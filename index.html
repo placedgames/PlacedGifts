@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#151516">
+<title>Gifts</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#151516;--card:#252527;--text:#fff;--hint:#9e9e9e;--accent:#4cb4e9;--gold:#ffc83d;--r:22px}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font:16px/1.3 -apple-system,"SF Pro Text",system-ui,sans-serif;overscroll-behavior:none}
+body{overflow:hidden}
+.page{display:none;height:100%;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 64px) 12px 130px}
+.page.on{display:block}
+h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
+.sub{color:var(--hint);text-align:center;font-size:15px;margin-bottom:18px}
+
+/* gifts */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.gift{background:var(--card);border-radius:var(--r);padding:14px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer}
+.gift:active{transform:scale(.97)}
+.pic{height:76px;display:flex;align-items:center;justify-content:center;font-size:54px}
+.pic img{max-height:76px;max-width:100%}
+.price{background:#33302a;color:var(--gold);border-radius:14px;padding:5px 10px;font-weight:600;font-size:15px;white-space:nowrap}
+.gname{font-size:12px;color:var(--hint);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px}
+
+/* stub pages */
+.empty{background:var(--card);border-radius:var(--r);padding:40px 20px;text-align:center;color:var(--hint)}
+.big{font-size:44px;font-weight:700;color:var(--text);margin:6px 0}
+
+/* profile */
+.ava{width:110px;height:110px;border-radius:50%;margin:0 auto 14px;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:700}
+.pname{font-size:28px;font-weight:700;text-align:center}
+.pnum{color:var(--hint);text-align:center;margin:4px 0 22px}
+.list{background:var(--card);border-radius:var(--r);margin-bottom:16px;overflow:hidden}
+.row{display:flex;align-items:center;gap:14px;padding:0 16px;height:54px;cursor:pointer}
+.row:active{background:#2e2e31}
+.ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.row .t{flex:1}
+.row .v{color:var(--hint)}
+.row:after{content:"›";color:#5a5a5e;font-size:24px}
+.row.sw:after{content:none}
+.row+.row .t{position:relative}
+.sw i{width:50px;height:30px;border-radius:15px;background:#3a3a3c;position:relative;transition:.2s}
+.sw i:after{content:"";position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on i{background:#34c759}.sw.on i:after{left:22px}
+
+/* меню: оригинальный liquid glass */
+:root{--glass-rgb:108,110,118;--glass-strong:.25;--glass-faint:.12;--glass-w:1px;--glass-h:100%;--glass-v:min(28px,55%);
+--glass2-rgb:122,124,134;--glass2-a:.34;--glass2-blur:3px;--glass2-spread:1px;
+--menu-glass-bg:rgba(44,44,47,.8);--menu-glass-blur:30px;--menu-glass-saturate:.8;--menu-slider-bg:rgba(200,200,204,.1)}
+.glass{position:relative;border:1px solid transparent;background:var(--menu-glass-bg);
+-webkit-backdrop-filter:blur(var(--menu-glass-blur)) saturate(var(--menu-glass-saturate));backdrop-filter:blur(var(--menu-glass-blur)) saturate(var(--menu-glass-saturate))}
+.glass::before,.glass::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none}
+.glass::before{padding:var(--glass-w);
+background:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,rgba(var(--glass-rgb),var(--glass-strong)) 0%,rgba(var(--glass-rgb),calc(var(--glass-strong)*.5)) 40%,rgba(var(--glass-rgb),calc(var(--glass-strong)*.18)) 72%,rgba(var(--glass-rgb),0) 100%),
+radial-gradient(ellipse var(--glass-h) var(--glass-v) at 100% 100%,rgba(var(--glass-rgb),var(--glass-strong)) 0%,rgba(var(--glass-rgb),calc(var(--glass-strong)*.5)) 40%,rgba(var(--glass-rgb),calc(var(--glass-strong)*.18)) 72%,rgba(var(--glass-rgb),0) 100%),
+radial-gradient(ellipse 30px 48% at 100% 50%,rgba(var(--glass-rgb),var(--glass-faint)) 0%,rgba(var(--glass-rgb),0) 100%);
+-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.glass::after{box-shadow:inset 0 0 var(--glass2-blur) var(--glass2-spread) rgba(var(--glass2-rgb),var(--glass2-a));
+-webkit-mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse var(--glass-h) var(--glass-v) at 100% 100%,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse 30px 48% at 100% 50%,rgba(0,0,0,.4) 0%,transparent 100%);
+mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse var(--glass-h) var(--glass-v) at 100% 100%,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse 30px 48% at 100% 50%,rgba(0,0,0,.4) 0%,transparent 100%)}
+#bar{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:1001;display:flex;gap:10px;align-items:center}
+#menuPill{flex:1;height:67px;border-radius:60px;display:flex;justify-content:space-between;align-items:center;padding:5px 4px 8px}
+#menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1)}
+#meWrap{position:relative;height:67px;width:67px;flex:none}
+#meWrap .glass{position:absolute;inset:0;border-radius:50%}
+.menu-item{display:flex;flex-direction:column;align-items:center;background:none;border:none;cursor:pointer;flex:1;padding:5px 0 2px;position:relative;z-index:3;color:inherit;font:inherit}
+.menu-icon-wrap{height:28px;display:flex;align-items:center;justify-content:center}
+.menu-icon-wrap svg{width:26px;height:26px;fill:currentColor;color:var(--hint)}
+.menu-label{font-size:11px;font-weight:500;color:var(--hint);margin-top:2px}
+.menu-item.active svg{color:var(--accent)}.menu-item.active .menu-label{color:var(--accent)}
+#meBtn{position:absolute;inset:0;margin:auto;width:57px;height:57px;border-radius:50%;border:none;padding:0;background:transparent;z-index:3;cursor:pointer}
+#meAva{width:100%;height:100%;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
+
+#toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 64px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
+#toast.on{opacity:1;transform:translateX(-50%)}
+.noanim *{transition:none!important;animation:none!important}
+</style>
+</head>
+<body>
+
+<section class="page on" id="p-market">
+  <h1>Маркет</h1><p class="sub">Покупка и продажа улучшенных подарков</p>
+  <div class="empty">Скоро здесь появятся лоты</div>
+</section>
+
+<section class="page" id="p-gifts">
+  <h1>Купить подарок</h1><p class="sub">Подарки можно купить для улучшения или хранения</p>
+  <div class="grid" id="grid"></div>
+</section>
+
+<section class="page" id="p-stars">
+  <h1>Звёзды</h1><p class="sub">Ваш баланс</p>
+  <div class="empty"><div class="big">★ <span id="bal">10</span></div>Пополнение появится позже</div>
+</section>
+
+<section class="page" id="p-me">
+  <div class="ava" id="ava"></div>
+  <div class="pname" id="uname"></div>
+  <div class="pnum" id="unum"></div>
+  <div class="list">
+    <div class="row" data-s="Мой профиль"><div class="ic" style="background:#f0604d">👤</div><span class="t">Мой профиль</span></div>
+    <div class="row" data-s="Мой рейтинг"><div class="ic" style="background:#f5a623">🏆</div><span class="t">Мой рейтинг</span></div>
+    <div class="row" data-go="stars"><div class="ic" style="background:#e0a800">★</div><span class="t">Мои звёзды</span><span class="v" id="bal2">10</span></div>
+  </div>
+  <div class="list">
+    <div class="row" data-s="Поддержка"><div class="ic" style="background:#3a8bf0">💬</div><span class="t">Поддержка</span></div>
+    <div class="row" data-s="Промокод"><div class="ic" style="background:#8e6cf0">🎟</div><span class="t">Промокод</span></div>
+    <div class="row" data-s="Язык"><div class="ic" style="background:#34c759">🌐</div><span class="t">Язык</span><span class="v">Русский</span></div>
+    <div class="row" data-s="Тема"><div class="ic" style="background:#636366">🌓</div><span class="t">Тема</span><span class="v">Чёрная</span></div>
+    <div class="row sw on" id="anim"><div class="ic" style="background:#ff6b35">✨</div><span class="t">Анимации</span><i></i></div>
+  </div>
+</section>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<symbol id="icon-catalog" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor" d="M10.359,1.500 L8.953,2.297 L8.297,2.953 L7.875,3.562 L7.312,5.016 L7.219,6.234 L6.375,6.422 L5.391,6.938 L4.594,7.734 L4.078,8.672 L3.891,9.375 L2.672,18.516 L2.672,19.453 L3.000,20.578 L3.469,21.328 L4.031,21.891 L4.969,22.453 L5.812,22.688 L17.625,22.734 L18.375,22.641 L19.078,22.406 L19.922,21.891 L20.625,21.141 L21.047,20.344 L21.281,19.453 L21.234,18.141 L20.062,9.375 L19.875,8.672 L19.359,7.734 L18.797,7.125 L17.812,6.516 L16.734,6.234 L16.641,5.016 L16.359,4.125 L15.797,3.141 L14.812,2.156 L13.828,1.594 L12.656,1.266 L11.297,1.266 Z M5.859,8.531 L6.469,8.016 L7.219,7.734 L16.734,7.734 L17.203,7.875 L17.812,8.250 L18.328,8.859 L18.609,9.703 L19.781,18.469 L19.781,19.406 L19.359,20.344 L18.750,20.906 L17.859,21.234 L6.094,21.234 L5.578,21.094 L5.016,20.766 L4.312,19.875 L4.125,18.938 L5.344,9.703 L5.531,9.047 Z M8.297,10.641 L8.250,12.469 L8.484,13.359 L9.141,14.438 L9.750,15.000 L10.594,15.469 L11.484,15.703 L12.469,15.703 L13.359,15.469 L14.438,14.812 L15.000,14.203 L15.469,13.359 L15.703,12.469 L15.703,10.781 L15.562,10.500 L15.234,10.266 L14.719,10.266 L14.297,10.641 L14.203,12.469 L13.734,13.406 L13.078,13.969 L12.141,14.250 L11.062,14.062 L10.547,13.734 L10.078,13.219 L9.750,12.469 L9.703,10.781 L9.469,10.406 L8.906,10.219 L8.531,10.359 Z M8.719,5.625 L8.906,4.828 L9.188,4.266 L9.938,3.422 L11.109,2.812 L12.328,2.719 L13.125,2.906 L13.688,3.188 L14.531,3.938 L15.141,5.109 L15.234,6.188 L8.766,6.234 Z"/></symbol>
+<symbol id="icon-gift" viewBox="0 0 24 24"><path d="M20 7h-2.3c.2-.4.3-.9.3-1.4A3.6 3.6 0 0 0 14.400 2c-1.100 0-1.900.5-2.400 1.300C11.500 2.500 10.700 2 9.600 2A3.600 3.600 0 0 0 6 5.600c0 .5.100 1 .3 1.400H4a1 1 0 0 0-1 1v3h8V7h2v4h8V8a1 1 0 0 0-1-1zM9.600 4c.8 0 1.400.6 1.400 1.400V7H9.600C8.800 7 8 6.400 8 5.600S8.800 4 9.600 4zm4.800 0c.8 0 1.600.8 1.600 1.600S15.200 7 14.400 7H13V5.400c0-.8.600-1.400 1.400-1.400zM4 13v6a2 2 0 0 0 2 2h5v-8zm9 0v8h5a2 2 0 0 0 2-2v-6z"/></symbol>
+<symbol id="icon-star" viewBox="0 0 24 24"><path d="M12 2l2.900 6.300 6.900.8-5.100 4.700 1.400 6.800L12 17.100 5.900 20.600l1.400-6.800L2.200 9.100l6.900-.8z"/></symbol>
+</svg>
+<div id="bar">
+  <div id="menuSlider"></div>
+  <div id="menuPill" class="glass">
+    <button class="menu-item" data-p="market"><div class="menu-icon-wrap"><svg><use href="#icon-catalog"/></svg></div><span class="menu-label">Маркет</span></button>
+    <button class="menu-item" data-p="gifts"><div class="menu-icon-wrap"><svg><use href="#icon-gift"/></svg></div><span class="menu-label">Подарки</span></button>
+    <button class="menu-item" data-p="stars"><div class="menu-icon-wrap"><svg><use href="#icon-star"/></svg></div><span class="menu-label">Звёзды</span></button>
+  </div>
+  <div id="meWrap"><div class="glass"></div><button id="meBtn" data-p="me"><div id="meAva"></div></button></div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ===== Настройки ===== */
+// Источник списка подарков: массив [{id,name,price,emoji?,image?}].
+// Если адрес пустой или недоступен, показывается запасной список ниже.
+const GIFTS_URL = '';
+
+const FALLBACK = [
+  {name:'Pepe с сердцем',price:50000,emoji:'🐸'},{name:'Золотой перстень',price:1000,emoji:'💍'},
+  {name:'Брошь',price:50000,emoji:'💖'},{name:'Кепка',price:25000,emoji:'🧢'},
+  {name:'Слива',price:5000,emoji:'🍑'},{name:'Кристалл',price:5000,emoji:'💎'},
+  {name:'Радужный кристалл',price:5000,emoji:'🔮'},{name:'Орёл',price:1000,emoji:'🦅'},
+  {name:'Статуэтка',price:750,emoji:'🏆'},{name:'Кольцо с камнем',price:2000,emoji:'💍'},
+  {name:'Кирпич',price:1000,emoji:'🧱'},{name:'Перьевая ручка',price:1000,emoji:'🖋'}
+];
+
+/* ===== Telegram и пользователь ===== */
+const tg = window.Telegram && Telegram.WebApp;
+if (tg) { tg.ready(); tg.expand(); try{ tg.setHeaderColor('#151516'); tg.setBackgroundColor('#151516'); }catch(e){} }
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const store = {
+  get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},
+  set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}
+};
+
+const u = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || {first_name:'Гость'};
+const name = [u.first_name,u.last_name].filter(Boolean).join(' ') || u.username || 'Гость';
+let num = store.get('anonNum');
+if (!num) {
+  const r = () => String(Math.floor(Math.random()*10000)).padStart(4,'0');
+  num = '+888 ' + r() + ' ' + r();
+  store.set('anonNum', num);
+}
+$('#uname').textContent = name;
+$('#unum').textContent = num;
+['#ava','#meAva'].forEach(s=>{
+  const el=$(s);
+  if (u.photo_url) el.style.backgroundImage = 'url("'+u.photo_url+'")';
+  else el.textContent = name[0].toUpperCase();
+});
+
+/* ===== Навигация ===== */
+const PAGES=['market','gifts','stars'];
+function slide(p){
+  const s=$('#menuSlider'),w=$('#bar'),pill=$('#menuPill'),me=$('#meWrap');
+  const wr=w.getBoundingClientRect(), i=PAGES.indexOf(p);
+  if(p==='me'){const c=me.getBoundingClientRect();s.style.left=(c.left-wr.left+4)+'px';s.style.width=(c.width-8)+'px';s.style.borderRadius='50%';}
+  else if(i>-1){const pr=pill.getBoundingClientRect(),seg=(pr.width-8)/3;s.style.left=(pr.left-wr.left+4+i*seg)+'px';s.style.width=seg+'px';s.style.borderRadius='50px';}
+  s.style.opacity='1';
+}
+let cur='gifts';
+function go(p){
+  cur=p;
+  $$('.page').forEach(e=>e.classList.toggle('on',e.id==='p-'+p));
+  $$('.menu-item').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
+  slide(p);
+  store.set('lastPage',p);
+  if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+}
+addEventListener('resize',()=>slide(cur));
+$$('[data-p]').forEach(e=>e.onclick=()=>go(e.dataset.p));
+$$('[data-go]').forEach(e=>e.onclick=()=>go(e.dataset.go));
+
+let tt;
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1600)}
+$$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
+
+/* ===== Анимации ===== */
+function applyAnim(on){document.body.classList.toggle('noanim',!on);$('#anim').classList.toggle('on',on)}
+applyAnim(store.get('anim','1')==='1');
+$('#anim').onclick=()=>{const on=store.get('anim','1')!=='1';store.set('anim',on?'1':'0');applyAnim(on)};
+
+/* ===== Подарки ===== */
+const fmt = n => Number(n).toLocaleString('ru-RU');
+function renderGifts(list){
+  $('#grid').innerHTML = list.map((g,i)=>
+    '<div class="gift" data-i="'+i+'"><div class="pic">'+
+    (g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁'))+
+    '</div><div class="gname"></div><div class="price">★ '+fmt(g.price)+'</div></div>').join('');
+  $$('.gift').forEach((el,i)=>{
+    el.querySelector('.gname').textContent = list[i].name;
+    el.onclick=()=>toast(list[i].name+': покупка скоро');
+  });
+}
+renderGifts(FALLBACK);
+if (GIFTS_URL) fetch(GIFTS_URL).then(r=>r.json()).then(d=>{if(Array.isArray(d)&&d.length)renderGifts(d)}).catch(()=>{});
+
+go(store.get('lastPage','gifts'));
+requestAnimationFrame(()=>slide(cur));
+</script>
+</body>
+</html>
