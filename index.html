@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#151516">
+<meta name="theme-color" content="#000000">
 <title>Gifts</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--bg:#151516;--card:#252527;--text:#fff;--hint:#9e9e9e;--accent:#4cb4e9;--gold:#ffc83d;--r:22px}
+:root{--bg:#000;--card:#252527;--text:#fff;--hint:#9e9e9e;--accent:#4cb4e9;--gold:#ffc83d;--r:22px}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:var(--bg);color:var(--text);font:16px/1.3 -apple-system,"SF Pro Text",system-ui,sans-serif;overscroll-behavior:none}
+html,body{height:100%;width:100%;overflow:hidden;touch-action:pan-y;background:var(--bg);color:var(--text);font:16px/1.3 -apple-system,"SF Pro Text",system-ui,sans-serif;overscroll-behavior:none}
 body{overflow:hidden}
-.page{display:none;height:100%;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 64px) 12px 130px}
+.page{display:none;height:100%;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 64px) 16px 130px;overflow-x:hidden;overscroll-behavior:contain}
 .page.on{display:block}
 h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 .sub{color:var(--hint);text-align:center;font-size:15px;margin-bottom:18px}
 
 /* gifts */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.gift{background:var(--card);border-radius:var(--r);padding:14px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.gift{min-width:0;background:var(--card);border-radius:var(--r);padding:14px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer}
 .gift:active{transform:scale(.97)}
 .pic{height:76px;display:flex;align-items:center;justify-content:center;font-size:54px}
 .pic img{max-height:76px;max-width:100%}
@@ -61,7 +61,7 @@ radial-gradient(ellipse 30px 48% at 100% 50%,rgba(var(--glass-rgb),var(--glass-f
 .glass::after{box-shadow:inset 0 0 var(--glass2-blur) var(--glass2-spread) rgba(var(--glass2-rgb),var(--glass2-a));
 -webkit-mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse var(--glass-h) var(--glass-v) at 100% 100%,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse 30px 48% at 100% 50%,rgba(0,0,0,.4) 0%,transparent 100%);
 mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse var(--glass-h) var(--glass-v) at 100% 100%,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse 30px 48% at 100% 50%,rgba(0,0,0,.4) 0%,transparent 100%)}
-#bar{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:1001;display:flex;gap:10px;align-items:center}
+#bar{position:fixed;left:16px;right:16px;bottom:16px;z-index:1001;display:flex;gap:10px;align-items:center}
 #menuPill{flex:1;height:67px;border-radius:60px;display:flex;justify-content:space-between;align-items:center;padding:5px 4px 8px}
 #menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1)}
 #meWrap{position:relative;height:67px;width:67px;flex:none}
@@ -147,7 +147,10 @@ const FALLBACK = [
 
 /* ===== Telegram и пользователь ===== */
 const tg = window.Telegram && Telegram.WebApp;
-if (tg) { tg.ready(); tg.expand(); try{ tg.setHeaderColor('#151516'); tg.setBackgroundColor('#151516'); }catch(e){} }
+if (tg) { tg.ready(); tg.expand();
+  try{ tg.disableVerticalSwipes && tg.disableVerticalSwipes(); }catch(e){}
+  try{ tg.disableClosingConfirmation && tg.disableClosingConfirmation(); }catch(e){}
+  try{ tg.requestFullscreen && tg.requestFullscreen(); }catch(e){} try{ tg.setHeaderColor('#000000'); tg.setBackgroundColor('#000000'); }catch(e){} }
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const store = {
   get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},
