@@ -135,7 +135,8 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 /* ===== Настройки ===== */
 // Источник списка подарков: массив [{id,name,price,emoji?,image?}].
 // Если адрес пустой или недоступен, показывается запасной список ниже.
-const GIFTS_URL = '';
+const GIFTS_URL = 'https://cdn.changes.tg/gifts/id-to-name.json';
+const IMG = id => 'https://api.changes.tg/original/'+id+'.png?size=256';
 
 const FALLBACK = [
   {name:'Pepe с сердцем',price:50000,emoji:'🐸'},{name:'Золотой перстень',price:1000,emoji:'💍'},
@@ -211,15 +212,15 @@ const fmt = n => Number(n).toLocaleString('ru-RU');
 function renderGifts(list){
   $('#grid').innerHTML = list.map((g,i)=>
     '<div class="gift" data-i="'+i+'"><div class="pic">'+
-    (g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁'))+
-    '</div><div class="gname"></div><div class="price">★ '+fmt(g.price)+'</div></div>').join('');
+    (g.image?'<img loading="lazy" src="'+g.image+'" alt="" onerror="this.replaceWith(\'🎁\')">':(g.emoji||'🎁'))+
+    '</div><div class="gname"></div>'+(g.price?'<div class="price">★ '+fmt(g.price)+'</div>':'')+'</div>').join('');
   $$('.gift').forEach((el,i)=>{
     el.querySelector('.gname').textContent = list[i].name;
-    el.onclick=()=>toast(list[i].name+': покупка скоро');
+    el.onclick=()=>toast(list[i].name+': скоро');
   });
 }
 renderGifts(FALLBACK);
-if (GIFTS_URL) fetch(GIFTS_URL).then(r=>r.json()).then(d=>{if(Array.isArray(d)&&d.length)renderGifts(d)}).catch(()=>{});
+if (GIFTS_URL) fetch(GIFTS_URL).then(r=>r.json()).then(d=>{const l=Object.keys(d).map(id=>({id,name:d[id],image:IMG(id)}));if(l.length)renderGifts(l)}).catch(()=>{});
 
 /* ===== Долгое нажатие на профиль: очистка кэша ===== */
 function clearAppCache(){ location.reload(); }
