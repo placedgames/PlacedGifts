@@ -207,7 +207,7 @@ body.navanim #bar{z-index:1}
 #bm.on{visibility:visible;pointer-events:auto}
 #bm .bm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .3s}
 #bm.on .bm-dim{opacity:1}
-#bm .bm-sheet{position:absolute;left:0;right:0;bottom:0;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 14px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:38px 38px 0 0;overflow:hidden;transform:translateY(100%);transition:transform .38s cubic-bezier(.32,.72,0,1);will-change:transform}
+#bm .bm-sheet{position:absolute;left:10px;right:10px;bottom:10px;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 14px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:38px;overflow:hidden;transform:translateY(calc(100% + 10px));transition:transform .38s cubic-bezier(.32,.72,0,1);will-change:transform}
 #bm.on .bm-sheet{transform:translateY(0)}
 #bm .bm-sheet.drag{transition:none}
 #bm .bm-pre{position:relative;flex:1 1 auto;min-height:0;background:#000 url(https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg) center/cover;display:flex;flex-direction:column;align-items:center;padding:16px 16px 14px;overflow:hidden}
@@ -216,7 +216,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-btn{pointer-events:auto;height:var(--hdr-h);border-radius:50px;display:flex;align-items:center;justify-content:center;color:#fff;font:inherit;font-size:18px;font-weight:550;cursor:pointer;padding:0;transition:transform .2s}
 #bm .bm-btn:active{transform:scale(1.1)}
 #bm .bm-x{width:var(--hdr-h);flex:none}
-#bm .bm-cnt{padding:0 14px;gap:5px;flex:none}
+#bm .bm-cnt{padding:0 16px;flex:none}
 #bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
 #bm .bm-btn svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
 #bm .bm-pill{flex:1 1 0;min-width:0;margin:0 8px;height:34px;padding:0 8px;border-radius:17px;display:flex;align-items:center;justify-content:center;white-space:nowrap;font-size:14px;font-weight:500;pointer-events:none;overflow:hidden}
@@ -230,20 +230,20 @@ body.navanim #bar{z-index:1}
 #bm .bm-cd{flex:none;font-size:16px;line-height:1.2;font-weight:500;margin-top:4px;padding:0 2px}
 #bm .bm-view{flex:none;margin-top:12px;height:42px;padding:0 24px;border:0;border-radius:21px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:17px;font-weight:700;cursor:pointer}
 #bm .bm-view:active{opacity:.7}
-#bm .bm-msg{flex:none;position:relative;z-index:2;width:100%;height:48px;margin-top:12px;border-radius:25px;display:flex;align-items:center;padding:0 20px}
-#bm .bm-msg input{width:100%;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
+#bm .bm-msg{flex:none;position:relative;z-index:2;width:100%;height:48px;margin-top:12px;border-radius:25px;display:flex;align-items:center;padding:0 14px}
+#bm .bm-msg input{width:100%;height:100%;padding:0;margin:0;text-align:left;line-height:normal;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
 #bm .bm-msg input::placeholder{color:#8e8e93}
-#bm .bm-bot{flex:none;padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 18px);background:#1c1c1e}
+#bm .bm-bot{flex:none;padding:12px 16px 16px;background:#1c1c1e}
 #bm .bm-hide{height:52px;border-radius:26px;background:#2c2c2e;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 20px;font-size:19px;font-weight:500;cursor:pointer;user-select:none}
 #bm .bm-sw{width:50px;height:30px;border-radius:15px;background:#3a3a3c;position:relative;transition:.2s}
 #bm .bm-sw:after{content:"";position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.2s}
 #bm .bm-hide.on .bm-sw{background:#34c759}#bm .bm-hide.on .bm-sw:after{left:22px}
-#bm .bm-note{color:#8e8e93;font-size:15px;line-height:1.3;font-weight:500;padding:10px 20px 0}
-#bm .bm-bar{position:relative;margin-top:12px;height:50px;border-radius:25px;background:#2c2c2e;overflow:hidden;font-size:18px;font-weight:550}
-#bm .bm-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:25px;background:#4aa8fa;transition:width .6s cubic-bezier(.3,.8,.3,1)}
+#bm .bm-note{color:#8e8e93;font-size:13px;line-height:1.3;font-weight:500;padding:10px 20px 0}
+#bm .bm-bar{position:relative;margin-top:12px;height:44px;border-radius:22px;background:#2c2c2e;overflow:hidden;font-size:17px;font-weight:500}
+#bm .bm-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:22px;background:#4aa8fa;transition:width .6s cubic-bezier(.3,.8,.3,1)}
 #bm .bm-bar span{position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:1}
 #bm .bm-left{left:18px}#bm .bm-sold{right:18px}
-#bm .bm-buy{margin-top:14px;width:100%;height:56px;border:0;border-radius:28px;background:#3b82f6;color:#fff;font:inherit;font-size:21px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:transform .15s,opacity .15s}
+#bm .bm-buy{margin-top:14px;width:100%;height:56px;border:0;border-radius:28px;background:#4BB6EE;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:transform .15s,opacity .15s}
 #bm .bm-buy:active{transform:scale(.98);opacity:.85}
 #bm .bm-buy img{width:22px;height:22px;filter:brightness(0) invert(1)}
 </style>
@@ -362,7 +362,7 @@ body.navanim #bar{z-index:1}
       <div class="bm-top">
         <button class="bm-btn bm-x glass" id="bmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:22px" viewBox="0 0 24 24" stroke-width="2.2"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
         <div class="bm-pill glass" id="bmPill"></div>
-        <div class="bm-btn bm-cnt glass"><svg class="ico" style="--s:24px"><use href="#i-gift2"/></svg><span>1x</span></div>
+        <div class="bm-btn bm-cnt glass"><span>1x</span></div>
       </div>
       <div class="bm-mid">
         <div class="bm-card">
