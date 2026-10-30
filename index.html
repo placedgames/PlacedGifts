@@ -9,7 +9,10 @@
 <style>
 :root{
 /* ===== РАЗМЕРЫ ИКОНОК: меняй любую отдельно ===== */
---ic-market:32px;--ic-gift:32px;--ic-star:32px;            /* меню */
+--ic-market:33px;--ic-gift:33px;--ic-star:32px;            /* меню */
+--menu-label-gap:0px;                                      /* расстояние от иконки до подписи в меню (меньше = ближе) */
+--ic-star-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
+--menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --ic-profile:24px;--ic-rating:24px;--ic-stars:24px;--ic-promo:24px;
 --ic-lang:24px;--ic-theme:24px;--ic-anim:24px;              /* профиль */
@@ -44,6 +47,7 @@ h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 .row:active{background:#2e2e31}
 .ic{width:var(--ic-plate);height:var(--ic-plate);flex:none;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff}
 .ic svg{fill:#fff;fill-rule:evenodd}
+.menu-item[data-p="stars"] svg{transform:translateY(var(--ic-star-y))}
 .ico{flex:none;width:var(--s,24px);height:var(--s,24px)}
 .row .t{flex:1}
 .row .v{color:var(--hint)}
@@ -76,12 +80,12 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 #menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1)}
 #meWrap{position:relative;height:67px;width:67px;flex:none}
 #meWrap .glass{position:absolute;inset:0;border-radius:50%}
-.menu-item{display:flex;flex-direction:column;align-items:center;background:none;border:none;cursor:pointer;flex:1;padding:5px 0 2px;position:relative;z-index:3;color:inherit;font:inherit}
+.menu-item{transform:translateY(var(--menu-y));display:flex;flex-direction:column;align-items:center;background:none;border:none;cursor:pointer;flex:1;padding:5px 0 2px;position:relative;z-index:3;color:inherit;font:inherit}
 .menu-icon-wrap{height:32px;display:flex;align-items:center;justify-content:center}
 .menu-icon-wrap svg{fill:currentColor;fill-rule:evenodd;color:var(--hint)}
 .menu-item:nth-child(1) .menu-icon-wrap,.menu-item:nth-child(1) .menu-label{transform:translateX(-2px)}
 .menu-item:nth-child(3) .menu-icon-wrap,.menu-item:nth-child(3) .menu-label{transform:translateX(2px)}
-.menu-label{font-size:11px;font-weight:500;color:var(--hint);margin-top:2px}
+.menu-label{font-size:11px;font-weight:500;color:var(--hint);margin-top:var(--menu-label-gap)}
 .menu-item.active svg{color:var(--accent)}.menu-item.active .menu-label{color:var(--accent)}
 #meBtn{-webkit-touch-callout:none;user-select:none;position:absolute;inset:0;margin:auto;width:57px;height:57px;border-radius:50%;border:none;padding:0;background:transparent;z-index:3;cursor:pointer}
 #meAva{width:100%;height:100%;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
