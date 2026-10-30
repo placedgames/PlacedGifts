@@ -47,8 +47,8 @@ body.nobar #bar{display:none}
 .gtabs button{position:relative;z-index:1;height:28px;padding:0 12px;border:0;background:none;color:#8a8a8e;font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:color .2s}
 .gtabs button.on{color:#a6a6ab}
 .grid{margin-top:19px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.gift{position:relative;min-width:0;height:153px;background:var(--card);border-radius:21px;padding:18px 0 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .12s}
-.gift:active{transform:scale(.97)}
+.gift{position:relative;min-width:0;height:153px;background:var(--card);border-radius:21px;padding:18px 0 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .38s cubic-bezier(.22,1,.36,1);backface-visibility:hidden}
+.gift:active{transform:scale(.96);transition:transform .22s cubic-bezier(.3,.7,.4,1)}
 .rib{position:absolute;top:-2.5px;right:-2.5px;width:115px;height:115px;pointer-events:none;z-index:2}
 .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
 .rib span{position:absolute;left:78.2%;top:21.8%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
@@ -203,7 +203,7 @@ body.navanim #bar{z-index:1}
 .noanim *:not(#menuSlider):not(.cover):not(.cover *):not(.phead){transition:none!important;animation:none!important}
 
 /* ===== модальное окно покупки подарка ===== */
-#bm{position:fixed;inset:0;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .4s}
+#bm{position:fixed;left:0;right:0;top:0;height:100%;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .4s}
 #bm.on{visibility:visible;pointer-events:auto;transition-delay:0s}
 #bm .bm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .3s}
 #bm.on .bm-dim{opacity:1}
@@ -246,8 +246,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:18.5px;background:#4BB6EE;transition:width .6s cubic-bezier(.3,.8,.3,1)}
 #bm .bm-bar span{position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:1}
 #bm .bm-left{left:18px}#bm .bm-sold{right:18px}
-#bm .bm-buy{margin-top:16px;width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:transform .15s,opacity .15s}
-#bm .bm-buy:active{transform:scale(.98);opacity:.85}
+#bm .bm-buy{margin-top:16px;width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
 #bm .bm-buy svg{flex:none;width:24px;height:24px;fill:#fff;fill-rule:evenodd;margin:0 -4px 0 -3px}
 </style>
 </head>
@@ -923,11 +922,16 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     $b('bmSold').textContent=fmt(SOLD)+' продано';
     $b('bmBuy').innerHTML='<span>Купить подарок за</span><svg viewBox="0 0 512 512"><use href="#i-star"/></svg><span>'+fmt(p)+'</span>';
     $b('bmFill').style.width='0';
+    bm.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     document.body.classList.add('bmopen');try{SP.hold(4,true)}catch(e){}
     bm.classList.add('on');bm.setAttribute('aria-hidden','false');
     requestAnimationFrame(()=>requestAnimationFrame(()=>{$b('bmFill').style.width=(left/TOTAL*100)+'%'}));
   };
-  function close(){document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}bm.classList.remove('on');bm.setAttribute('aria-hidden','true');document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+  function close(){document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}bm.classList.remove('on');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on'))bm.style.height=''},450);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+  const keepTop=()=>{if(bm.classList.contains('on'))window.scrollTo(0,0)};
+  if(window.visualViewport){visualViewport.addEventListener('resize',keepTop);visualViewport.addEventListener('scroll',keepTop)}
+  $b('bmMsg').addEventListener('focus',()=>{keepTop();setTimeout(keepTop,50);setTimeout(keepTop,250)});
+  $b('bmMsg').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur()});
   $b('bmClose').onclick=close;
   bm.querySelector('.bm-dim').onclick=close;
   $b('bmHide').onclick=()=>{hidden=!hidden;$b('bmHide').classList.toggle('on',hidden)};
