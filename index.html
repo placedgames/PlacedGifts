@@ -60,7 +60,7 @@ body.nobar #bar{display:none}
 .price>img,.price>span{position:relative;z-index:1}
 .sp{position:absolute;z-index:0;pointer-events:none;animation-play-state:paused;background:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20512%20512%27%3E%3Cpath%20fill=%27%23ecb23a%27%20d=%27M255.2%2040.4C247.8%2042%20245.3%2044.1%20242.3%2051.5C239.6%2058.2%20239.1%2074.6%20238.3%2082.5C236%20104%20226.8%20200.5%20218.7%20213.5C216.5%20216.9%20213.2%20219.3%20209.5%20220.7C196%20225.9%20177.9%20227.4%20163.5%20229.8C141.2%20233.4%20118.9%20237.4%2096.5%20240.4C86.8%20241.7%2075.8%20241.9%2066.5%20245.3C59.9%20247.7%2055.2%20255.5%2057.8%20262.5C58.9%20265.5%2061.7%20268.6%2064.5%20270.1C71.6%20273.7%2094.4%20274.5%20103.5%20275.8C126.7%20279.2%20150.2%20281.7%20173.5%20284.1C184.4%20285.3%20200.5%20286.1%20210.5%20290.1C214.7%20291.8%20218%20294.7%20220%20298.8C229%20317.6%20236.5%20408.6%20239.3%20434.8C240.1%20443%20240%20451.6%20241.7%20459.8C244.4%20472.5%20259.8%20476.2%20266.7%20464.5C269.4%20459.8%20269.3%20453.7%20269.9%20448.5C272.7%20423.7%20282.3%20307.8%20294.5%20294.5C301.4%20287.1%20314.9%20286.8%20324.2%20285.4C326.9%20285.1%20329.6%20284.7%20332.2%20284.3C345.5%20282.8%20443%20271.6%20447.2%20269.4C451.6%20267.2%20454.6%20262.3%20454.5%20257.5C454%20241.5%20439.5%20243%20427.5%20241.2C406.5%20238.2%20309.3%20226.6%20297.5%20218.3C294.1%20216%20292.2%20212.6%20290.9%20208.8C287.5%20199%20286.4%20188%20285.1%20177.8C281.1%20146.1%20277.2%20114.5%20274.5%2082.8C273.7%2073.7%20274.1%2057.7%20271.2%2049.8C270%2046.5%20265.5%2042%20262.2%2040.8C260.9%2040.3%20259.6%2040.5%20258.2%2040.5C257.2%2040.4%20256.3%2040.4%20255.2%2040.4Z%27/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;animation:fly 3s ease-in-out infinite paused}
 .gift.vis .sp{animation-play-state:running}
-body.scrolling .gift .sp{animation-play-state:paused}
+body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-20deg)}18%{opacity:.95}70%{opacity:.8}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.05) rotate(20deg)}}
 .gempty{margin-top:19px;background:var(--card);border-radius:28px;padding:44px 20px;text-align:center;color:var(--hint)}
 .gbtn{flex:none;width:max-content;min-width:calc(var(--hdr-h) + 24px);flex-direction:column;gap:0;padding:0 18px;line-height:1}
@@ -248,7 +248,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-left{left:18px}#bm .bm-sold{right:18px}
 #bm .bm-buy{margin-top:16px;width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:transform .15s,opacity .15s}
 #bm .bm-buy:active{transform:scale(.98);opacity:.85}
-#bm .bm-buy svg{flex:none;width:30px;height:30px;fill:#fff;fill-rule:evenodd;margin:0 -4px 0 -3px}
+#bm .bm-buy svg{flex:none;width:26px;height:26px;fill:#fff;fill-rule:evenodd;margin:0 -4px 0 -3px}
 </style>
 </head>
 <body>
@@ -727,7 +727,7 @@ const PS=(function(){
     }
     x.globalAlpha=1;
   }
-  const ok=()=>!document.hidden&&$('#p-gifts').classList.contains('on')&&!document.body.classList.contains('scrolling')&&!document.body.classList.contains('noanim');
+  const ok=()=>!document.hidden&&$('#p-gifts').classList.contains('on')&&!document.body.classList.contains('scrolling')&&!document.body.classList.contains('bmopen')&&!document.body.classList.contains('noanim');
   function loop(now){
     raf=0;for(const c of vis)if(!c.isConnected)vis.delete(c);
     if(!vis.size||!ok())return;
@@ -923,10 +923,11 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     $b('bmSold').textContent=fmt(SOLD)+' продано';
     $b('bmBuy').innerHTML='<span>Купить подарок за</span><svg viewBox="0 0 512 512"><use href="#i-star"/></svg><span>'+fmt(p)+'</span>';
     $b('bmFill').style.width='0';
+    document.body.classList.add('bmopen');try{SP.hold(4,true)}catch(e){}
     bm.classList.add('on');bm.setAttribute('aria-hidden','false');
     requestAnimationFrame(()=>requestAnimationFrame(()=>{$b('bmFill').style.width=(left/TOTAL*100)+'%'}));
   };
-  function close(){bm.classList.remove('on');bm.setAttribute('aria-hidden','true');document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+  function close(){document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}bm.classList.remove('on');bm.setAttribute('aria-hidden','true');document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
   $b('bmClose').onclick=close;
   bm.querySelector('.bm-dim').onclick=close;
   $b('bmHide').onclick=()=>{hidden=!hidden;$b('bmHide').classList.toggle('on',hidden)};
