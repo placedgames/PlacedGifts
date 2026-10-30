@@ -64,10 +64,10 @@ body.scrolling .gift .sp{animation-play-state:paused}
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-20deg)}18%{opacity:.95}70%{opacity:.8}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.05) rotate(20deg)}}
 .gempty{margin-top:19px;background:var(--card);border-radius:28px;padding:44px 20px;text-align:center;color:var(--hint)}
 .gbtn{flex:none;width:max-content;min-width:calc(var(--hdr-h) + 24px);flex-direction:column;gap:0;padding:0 18px;line-height:1}
-.gbl{font-size:12px;font-weight:550;color:#fff}
-.gv{display:flex;align-items:center;gap:1px;font-size:14px;font-weight:650;margin-top:-2px}
-.gv img{width:17px;height:17px;object-fit:contain}
-.gv small{font-size:11px;font-weight:600;margin-left:-2px}
+.gbl{font-size:13px;font-weight:550;color:#fff}
+.gv{display:flex;align-items:center;gap:1px;font-size:13px;font-weight:650;margin-top:-2px;align-self:flex-end}
+.gv img{width:15px;height:15px;object-fit:contain}
+.gv small{font-size:10px;font-weight:600;margin-left:-2px}
 .pst{width:19px;height:19px;object-fit:contain;flex:none;position:relative}
 
 /* stub pages */
@@ -115,8 +115,8 @@ body.scrolling .gift .sp{animation-play-state:paused}
 .sw.on i{background:#34c759}.sw.on i:after{left:22px}
 
 /* меню: оригинальный liquid glass */
-:root{--glass-rgb:132,134,144;--glass-strong:.36;--glass-faint:.17;--glass-w:1px;--glass-h:100%;--glass-v:min(28px,55%);
---glass2-rgb:142,144,154;--glass2-a:.46;--glass2-blur:3px;--glass2-spread:1px;
+:root{--glass-rgb:118,120,129;--glass-strong:.32;--glass-faint:.15;--glass-w:1px;--glass-h:100%;--glass-v:min(28px,55%);
+--glass2-rgb:127,129,138;--glass2-a:.41;--glass2-blur:3px;--glass2-spread:1px;
 --menu-glass-bg:rgba(48,48,50,.7);--menu-glass-blur:10px;--menu-inactive:#bdbdc1;--menu-slider-bg:rgba(200,200,204,.1)}
 .glass{position:relative;border:1px solid transparent;background:var(--menu-glass-bg);
 -webkit-backdrop-filter:blur(var(--menu-glass-blur));backdrop-filter:blur(var(--menu-glass-blur))}
@@ -178,6 +178,18 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 .hb:active{opacity:.7}
 .hb svg{fill:#fff;fill-rule:evenodd}
 .hb svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
+
+/* переходы между страницами как в Telegram */
+.page.tr{position:absolute;left:0;top:0;width:100%;background:var(--bg);will-change:transform,opacity}
+.page.tr.top{z-index:2;box-shadow:-8px 0 28px rgba(0,0,0,.55)}
+.hdr-ghost{position:fixed;left:16px;right:16px;top:var(--hdr-top);z-index:1000;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.hdr-ghost *{pointer-events:none!important}
+
+/* слайдер на странице профиля: стекло и ползунок как у меню */
+.mtabs{margin-top:16px;height:46px;border-radius:50px;display:flex;align-items:stretch;padding:4px}
+.mtabs i{position:absolute;top:4px;bottom:4px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1)}
+.mtabs button{position:relative;z-index:2;flex:1;border:0;background:none;color:var(--menu-inactive);font:inherit;font-size:15px;font-weight:550;cursor:pointer;transition:color .2s;padding:0}
+.mtabs button.on{color:var(--accent)}
 #toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
 #toast.on{opacity:1;transform:translateX(-50%)}
 .noanim *:not(#menuSlider):not(.cover):not(.cover *):not(.phead){transition:none!important;animation:none!important}
@@ -248,6 +260,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
     <div class="pf"><b>мобильный</b><span id="pNum"></span></div>
     <div class="pf pf-user"><div><b>имя пользователя</b><span class="lnk" id="pUser"></span></div><svg class="ico" style="--s:var(--ic-pf-qr)"><use href="#i-qr"/></svg></div>
   </div>
+  <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="all">Все подарки</button><button data-m="uniq">Уникальные</button></div>
 </section>
 
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
@@ -353,7 +366,6 @@ const GIFT=ico('i-gift2','--ic-hdr-gift'), WRITE=ico('i-edit','--ic-hdr-write'),
 const PLUS='<svg class="ico hs" style="--s:var(--ic-hdr-plus)" viewBox="0 0 24 24" stroke-width="2"><path d="M12 4.5v15M4.5 12h15"/></svg>';
 const BACK='<svg class="ico hs" style="--s:var(--ic-hdr)" viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg>';
 const STAR='https://cdn.jsdelivr.net/gh/placedgames/pg/Star.png';
-const CLOSE='<svg class="ico hs" style="--s:22px" viewBox="0 0 24 24" stroke-width="2.6"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg>';
 function balHtml(){const v=parseFloat(($('#bal').textContent||'0').replace(',','.'))||0,i=Math.floor(v),f=Math.round((v-i)*100);return Number(i).toLocaleString('ru-RU')+(f?'<small>,'+String(f).padStart(2,'0')+'</small>':'')}
 const hTxt=(t,a)=>'<button class="hb hb-txt glass" data-a="'+a+'">'+t+'</button>';
 const hRound=(i,a)=>'<button class="hb hb-round glass" data-a="'+a+'">'+i+'</button>';
@@ -363,7 +375,7 @@ const HDR={
   chats:()=>hTxt('Изм.','edit')+hDbl('gifts',GIFT,'write',WRITE),
   settings:()=>hRound(QR,'qr')+hTxt('Изм.','edit'),
   me:()=>hRound(BACK,'back')+hTxt('Изм.','edit'),
-  gifts:()=>hRound(CLOSE,'back')+'<div class="hb gbtn glass" data-a="stars"><div class="gbl">Баланс</div><div class="gv"><img src="'+STAR+'" alt=""><span>'+balHtml()+'</span></div></div>',
+  gifts:()=>hRound(BACK,'back')+'<div class="hb gbtn glass" data-a="stars"><div class="gbl">Баланс</div><div class="gv"><img src="'+STAR+'" alt=""><span>'+balHtml()+'</span></div></div>',
   stars:()=>hRound(BACK,'back')
 };
 const HDR_TOAST={sort:'Сортировка',add:'Добавить',edit:'Изменить',write:'Написать',qr:'QR-код'};
@@ -464,16 +476,46 @@ function slide(p){
 let cur='chats',hist=[];
 function goBack(){go(hist.pop()||'settings',false,true)}
 function syncInstant(){const s=$('#menuSlider');s.classList.add('no-transition');slide(cur);void s.offsetWidth;s.classList.remove('no-transition')}
+const DETAIL=['gifts','stars','me'], NAV_EASE='cubic-bezier(.32,.72,0,1)', NAV_MS=380;
+let navFin=null;
+const animOn=()=>store.get('anim','1')==='1';
+function navDone(){if(navFin){const f=navFin;navFin=null;f()}$$('.hdr-ghost').forEach(e=>e.remove())}
+function setHdr(p,dir){
+  const h=$('#hdr');let g=null;
+  if(dir){g=h.cloneNode(true);g.removeAttribute('id');g.className='hdr-ghost';document.body.appendChild(g)}
+  h.innerHTML=HDR[p]?HDR[p]():'';
+  if(dir){
+    const k=32*dir;
+    g.animate([{opacity:1,transform:'translateX(0)'},{opacity:0,transform:'translateX('+(-k)+'px)'}],{duration:220,easing:'ease-out',fill:'forwards'}).onfinish=()=>g.remove();
+    h.animate([{opacity:0,transform:'translateX('+k+'px)'},{opacity:1,transform:'translateX(0)'}],{duration:NAV_MS,easing:NAV_EASE});
+  }
+}
 function go(p,instant,back){
+  navDone();
+  const prev=cur;
   if(!back&&!instant&&p!==cur){hist.push(cur);if(hist.length>20)hist.shift()}
   cur=p;
-  $('#hdr').innerHTML=HDR[p]?HDR[p]():'';
-  $$('.page').forEach(e=>e.classList.toggle('on',e.id==='p-'+p));
+  // 1 — открытие вперёд (справа налево), -1 — возврат (слева направо), 0 — без анимации
+  const dir=(!instant&&p!==prev&&animOn())?(back?(DETAIL.includes(prev)?-1:0):(DETAIL.includes(p)?1:0)):0;
+  setHdr(p,dir);
+  const inc=$('#p-'+p),out=$('#p-'+prev);
+  $$('.page').forEach(e=>e.classList.toggle('on',e===inc||(dir!==0&&e===out)));
   $$('.menu-item').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
   instant?syncInstant():slide(p);
-  Object.keys(covers).forEach(k=>{if(k===p)covers[k].measure();else covers[k].reset()});
+  // страницы не помнят позицию: всегда открываются сверху и с первой вкладкой
+  if(p!==prev||instant){inc.scrollTop=0;resetTabs()}
+  const later=[];
+  Object.keys(covers).forEach(k=>{if(k===p)covers[k].measure();else if(dir!==0&&k===prev)later.push(()=>covers[k].reset());else covers[k].reset()});
   document.body.classList.toggle('nobar',p==='gifts');giftsOn(p==='gifts');
-  store.set('lastPage',p);
+  if(dir!==0){
+    const top=dir>0?inc:out,bot=dir>0?out:inc;
+    inc.classList.add('tr');out.classList.add('tr');top.classList.add('top');
+    const o={duration:NAV_MS,easing:NAV_EASE,fill:'both'};
+    const a1=top.animate(dir>0?[{transform:'translateX(100%)'},{transform:'translateX(0)'}]:[{transform:'translateX(0)'},{transform:'translateX(100%)'}],o);
+    const a2=bot.animate(dir>0?[{transform:'translateX(0)',opacity:1},{transform:'translateX(-28%)',opacity:.55}]:[{transform:'translateX(-28%)',opacity:.55},{transform:'translateX(0)',opacity:1}],o);
+    navFin=()=>{a1.cancel();a2.cancel();$$('.page.tr').forEach(e=>e.classList.remove('tr','top'));out.classList.remove('on');later.forEach(f=>f())};
+    a1.onfinish=()=>{if(cur===p)navDone()};
+  }
   if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
 (function(){let raf=0;const sch=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(syncInstant)};
@@ -555,20 +597,29 @@ function renderGifts(list){
 renderGifts(FALLBACK);
 if (GIFTS_URL) fetch(GIFTS_URL).then(r=>r.json()).then(d=>{const l=Object.keys(d).map(id=>({id,name:d[id],image:IMG(id)}));if(l.length)renderGifts(l)}).catch(()=>{});
 
-/* слайдер Все / Коллекционные */
-function placeTab(instant){
-  const b=$('#gtabs .on'),i=$('#gtI'); if(!b||!b.offsetWidth) return;
+/* слайдеры вкладок: «Все / Коллекционные» и «Все подарки / Уникальные» */
+function placeTab(box,instant){
+  const b=box.querySelector('button.on'),i=box.querySelector('i'); if(!b||!b.offsetWidth) return;
   if(instant) i.style.transition='none';
   i.style.left=b.offsetLeft+'px'; i.style.width=b.offsetWidth+'px';
   if(instant){ void i.offsetWidth; i.style.transition=''; }
 }
+function pickTab(box,b){ $$('#'+box.id+' button').forEach(x=>x.classList.toggle('on',x===b)); placeTab(box); if(tg&&tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); }
 $$('#gtabs button').forEach(b=>b.onclick=()=>{
-  $$('#gtabs button').forEach(x=>x.classList.toggle('on',x===b));
-  placeTab();
+  pickTab($('#gtabs'),b);
   const all=b.dataset.t==='all';
   $('#grid').hidden=!all; $('#gempty').hidden=all;
-  if(tg&&tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 });
+$$('#mtabs button').forEach(b=>b.onclick=()=>pickTab($('#mtabs'),b));
+function resetTabs(){
+  [['#gtabs','all','t'],['#mtabs','all','m']].forEach(([sel,v,k])=>{
+    const box=$(sel),b=box.querySelector('[data-'+k+'="'+v+'"]');
+    box.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    placeTab(box,true);
+  });
+  $('#grid').hidden=false; $('#gempty').hidden=true;
+}
+if(window.ResizeObserver)new ResizeObserver(()=>{placeTab($('#mtabs'),true);placeTab($('#gtabs'),true)}).observe(document.body);
 
 /* летающие звёздочки за аватаркой */
 const SP=(function(){
@@ -666,7 +717,7 @@ const SP=(function(){
 })();
 
 function giftsOn(on){
-  if(on){ SP.start(); PS.kick(); requestAnimationFrame(()=>placeTab(true)); }
+  if(on){ SP.start(); PS.kick(); requestAnimationFrame(()=>placeTab($('#gtabs'),true)); }
   else SP.stop();
 }
 
@@ -692,8 +743,7 @@ function clearAppCache(){ location.reload(); }
   btn.addEventListener('contextmenu',e=>e.preventDefault());
 })();
 
-const lp=store.get('lastPage','chats');
-go(PAGES.concat(['gifts','stars','me']).includes(lp)?lp:'chats',true);
+go('chats',true);
 requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
 </script>
 </body>
