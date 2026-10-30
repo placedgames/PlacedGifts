@@ -67,9 +67,9 @@ body.scrolling .gift .sp{animation-play-state:paused}
 .hb.gbtn{padding:0 10px}
 .gin{display:flex;flex-direction:column;align-items:flex-end;line-height:1}
 .gbl{font-size:13px;font-weight:550;color:#fff}
-.gv{display:flex;align-items:center;gap:1px;font-size:13px;font-weight:650;margin-top:-1px}
-.gv img{width:15px;height:15px;object-fit:contain}
-.gv small{font-size:10px;font-weight:600;margin-left:-2px}
+.gv{display:flex;align-items:center;gap:1px;font-size:14px;font-weight:650;margin-top:1px}
+.gv img{width:16px;height:16px;object-fit:contain}
+.gv small{font-size:11px;font-weight:600;margin-left:-2px}
 .pst{width:19px;height:19px;object-fit:contain;flex:none;position:relative}
 
 /* stub pages */
@@ -443,7 +443,6 @@ function makeCover(id){
   }
   function set(v,anim){
     exp=v;pg.classList.toggle('anim',!!anim);render(v?1:0);
-    if(anim&&tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light');
   }
   let ts=null,pull=0;
   pg.addEventListener('touchstart',e=>{ts={x:e.touches[0].clientX,y:e.touches[0].clientY,drag:false,ok:pg.scrollTop<=0}},{passive:true});
@@ -477,7 +476,7 @@ function slide(p){
 }
 let cur='chats',hist=[];
 function syncInstant(){const s=$('#menuSlider');s.classList.add('no-transition');slide(cur);void s.offsetWidth;s.classList.remove('no-transition')}
-const DETAIL=['gifts','stars','me'], NAV_EASE='cubic-bezier(.32,.72,0,1)', NAV_MS=460;
+const DETAIL=['gifts','stars','me'], NAV_EASE='cubic-bezier(.32,.72,0,1)', NAV_MS=560;
 let navFin=null, swipeOn=false, meFull=false;
 const animOn=()=>store.get('anim','1')==='1';
 function navDone(){if(navFin){const f=navFin;navFin=null;f()}}
@@ -485,7 +484,7 @@ function navDone(){if(navFin){const f=navFin;navFin=null;f()}}
 function setHdr(p,pulse){
   const h=$('#hdr');
   h.innerHTML=HDR[p]?HDR[p]():'';
-  if(pulse)$$('#hdr .hb').forEach(b=>b.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:300,easing:'ease-out'}));
+  if(pulse)$$('#hdr .hb').forEach(b=>b.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:520,easing:'cubic-bezier(.4,0,.2,1)'}));
 }
 // o: {noanim:true} — без анимации; {full:true} — страница профиля поверх меню (кнопка «Мой профиль»); {bounce:true} — «подпрыгнуть» кнопками хедера
 const noBar=(n,full)=>n==='gifts'||n==='stars'||(n==='me'&&full);
@@ -640,7 +639,7 @@ function placeTab(box,instant){
   i.style.left=b.offsetLeft+'px'; i.style.width=b.offsetWidth+'px';
   if(instant){ void i.offsetWidth; i.style.transition=''; }
 }
-function pickTab(box,b){ $$('#'+box.id+' button').forEach(x=>x.classList.toggle('on',x===b)); placeTab(box); if(tg&&tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); }
+function pickTab(box,b){ $$('#'+box.id+' button').forEach(x=>x.classList.toggle('on',x===b)); placeTab(box); }
 $$('#gtabs button').forEach(b=>b.onclick=()=>{
   pickTab($('#gtabs'),b);
   const all=b.dataset.t==='all';
@@ -765,11 +764,10 @@ function clearAppCache(){ location.reload(); }
     lpFired=false;
     timer=setTimeout(()=>{
       lpFired=true;
-      if(tg&&tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
       if(tg&&tg.showPopup){
         tg.showPopup({message:'Вы действительно хотите очистить кэш приложения?',
           buttons:[{id:'clear',type:'destructive',text:'Очистить'},{id:'close',type:'close'}]},
-          id=>{ if(id==='clear'){ if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium'); clearAppCache(); } });
+          id=>{ if(id==='clear'){ clearAppCache(); } });
       } else if(confirm('Очистить кэш приложения?')) clearAppCache();
     },350);
   };
