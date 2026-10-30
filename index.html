@@ -9,7 +9,7 @@
 <style>
 :root{
 /* ===== РАЗМЕРЫ ИКОНОК: меняй любую отдельно ===== */
---ic-market:30px;--ic-gift:30px;--ic-star:30px;            /* меню */
+--ic-market:32px;--ic-gift:32px;--ic-star:32px;            /* меню */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --ic-profile:24px;--ic-rating:24px;--ic-stars:24px;--ic-promo:24px;
 --ic-lang:24px;--ic-theme:24px;--ic-anim:24px;              /* профиль */
@@ -77,7 +77,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 #meWrap{position:relative;height:67px;width:67px;flex:none}
 #meWrap .glass{position:absolute;inset:0;border-radius:50%}
 .menu-item{display:flex;flex-direction:column;align-items:center;background:none;border:none;cursor:pointer;flex:1;padding:5px 0 2px;position:relative;z-index:3;color:inherit;font:inherit}
-.menu-icon-wrap{height:30px;display:flex;align-items:center;justify-content:center}
+.menu-icon-wrap{height:32px;display:flex;align-items:center;justify-content:center}
 .menu-icon-wrap svg{fill:currentColor;fill-rule:evenodd;color:var(--hint)}
 .menu-item:nth-child(1) .menu-icon-wrap,.menu-item:nth-child(1) .menu-label{transform:translateX(-2px)}
 .menu-item:nth-child(3) .menu-icon-wrap,.menu-item:nth-child(3) .menu-label{transform:translateX(2px)}
@@ -113,16 +113,16 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
   <div class="pname" id="uname"></div>
   <div class="pnum" id="unum"></div>
   <div class="list">
-    <div class="row" data-s="Мой профиль"><div class="ic" style="background:#f0604d"><svg class="ico" style="--s:var(--ic-market)"><use href="#i-profile"/></svg></div><span class="t">Мой профиль</span></div>
-    <div class="row" data-s="Мой рейтинг"><div class="ic" style="background:#f5a623"><svg class="ico" style="--s:var(--ic-gift)"><use href="#i-stat"/></svg></div><span class="t">Мой рейтинг</span></div>
-    <div class="row" data-go="stars"><div class="ic" style="background:#e0a800"><svg class="ico" style="--s:var(--ic-star)"><use href="#i-star"/></svg></div><span class="t">Мои звёзды</span><span class="v" id="bal2">10</span></div>
+    <div class="row" data-s="Мой профиль"><div class="ic" style="background:#f0604d"><svg class="ico" style="--s:var(--ic-profile)"None><use href="#i-profile"/></svg></div><span class="t">Мой профиль</span></div>
+    <div class="row" data-s="Мой рейтинг"><div class="ic" style="background:#f5a623"><svg class="ico" style="--s:var(--ic-rating)"None><use href="#i-stat"/></svg></div><span class="t">Мой рейтинг</span></div>
+    <div class="row" data-go="stars"><div class="ic" style="background:#e0a800"><svg class="ico" style="--s:var(--ic-stars)"None><use href="#i-star"/></svg></div><span class="t">Мои звёзды</span><span class="v" id="bal2">10</span></div>
   </div>
   <div class="list">
     <div class="row" data-s="Поддержка"><div class="ic" style="background:#3a8bf0"></div><span class="t">Поддержка</span></div>
-    <div class="row" data-s="Промокод"><div class="ic" style="background:#8e6cf0"><svg class="ico" style="--s:var(--ic-profile)"><use href="#i-sell"/></svg></div><span class="t">Промокод</span></div>
-    <div class="row" data-s="Язык"><div class="ic" style="background:#34c759"><svg class="ico" style="--s:var(--ic-rating)"><use href="#i-lang"/></svg></div><span class="t">Язык</span><span class="v">Русский</span></div>
-    <div class="row" data-s="Тема"><div class="ic" style="background:#636366"><svg class="ico" style="--s:var(--ic-stars)" viewBox="0 0 24 24"><use href="#icon-theme"/></svg></div><span class="t">Тема</span><span class="v">Чёрная</span></div>
-    <div class="row sw on" id="anim"><div class="ic" style="background:#ff6b35"><svg class="ico" style="--s:var(--ic-promo)"><use href="#i-gift"/></svg></div><span class="t">Анимации</span><i></i></div>
+    <div class="row" data-s="Промокод"><div class="ic" style="background:#8e6cf0"><svg class="ico" style="--s:var(--ic-promo)"None><use href="#i-sell"/></svg></div><span class="t">Промокод</span></div>
+    <div class="row" data-s="Язык"><div class="ic" style="background:#34c759"><svg class="ico" style="--s:var(--ic-lang)"None><use href="#i-lang"/></svg></div><span class="t">Язык</span><span class="v">Русский</span></div>
+    <div class="row" data-s="Тема"><div class="ic" style="background:#636366"><svg class="ico" style="--s:var(--ic-theme)" viewBox="0 0 24 24"><use href="#icon-theme"/></svg></div><span class="t">Тема</span><span class="v">Чёрная</span></div>
+    <div class="row sw on" id="anim"><div class="ic" style="background:#ff6b35"><svg class="ico" style="--s:var(--ic-anim)"None><use href="#i-gift"/></svg></div><span class="t">Анимации</span><i></i></div>
   </div>
 </section>
 
@@ -149,9 +149,9 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 <div id="bar">
   <div id="menuSlider"></div>
   <div id="menuPill" class="glass">
-    <button class="menu-item" data-p="market"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-lang)"><use href="#i-market"/></svg></div><span class="menu-label">Маркет</span></button>
-    <button class="menu-item" data-p="gifts"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-theme)"><use href="#i-gift"/></svg></div><span class="menu-label">Подарки</span></button>
-    <button class="menu-item" data-p="stars"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-anim)"><use href="#i-star"/></svg></div><span class="menu-label">Звёзды</span></button>
+    <button class="menu-item" data-p="market"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-market)"None><use href="#i-market"/></svg></div><span class="menu-label">Маркет</span></button>
+    <button class="menu-item" data-p="gifts"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-gift)"None><use href="#i-gift"/></svg></div><span class="menu-label">Подарки</span></button>
+    <button class="menu-item" data-p="stars"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-star)"None><use href="#i-star"/></svg></div><span class="menu-label">Звёзды</span></button>
   </div>
   <div id="meWrap"><div class="glass"></div><button id="meBtn" data-p="me"><div id="meAva"></div></button></div>
 </div>
