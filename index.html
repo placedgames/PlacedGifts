@@ -16,8 +16,8 @@
 --ic-contacts-y:0px;                                      /* доп. сдвиг иконки контактов вниз */
 --ic-settings-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:18px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:48px;--set-r-multi:34px;               /* аватар и скругление карточки профиля */
---ic-rating-badge:22px;--ic-pf-qr:30px;                                     /* значок рейтинга на странице профиля */
+--ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:15px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:48px;--set-r-multi:34px;               /* аватар и скругление карточки профиля */
+--ic-rating-badge:22px;--ic-pf-qr:32px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:24px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
 --ic-profile:24px;--ic-buygift:24px;--ic-stars:24px;--ic-promo:24px;
@@ -75,7 +75,7 @@ h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 #p-settings .list{border-radius:var(--set-r);margin-bottom:20px}
 #p-settings .list:has(.row:nth-child(2)){border-radius:var(--set-r-multi)}
 #p-settings .row{font-size:17px}
-.row:after{content:"›";color:#5a5a5e;font-size:24px}
+.row:after{content:"";flex:none;width:9px;height:15px;margin-right:2px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 15' fill='none' stroke='%235a5a5e' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.6 1.6L7 7.5l-5.4 5.9'/%3E%3C/svg%3E") center/contain no-repeat}
 .row.sw:after{content:none}
 .row{position:relative}
 .row+.row:before{content:"";position:absolute;top:0;left:calc(16px + var(--ic-plate) + 14px);right:16px;height:1px;background:#333335}
