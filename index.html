@@ -16,8 +16,8 @@
 --ic-contacts-y:0px;                                      /* доп. сдвиг иконки контактов вниз */
 --ic-settings-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-34.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:14px;--stat-gap:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:31px;--list-r:22px;--set-r:48px;--set-r-multi:34px;               /* аватар и скругление карточки профиля */
---ic-rating-badge:22px;--ic-pf-qr:28px;                                     /* значок рейтинга на странице профиля */
+--ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:18px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:48px;--set-r-multi:34px;               /* аватар и скругление карточки профиля */
+--ic-rating-badge:22px;--ic-pf-qr:30px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:24px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
 --ic-profile:24px;--ic-buygift:24px;--ic-stars:24px;--ic-promo:24px;
@@ -50,6 +50,7 @@ h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 .pname{font-size:28px;font-weight:550;text-align:center}
 .pnum{color:var(--hint);display:flex;justify-content:center;align-items:center;gap:var(--stat-gap);margin:var(--name-gap) 0 var(--pgap-bottom)}
 .pnum svg{fill:var(--accent);fill-rule:evenodd}
+.pnum,.pstat{transform:translateX(calc(var(--stat-shift)*-1))}
 .pstat{display:flex;justify-content:center;align-items:center;gap:var(--stat-gap);color:var(--hint);font-size:17px;font-weight:500;margin:var(--name-gap) 0 var(--pgap-bottom)}
 .pstat svg{fill:var(--accent);fill-rule:evenodd}
 .pf{padding:14px 16px;position:relative}
@@ -148,7 +149,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 .hb svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
 #toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
 #toast.on{opacity:1;transform:translateX(-50%)}
-.noanim *:not(#menuSlider){transition:none!important;animation:none!important}
+.noanim *:not(#menuSlider):not(.cover):not(.cover *):not(.phead){transition:none!important;animation:none!important}
 </style>
 </head>
 <body>
@@ -334,6 +335,7 @@ function makeCover(id){
   const pg=$('#p-'+id),hd=pg.querySelector('.phead'),cv=pg.querySelector('.cover'),av=pg.querySelector('.ava'),im=pg.querySelector('.cimg');
   const cn=pg.querySelector('.cname'),cs=pg.querySelector('.cstat'),csv=cs.querySelector('svg'),ctx=cs.querySelector('span'),pn=pg.querySelector('.pname'),pst=pg.querySelector('.pnum,.pstat'),ci=pg.querySelector('.cinfo');
   let exp=false,h0=0,h1=0,g=null,N=null,tm=0;
+  const SHv=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stat-shift')),SH=isNaN(SHv)?0:SHv;
   const SGv=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stat-gap')),SG=isNaN(SGv)?3:SGv,MR0=SG-6;
   const lerp=(a,b,p)=>a+(b-a)*p;
   function render(p){
@@ -376,7 +378,7 @@ function makeCover(id){
       const wt=ctx.offsetWidth,ws=csv.getBoundingClientRect().width;
       cs.style.fontSize='17px';const hs=cs.offsetHeight;
       const y0=rn.top-cr.top+(rn.height-28*1.1)/2;
-      N={y0,y1:g.CH-14-(24*1.1+hs),wn0,fs0,xs0:g.W/2-(ws+SG+wt)/2,gap0:(rp.top-cr.top+(rp.height-hs)/2)-(y0+28*1.1)};
+      N={y0,y1:g.CH-14-(24*1.1+hs),wn0,fs0,xs0:g.W/2-(ws+SG+wt)/2-SH,gap0:(rp.top-cr.top+(rp.height-hs)/2)-(y0+28*1.1)};
       cn.style.transition=cs.style.transition=csv.style.transition='';
     }catch(e){N=null}
     render(exp?1:0);
