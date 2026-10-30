@@ -134,7 +134,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 #bar{position:fixed;left:18px;right:18px;bottom:18px;z-index:1001;display:flex;gap:10px;align-items:center}
 #menuPill{flex:1;height:66px;border-radius:60px;display:flex;justify-content:space-between;align-items:center;padding:5px 4px 8px}
 #menuSlider.no-transition{transition:none!important}
-#menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1)}
+#menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)}
 #meWrap{position:relative;height:66px;width:66px;flex:none}
 #meWrap .glass{position:absolute;inset:0;border-radius:50%}
 .menu-item{transform:translateY(var(--menu-y));display:flex;flex-direction:column;align-items:center;background:none;border:none;cursor:pointer;flex:1;padding:5px 0 2px;position:relative;z-index:3;color:inherit;font:inherit}
@@ -177,7 +177,11 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 .hb-round{width:var(--hdr-h)}
 .hb-dbl{gap:14px;padding:0 12px}
 .hb-dbl span{display:flex;align-items:center;justify-content:center}
-.hb:active{opacity:.7}
+.hb{transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.hb.press{transform:scale(1.12)}
+#menuSlider.press{transform:scale(1.1)}
+.noanim .hb.press,.noanim #menuSlider.press{transform:none}
+.noanim .gift:active{transform:none}
 .hb svg{fill:#fff;fill-rule:evenodd}
 .hb svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
 
@@ -484,7 +488,7 @@ function navDone(){if(navFin){const f=navFin;navFin=null;f()}}
 function setHdr(p,pulse){
   const h=$('#hdr');
   h.innerHTML=HDR[p]?HDR[p]():'';
-  if(pulse)$$('#hdr .hb').forEach(b=>b.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:520,easing:'cubic-bezier(.4,0,.2,1)'}));
+  if(pulse&&animOn())$$('#hdr .hb').forEach(b=>b.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:520,easing:'cubic-bezier(.4,0,.2,1)'}));
 }
 // o: {noanim:true} — без анимации; {full:true} — страница профиля поверх меню (кнопка «Мой профиль»); {bounce:true} — «подпрыгнуть» кнопками хедера
 const noBar=(n,full)=>n==='gifts'||n==='stars'||(n==='me'&&full);
@@ -537,6 +541,26 @@ function goBack(){
   const t=hist.pop()||'settings';
   go(t,false,true);
 }
+
+/* ===== Отклик на нажатие: кнопка хедера и ползунок меню раздуваются и сдуваются ===== */
+(function(){
+  const MIN=160;
+  let hp=null,ht=0,mp=0,mt=0;
+  $('#hdr').addEventListener('pointerdown',e=>{
+    const b=e.target.closest('.hb');if(!b||!animOn())return;
+    hp=b;ht=performance.now();b.classList.add('press');
+  });
+  const sl=$('#menuSlider');
+  $('#bar').addEventListener('pointerdown',e=>{
+    if(!e.target.closest('.menu-item,#meBtn')||!animOn())return;
+    mp=1;mt=performance.now();sl.classList.add('press');
+  });
+  const rel=()=>{
+    if(hp){const b=hp;hp=null;setTimeout(()=>b.classList.remove('press'),Math.max(0,MIN-(performance.now()-ht)))}
+    if(mp){mp=0;setTimeout(()=>sl.classList.remove('press'),Math.max(0,MIN-(performance.now()-mt)))}
+  };
+  ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
+})();
 
 /* ===== Закрытие страницы быстрым свайпом слева направо (как кнопка назад) ===== */
 (function(){
