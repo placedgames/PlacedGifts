@@ -16,7 +16,7 @@
 --ic-contacts-y:0px;                                      /* доп. сдвиг иконки контактов вниз */
 --ic-settings-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-30.5px;--pgap:16px;--name-gap:2px;--pgap-bottom:32px;--ava-gap:10px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:32px;--list-r:22px;--set-r:48px;--set-r-multi:34px;               /* аватар и скругление карточки профиля */
+--ava-size:100px;--ava-top:-30.5px;--pgap:16px;--name-gap:0px;--pgap-bottom:32px;--ava-gap:10px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:32px;--list-r:22px;--set-r:48px;--set-r-multi:34px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:24px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
@@ -346,6 +346,8 @@ function makeCover(id){
       cn.style.transform='translateX('+lerp((g.W-N.wn0)/2,16,p)+'px)';cn.style.fontSize=lerp(28,24,p)+'px';
       cs.style.transform='translateX('+lerp(N.xs0,16,p)+'px)';cs.style.marginTop=lerp(N.gap0,0,p)+'px';cs.style.fontSize=lerp(N.fs0,17,p)+'px';
       cs.style.color=p>0?'rgba(255,255,255,.78)':'rgb(158,158,158)';
+      const pu=pst.querySelector('use'),cu=cs.querySelector('use'),rt=pu&&(pu.getAttribute('href')||'').replace('#i-n','');
+      if(cu&&rt)cu.setAttribute('href',(p>0?'#i-h':'#i-n')+rt);
       csv.style.fill=p>0?'#fff':'#4cb4e9';csv.style.marginLeft=lerp(0,-2,p)+'px';csv.style.marginRight=lerp(0,-3,p)+'px';
     }
     pg.style.setProperty('--ci',p>0?1:0);
