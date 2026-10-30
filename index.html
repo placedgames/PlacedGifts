@@ -203,8 +203,8 @@ body.navanim #bar{z-index:1}
 .noanim *:not(#menuSlider):not(.cover):not(.cover *):not(.phead){transition:none!important;animation:none!important}
 
 /* ===== модальное окно покупки подарка ===== */
-#bm{position:fixed;inset:0;z-index:2000;visibility:hidden;pointer-events:none}
-#bm.on{visibility:visible;pointer-events:auto}
+#bm{position:fixed;inset:0;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .4s}
+#bm.on{visibility:visible;pointer-events:auto;transition-delay:0s}
 #bm .bm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .3s}
 #bm.on .bm-dim{opacity:1}
 #bm .bm-sheet{position:absolute;left:8px;right:8px;bottom:8px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:38px 38px 48px 48px;overflow:hidden;transform:translateY(calc(100% + 8px));transition:transform .38s cubic-bezier(.32,.72,0,1);will-change:transform}
@@ -246,9 +246,9 @@ body.navanim #bar{z-index:1}
 #bm .bm-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:18.5px;background:#4BB6EE;transition:width .6s cubic-bezier(.3,.8,.3,1)}
 #bm .bm-bar span{position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:1}
 #bm .bm-left{left:18px}#bm .bm-sold{right:18px}
-#bm .bm-buy{margin-top:16px;width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:transform .15s,opacity .15s}
+#bm .bm-buy{margin-top:16px;width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE;color:#fff;font:inherit;font-size:18px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:transform .15s,opacity .15s}
 #bm .bm-buy:active{transform:scale(.98);opacity:.85}
-#bm .bm-buy svg{flex:none;width:26px;height:26px;fill:#fff;fill-rule:evenodd;margin:0 -4px 0 -3px}
+#bm .bm-buy svg{flex:none;width:25px;height:25px;fill:#fff;fill-rule:evenodd;margin:0 -4px 0 -3px}
 </style>
 </head>
 <body>
@@ -363,7 +363,7 @@ body.navanim #bar{z-index:1}
     <div class="bm-pre" id="bmPre">
       <div class="bm-grab"></div>
       <div class="bm-top">
-        <button class="bm-btn bm-x glass" id="bmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:23px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
+        <button class="bm-btn bm-x glass" id="bmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
         <div class="bm-pill" id="bmPill"></div>
         <div class="bm-btn bm-cnt glass"><span>1x</span></div>
       </div>
