@@ -37,7 +37,7 @@ h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 body.nobar #bar{display:none}
 #p-gifts [hidden]{display:none!important}
 .ghead{position:relative;display:flow-root}
-#gsp{position:absolute;left:-16px;width:calc(100% + 32px);top:calc(var(--ava-top) - 46px);height:156px;z-index:0;pointer-events:none}
+#gsp{position:absolute;left:-16px;width:calc(100% + 32px);top:calc(-1*(var(--hdr-top) + var(--hdr-h) + 8px));height:calc(100% + var(--hdr-top) + var(--hdr-h) + 8px);z-index:0;pointer-events:none;-webkit-mask-image:linear-gradient(to bottom,#000 88%,transparent);mask-image:linear-gradient(to bottom,#000 88%,transparent)}
 .gava{position:relative;z-index:1;width:var(--ava-size);height:var(--ava-size);margin:var(--ava-top) auto var(--ava-gap);border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:700}
 #p-gifts h1{position:relative;z-index:1;font-size:28px;line-height:1.3;font-weight:700;margin:0}
 .gdesc{margin:20px auto 0;text-align:center;font-size:16px;line-height:20px;font-weight:500;white-space:nowrap}
@@ -47,7 +47,7 @@ body.nobar #bar{display:none}
 .gtabs button{position:relative;z-index:1;height:28px;padding:0 12px;border:0;background:none;color:#8a8a8e;font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:color .2s}
 .gtabs button.on{color:#a6a6ab}
 .grid{margin-top:19px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.gift{min-width:0;height:153px;background:var(--card);border-radius:24px;padding:18px 0 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .12s}
+.gift{min-width:0;height:153px;background:var(--card);border-radius:22px;padding:18px 0 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .12s}
 .gift:active{transform:scale(.97)}
 .pic{height:84px;width:100%;display:flex;align-items:center;justify-content:center;font-size:60px}
 .pic img{max-height:84px;max-width:84px;object-fit:contain}
@@ -57,7 +57,7 @@ body.nobar #bar{display:none}
 .sp{position:absolute;z-index:0;pointer-events:none;animation-play-state:paused;background:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20512%20512%27%3E%3Cpath%20fill=%27%23ecb23a%27%20d=%27M255.2%2040.4C247.8%2042%20245.3%2044.1%20242.3%2051.5C239.6%2058.2%20239.1%2074.6%20238.3%2082.5C236%20104%20226.8%20200.5%20218.7%20213.5C216.5%20216.9%20213.2%20219.3%20209.5%20220.7C196%20225.9%20177.9%20227.4%20163.5%20229.8C141.2%20233.4%20118.9%20237.4%2096.5%20240.4C86.8%20241.7%2075.8%20241.9%2066.5%20245.3C59.9%20247.7%2055.2%20255.5%2057.8%20262.5C58.9%20265.5%2061.7%20268.6%2064.5%20270.1C71.6%20273.7%2094.4%20274.5%20103.5%20275.8C126.7%20279.2%20150.2%20281.7%20173.5%20284.1C184.4%20285.3%20200.5%20286.1%20210.5%20290.1C214.7%20291.8%20218%20294.7%20220%20298.8C229%20317.6%20236.5%20408.6%20239.3%20434.8C240.1%20443%20240%20451.6%20241.7%20459.8C244.4%20472.5%20259.8%20476.2%20266.7%20464.5C269.4%20459.8%20269.3%20453.7%20269.9%20448.5C272.7%20423.7%20282.3%20307.8%20294.5%20294.5C301.4%20287.1%20314.9%20286.8%20324.2%20285.4C326.9%20285.1%20329.6%20284.7%20332.2%20284.3C345.5%20282.8%20443%20271.6%20447.2%20269.4C451.6%20267.2%20454.6%20262.3%20454.5%20257.5C454%20241.5%20439.5%20243%20427.5%20241.2C406.5%20238.2%20309.3%20226.6%20297.5%20218.3C294.1%20216%20292.2%20212.6%20290.9%20208.8C287.5%20199%20286.4%20188%20285.1%20177.8C281.1%20146.1%20277.2%20114.5%20274.5%2082.8C273.7%2073.7%20274.1%2057.7%20271.2%2049.8C270%2046.5%20265.5%2042%20262.2%2040.8C260.9%2040.3%20259.6%2040.5%20258.2%2040.5C257.2%2040.4%20256.3%2040.4%20255.2%2040.4Z%27/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;animation:fly 3s ease-in-out infinite paused}
 .gift.vis .sp{animation-play-state:running}
 body.scrolling .gift .sp{animation-play-state:paused}
-@keyframes fly{0%{opacity:0;transform:translate(0,8px) scale(.3) rotate(-20deg)}25%{opacity:.95}60%{opacity:.9}100%{opacity:0;transform:translate(var(--dx),-12px) scale(1.1) rotate(25deg)}}
+@keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-25deg)}50%{opacity:.95;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1) rotate(15deg)}100%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-25deg)}}
 .gempty{margin-top:19px;background:var(--card);border-radius:28px;padding:44px 20px;text-align:center;color:var(--hint)}
 .gbtn{flex:none;width:max-content;min-width:calc(var(--hdr-h) + 24px);flex-direction:column;gap:0;padding:0 18px;line-height:1}
 .gbl{font-size:12px;font-weight:550;color:#fff}
@@ -493,10 +493,10 @@ const POOL=[15,15,25,25,25,50,50,50,100,100,150,250,350,500,750,1000,1500,2000,2
 function rndPrice(k){let h=5381;k=String(k);for(let i=0;i<k.length;i++)h=((h<<5)+h+k.charCodeAt(i))>>>0;return POOL[h%POOL.length]}
 
 // летящие звёздочки на плашке цены
-const SPKS=Array.from({length:16},(_,i)=>{
-  const f=x=>x-Math.floor(x), l=2+f(i*.618+.13)*94, t=2+f(i*.381+.27)*22, z=4+f(i*.754+.5)*4.5;
-  const dx=(i%2?1:-1)*(5+f(i*.43)*9), d=2.4+f(i*.57)*1.2, dl=-f(i*.91)*3.5;
-  return '<i class="sp" style="left:'+l.toFixed(1)+'%;top:'+t.toFixed(1)+'px;width:'+z.toFixed(1)+'px;height:'+z.toFixed(1)+'px;--dx:'+dx.toFixed(1)+'px;animation-duration:'+d.toFixed(2)+'s;animation-delay:'+dl.toFixed(2)+'s"></i>';
+const SPKS=Array.from({length:24},(_,i)=>{
+  const f=x=>x-Math.floor(x), sg=i%2?1:-1, z=7+f(i*.754+.5)*5;
+  const dx=sg*(12+f(i*.618+.13)*38), dy=(f(i*.381+.27)-.5)*22, d=1.9+f(i*.57)*1.1, dl=-f(i*.91)*3;
+  return '<i class="sp" style="left:50%;top:50%;width:'+z.toFixed(1)+'px;height:'+z.toFixed(1)+'px;--dx:'+dx.toFixed(1)+'px;--dy:'+dy.toFixed(1)+'px;animation-duration:'+d.toFixed(2)+'s;animation-delay:'+dl.toFixed(2)+'s"></i>';
 }).join('');
 
 const GIO=window.IntersectionObserver?new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('vis',e.isIntersecting)),{rootMargin:'40px'}):null;
@@ -531,14 +531,15 @@ $$('#gtabs button').forEach(b=>b.onclick=()=>{
 const SP=(function(){
   const cv=$('#gsp'),cx=cv.getContext('2d');
   const COL=['232,160,32','205,135,25','240,150,45','180,115,20','222,170,50','150,95,18'];
-  let W=0,H=0,ps=[],raf=0,last=0,held=0,running=0;
+  let W=0,H=0,CX=0,CY=0,ps=[],raf=0,last=0,held=0,running=0;
   const R=(a,b)=>a+Math.random()*(b-a);
   function spawn(p,first){
-    p.x=R(0,W);p.y=R(0,H);
-    const a=R(0,6.283),sp=R(2,7);
-    p.vx=Math.cos(a)*sp;p.vy=Math.sin(a)*sp-2;
-    p.t=Math.random()<.22?1:0;p.s=p.t?R(4.5,9.5):R(3.5,9);p.rot=p.t?R(-.6,.6):R(-.5,.5);p.vr=R(-.3,.3);
-    p.life=R(3,7);p.age=first?R(0,p.life):0;
+    const a=R(0,6.283),sp=R(55,150);
+    p.vx=Math.cos(a)*sp;p.vy=Math.sin(a)*sp-28;          // от центра во все стороны, чуть сильнее вверх
+    const r0=R(30,70);
+    p.t=Math.random()<.22?1:0;p.s=p.t?R(4.5,9.5):R(3.5,9);p.rot=R(-.6,.6);p.vr=R(-.8,.8);
+    p.life=R(2.2,4.6);p.age=first?R(0,p.life):0;
+    p.x=CX+Math.cos(a)*r0+p.vx*p.age;p.y=CY+Math.sin(a)*r0+p.vy*p.age;
     p.c=COL[(Math.random()*COL.length)|0];p.al=R(.45,.95);
     return p;
   }
@@ -546,8 +547,10 @@ const SP=(function(){
     const r=cv.getBoundingClientRect(); if(!r.width) return false;
     const d=Math.min(window.devicePixelRatio||1,2); W=r.width;H=r.height;
     cv.width=Math.round(W*d);cv.height=Math.round(H*d);cx.setTransform(d,0,0,d,0,0);
-    const n=Math.round(W*H/330);
-    while(ps.length<n)ps.push(spawn({},true)); ps.length=n;
+    const av=$('#gAva').getBoundingClientRect();
+    CX=av.left+av.width/2-r.left;CY=av.top+av.height/2-r.top;
+    const n=Math.min(230,Math.round(W*H/800));
+    ps.length=0;while(ps.length<n)ps.push(spawn({},true));
     return true;
   }
   const SPK=new Path2D("M255.2 40.4C247.8 42 245.3 44.1 242.3 51.5C239.6 58.2 239.1 74.6 238.3 82.5C236 104 226.8 200.5 218.7 213.5C216.5 216.9 213.2 219.3 209.5 220.7C196 225.9 177.9 227.4 163.5 229.8C141.2 233.4 118.9 237.4 96.5 240.4C86.8 241.7 75.8 241.9 66.5 245.3C59.9 247.7 55.2 255.5 57.8 262.5C58.9 265.5 61.7 268.6 64.5 270.1C71.6 273.7 94.4 274.5 103.5 275.8C126.7 279.2 150.2 281.7 173.5 284.1C184.4 285.3 200.5 286.1 210.5 290.1C214.7 291.8 218 294.7 220 298.8C229 317.6 236.5 408.6 239.3 434.8C240.1 443 240 451.6 241.7 459.8C244.4 472.5 259.8 476.2 266.7 464.5C269.4 459.8 269.3 453.7 269.9 448.5C272.7 423.7 282.3 307.8 294.5 294.5C301.4 287.1 314.9 286.8 324.2 285.4C326.9 285.1 329.6 284.7 332.2 284.3C345.5 282.8 443 271.6 447.2 269.4C451.6 267.2 454.6 262.3 454.5 257.5C454 241.5 439.5 243 427.5 241.2C406.5 238.2 309.3 226.6 297.5 218.3C294.1 216 292.2 212.6 290.9 208.8C287.5 199 286.4 188 285.1 177.8C281.1 146.1 277.2 114.5 274.5 82.8C273.7 73.7 274.1 57.7 271.2 49.8C270 46.5 265.5 42 262.2 40.8C260.9 40.3 259.6 40.5 258.2 40.5C257.2 40.4 256.3 40.4 255.2 40.4Z");
