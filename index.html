@@ -57,7 +57,7 @@ body.nobar #bar{display:none}
 .price:after{animation-delay:-1.3s}
 @keyframes tw{0%,100%{opacity:.25}50%{opacity:1}}
 .gempty{margin-top:19px;background:var(--card);border-radius:28px;padding:44px 20px;text-align:center;color:var(--hint)}
-.gbtn{flex-direction:column;gap:1px;padding:0 16px;line-height:1.1}
+.gbtn{flex:none;width:max-content;min-width:calc(var(--hdr-h) + 24px);flex-direction:column;gap:1px;padding:0 18px;line-height:1.1}
 .gbl{font-size:12px;font-weight:500;color:#fff}
 .gv{display:flex;align-items:center;gap:4px;font-size:16px;font-weight:700}
 .gv img{width:15px;height:15px;object-fit:contain}
@@ -536,7 +536,7 @@ const SP=(function(){
     p.x=R(0,W);p.y=R(0,H);
     const a=R(0,6.283),sp=R(2,7);
     p.vx=Math.cos(a)*sp;p.vy=Math.sin(a)*sp-2;
-    p.s=R(2.5,7);p.rot=R(0,1.57);p.vr=R(-.35,.35);
+    p.s=R(3.5,9);p.rot=R(-.5,.5);p.vr=R(-.3,.3);
     p.life=R(3,7);p.age=first?R(0,p.life):0;
     p.c=COL[(Math.random()*COL.length)|0];p.al=R(.55,1);
     return p;
@@ -549,17 +549,32 @@ const SP=(function(){
     while(ps.length<n)ps.push(spawn({},true)); ps.length=n;
     return true;
   }
+  const TIPS=[[0,-1],[1,0],[0,1],[-1,0]],K=.2;
+  function starPath(s){
+    // 4 острых луча, вогнутые стороны, скруглённые кончики и стыки
+    const r=s*.9,k=s*K,pts=[];
+    for(let i=0;i<4;i++){
+      const t=TIPS[i],n=TIPS[(i+1)%4];
+      pts.push([t[0]*r,t[1]*r]);
+      pts.push([(t[0]+n[0])*k,(t[1]+n[1])*k]);
+    }
+    cx.beginPath();cx.moveTo(pts[0][0],pts[0][1]);
+    for(let i=0;i<8;i++){
+      const a=pts[i],b=pts[(i+1)%8];
+      cx.quadraticCurveTo((a[0]+b[0])*.5*.55,(a[1]+b[1])*.5*.55,b[0],b[1]);
+    }
+    cx.closePath();
+  }
   function draw(){
     cx.clearRect(0,0,W,H);
-    cx.lineCap='round';
     for(const p of ps){
       const k=Math.sin(Math.PI*Math.min(p.age/p.life,1));   // плавно появляется и гаснет
       const a=p.al*k*k; if(a<.02) continue;
       const s=p.s*(.7+.3*k);
       cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);
-      cx.strokeStyle='rgba('+p.c+','+a.toFixed(3)+')';
-      cx.lineWidth=Math.max(1.1,p.s*.3);
-      cx.beginPath();cx.moveTo(-s,0);cx.lineTo(s,0);cx.moveTo(0,-s);cx.lineTo(0,s);cx.stroke();
+      const col='rgba('+p.c+','+a.toFixed(3)+')';
+      cx.fillStyle=col;cx.strokeStyle=col;cx.lineJoin='round';cx.lineWidth=Math.max(.8,s*.16);
+      starPath(s);cx.fill();cx.stroke();
       cx.restore();
     }
   }
