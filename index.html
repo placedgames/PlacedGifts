@@ -67,7 +67,7 @@ body.scrolling .gift .sp{animation-play-state:paused}
 .hb.gbtn{padding:0 10px}
 .gin{display:flex;flex-direction:column;align-items:flex-end;line-height:1}
 .gbl{font-size:13px;font-weight:550;color:#fff}
-.gv{display:flex;align-items:center;gap:1px;font-size:13px;font-weight:650;margin-top:-2px}
+.gv{display:flex;align-items:center;gap:1px;font-size:13px;font-weight:650;margin-top:-1px}
 .gv img{width:15px;height:15px;object-fit:contain}
 .gv small{font-size:10px;font-weight:600;margin-left:-2px}
 .pst{width:19px;height:19px;object-fit:contain;flex:none;position:relative}
@@ -183,7 +183,8 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 
 /* переходы между страницами как в Telegram */
 .page.tr{position:absolute;left:0;top:0;width:100%;background:var(--bg);will-change:transform,opacity}
-.page.tr.top{z-index:2;box-shadow:-8px 0 28px rgba(0,0,0,.55)}
+.page.tr.top{z-index:2}
+body.navanim #bar{z-index:1}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin-top:16px;height:46px;border-radius:50px;display:flex;align-items:stretch;padding:3px}
@@ -221,7 +222,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 
 <section class="page" id="p-stars">
   <h1>Звёзды</h1><p class="sub">Ваш баланс</p>
-  <div class="empty"><div class="big">★ <span id="bal">10</span></div>Пополнение появится позже</div>
+  <div class="empty"><div class="big">★ <span id="bal">100</span></div>Пополнение появится позже</div>
 </section>
 
 <section class="page" id="p-settings">
@@ -236,7 +237,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
     <div class="row" data-go="me"><div class="ic" style="background:#f0604d"><svg class="ico" style="--s:var(--ic-profile)"><use href="#i-profile"/></svg></div><span class="t">Мой профиль</span></div>
   </div>
   <div class="list">
-    <div class="row" data-go="stars"><div class="ic" style="background:#e0a800"><svg class="ico" style="--s:var(--ic-stars)"><use href="#i-star"/></svg></div><span class="t">Мои звёзды</span><span class="v" id="bal2">10</span></div>
+    <div class="row" data-go="stars"><div class="ic" style="background:#e0a800"><svg class="ico" style="--s:var(--ic-stars)"><use href="#i-star"/></svg></div><span class="t">Мои звёзды</span><span class="v" id="bal2">100</span></div>
     <div class="row" data-go="gifts"><div class="ic" style="background:#ff2d55"><svg class="ico" style="--s:var(--ic-buygift)"><use href="#i-gift"/></svg></div><span class="t">Купить подарок</span></div>
   </div>
   <div class="list">
@@ -487,10 +488,11 @@ function setHdr(p,pulse){
   if(pulse)$$('#hdr .hb').forEach(b=>b.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:300,easing:'ease-out'}));
 }
 // o: {noanim:true} — без анимации; {full:true} — страница профиля поверх меню (кнопка «Мой профиль»); {bounce:true} — «подпрыгнуть» кнопками хедера
+const noBar=(n,full)=>n==='gifts'||n==='stars'||(n==='me'&&full);
 function go(p,instant,back,o){
   o=o||{};
   navDone();
-  const prev=cur;
+  const prev=cur, hadNo=document.body.classList.contains('nobar');
   if(!back&&!instant&&p!==cur){hist.push(cur);if(hist.length>20)hist.shift()}
   // 1 — открытие вперёд (справа налево), -1 — возврат (слева направо), 0 — без анимации
   let dir=0;
@@ -500,91 +502,57 @@ function go(p,instant,back,o){
   }
   if(p==='me')meFull=!!o.full;
   cur=p;
+  const wantNo=noBar(p,meFull);
   setHdr(p,dir!==0||!!o.bounce);
   const inc=$('#p-'+p),out=$('#p-'+prev);
   $$('.page').forEach(e=>e.classList.toggle('on',e===inc||(dir!==0&&e===out)));
   $$('.menu-item').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
-  instant?syncInstant():slide(p);
+  // при открытии вперёд меню уезжает вместе со страницей и прячется только в конце
+  if(dir<=0)document.body.classList.toggle('nobar',wantNo);
+  if(dir<=0){instant?syncInstant():slide(p)}
   // страницы не помнят позицию: всегда открываются сверху и с первой вкладкой
   if(p!==prev||instant){inc.scrollTop=0;resetTabs()}
   const later=[];
   Object.keys(covers).forEach(k=>{if(k===p)covers[k].measure();else if(dir!==0&&k===prev)later.push(()=>covers[k].reset());else covers[k].reset()});
-  document.body.classList.toggle('nobar',p==='gifts'||(p==='me'&&meFull));giftsOn(p==='gifts');
+  giftsOn(p==='gifts');
   if(dir!==0){
-    const top=dir>0?inc:out,bot=dir>0?out:inc;
+    const top=dir>0?inc:out,bot=dir>0?out:inc,bar=$('#bar');
+    document.body.classList.add('navanim');
     inc.classList.add('tr');out.classList.add('tr');top.classList.add('top');
     const o2={duration:NAV_MS,easing:NAV_EASE,fill:'both'};
     const a1=top.animate(dir>0?[{transform:'translateX(100%)'},{transform:'translateX(0)'}]:[{transform:'translateX(0)'},{transform:'translateX(100%)'}],o2);
-    const a2=bot.animate(dir>0?[{transform:'translateX(0)',opacity:1},{transform:'translateX(-28%)',opacity:.55}]:[{transform:'translateX(-28%)',opacity:.55},{transform:'translateX(0)',opacity:1}],o2);
-    navFin=()=>{a1.cancel();a2.cancel();$$('.page.tr').forEach(e=>e.classList.remove('tr','top'));out.classList.remove('on');later.forEach(f=>f())};
+    const a2=bot.animate(dir>0?[{transform:'translateX(0)'},{transform:'translateX(-28%)'}]:[{transform:'translateX(-28%)'},{transform:'translateX(0)'}],o2);
+    const off=-0.28*innerWidth;
+    let a3=null;
+    if(dir>0&&!hadNo&&wantNo)a3=bar.animate([{transform:'translateX(0)'},{transform:'translateX('+off+'px)'}],o2);
+    if(dir<0&&hadNo&&!wantNo)a3=bar.animate([{transform:'translateX('+off+'px)'},{transform:'translateX(0)'}],o2);
+    navFin=()=>{a1.cancel();a2.cancel();if(a3)a3.cancel();
+      document.body.classList.remove('navanim');
+      $$('.page.tr').forEach(e=>e.classList.remove('tr','top'));out.classList.remove('on');
+      if(dir>0){document.body.classList.toggle('nobar',wantNo)}
+      later.forEach(f=>f())};
     a1.onfinish=()=>{if(cur===p)navDone()};
   }
-  if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
 function goBack(){
   const t=hist.pop()||'settings';
   go(t,false,true);
 }
 
-/* ===== Свайп назад: слева направо, можно остановить на половине ===== */
+/* ===== Закрытие страницы быстрым свайпом слева направо (как кнопка назад) ===== */
 (function(){
-  const EASE=NAV_EASE;
   let s=null;
-  const eligible=()=>DETAIL.includes(cur)&&(cur!=='me'||meFull)&&!navFin&&!swipeOn;
-  const W=()=>innerWidth;
-  function apply(x){
-    const pr=x/W();
-    s.top.style.transform='translateX('+x+'px)';
-    s.bot.style.transform='translateX('+(-28*(1-pr))+'%)';
-    s.bot.style.opacity=(.55+.45*pr).toFixed(3);
-  }
-  function begin(){
-    s.name=hist[hist.length-1]||'settings';
-    s.top=$('#p-'+cur);s.bot=$('#p-'+s.name);
-    s.bot.classList.add('on','tr');s.top.classList.add('tr','top');
-    s.bot.scrollTop=0;
-    if(covers[s.name])covers[s.name].measure();
-    s.on=true;swipeOn=true;s.x=0;apply(0);
-  }
-  function clean(st){
-    [st.top,st.bot].forEach(e=>{e.style.transform='';e.style.opacity='';e.classList.remove('tr','top')});
-  }
-  function finish(commit){
-    const st=s,w=W(),x=s.x,to=commit?w:0,pr=to/w;
-    const dur=Math.max(150,Math.abs(to-x)/w*NAV_MS);
-    const o={duration:dur,easing:EASE,fill:'both'};
-    const a1=s.top.animate([{transform:'translateX('+x+'px)'},{transform:'translateX('+to+'px)'}],o);
-    const a2=s.bot.animate([{transform:'translateX('+(-28*(1-x/w))+'%)',opacity:.55+.45*x/w},{transform:'translateX('+(-28*(1-pr))+'%)',opacity:.55+.45*pr}],o);
-    a1.onfinish=()=>{
-      a1.cancel();a2.cancel();clean(st);
-      if(commit){hist.pop();swipeOn=false;go(st.name,false,true,{noanim:true,bounce:true})}
-      else{st.bot.classList.remove('on');swipeOn=false}
-    };
-  }
+  const eligible=()=>DETAIL.includes(cur)&&(cur!=='me'||meFull)&&!navFin;
   document.addEventListener('touchstart',e=>{
-    if(swipeOn||e.touches.length!==1||!eligible()){s=null;return}
-    const t=e.touches[0];s={x0:t.clientX,y0:t.clientY,on:false,lx:t.clientX,lt:e.timeStamp,v:0};
+    s=(e.touches.length===1&&eligible())?{x:e.touches[0].clientX,y:e.touches[0].clientY,t:e.timeStamp}:null;
   },{passive:true});
-  document.addEventListener('touchmove',e=>{
+  document.addEventListener('touchmove',e=>{if(s&&e.touches.length>1)s=null},{passive:true});
+  document.addEventListener('touchend',e=>{
     if(!s)return;
-    const t=e.touches[0],dx=t.clientX-s.x0,dy=t.clientY-s.y0;
-    if(!s.on){
-      if(dx>10&&dx>Math.abs(dy)*1.5)begin();
-      else{if(Math.abs(dy)>10||dx<-10)s=null;return}
-    }
-    if(e.cancelable)e.preventDefault();
-    const x=Math.max(0,Math.min(W(),dx-10));
-    const dt=e.timeStamp-s.lt;if(dt>0)s.v=.6*s.v+.4*((t.clientX-s.lx)/dt);
-    s.lx=t.clientX;s.lt=e.timeStamp;
-    s.x=x;apply(x);
-  },{passive:false});
-  const end=e=>{
-    if(!s||!s.on){s=null;return}
-    const commit=s.x>W()*.4||(s.v>.5&&s.x>20);
-    finish(commit);s=null;
-  };
-  document.addEventListener('touchend',end);
-  document.addEventListener('touchcancel',end);
+    const t=e.changedTouches[0],dx=t.clientX-s.x,dy=t.clientY-s.y,dt=Math.max(1,e.timeStamp-s.t);
+    s=null;
+    if(dx>60&&Math.abs(dy)<dx*.5&&dt<320&&dx/dt>.3&&eligible())goBack();
+  });
 })();
 (function(){let raf=0;const sch=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(syncInstant)};
   addEventListener('resize',sch);addEventListener('orientationchange',()=>setTimeout(sch,150));
