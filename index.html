@@ -19,13 +19,14 @@
 --ava-size:100px;--ava-top:-14px;--pgap:16px;--name-gap:4px;--pgap-bottom:28px;--pcard-r:32px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
+--hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 12px);--hdr-h:45px;--ic-hdr:24px;
 --ic-profile:24px;--ic-buygift:24px;--ic-stars:24px;--ic-promo:24px;
 --ic-lang:24px;--ic-theme:24px;--ic-anim:24px;              /* профиль */
 --bg:#000;--card:#1c1c1d;--text:#fff;--hint:#9e9e9e;--accent:#4cb4e9;--gold:#ffc83d;--r:22px}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;width:100%;overflow:hidden;touch-action:pan-y;background:var(--bg);color:var(--text);font:16px/1.3 -apple-system,"SF Pro Text",system-ui,sans-serif;overscroll-behavior:none}
 body{overflow:hidden}
-.page{display:none;height:100%;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 64px) 16px 130px;overflow-x:hidden;overscroll-behavior:contain}
+.page{display:none;height:100%;overflow-y:auto;padding:calc(var(--hdr-top) + var(--hdr-h) + 8px) 16px 130px;overflow-x:hidden;overscroll-behavior:contain}
 .page.on{display:block}
 h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 .sub{color:var(--hint);text-align:center;font-size:15px;margin-bottom:18px}
@@ -108,7 +109,19 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 #meBtn{-webkit-touch-callout:none;user-select:none;position:absolute;inset:0;margin:auto;width:57px;height:57px;border-radius:50%;border:none;padding:0;background:transparent;z-index:3;cursor:pointer}
 #meAva{width:100%;height:100%;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
 
-#toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 64px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
+
+/* хедер: закреплённые кнопки поверх контента, стекло как у меню */
+#hdr{position:fixed;left:16px;right:16px;top:var(--hdr-top);z-index:1000;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+#hdr:empty{display:none}
+.hb{pointer-events:auto;height:var(--hdr-h);border-radius:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);font:inherit;font-size:18px;font-weight:550;white-space:nowrap;padding:0;border-width:1px;-webkit-appearance:none;appearance:none}
+.hb-txt{padding:0 17px}
+.hb-round{width:var(--hdr-h)}
+.hb-dbl{gap:14px;padding:0 15px}
+.hb-dbl span{display:flex;align-items:center;justify-content:center}
+.hb:active{opacity:.7}
+.hb svg{fill:var(--accent);fill-rule:evenodd}
+.hb svg.hs{fill:none;stroke:var(--accent);stroke-linecap:round;stroke-linejoin:round}
+#toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
 #toast.on{opacity:1;transform:translateX(-50%)}
 .noanim *:not(#menuSlider){transition:none!important;animation:none!important}
 </style>
@@ -121,7 +134,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 </section>
 
 <section class="page" id="p-chats">
-  <h1>Сообщения</h1><p class="sub">Ваши переписки</p>
+  <h1>Чаты</h1><p class="sub">Ваши переписки</p>
   <div class="empty">Скоро здесь появятся чаты</div>
 </section>
 
@@ -189,12 +202,13 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 <div id="bar">
   <div id="menuSlider"></div>
   <div id="menuPill" class="glass">
-    <button class="menu-item" data-p="contacts"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-contacts)"><use href="#i-profile"/></svg></div><span class="menu-label">Contacts</span></button>
-    <button class="menu-item" data-p="chats"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-chats)"><use href="#i-chats"/></svg></div><span class="menu-label">Messages</span></button>
-    <button class="menu-item" data-p="settings"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-settings)"><use href="#i-settings"/></svg></div><span class="menu-label">Settings</span></button>
+    <button class="menu-item" data-p="contacts"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-contacts)"><use href="#i-profile"/></svg></div><span class="menu-label">Контакты</span></button>
+    <button class="menu-item" data-p="chats"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-chats)"><use href="#i-chats"/></svg></div><span class="menu-label">Чаты</span></button>
+    <button class="menu-item" data-p="settings"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-settings)"><use href="#i-settings"/></svg></div><span class="menu-label">Настройки</span></button>
   </div>
   <div id="meWrap"><div class="glass"></div><button id="meBtn" data-p="me"><div id="meAva"></div></button></div>
 </div>
+<div id="hdr"></div>
 <div id="toast"></div>
 
 <script>
@@ -247,6 +261,30 @@ $('#uRate').setAttribute('href','#i-n'+rating);
   else el.textContent = name[0].toUpperCase();
 });
 
+
+/* ===== Хедер ===== */
+const RATE='<svg class="ico" style="--s:var(--ic-hdr)"><use href="#i-n1"/></svg>';
+const GIFT='<svg class="ico" style="--s:var(--ic-hdr)"><use href="#i-gift"/></svg>';
+const PLUS='<svg class="ico hs" style="--s:var(--ic-hdr)" viewBox="0 0 24 24" stroke-width="1.4"><path d="M12 4.5v15M4.5 12h15"/></svg>';
+const BACK='<svg class="ico hs" style="--s:var(--ic-hdr)" viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg>';
+const hTxt=(t,a)=>'<button class="hb hb-txt glass" data-a="'+a+'">'+t+'</button>';
+const hRound=(i,a)=>'<button class="hb hb-round glass" data-a="'+a+'">'+i+'</button>';
+const hDbl=(a1,i1,a2,i2)=>'<div class="hb hb-dbl glass"><span data-a="'+a1+'">'+i1+'</span><span data-a="'+a2+'">'+i2+'</span></div>';
+const HDR={
+  contacts:()=>hTxt('Сортиров.','sort')+hRound(PLUS,'add'),
+  chats:()=>hTxt('Изм.','edit')+hDbl('gifts',GIFT,'rating',RATE),
+  settings:()=>hRound(RATE,'rating')+hTxt('Изм.','edit'),
+  me:()=>hRound(BACK,'back')+hTxt('Изм.','edit'),
+  gifts:()=>hRound(BACK,'back'),
+  stars:()=>hRound(BACK,'back')
+};
+const HDR_TOAST={sort:'Сортировка',add:'Добавить',edit:'Изменить',rating:'Рейтинг'};
+$('#hdr').addEventListener('click',e=>{
+  const t=e.target.closest('[data-a]'); if(!t) return;
+  const a=t.dataset.a;
+  if(a==='back') goBack(); else if(a==='gifts') go('gifts'); else toast(HDR_TOAST[a]+': скоро');
+});
+
 /* ===== Навигация ===== */
 const PAGES=['contacts','chats','settings'];
 function slide(p){
@@ -256,10 +294,13 @@ function slide(p){
   else if(i>-1){const pr=pill.getBoundingClientRect(),seg=(pr.width-8)/3;s.style.left=(pr.left-wr.left+4+i*seg)+'px';s.style.width=seg+'px';s.style.borderRadius='50px';}
   s.style.opacity=(p==='me'||i>-1)?'1':'0';
 }
-let cur='chats';
+let cur='chats',hist=[];
+function goBack(){go(hist.pop()||'settings',false,true)}
 function syncInstant(){const s=$('#menuSlider');s.classList.add('no-transition');slide(cur);void s.offsetWidth;s.classList.remove('no-transition')}
-function go(p,instant){
+function go(p,instant,back){
+  if(!back&&!instant&&p!==cur){hist.push(cur);if(hist.length>20)hist.shift()}
   cur=p;
+  $('#hdr').innerHTML=HDR[p]?HDR[p]():'';
   $$('.page').forEach(e=>e.classList.toggle('on',e.id==='p-'+p));
   $$('.menu-item').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
   instant?syncInstant():slide(p);
