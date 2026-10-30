@@ -117,22 +117,20 @@ body.scrolling .gift .sp{animation-play-state:paused}
 .sw.on i{background:#34c759}.sw.on i:after{left:22px}
 
 /* меню: оригинальный liquid glass */
-:root{--glass-rgb:118,120,129;--glass-strong:.32;--glass-faint:.15;--glass-w:1px;--glass-h:100%;--glass-v:min(28px,55%);
---glass2-rgb:127,129,138;--glass2-a:.41;--glass2-blur:3px;--glass2-spread:1px;
+:root{--glass-rgb:115,117,126;--glass-strong:.14;--glass-side:rgba(115,117,126,0);--glass-w:1px;--glass-h:100%;--glass-v:min(28px,55%);
+--glass2-rgb:140,142,152;--glass2-a:.4;--glass2-blur:3px;--glass2-spread:1px;
 --menu-glass-bg:rgba(48,48,50,.7);--menu-glass-blur:10px;--menu-inactive:#fff;--menu-slider-bg:rgba(200,200,204,.1)}
-.glass{position:relative;border:1px solid transparent;background:var(--menu-glass-bg);
+.glass{position:relative;border:0;background:var(--menu-glass-bg);
 -webkit-backdrop-filter:blur(var(--menu-glass-blur));backdrop-filter:blur(var(--menu-glass-blur))}
-.glass::before,.glass::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none}
+.glass::before,.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
 .glass::before{padding:var(--glass-w);
-background:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,rgba(var(--glass-rgb),var(--glass-strong)) 0%,rgba(var(--glass-rgb),calc(var(--glass-strong)*.5)) 40%,rgba(var(--glass-rgb),calc(var(--glass-strong)*.18)) 72%,rgba(var(--glass-rgb),0) 100%),
-radial-gradient(ellipse var(--glass-h) var(--glass-v) at 100% 100%,rgba(var(--glass-rgb),var(--glass-strong)) 0%,rgba(var(--glass-rgb),calc(var(--glass-strong)*.5)) 40%,rgba(var(--glass-rgb),calc(var(--glass-strong)*.18)) 72%,rgba(var(--glass-rgb),0) 100%),
-radial-gradient(ellipse 30px 48% at 100% 50%,rgba(var(--glass-rgb),var(--glass-faint)) 0%,rgba(var(--glass-rgb),0) 100%);
+background:linear-gradient(to bottom,rgba(var(--glass-rgb),calc(var(--glass-strong)*1)) 0%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.8)) 8%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.5)) 16%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.26)) 25%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.1)) 34%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.02)) 44%,var(--glass-side) 50%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.02)) 56%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.1)) 66%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.26)) 75%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.5)) 84%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.8)) 92%,rgba(var(--glass-rgb),calc(var(--glass-strong)*1)) 100%);
 -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
 .glass::after{box-shadow:inset 0 0 var(--glass2-blur) var(--glass2-spread) rgba(var(--glass2-rgb),var(--glass2-a));
--webkit-mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse var(--glass-h) var(--glass-v) at 100% 100%,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse 30px 48% at 100% 50%,rgba(0,0,0,.4) 0%,transparent 100%);
-mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse var(--glass-h) var(--glass-v) at 100% 100%,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse 30px 48% at 100% 50%,rgba(0,0,0,.4) 0%,transparent 100%)}
+-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0) 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%);
+mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0) 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%)}
 #bar{position:fixed;left:18px;right:18px;bottom:18px;z-index:1001;display:flex;gap:10px;align-items:center}
-#menuPill{flex:1;height:66px;border-radius:60px;display:flex;justify-content:space-between;align-items:center;padding:5px 4px 8px}
+#menuPill{flex:1;height:66px;border-radius:60px;display:flex;justify-content:space-between;align-items:center;padding:6px 5px 9px}
 #menuSlider.no-transition{transition:none!important}
 #menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)}
 #meWrap{position:relative;height:66px;width:66px;flex:none}
@@ -172,7 +170,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 /* хедер: закреплённые кнопки поверх контента, стекло как у меню */
 #hdr{position:fixed;left:16px;right:16px;top:var(--hdr-top);z-index:1000;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
 #hdr:empty{display:none}
-.hb{pointer-events:auto;height:var(--hdr-h);border-radius:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font:inherit;font-size:18px;font-weight:550;white-space:nowrap;padding:0;border-width:1px;-webkit-appearance:none;appearance:none}
+.hb{pointer-events:auto;height:var(--hdr-h);border-radius:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font:inherit;font-size:18px;font-weight:550;white-space:nowrap;padding:0;-webkit-appearance:none;appearance:none}
 .hb-txt{padding:0 12px}
 .hb-round{width:var(--hdr-h)}
 .hb-dbl{gap:14px;padding:0 12px}
@@ -196,8 +194,8 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 body.navanim #bar{z-index:1}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
-.mtabs{margin-top:16px;height:46px;border-radius:50px;display:flex;align-items:stretch;padding:3px}
-.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1)}
+.mtabs{margin-top:16px;height:46px;border-radius:50px;display:flex;align-items:stretch;padding:4px}
+.mtabs i{position:absolute;top:4px;bottom:4px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1)}
 .mtabs button{position:relative;z-index:2;flex:1;border:0;background:none;color:#bdbdc1;font:inherit;font-size:16px;font-weight:550;cursor:pointer;transition:color .2s;padding:0}
 .mtabs button.on{color:#fff}
 #toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
