@@ -16,7 +16,7 @@
 --ic-contacts-y:0px;                                      /* доп. сдвиг иконки контактов вниз */
 --ic-settings-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-30.5px;--pgap:16px;--name-gap:2px;--pgap-bottom:32px;--ava-gap:10px;--cover-h:115vw;--pcard-r:32px;               /* аватар и скругление карточки профиля */
+--ava-size:100px;--ava-top:-30.5px;--pgap:16px;--name-gap:2px;--pgap-bottom:32px;--ava-gap:10px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:32px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:24px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
@@ -110,23 +110,24 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 #meAva{width:100%;height:100%;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
 
 
-/* профиль: обложка на весь экран при свайпе вниз */
-#p-me{position:relative}
-#pHead{display:flow-root;height:auto}
-#pHead>*{opacity:var(--hf,1)}
-#cover{position:absolute;left:0;right:0;top:0;height:var(--cover-h);background:#303033 center/cover;overflow:hidden;opacity:0;clip-path:inset(0 0 100% 0);pointer-events:none}
-#cover .cl{position:absolute;inset:0 0 18% 0;display:flex;align-items:center;justify-content:center;font-size:38vw;font-weight:700;color:#fff}
-#cover .cshade{position:absolute;left:0;right:0;bottom:0;height:52%;background:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,.55));
--webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
--webkit-mask-image:linear-gradient(to bottom,transparent,#000 70%);mask-image:linear-gradient(to bottom,transparent,#000 70%)}
-#cover .cinfo{position:absolute;left:16px;bottom:14px;opacity:var(--ci,0)}
-.cname{font-size:28px;font-weight:550;line-height:1.2}
-.cstat{display:flex;align-items:center;gap:6px;margin-top:2px;color:rgba(255,255,255,.78);font-size:17px;font-weight:500}
+/* обложка: фото вырастает из круга аватарки (профиль и настройки) */
+.page{position:relative}
+.phead{display:flow-root;height:auto}
+.phead>:not(.ava){opacity:var(--hf,1)}
+.phead .ava{visibility:hidden}
+.cover{position:absolute;left:0;right:0;top:0;height:var(--cover-h);overflow:hidden;pointer-events:none}
+.cimg{position:absolute;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;overflow:hidden}
+.cshade{position:absolute;left:0;right:0;bottom:0;height:var(--shade-h);background:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,.42));
+-webkit-backdrop-filter:blur(var(--shade-blur));backdrop-filter:blur(var(--shade-blur));
+-webkit-mask-image:linear-gradient(to bottom,transparent,#000 75%);mask-image:linear-gradient(to bottom,transparent,#000 75%);opacity:var(--ci,0)}
+.cinfo{position:absolute;left:16px;bottom:14px;opacity:var(--ci,0)}
+.cname{font-size:26px;font-weight:550;line-height:1.1}
+.cstat{display:flex;align-items:center;gap:6px;margin-top:0;color:rgba(255,255,255,.78);font-size:17px;font-weight:500;line-height:1.2}
 .cstat svg{fill:#fff;fill-rule:evenodd}
-#p-me.anim #pHead{transition:height .32s cubic-bezier(.3,.8,.3,1)}
-#p-me.anim #pHead>*{transition:opacity .25s}
-#p-me.anim #cover{transition:opacity .3s,clip-path .32s cubic-bezier(.3,.8,.3,1)}
-#p-me.anim #cover .cinfo{transition:opacity .3s}
+.page.anim .cimg{transition:left .22s,top .22s,width .22s,height .22s,border-radius .22s,font-size .22s,padding .22s;transition-timing-function:cubic-bezier(.3,.8,.3,1)}
+.page.anim .phead{transition:height .22s cubic-bezier(.3,.8,.3,1)}
+.page.anim .phead>:not(.ava){transition:opacity .18s}
+.page.anim .cshade,.page.anim .cinfo{transition:opacity .2s}
 
 /* хедер: закреплённые кнопки поверх контента, стекло как у меню */
 #hdr{position:fixed;left:16px;right:16px;top:var(--hdr-top);z-index:1000;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
@@ -167,9 +168,13 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 </section>
 
 <section class="page" id="p-settings">
-  <div class="ava" id="ava"></div>
-  <div class="pname" id="uname"></div>
-  <div class="pnum"><svg class="ico" style="--s:var(--ic-rating-badge)"><use id="uRate" href="#i-n1"/></svg><span id="unum"></span></div>
+  <div class="cover"><div class="cimg"></div><div class="cshade"></div>
+    <div class="cinfo"><div class="cname"></div><div class="cstat"><svg class="ico" style="--s:var(--ic-rating-badge)"><use data-h="1" href="#i-h1"/></svg><span class="ctext"></span></div></div></div>
+  <div class="phead">
+    <div class="ava" id="ava"></div>
+    <div class="pname" id="uname"></div>
+    <div class="pnum"><svg class="ico" style="--s:var(--ic-rating-badge)"><use id="uRate" href="#i-n1"/></svg><span id="unum"></span></div>
+  </div>
   <div class="list">
     <div class="row" data-go="me"><div class="ic" style="background:#f0604d"><svg class="ico" style="--s:var(--ic-profile)"><use href="#i-profile"/></svg></div><span class="t">Мой профиль</span></div>
   </div>
@@ -187,9 +192,9 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 </section>
 
 <section class="page" id="p-me">
-  <div id="cover"><div class="cl" id="cLetter"></div><div class="cshade"></div>
-    <div class="cinfo"><div class="cname" id="cName"></div><div class="cstat"><svg class="ico" style="--s:var(--ic-rating-badge)"><use id="cRate" href="#i-n1"/></svg><span>в сети</span></div></div></div>
-  <div id="pHead">
+  <div class="cover"><div class="cimg"></div><div class="cshade"></div>
+    <div class="cinfo"><div class="cname"></div><div class="cstat"><svg class="ico" style="--s:var(--ic-rating-badge)"><use data-h="1" href="#i-h1"/></svg><span class="ctext">в сети</span></div></div></div>
+  <div class="phead">
     <div class="ava" id="pAva"></div>
     <div class="pname" id="pName"></div>
     <div class="pstat"><svg class="ico" style="--s:var(--ic-rating-badge)"><use id="pRate" href="#i-n1"/></svg><span>в сети</span></div>
@@ -276,13 +281,16 @@ $('#uname').textContent = name;
 $('#unum').textContent = num;
 const rating = 1; // пока у всех 1
 $('#pName').textContent = name;
-$('#cName').textContent = name;
+$$('.cname').forEach(e=>e.textContent=name);
 $('#pNum').textContent = num;
 $('#pUser').textContent = u.username ? '@'+u.username : '@username';
 $('#pRate').setAttribute('href','#i-n'+rating);
 $('#uRate').setAttribute('href','#i-n'+rating);
-$('#cRate').setAttribute('href','#i-n'+rating);
-{const cv=$('#cover');if(u.photo_url)cv.style.backgroundImage='url("'+u.photo_url+'")';else $('#cLetter').textContent=name[0].toUpperCase();}
+// белая плашка рейтинга с пустой цифрой для обложки: копии символов без белых путей
+$$('symbol[id^="i-n"]').forEach(sy=>{const c=sy.cloneNode(true);c.id='i-h'+sy.id.slice(3);c.querySelectorAll('path[fill]').forEach(x=>x.remove());sy.parentNode.appendChild(c)});
+$$('use[data-h]').forEach(e=>e.setAttribute('href','#i-h'+rating));
+$$('.cimg').forEach(el=>{if(u.photo_url)el.style.backgroundImage='url("'+u.photo_url+'")';else el.textContent=name[0].toUpperCase()});
+$$('.page:not(#p-me) .ctext').forEach(e=>e.textContent=num);
 ['#ava','#pAva','#meAva'].forEach(s=>{
   const el=$(s);
   if (u.photo_url) el.style.backgroundImage = 'url("'+u.photo_url+'")';
@@ -314,40 +322,49 @@ $('#hdr').addEventListener('click',e=>{
 });
 
 
-/* ===== Профиль: растягивание обложки свайпом вниз ===== */
-let meExp=false,h0=0,h1=0;
-function measureMe(){
-  const hd=$('#pHead'),cv=$('#cover'),pg=$('#p-me');
-  pg.classList.remove('anim');hd.style.height='auto';
-  h0=hd.offsetHeight;h1=Math.max(h0,cv.offsetHeight-hd.offsetTop+16);
-  renderMe(meExp?1:0);
-}
-function renderMe(p){
-  const hd=$('#pHead'),cv=$('#cover');
-  hd.style.height=(h0+(h1-h0)*p)+'px';
-  hd.style.setProperty('--hf',Math.max(0,1-p*1.8));
-  cv.style.opacity=Math.min(1,p*2);
-  cv.style.clipPath='inset(0 0 '+((1-p)*100)+'% 0)';
-  cv.style.setProperty('--ci',Math.max(0,(p-.5)*2));
-}
-function setExp(v,anim){
-  meExp=v;$('#p-me').classList.toggle('anim',!!anim);renderMe(v?1:0);
-  if(anim&&tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light');
-}
-(function(){
-  const pg=$('#p-me');let ts=null,pull=0;
+/* ===== Обложка: фото вырастает из круга аватарки при свайпе вниз ===== */
+const covers={};
+function makeCover(id){
+  const pg=$('#p-'+id),hd=pg.querySelector('.phead'),cv=pg.querySelector('.cover'),av=pg.querySelector('.ava'),im=pg.querySelector('.cimg');
+  let exp=false,h0=0,h1=0,g=null;
+  const lerp=(a,b,p)=>a+(b-a)*p;
+  function render(p){
+    if(!g)return;
+    hd.style.height=lerp(h0,h1,p)+'px';
+    hd.style.setProperty('--hf',Math.max(0,1-p*1.8));
+    pg.style.setProperty('--ci',Math.max(0,(p-.55)*2.2));
+    im.style.left=lerp(g.L,0,p)+'px';im.style.top=lerp(g.T,0,p)+'px';
+    im.style.width=lerp(g.S,g.W,p)+'px';im.style.height=lerp(g.S,g.CH,p)+'px';
+    im.style.borderRadius=lerp(g.S/2,0,p)+'px';
+    im.style.fontSize=lerp(g.S*.44,g.W*.38,p)+'px';
+    im.style.paddingBottom=lerp(0,g.CH*.18,p)+'px';
+  }
+  function measure(){
+    pg.classList.remove('anim');hd.style.height='auto';
+    h0=hd.offsetHeight;
+    g={L:av.offsetLeft,T:av.offsetTop,S:av.offsetWidth,W:pg.clientWidth,CH:cv.offsetHeight};
+    h1=Math.max(h0,g.CH-hd.offsetTop+16);
+    render(exp?1:0);
+  }
+  function set(v,anim){
+    exp=v;pg.classList.toggle('anim',!!anim);render(v?1:0);
+    if(anim&&tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light');
+  }
+  let ts=null,pull=0;
   pg.addEventListener('touchstart',e=>{ts={y:e.touches[0].clientY,drag:false,ok:pg.scrollTop<=0}},{passive:true});
   pg.addEventListener('touchmove',e=>{
     if(!ts)return;const dy=e.touches[0].clientY-ts.y;
-    if(!meExp){
+    if(!exp){
       if(ts.ok&&dy>0){ if(!ts.drag){ts.drag=true;pg.classList.remove('anim')}
-        pull=Math.min(1,dy/160);renderMe(pull);if(e.cancelable)e.preventDefault();}
-    }else if(dy<-40){setExp(false,true);ts=null}
+        pull=Math.min(1,dy/160);render(pull);if(e.cancelable)e.preventDefault();}
+    }else if(dy<-40){set(false,true);ts=null}
   },{passive:false});
-  const end=()=>{if(ts&&ts.drag)setExp(pull>.4,true);ts=null;pull=0};
+  const end=()=>{if(ts&&ts.drag)set(pull>.4,true);ts=null;pull=0};
   pg.addEventListener('touchend',end);pg.addEventListener('touchcancel',end);
-  addEventListener('resize',()=>{if(cur==='me')measureMe()});
-})();
+  covers[id]={measure,reset:()=>{if(exp){exp=false;render(0)}},isExp:()=>exp};
+}
+makeCover('me');makeCover('settings');
+addEventListener('resize',()=>{const c=covers[cur];if(c)c.measure()});
 
 /* ===== Навигация ===== */
 const PAGES=['contacts','chats','settings'];
@@ -368,7 +385,7 @@ function go(p,instant,back){
   $$('.page').forEach(e=>e.classList.toggle('on',e.id==='p-'+p));
   $$('.menu-item').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
   instant?syncInstant():slide(p);
-  if(p==='me')measureMe(); else if(meExp){meExp=false;renderMe(0)}
+  Object.keys(covers).forEach(k=>{if(k===p)covers[k].measure();else covers[k].reset()});
   store.set('lastPage',p);
   if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
