@@ -64,8 +64,10 @@ body.scrolling .gift .sp{animation-play-state:paused}
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-20deg)}18%{opacity:.95}70%{opacity:.8}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.05) rotate(20deg)}}
 .gempty{margin-top:19px;background:var(--card);border-radius:28px;padding:44px 20px;text-align:center;color:var(--hint)}
 .gbtn{flex:none;width:max-content;min-width:calc(var(--hdr-h) + 24px);flex-direction:column;gap:0;padding:0 18px;line-height:1}
+.hb.gbtn{padding:0 10px}
+.gin{display:flex;flex-direction:column;align-items:flex-end;line-height:1}
 .gbl{font-size:13px;font-weight:550;color:#fff}
-.gv{display:flex;align-items:center;gap:1px;font-size:13px;font-weight:650;margin-top:-2px;align-self:flex-end}
+.gv{display:flex;align-items:center;gap:1px;font-size:13px;font-weight:650;margin-top:-2px}
 .gv img{width:15px;height:15px;object-fit:contain}
 .gv small{font-size:10px;font-weight:600;margin-left:-2px}
 .pst{width:19px;height:19px;object-fit:contain;flex:none;position:relative}
@@ -117,7 +119,7 @@ body.scrolling .gift .sp{animation-play-state:paused}
 /* меню: оригинальный liquid glass */
 :root{--glass-rgb:118,120,129;--glass-strong:.32;--glass-faint:.15;--glass-w:1px;--glass-h:100%;--glass-v:min(28px,55%);
 --glass2-rgb:127,129,138;--glass2-a:.41;--glass2-blur:3px;--glass2-spread:1px;
---menu-glass-bg:rgba(48,48,50,.7);--menu-glass-blur:10px;--menu-inactive:#bdbdc1;--menu-slider-bg:rgba(200,200,204,.1)}
+--menu-glass-bg:rgba(48,48,50,.7);--menu-glass-blur:10px;--menu-inactive:#fff;--menu-slider-bg:rgba(200,200,204,.1)}
 .glass{position:relative;border:1px solid transparent;background:var(--menu-glass-bg);
 -webkit-backdrop-filter:blur(var(--menu-glass-blur));backdrop-filter:blur(var(--menu-glass-blur))}
 .glass::before,.glass::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none}
@@ -182,14 +184,12 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 /* переходы между страницами как в Telegram */
 .page.tr{position:absolute;left:0;top:0;width:100%;background:var(--bg);will-change:transform,opacity}
 .page.tr.top{z-index:2;box-shadow:-8px 0 28px rgba(0,0,0,.55)}
-.hdr-ghost{position:fixed;left:16px;right:16px;top:var(--hdr-top);z-index:1000;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
-.hdr-ghost *{pointer-events:none!important}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
-.mtabs{margin-top:16px;height:46px;border-radius:50px;display:flex;align-items:stretch;padding:4px}
-.mtabs i{position:absolute;top:4px;bottom:4px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1)}
-.mtabs button{position:relative;z-index:2;flex:1;border:0;background:none;color:var(--menu-inactive);font:inherit;font-size:15px;font-weight:550;cursor:pointer;transition:color .2s;padding:0}
-.mtabs button.on{color:var(--accent)}
+.mtabs{margin-top:16px;height:46px;border-radius:50px;display:flex;align-items:stretch;padding:3px}
+.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1)}
+.mtabs button{position:relative;z-index:2;flex:1;border:0;background:none;color:#bdbdc1;font:inherit;font-size:16px;font-weight:550;cursor:pointer;transition:color .2s;padding:0}
+.mtabs button.on{color:#fff}
 #toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
 #toast.on{opacity:1;transform:translateX(-50%)}
 .noanim *:not(#menuSlider):not(.cover):not(.cover *):not(.phead){transition:none!important;animation:none!important}
@@ -375,7 +375,7 @@ const HDR={
   chats:()=>hTxt('Изм.','edit')+hDbl('gifts',GIFT,'write',WRITE),
   settings:()=>hRound(QR,'qr')+hTxt('Изм.','edit'),
   me:()=>hRound(BACK,'back')+hTxt('Изм.','edit'),
-  gifts:()=>hRound(BACK,'back')+'<div class="hb gbtn glass" data-a="stars"><div class="gbl">Баланс</div><div class="gv"><img src="'+STAR+'" alt=""><span>'+balHtml()+'</span></div></div>',
+  gifts:()=>hRound(BACK,'back')+'<div class="hb gbtn glass" data-a="stars"><div class="gin"><div class="gbl">Баланс</div><div class="gv"><img src="'+STAR+'" alt=""><span>'+balHtml()+'</span></div></div></div>',
   stars:()=>hRound(BACK,'back')
 };
 const HDR_TOAST={sort:'Сортировка',add:'Добавить',edit:'Изменить',write:'Написать',qr:'QR-код'};
@@ -445,9 +445,10 @@ function makeCover(id){
     if(anim&&tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light');
   }
   let ts=null,pull=0;
-  pg.addEventListener('touchstart',e=>{ts={y:e.touches[0].clientY,drag:false,ok:pg.scrollTop<=0}},{passive:true});
+  pg.addEventListener('touchstart',e=>{ts={x:e.touches[0].clientX,y:e.touches[0].clientY,drag:false,ok:pg.scrollTop<=0}},{passive:true});
   pg.addEventListener('touchmove',e=>{
-    if(!ts)return;const dy=e.touches[0].clientY-ts.y;
+    if(!ts||swipeOn)return;const dy=e.touches[0].clientY-ts.y;
+    if(!ts.drag&&Math.abs(e.touches[0].clientX-ts.x)>Math.abs(dy))return;
     if(!exp){
       if(ts.ok&&dy>0){ if(e.cancelable)e.preventDefault();
         if(!ts.drag&&dy>6){ts.drag=true;set(true,true)}}
@@ -474,30 +475,32 @@ function slide(p){
   s.style.opacity=(p==='me'||i>-1)?'1':'0';
 }
 let cur='chats',hist=[];
-function goBack(){go(hist.pop()||'settings',false,true)}
 function syncInstant(){const s=$('#menuSlider');s.classList.add('no-transition');slide(cur);void s.offsetWidth;s.classList.remove('no-transition')}
-const DETAIL=['gifts','stars','me'], NAV_EASE='cubic-bezier(.32,.72,0,1)', NAV_MS=380;
-let navFin=null;
+const DETAIL=['gifts','stars','me'], NAV_EASE='cubic-bezier(.32,.72,0,1)', NAV_MS=460;
+let navFin=null, swipeOn=false, meFull=false;
 const animOn=()=>store.get('anim','1')==='1';
-function navDone(){if(navFin){const f=navFin;navFin=null;f()}$$('.hdr-ghost').forEach(e=>e.remove())}
-function setHdr(p,dir){
-  const h=$('#hdr');let g=null;
-  if(dir){g=h.cloneNode(true);g.removeAttribute('id');g.className='hdr-ghost';document.body.appendChild(g)}
+function navDone(){if(navFin){const f=navFin;navFin=null;f()}}
+// кнопки хедера просто меняются и на миг «разбухают»
+function setHdr(p,pulse){
+  const h=$('#hdr');
   h.innerHTML=HDR[p]?HDR[p]():'';
-  if(dir){
-    const k=32*dir;
-    g.animate([{opacity:1,transform:'translateX(0)'},{opacity:0,transform:'translateX('+(-k)+'px)'}],{duration:220,easing:'ease-out',fill:'forwards'}).onfinish=()=>g.remove();
-    h.animate([{opacity:0,transform:'translateX('+k+'px)'},{opacity:1,transform:'translateX(0)'}],{duration:NAV_MS,easing:NAV_EASE});
-  }
+  if(pulse)$$('#hdr .hb').forEach(b=>b.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:300,easing:'ease-out'}));
 }
-function go(p,instant,back){
+// o: {noanim:true} — без анимации; {full:true} — страница профиля поверх меню (кнопка «Мой профиль»); {bounce:true} — «подпрыгнуть» кнопками хедера
+function go(p,instant,back,o){
+  o=o||{};
   navDone();
   const prev=cur;
   if(!back&&!instant&&p!==cur){hist.push(cur);if(hist.length>20)hist.shift()}
-  cur=p;
   // 1 — открытие вперёд (справа налево), -1 — возврат (слева направо), 0 — без анимации
-  const dir=(!instant&&p!==prev&&animOn())?(back?(DETAIL.includes(prev)?-1:0):(DETAIL.includes(p)?1:0)):0;
-  setHdr(p,dir);
+  let dir=0;
+  if(!instant&&!o.noanim&&p!==prev&&animOn()){
+    if(back)dir=(DETAIL.includes(prev)&&!(prev==='me'&&!meFull))?-1:0;
+    else dir=(DETAIL.includes(p)&&!(p==='me'&&!o.full))?1:0;
+  }
+  if(p==='me')meFull=!!o.full;
+  cur=p;
+  setHdr(p,dir!==0||!!o.bounce);
   const inc=$('#p-'+p),out=$('#p-'+prev);
   $$('.page').forEach(e=>e.classList.toggle('on',e===inc||(dir!==0&&e===out)));
   $$('.menu-item').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
@@ -506,24 +509,89 @@ function go(p,instant,back){
   if(p!==prev||instant){inc.scrollTop=0;resetTabs()}
   const later=[];
   Object.keys(covers).forEach(k=>{if(k===p)covers[k].measure();else if(dir!==0&&k===prev)later.push(()=>covers[k].reset());else covers[k].reset()});
-  document.body.classList.toggle('nobar',p==='gifts');giftsOn(p==='gifts');
+  document.body.classList.toggle('nobar',p==='gifts'||(p==='me'&&meFull));giftsOn(p==='gifts');
   if(dir!==0){
     const top=dir>0?inc:out,bot=dir>0?out:inc;
     inc.classList.add('tr');out.classList.add('tr');top.classList.add('top');
-    const o={duration:NAV_MS,easing:NAV_EASE,fill:'both'};
-    const a1=top.animate(dir>0?[{transform:'translateX(100%)'},{transform:'translateX(0)'}]:[{transform:'translateX(0)'},{transform:'translateX(100%)'}],o);
-    const a2=bot.animate(dir>0?[{transform:'translateX(0)',opacity:1},{transform:'translateX(-28%)',opacity:.55}]:[{transform:'translateX(-28%)',opacity:.55},{transform:'translateX(0)',opacity:1}],o);
+    const o2={duration:NAV_MS,easing:NAV_EASE,fill:'both'};
+    const a1=top.animate(dir>0?[{transform:'translateX(100%)'},{transform:'translateX(0)'}]:[{transform:'translateX(0)'},{transform:'translateX(100%)'}],o2);
+    const a2=bot.animate(dir>0?[{transform:'translateX(0)',opacity:1},{transform:'translateX(-28%)',opacity:.55}]:[{transform:'translateX(-28%)',opacity:.55},{transform:'translateX(0)',opacity:1}],o2);
     navFin=()=>{a1.cancel();a2.cancel();$$('.page.tr').forEach(e=>e.classList.remove('tr','top'));out.classList.remove('on');later.forEach(f=>f())};
     a1.onfinish=()=>{if(cur===p)navDone()};
   }
   if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
+function goBack(){
+  const t=hist.pop()||'settings';
+  go(t,false,true);
+}
+
+/* ===== Свайп назад: слева направо, можно остановить на половине ===== */
+(function(){
+  const EASE=NAV_EASE;
+  let s=null;
+  const eligible=()=>DETAIL.includes(cur)&&(cur!=='me'||meFull)&&!navFin&&!swipeOn;
+  const W=()=>innerWidth;
+  function apply(x){
+    const pr=x/W();
+    s.top.style.transform='translateX('+x+'px)';
+    s.bot.style.transform='translateX('+(-28*(1-pr))+'%)';
+    s.bot.style.opacity=(.55+.45*pr).toFixed(3);
+  }
+  function begin(){
+    s.name=hist[hist.length-1]||'settings';
+    s.top=$('#p-'+cur);s.bot=$('#p-'+s.name);
+    s.bot.classList.add('on','tr');s.top.classList.add('tr','top');
+    s.bot.scrollTop=0;
+    if(covers[s.name])covers[s.name].measure();
+    s.on=true;swipeOn=true;s.x=0;apply(0);
+  }
+  function clean(st){
+    [st.top,st.bot].forEach(e=>{e.style.transform='';e.style.opacity='';e.classList.remove('tr','top')});
+  }
+  function finish(commit){
+    const st=s,w=W(),x=s.x,to=commit?w:0,pr=to/w;
+    const dur=Math.max(150,Math.abs(to-x)/w*NAV_MS);
+    const o={duration:dur,easing:EASE,fill:'both'};
+    const a1=s.top.animate([{transform:'translateX('+x+'px)'},{transform:'translateX('+to+'px)'}],o);
+    const a2=s.bot.animate([{transform:'translateX('+(-28*(1-x/w))+'%)',opacity:.55+.45*x/w},{transform:'translateX('+(-28*(1-pr))+'%)',opacity:.55+.45*pr}],o);
+    a1.onfinish=()=>{
+      a1.cancel();a2.cancel();clean(st);
+      if(commit){hist.pop();swipeOn=false;go(st.name,false,true,{noanim:true,bounce:true})}
+      else{st.bot.classList.remove('on');swipeOn=false}
+    };
+  }
+  document.addEventListener('touchstart',e=>{
+    if(swipeOn||e.touches.length!==1||!eligible()){s=null;return}
+    const t=e.touches[0];s={x0:t.clientX,y0:t.clientY,on:false,lx:t.clientX,lt:e.timeStamp,v:0};
+  },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(!s)return;
+    const t=e.touches[0],dx=t.clientX-s.x0,dy=t.clientY-s.y0;
+    if(!s.on){
+      if(dx>10&&dx>Math.abs(dy)*1.5)begin();
+      else{if(Math.abs(dy)>10||dx<-10)s=null;return}
+    }
+    if(e.cancelable)e.preventDefault();
+    const x=Math.max(0,Math.min(W(),dx-10));
+    const dt=e.timeStamp-s.lt;if(dt>0)s.v=.6*s.v+.4*((t.clientX-s.lx)/dt);
+    s.lx=t.clientX;s.lt=e.timeStamp;
+    s.x=x;apply(x);
+  },{passive:false});
+  const end=e=>{
+    if(!s||!s.on){s=null;return}
+    const commit=s.x>W()*.4||(s.v>.5&&s.x>20);
+    finish(commit);s=null;
+  };
+  document.addEventListener('touchend',end);
+  document.addEventListener('touchcancel',end);
+})();
 (function(){let raf=0;const sch=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(syncInstant)};
   addEventListener('resize',sch);addEventListener('orientationchange',()=>setTimeout(sch,150));
   if(window.ResizeObserver){const ro=new ResizeObserver(sch);ro.observe($('#bar'));ro.observe($('#menuPill'))}})();
 let lpFired=false;
-$$('[data-p]').forEach(e=>e.onclick=()=>{ if(e.id==='meBtn'&&lpFired){lpFired=false;return} go(e.dataset.p) });
-$$('[data-go]').forEach(e=>e.onclick=()=>go(e.dataset.go));
+$$('[data-p]').forEach(e=>e.onclick=()=>{ if(e.id==='meBtn'&&lpFired){lpFired=false;return} if(e.id==='meBtn')go('me',false,false,{noanim:true,full:false});else go(e.dataset.p) });
+$$('[data-go]').forEach(e=>e.onclick=()=>go(e.dataset.go,false,false,{full:true}));
 
 let tt;
 function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1600)}
