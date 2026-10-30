@@ -7,7 +7,13 @@
 <title>Gifts</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--bg:#000;--card:#1c1c1d;--text:#fff;--hint:#9e9e9e;--accent:#4cb4e9;--gold:#ffc83d;--r:22px}
+:root{
+/* ===== РАЗМЕРЫ ИКОНОК: меняй любую отдельно ===== */
+--ic-market:30px;--ic-gift:30px;--ic-star:30px;            /* меню */
+--ic-plate:32px;                                            /* цветная плашка в профиле */
+--ic-profile:24px;--ic-rating:24px;--ic-stars:24px;--ic-promo:24px;
+--ic-lang:24px;--ic-theme:24px;--ic-anim:24px;              /* профиль */
+--bg:#000;--card:#1c1c1d;--text:#fff;--hint:#9e9e9e;--accent:#4cb4e9;--gold:#ffc83d;--r:22px}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;width:100%;overflow:hidden;touch-action:pan-y;background:var(--bg);color:var(--text);font:16px/1.3 -apple-system,"SF Pro Text",system-ui,sans-serif;overscroll-behavior:none}
 body{overflow:hidden}
@@ -36,14 +42,15 @@ h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 .list{background:var(--card);border-radius:var(--r);margin-bottom:16px;overflow:hidden}
 .row{display:flex;align-items:center;gap:14px;padding:0 16px;height:54px;cursor:pointer}
 .row:active{background:#2e2e31}
-.ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff}
-.ic svg{width:20px;height:20px;fill:#fff;fill-rule:evenodd}
+.ic{width:var(--ic-plate);height:var(--ic-plate);flex:none;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff}
+.ic svg{fill:#fff;fill-rule:evenodd}
+.ico{flex:none;width:var(--s,24px);height:var(--s,24px)}
 .row .t{flex:1}
 .row .v{color:var(--hint)}
 .row:after{content:"›";color:#5a5a5e;font-size:24px}
 .row.sw:after{content:none}
 .row{position:relative}
-.row+.row:before{content:"";position:absolute;top:0;left:60px;right:16px;height:1px;background:#333335}
+.row+.row:before{content:"";position:absolute;top:0;left:calc(16px + var(--ic-plate) + 14px);right:16px;height:1px;background:#333335}
 .sw i{width:50px;height:30px;border-radius:15px;background:#3a3a3c;position:relative;transition:.2s}
 .sw i:after{content:"";position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.2s}
 .sw.on i{background:#34c759}.sw.on i:after{left:22px}
@@ -70,8 +77,8 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 #meWrap{position:relative;height:67px;width:67px;flex:none}
 #meWrap .glass{position:absolute;inset:0;border-radius:50%}
 .menu-item{display:flex;flex-direction:column;align-items:center;background:none;border:none;cursor:pointer;flex:1;padding:5px 0 2px;position:relative;z-index:3;color:inherit;font:inherit}
-.menu-icon-wrap{height:28px;display:flex;align-items:center;justify-content:center}
-.menu-icon-wrap svg{width:26px;height:26px;fill:currentColor;fill-rule:evenodd;color:var(--hint)}
+.menu-icon-wrap{height:30px;display:flex;align-items:center;justify-content:center}
+.menu-icon-wrap svg{fill:currentColor;fill-rule:evenodd;color:var(--hint)}
 .menu-item:nth-child(1) .menu-icon-wrap,.menu-item:nth-child(1) .menu-label{transform:translateX(-2px)}
 .menu-item:nth-child(3) .menu-icon-wrap,.menu-item:nth-child(3) .menu-label{transform:translateX(2px)}
 .menu-label{font-size:11px;font-weight:500;color:var(--hint);margin-top:2px}
@@ -81,7 +88,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 
 #toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 64px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
 #toast.on{opacity:1;transform:translateX(-50%)}
-.noanim *{transition:none!important;animation:none!important}
+.noanim *:not(#menuSlider){transition:none!important;animation:none!important}
 </style>
 </head>
 <body>
@@ -106,16 +113,16 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
   <div class="pname" id="uname"></div>
   <div class="pnum" id="unum"></div>
   <div class="list">
-    <div class="row" data-s="Мой профиль"><div class="ic" style="background:#f0604d"><svg><use href="#i-profile"/></svg></div><span class="t">Мой профиль</span></div>
-    <div class="row" data-s="Мой рейтинг"><div class="ic" style="background:#f5a623"><svg><use href="#i-stat"/></svg></div><span class="t">Мой рейтинг</span></div>
-    <div class="row" data-go="stars"><div class="ic" style="background:#e0a800"><svg><use href="#i-star"/></svg></div><span class="t">Мои звёзды</span><span class="v" id="bal2">10</span></div>
+    <div class="row" data-s="Мой профиль"><div class="ic" style="background:#f0604d"><svg class="ico" style="--s:var(--ic-market)"><use href="#i-profile"/></svg></div><span class="t">Мой профиль</span></div>
+    <div class="row" data-s="Мой рейтинг"><div class="ic" style="background:#f5a623"><svg class="ico" style="--s:var(--ic-gift)"><use href="#i-stat"/></svg></div><span class="t">Мой рейтинг</span></div>
+    <div class="row" data-go="stars"><div class="ic" style="background:#e0a800"><svg class="ico" style="--s:var(--ic-star)"><use href="#i-star"/></svg></div><span class="t">Мои звёзды</span><span class="v" id="bal2">10</span></div>
   </div>
   <div class="list">
     <div class="row" data-s="Поддержка"><div class="ic" style="background:#3a8bf0"></div><span class="t">Поддержка</span></div>
-    <div class="row" data-s="Промокод"><div class="ic" style="background:#8e6cf0"><svg><use href="#i-sell"/></svg></div><span class="t">Промокод</span></div>
-    <div class="row" data-s="Язык"><div class="ic" style="background:#34c759"><svg><use href="#i-lang"/></svg></div><span class="t">Язык</span><span class="v">Русский</span></div>
-    <div class="row" data-s="Тема"><div class="ic" style="background:#636366"><svg viewBox="0 0 24 24"><use href="#icon-theme"/></svg></div><span class="t">Тема</span><span class="v">Чёрная</span></div>
-    <div class="row sw on" id="anim"><div class="ic" style="background:#ff6b35"><svg><use href="#i-gift"/></svg></div><span class="t">Анимации</span><i></i></div>
+    <div class="row" data-s="Промокод"><div class="ic" style="background:#8e6cf0"><svg class="ico" style="--s:var(--ic-profile)"><use href="#i-sell"/></svg></div><span class="t">Промокод</span></div>
+    <div class="row" data-s="Язык"><div class="ic" style="background:#34c759"><svg class="ico" style="--s:var(--ic-rating)"><use href="#i-lang"/></svg></div><span class="t">Язык</span><span class="v">Русский</span></div>
+    <div class="row" data-s="Тема"><div class="ic" style="background:#636366"><svg class="ico" style="--s:var(--ic-stars)" viewBox="0 0 24 24"><use href="#icon-theme"/></svg></div><span class="t">Тема</span><span class="v">Чёрная</span></div>
+    <div class="row sw on" id="anim"><div class="ic" style="background:#ff6b35"><svg class="ico" style="--s:var(--ic-promo)"><use href="#i-gift"/></svg></div><span class="t">Анимации</span><i></i></div>
   </div>
 </section>
 
@@ -142,9 +149,9 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 <div id="bar">
   <div id="menuSlider"></div>
   <div id="menuPill" class="glass">
-    <button class="menu-item" data-p="market"><div class="menu-icon-wrap"><svg><use href="#i-market"/></svg></div><span class="menu-label">Маркет</span></button>
-    <button class="menu-item" data-p="gifts"><div class="menu-icon-wrap"><svg><use href="#i-gift"/></svg></div><span class="menu-label">Подарки</span></button>
-    <button class="menu-item" data-p="stars"><div class="menu-icon-wrap"><svg><use href="#i-star"/></svg></div><span class="menu-label">Звёзды</span></button>
+    <button class="menu-item" data-p="market"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-lang)"><use href="#i-market"/></svg></div><span class="menu-label">Маркет</span></button>
+    <button class="menu-item" data-p="gifts"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-theme)"><use href="#i-gift"/></svg></div><span class="menu-label">Подарки</span></button>
+    <button class="menu-item" data-p="stars"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-anim)"><use href="#i-star"/></svg></div><span class="menu-label">Звёзды</span></button>
   </div>
   <div id="meWrap"><div class="glass"></div><button id="meBtn" data-p="me"><div id="meAva"></div></button></div>
 </div>
@@ -197,7 +204,7 @@ $('#unum').textContent = num;
 /* ===== Навигация ===== */
 const PAGES=['market','gifts','stars'];
 function slide(p){
-  const s=$('#menuSlider'),w=$('#bar'),pill=$('#menuPill'),me=$('#meWrap');
+  const s=$('#menuSlider'),w=$('#bar');s.getBoundingClientRect();const _=0,pill=$('#menuPill'),me=$('#meWrap');
   const wr=w.getBoundingClientRect(), i=PAGES.indexOf(p);
   if(p==='me'){const c=me.getBoundingClientRect();s.style.left=(c.left-wr.left+4)+'px';s.style.width=(c.width-8)+'px';s.style.borderRadius='50%';}
   else if(i>-1){const pr=pill.getBoundingClientRect(),seg=(pr.width-8)/3;s.style.left=(pr.left-wr.left+4+i*seg)+'px';s.style.width=seg+'px';s.style.borderRadius='50px';}
