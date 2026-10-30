@@ -201,6 +201,50 @@ body.navanim #bar{z-index:1}
 #toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
 #toast.on{opacity:1;transform:translateX(-50%)}
 .noanim *:not(#menuSlider):not(.cover):not(.cover *):not(.phead){transition:none!important;animation:none!important}
+
+/* ===== модальное окно покупки подарка ===== */
+#bm{position:fixed;inset:0;z-index:2000;visibility:hidden;pointer-events:none}
+#bm.on{visibility:visible;pointer-events:auto}
+#bm .bm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .3s}
+#bm.on .bm-dim{opacity:1}
+#bm .bm-sheet{position:absolute;left:0;right:0;bottom:0;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 14px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:38px 38px 0 0;overflow:hidden;transform:translateY(100%);transition:transform .38s cubic-bezier(.32,.72,0,1);will-change:transform}
+#bm.on .bm-sheet{transform:translateY(0)}
+#bm .bm-sheet.drag{transition:none}
+#bm .bm-pre{position:relative;flex:1 1 auto;min-height:0;background:#000 url(https://cdn.jsdelivr.net/gh/placedgames/pg/Background.png) center/cover;display:flex;flex-direction:column;align-items:center;padding:16px 16px 14px;overflow:hidden}
+#bm .bm-grab{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:36px;height:5px;border-radius:3px;background:rgba(255,255,255,.35);z-index:3}
+#bm .bm-top{position:relative;z-index:2;width:100%;display:flex;justify-content:space-between;align-items:center;margin-top:12px;pointer-events:none}
+#bm .bm-btn{pointer-events:auto;height:var(--hdr-h);border-radius:50px;display:flex;align-items:center;justify-content:center;color:#fff;font:inherit;font-size:18px;font-weight:550;cursor:pointer;padding:0;transition:transform .2s}
+#bm .bm-btn:active{transform:scale(1.1)}
+#bm .bm-x{width:var(--hdr-h)}
+#bm .bm-cnt{padding:0 16px;gap:6px}
+#bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
+#bm .bm-btn svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
+#bm .bm-pill{position:absolute;z-index:2;top:calc(12px + 16px + var(--hdr-h) / 2 - 17px);left:50%;transform:translateX(-50%);height:34px;padding:0 16px;border-radius:17px;display:flex;align-items:center;white-space:nowrap;font-size:16px;font-weight:500;pointer-events:none;max-width:calc(100% - 140px);overflow:hidden}
+#bm .bm-mid{flex:1 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding-top:8px}
+#bm .bm-card{position:relative;overflow:hidden;width:min(100%,326px);border-radius:34px;padding:26px 18px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;background:rgba(28,28,30,.45);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+#bm .bm-rib{position:absolute;top:24px;right:-36px;width:140px;padding:5px 0;transform:rotate(45deg);background:rgba(255,255,255,.12);font-size:13px;font-weight:550;line-height:1.1;text-align:center;color:#fff;pointer-events:none}
+#bm .bm-img{width:150px;height:150px;display:flex;align-items:center;justify-content:center;font-size:110px}
+#bm .bm-img img{max-width:100%;max-height:100%;object-fit:contain}
+#bm .bm-ct{font-size:24px;font-weight:700;margin-top:16px}
+#bm .bm-cd{font-size:19px;line-height:1.2;font-weight:500;margin-top:6px;padding:0 4px}
+#bm .bm-view{margin-top:16px;height:50px;padding:0 28px;border:0;border-radius:25px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:19px;font-weight:700;cursor:pointer}
+#bm .bm-view:active{opacity:.7}
+#bm .bm-msg{position:relative;z-index:2;width:100%;height:50px;margin-top:12px;border-radius:25px;display:flex;align-items:center;padding:0 20px}
+#bm .bm-msg input{width:100%;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:19px;font-weight:500}
+#bm .bm-msg input::placeholder{color:#8e8e93}
+#bm .bm-bot{flex:none;padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 18px);background:#1c1c1e}
+#bm .bm-hide{height:52px;border-radius:26px;background:#2c2c2e;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 20px;font-size:19px;font-weight:500;cursor:pointer;user-select:none}
+#bm .bm-sw{width:50px;height:30px;border-radius:15px;background:#3a3a3c;position:relative;transition:.2s}
+#bm .bm-sw:after{content:"";position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.2s}
+#bm .bm-hide.on .bm-sw{background:#34c759}#bm .bm-hide.on .bm-sw:after{left:22px}
+#bm .bm-note{color:#8e8e93;font-size:15px;line-height:1.3;font-weight:500;padding:10px 20px 0}
+#bm .bm-bar{position:relative;margin-top:16px;height:50px;border-radius:25px;background:#2c2c2e;overflow:hidden;font-size:18px;font-weight:550}
+#bm .bm-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:25px;background:#4aa8fa;transition:width .6s cubic-bezier(.3,.8,.3,1)}
+#bm .bm-bar span{position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:1}
+#bm .bm-left{left:18px}#bm .bm-sold{right:18px}
+#bm .bm-buy{margin-top:18px;width:100%;height:56px;border:0;border-radius:28px;background:#3b82f6;color:#fff;font:inherit;font-size:21px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:transform .15s,opacity .15s}
+#bm .bm-buy:active{transform:scale(.98);opacity:.85}
+#bm .bm-buy img{width:22px;height:22px;filter:brightness(0) invert(1)}
 </style>
 </head>
 <body>
@@ -309,6 +353,36 @@ body.navanim #bar{z-index:1}
   <div id="meWrap"><div class="glass"></div><button id="meBtn" data-p="me"><div id="meAva"></div></button></div>
 </div>
 <div id="hdr"></div>
+<div id="bm" aria-hidden="true">
+  <div class="bm-dim"></div>
+  <div class="bm-sheet" id="bmSheet">
+    <div class="bm-pre" id="bmPre">
+      <div class="bm-grab"></div>
+      <div class="bm-top">
+        <button class="bm-btn bm-x glass" id="bmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:22px" viewBox="0 0 24 24" stroke-width="2.2"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
+        <div class="bm-btn bm-cnt glass"><svg class="ico" style="--s:24px"><use href="#i-gift2"/></svg><span>1x</span></div>
+      </div>
+      <div class="bm-pill glass" id="bmPill"></div>
+      <div class="bm-mid">
+        <div class="bm-card">
+          <div class="bm-rib" id="bmRib"></div>
+          <div class="bm-img" id="bmImg"></div>
+          <div class="bm-ct">Купленный подарок</div>
+          <div class="bm-cd" id="bmCd"></div>
+          <button class="bm-view" id="bmView">Посмотреть</button>
+        </div>
+      </div>
+      <label class="bm-msg glass"><input id="bmMsg" type="text" placeholder="Введите сообщение (необязательно)" maxlength="255" autocomplete="off"></label>
+    </div>
+    <div class="bm-bot">
+      <div class="bm-hide" id="bmHide"><span>Скрыть имя</span><i class="bm-sw"></i></div>
+      <div class="bm-note">Скрыть моё имя и сообщение от посетителей профиля.</div>
+      <div class="bm-bar"><div class="bm-fill" id="bmFill"></div><span class="bm-left" id="bmLeft"></span><span class="bm-sold" id="bmSold"></span></div>
+      <div class="bm-note">Когда все подарки будут проданы, вы больше не сможете их купить.</div>
+      <button class="bm-buy" id="bmBuy"></button>
+    </div>
+  </div>
+</div>
 <div id="toast"></div>
 
 <script>
@@ -674,7 +748,7 @@ function renderGifts(list){
     (g.image?'<img loading="lazy" src="'+g.image+'" alt="" onerror="this.replaceWith(\'🎁\')">':(g.emoji||'🎁'))+
     '</div><div class="price"><canvas class="pc"></canvas><img class="pst" src="'+STAR+'" alt=""><span>'+fmt(price)+'</span></div></div>';
   }).join('');
-  $$('.gift').forEach(el=>{ GIO.observe(el); el.onclick=()=>toast('Подарок за ★ '+fmt(el.dataset.p)+': скоро'); });
+  $$('.gift').forEach(el=>{ GIO.observe(el); el.onclick=()=>{const im=el.querySelector('.pic img');openBuy({price:el.dataset.p,image:im?im.src:null})}; });
 }
 renderGifts(FALLBACK);
 if (GIFTS_URL) fetch(GIFTS_URL).then(r=>r.json()).then(d=>{const l=Object.keys(d).map(id=>({id,name:d[id],image:IMG(id)}));if(l.length)renderGifts(l)}).catch(()=>{});
@@ -826,6 +900,40 @@ function clearAppCache(){ location.reload(); }
 
 go('chats',true);
 requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
+</script>
+<script>
+/* ===== модальное окно покупки ===== */
+(function(){
+  const bm=document.getElementById('bm'),sheet=document.getElementById('bmSheet'),$b=id=>document.getElementById(id);
+  const TOTAL=30000, SOLD=4120, EXCH=0.85;
+  const short=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'K':String(n);
+  let cur=null,hidden=false;
+  window.openBuy=function(g){
+    cur=g;hidden=false;$b('bmHide').classList.remove('on');$b('bmMsg').value='';
+    const p=+g.price,left=TOTAL-SOLD;
+    $b('bmImg').innerHTML=g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁');
+    $b('bmPill').textContent='Вы купили подарок за '+fmt(p)+' звёзд';
+    $b('bmRib').textContent='1 из '+short(TOTAL);
+    $b('bmCd').textContent='Добавьте этот подарок в профиль или обменяйте на '+fmt(Math.round(p*EXCH))+' звёзд.';
+    $b('bmLeft').textContent=fmt(left)+' осталось';
+    $b('bmSold').textContent=fmt(SOLD)+' продано';
+    $b('bmBuy').innerHTML='<span>Купить подарок за</span><img src="'+STAR+'" alt=""><span>'+fmt(p)+'</span>';
+    $b('bmFill').style.width='0';
+    bm.classList.add('on');bm.setAttribute('aria-hidden','false');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{$b('bmFill').style.width=(left/TOTAL*100)+'%'}));
+  };
+  function close(){bm.classList.remove('on');bm.setAttribute('aria-hidden','true');document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+  $b('bmClose').onclick=close;
+  bm.querySelector('.bm-dim').onclick=close;
+  $b('bmHide').onclick=()=>{hidden=!hidden;$b('bmHide').classList.toggle('on',hidden)};
+  $b('bmView').onclick=()=>toast('Просмотр подарка: скоро');
+  $b('bmBuy').onclick=()=>{toast('Подарок куплен за ★ '+fmt(cur.price));close()};
+  /* свайп вниз по верхней части окна */
+  let sy=0,dy=0,on=false;
+  sheet.addEventListener('touchstart',e=>{const r=sheet.getBoundingClientRect();if(e.touches[0].clientY-r.top<90){on=true;sy=e.touches[0].clientY;dy=0}},{passive:true});
+  sheet.addEventListener('touchmove',e=>{if(!on)return;dy=Math.max(0,e.touches[0].clientY-sy);sheet.classList.add('drag');sheet.style.transform='translateY('+dy+'px)'},{passive:true});
+  sheet.addEventListener('touchend',()=>{if(!on)return;on=false;sheet.classList.remove('drag');sheet.style.transform='';if(dy>120)close()});
+})();
 </script>
 </body>
 </html>
