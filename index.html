@@ -16,7 +16,7 @@
 --ic-contacts-y:0px;                                      /* доп. сдвиг иконки контактов вниз */
 --ic-settings-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-30.5px;--pgap:16px;--name-gap:2px;--pgap-bottom:32px;--ava-gap:10px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:40px;--list-r:40px;               /* аватар и скругление карточки профиля */
+--ava-size:100px;--ava-top:-30.5px;--pgap:16px;--name-gap:2px;--pgap-bottom:32px;--ava-gap:10px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:32px;--list-r:22px;--set-r:40px;--set-r-multi:26px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:24px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
@@ -70,6 +70,9 @@ h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 .ico{flex:none;width:var(--s,24px);height:var(--s,24px)}
 .row .t{flex:1}
 .row .v{color:var(--hint)}
+#p-settings .list{border-radius:var(--set-r)}
+#p-settings .list:has(.row:nth-child(2)){border-radius:var(--set-r-multi)}
+#p-settings .row{font-size:18px}
 .row:after{content:"›";color:#5a5a5e;font-size:24px}
 .row.sw:after{content:none}
 .row{position:relative}
@@ -123,7 +126,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 .cinfo{position:absolute;left:16px;bottom:14px;opacity:var(--ci,0)}
 .cname{font-size:24px;font-weight:550;line-height:1.1}
 .cstat{display:flex;align-items:center;gap:6px;margin-top:0;color:rgba(255,255,255,.78);font-size:17px;font-weight:500;line-height:1.2}
-.cstat svg{fill:#fff;fill-rule:evenodd;margin-left:-4px;margin-right:-3px}
+.cstat svg{fill:#fff;fill-rule:evenodd;margin-left:-2px;margin-right:-3px}
 .page.anim .cimg{transition:left .22s,top .22s,width .22s,height .22s,border-radius .22s,font-size .22s,padding .22s;transition-timing-function:cubic-bezier(.3,.8,.3,1)}
 .page.anim .phead{transition:height .22s cubic-bezier(.3,.8,.3,1)}
 .page.anim .phead>:not(.ava){transition:opacity .18s}
