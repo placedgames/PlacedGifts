@@ -179,6 +179,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 .hb-dbl span{display:flex;align-items:center;justify-content:center}
 .hb{transition:transform .3s cubic-bezier(.4,0,.2,1)}
 .hb.press{transform:scale(1.12)}
+.hb{touch-action:none}
 #menuSlider.press{transform:scale(1.1)}
 .noanim .hb.press,.noanim #menuSlider.press{transform:none}
 .noanim .gift:active{transform:none}
@@ -545,18 +546,37 @@ function goBack(){
 /* ===== Отклик на нажатие: кнопка хедера и ползунок меню раздуваются и сдуваются ===== */
 (function(){
   const MIN=160;
-  let hp=null,ht=0,mp=0,mt=0;
+  let hp=null,hs=null,dragged=false,ht=0,mp=0,mt=0;
   $('#hdr').addEventListener('pointerdown',e=>{
     const b=e.target.closest('.hb');if(!b||!animOn())return;
     hp=b;ht=performance.now();b.classList.add('press');
+    hs={x:e.clientX,y:e.clientY,id:e.pointerId,drag:false};dragged=false;
+    try{b.setPointerCapture(e.pointerId)}catch(_){}
   });
+  // «слайм»: кнопку можно тянуть пальцем, она растягивается за ним и пружинит назад
+  const M=14,R=70;
+  document.addEventListener('pointermove',e=>{
+    if(!hp||!hs||e.pointerId!==hs.id)return;
+    const dx=e.clientX-hs.x,dy=e.clientY-hs.y;
+    if(!hs.drag){if(Math.hypot(dx,dy)<4)return;hs.drag=true;dragged=true;hp.style.transition='none'}
+    const tx=M*Math.tanh(dx/R),ty=M*Math.tanh(dy/R),ax=Math.abs(tx)/M,ay=Math.abs(ty)/M;
+    const sx=1.12+.12*ax-.04*ay,sy=1.12+.12*ay-.04*ax;
+    hp.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) scale('+sx.toFixed(3)+','+sy.toFixed(3)+')';
+  });
+  $('#hdr').addEventListener('click',e=>{if(dragged){e.stopPropagation();dragged=false}},true);
   const sl=$('#menuSlider');
   $('#bar').addEventListener('pointerdown',e=>{
     if(!e.target.closest('.menu-item,#meBtn')||!animOn())return;
     mp=1;mt=performance.now();sl.classList.add('press');
   });
   const rel=()=>{
-    if(hp){const b=hp;hp=null;setTimeout(()=>b.classList.remove('press'),Math.max(0,MIN-(performance.now()-ht)))}
+    if(hp){
+      const b=hp,d=hs&&hs.drag;hp=null;hs=null;
+      if(d){
+        b.style.transition='transform .6s cubic-bezier(.34,1.5,.64,1)';b.classList.remove('press');b.style.transform='';
+        setTimeout(()=>{b.style.transition=''},650);
+      }else setTimeout(()=>b.classList.remove('press'),Math.max(0,MIN-(performance.now()-ht)));
+    }
     if(mp){mp=0;setTimeout(()=>sl.classList.remove('press'),Math.max(0,MIN-(performance.now()-mt)))}
   };
   ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
@@ -567,7 +587,7 @@ function goBack(){
   let s=null;
   const eligible=()=>DETAIL.includes(cur)&&(cur!=='me'||meFull)&&!navFin;
   document.addEventListener('touchstart',e=>{
-    s=(e.touches.length===1&&eligible())?{x:e.touches[0].clientX,y:e.touches[0].clientY,t:e.timeStamp}:null;
+    s=(e.touches.length===1&&eligible()&&!e.target.closest('#hdr'))?{x:e.touches[0].clientX,y:e.touches[0].clientY,t:e.timeStamp}:null;
   },{passive:true});
   document.addEventListener('touchmove',e=>{if(s&&e.touches.length>1)s=null},{passive:true});
   document.addEventListener('touchend',e=>{
