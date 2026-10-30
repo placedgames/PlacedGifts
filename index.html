@@ -16,7 +16,7 @@
 --ic-contacts-y:0px;                                      /* доп. сдвиг иконки контактов вниз */
 --ic-settings-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-30.5px;--pgap:16px;--name-gap:2px;--pgap-bottom:32px;--ava-gap:10px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:32px;--list-r:22px;--set-r:40px;--set-r-multi:26px;               /* аватар и скругление карточки профиля */
+--ava-size:100px;--ava-top:-30.5px;--pgap:16px;--name-gap:2px;--pgap-bottom:32px;--ava-gap:10px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:32px;--list-r:22px;--set-r:48px;--set-r-multi:34px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:24px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
@@ -123,14 +123,16 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 .cshade{position:absolute;left:0;right:0;bottom:0;height:var(--shade-h);background:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,.42));
 -webkit-backdrop-filter:blur(var(--shade-blur));backdrop-filter:blur(var(--shade-blur));
 -webkit-mask-image:linear-gradient(to bottom,transparent,#000 75%);mask-image:linear-gradient(to bottom,transparent,#000 75%);opacity:var(--ci,0)}
-.cinfo{position:absolute;left:16px;bottom:14px;opacity:var(--ci,0)}
-.cname{font-size:24px;font-weight:550;line-height:1.1}
-.cstat{display:flex;align-items:center;gap:6px;margin-top:0;color:rgba(255,255,255,.78);font-size:17px;font-weight:500;line-height:1.2}
+.cinfo{position:absolute;left:0;top:0;opacity:var(--cn,0)}
+.cname{font-size:24px;font-weight:550;line-height:1.1;width:max-content;white-space:nowrap}
+.cstat{width:max-content;white-space:nowrap;display:flex;align-items:center;gap:6px;margin-top:0;color:rgba(255,255,255,.78);font-size:17px;font-weight:500;line-height:1.2}
 .cstat svg{fill:#fff;fill-rule:evenodd;margin-left:-2px;margin-right:-3px}
 .page.anim .cimg{transition:left .22s,top .22s,width .22s,height .22s,border-radius .22s,font-size .22s,padding .22s;transition-timing-function:cubic-bezier(.3,.8,.3,1)}
 .page.anim .phead{transition:height .22s cubic-bezier(.3,.8,.3,1)}
-.page.anim .phead>:not(.ava){transition:opacity .18s}
-.page.anim .cshade,.page.anim .cinfo{transition:opacity .22s cubic-bezier(.3,.8,.3,1)}
+.page.anim .phead>:not(.ava){transition:none}
+.page.anim .cshade{transition:opacity .22s cubic-bezier(.3,.8,.3,1)}
+.page.anim .cinfo{transition:top .22s cubic-bezier(.3,.8,.3,1)}
+.page.anim .cname,.page.anim .cstat,.page.anim .cstat svg{transition:transform .22s cubic-bezier(.3,.8,.3,1),font-size .22s cubic-bezier(.3,.8,.3,1),margin .22s cubic-bezier(.3,.8,.3,1),color .22s,fill .22s}
 
 /* хедер: закреплённые кнопки поверх контента, стекло как у меню */
 #hdr{position:fixed;left:16px;right:16px;top:var(--hdr-top);z-index:1000;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
@@ -329,12 +331,23 @@ $('#hdr').addEventListener('click',e=>{
 const covers={};
 function makeCover(id){
   const pg=$('#p-'+id),hd=pg.querySelector('.phead'),cv=pg.querySelector('.cover'),av=pg.querySelector('.ava'),im=pg.querySelector('.cimg');
-  let exp=false,h0=0,h1=0,g=null;
+  const cn=pg.querySelector('.cname'),cs=pg.querySelector('.cstat'),csv=cs.querySelector('svg'),ctx=cs.querySelector('span'),pn=pg.querySelector('.pname'),pst=pg.querySelector('.pnum,.pstat'),ci=pg.querySelector('.cinfo');
+  let exp=false,h0=0,h1=0,g=null,N=null,tm=0;
   const lerp=(a,b,p)=>a+(b-a)*p;
   function render(p){
     if(!g)return;
     hd.style.height=lerp(h0,h1,p)+'px';
-    hd.style.setProperty('--hf',Math.max(0,1-p*1.8));
+    clearTimeout(tm);
+    if(p>0){hd.style.setProperty('--hf',0);pg.style.setProperty('--cn',1)}
+    else if(pg.classList.contains('anim')){tm=setTimeout(()=>{if(!exp){hd.style.setProperty('--hf',1);pg.style.setProperty('--cn',0)}},240)}
+    else{hd.style.setProperty('--hf',1);pg.style.setProperty('--cn',0)}
+    if(N){
+      ci.style.top=lerp(N.y0,N.y1,p)+'px';
+      cn.style.transform='translateX('+lerp((g.W-N.wn0)/2,16,p)+'px)';cn.style.fontSize=lerp(28,24,p)+'px';
+      cs.style.transform='translateX('+lerp(N.xs0,16,p)+'px)';cs.style.marginTop=lerp(N.gap0,0,p)+'px';cs.style.fontSize=lerp(N.fs0,17,p)+'px';
+      cs.style.color=p>0?'rgba(255,255,255,.78)':'rgb(158,158,158)';
+      csv.style.fill=p>0?'#fff':'#4cb4e9';csv.style.marginLeft=lerp(0,-2,p)+'px';csv.style.marginRight=lerp(0,-3,p)+'px';
+    }
     pg.style.setProperty('--ci',p>0?1:0);
     im.style.left=lerp(g.L,0,p)+'px';im.style.top=lerp(g.T,0,p)+'px';
     im.style.width=lerp(g.S,g.W,p)+'px';im.style.height=lerp(g.S,g.CH,p)+'px';
@@ -347,6 +360,18 @@ function makeCover(id){
     h0=hd.offsetHeight;
     g={L:av.offsetLeft,T:av.offsetTop,S:av.offsetWidth,W:pg.clientWidth,CH:cv.offsetHeight};
     h1=Math.max(h0,g.CH-hd.offsetTop+16);
+    try{
+      const cr=cv.getBoundingClientRect(),rn=pn.getBoundingClientRect(),rp=pst.getBoundingClientRect();
+      const fs0=parseFloat(getComputedStyle(pst).fontSize)||17;
+      cn.style.transition=cs.style.transition=csv.style.transition='none';
+      cn.style.fontSize='28px';const wn0=cn.offsetWidth;
+      cs.style.fontSize=fs0+'px';csv.style.marginLeft=csv.style.marginRight='0px';cs.style.marginTop='0px';
+      const wt=ctx.offsetWidth,ws=csv.getBoundingClientRect().width;
+      cs.style.fontSize='17px';const hs=cs.offsetHeight;
+      const y0=rn.top-cr.top+(rn.height-28*1.1)/2;
+      N={y0,y1:g.CH-14-(24*1.1+hs),wn0,fs0,xs0:g.W/2-wt/2-6-ws,gap0:(rp.top-cr.top+(rp.height-hs)/2)-(y0+28*1.1)};
+      cn.style.transition=cs.style.transition=csv.style.transition='';
+    }catch(e){N=null}
     render(exp?1:0);
   }
   function set(v,anim){
