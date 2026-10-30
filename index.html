@@ -182,6 +182,10 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 .hb{touch-action:none}
 #menuSlider.press{transform:scale(1.1)}
 .noanim .hb.press,.noanim #menuSlider.press{transform:none}
+.hb:not(.hb-dbl).press,.hb:not(.hb-dbl).press .gbl{color:#a9a9ad}
+.hb:not(.hb-dbl).press svg,.hb-dbl span.press svg{fill:#a9a9ad}
+.hb:not(.hb-dbl).press svg.hs{fill:none;stroke:#a9a9ad}
+.hb:not(.hb-dbl).press img{filter:brightness(.7)}
 .noanim .gift:active{transform:none}
 .hb svg{fill:#fff;fill-rule:evenodd}
 .hb svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
@@ -548,19 +552,20 @@ function goBack(){
   const MIN=160;
   let hp=null,hs=null,dragged=false,ht=0,mp=0,mt=0;
   $('#hdr').addEventListener('pointerdown',e=>{
-    const b=e.target.closest('.hb');if(!b||!animOn())return;
+    const b=e.target.closest('.hb');if(!b)return;
     hp=b;ht=performance.now();b.classList.add('press');
-    hs={x:e.clientX,y:e.clientY,id:e.pointerId,drag:false};dragged=false;
+    hs={x:e.clientX,y:e.clientY,id:e.pointerId,drag:false,sp:e.target.closest('.hb-dbl>span')};dragged=false;
+    if(hs.sp)hs.sp.classList.add('press');
     try{b.setPointerCapture(e.pointerId)}catch(_){}
   });
   // «слайм»: кнопку можно тянуть пальцем, она растягивается за ним и пружинит назад
-  const M=14,R=70;
+  const M=7,R=60;
   document.addEventListener('pointermove',e=>{
-    if(!hp||!hs||e.pointerId!==hs.id)return;
+    if(!hp||!hs||e.pointerId!==hs.id||!animOn())return;
     const dx=e.clientX-hs.x,dy=e.clientY-hs.y;
     if(!hs.drag){if(Math.hypot(dx,dy)<4)return;hs.drag=true;dragged=true;hp.style.transition='none'}
     const tx=M*Math.tanh(dx/R),ty=M*Math.tanh(dy/R),ax=Math.abs(tx)/M,ay=Math.abs(ty)/M;
-    const sx=1.12+.12*ax-.04*ay,sy=1.12+.12*ay-.04*ax;
+    const sx=1.12+.06*ax-.02*ay,sy=1.12+.06*ay-.02*ax;
     hp.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) scale('+sx.toFixed(3)+','+sy.toFixed(3)+')';
   });
   $('#hdr').addEventListener('click',e=>{if(dragged){e.stopPropagation();dragged=false}},true);
@@ -571,11 +576,11 @@ function goBack(){
   });
   const rel=()=>{
     if(hp){
-      const b=hp,d=hs&&hs.drag;hp=null;hs=null;
+      const b=hp,d=hs&&hs.drag,sp=hs&&hs.sp;hp=null;hs=null;
       if(d){
-        b.style.transition='transform .6s cubic-bezier(.34,1.5,.64,1)';b.classList.remove('press');b.style.transform='';
+        b.style.transition='transform .6s cubic-bezier(.34,1.5,.64,1)';b.classList.remove('press');if(sp)sp.classList.remove('press');b.style.transform='';
         setTimeout(()=>{b.style.transition=''},650);
-      }else setTimeout(()=>b.classList.remove('press'),Math.max(0,MIN-(performance.now()-ht)));
+      }else setTimeout(()=>{b.classList.remove('press');if(sp)sp.classList.remove('press')},Math.max(0,MIN-(performance.now()-ht)));
     }
     if(mp){mp=0;setTimeout(()=>sl.classList.remove('press'),Math.max(0,MIN-(performance.now()-mt)))}
   };
