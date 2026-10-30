@@ -47,12 +47,13 @@ body.nobar #bar{display:none}
 .gtabs button{position:relative;z-index:1;height:28px;padding:0 12px;border:0;background:none;color:#8a8a8e;font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:color .2s}
 .gtabs button.on{color:#a6a6ab}
 .grid{margin-top:19px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.gift{content-visibility:auto;contain-intrinsic-size:auto 153px;min-width:0;height:153px;background:var(--card);border-radius:22px;padding:18px 0 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .12s}
+.gift{min-width:0;height:153px;background:var(--card);border-radius:22px;padding:18px 0 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .12s}
 .gift:active{transform:scale(.97)}
 .pic{height:84px;width:100%;display:flex;align-items:center;justify-content:center;font-size:60px}
 .pic img{max-height:84px;max-width:84px;object-fit:contain}
 .price{position:relative;overflow:hidden;margin-top:auto;height:30px;padding:0 10px;border-radius:15px;background:#2b281f;color:#f5b82e;display:flex;align-items:center;gap:1px;font-size:12px;font-weight:550;white-space:nowrap;contain:paint}
 .price .ico{flex:none}
+.pc{position:absolute;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .price>img,.price>span{position:relative;z-index:1}
 .sp{position:absolute;z-index:0;pointer-events:none;animation-play-state:paused;background:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20512%20512%27%3E%3Cpath%20fill=%27%23ecb23a%27%20d=%27M255.2%2040.4C247.8%2042%20245.3%2044.1%20242.3%2051.5C239.6%2058.2%20239.1%2074.6%20238.3%2082.5C236%20104%20226.8%20200.5%20218.7%20213.5C216.5%20216.9%20213.2%20219.3%20209.5%20220.7C196%20225.9%20177.9%20227.4%20163.5%20229.8C141.2%20233.4%20118.9%20237.4%2096.5%20240.4C86.8%20241.7%2075.8%20241.9%2066.5%20245.3C59.9%20247.7%2055.2%20255.5%2057.8%20262.5C58.9%20265.5%2061.7%20268.6%2064.5%20270.1C71.6%20273.7%2094.4%20274.5%20103.5%20275.8C126.7%20279.2%20150.2%20281.7%20173.5%20284.1C184.4%20285.3%20200.5%20286.1%20210.5%20290.1C214.7%20291.8%20218%20294.7%20220%20298.8C229%20317.6%20236.5%20408.6%20239.3%20434.8C240.1%20443%20240%20451.6%20241.7%20459.8C244.4%20472.5%20259.8%20476.2%20266.7%20464.5C269.4%20459.8%20269.3%20453.7%20269.9%20448.5C272.7%20423.7%20282.3%20307.8%20294.5%20294.5C301.4%20287.1%20314.9%20286.8%20324.2%20285.4C326.9%20285.1%20329.6%20284.7%20332.2%20284.3C345.5%20282.8%20443%20271.6%20447.2%20269.4C451.6%20267.2%20454.6%20262.3%20454.5%20257.5C454%20241.5%20439.5%20243%20427.5%20241.2C406.5%20238.2%20309.3%20226.6%20297.5%20218.3C294.1%20216%20292.2%20212.6%20290.9%20208.8C287.5%20199%20286.4%20188%20285.1%20177.8C281.1%20146.1%20277.2%20114.5%20274.5%2082.8C273.7%2073.7%20274.1%2057.7%20271.2%2049.8C270%2046.5%20265.5%2042%20262.2%2040.8C260.9%2040.3%20259.6%2040.5%20258.2%2040.5C257.2%2040.4%20256.3%2040.4%20255.2%2040.4Z%27/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;animation:fly 3s ease-in-out infinite paused}
 .gift.vis .sp{animation-play-state:running}
@@ -493,22 +494,55 @@ const POOL=[15,15,25,25,25,50,50,50,100,100,150,250,350,500,750,1000,1500,2000,2
 function rndPrice(k){let h=5381;k=String(k);for(let i=0;i<k.length;i++)h=((h<<5)+h+k.charCodeAt(i))>>>0;return POOL[h%POOL.length]}
 
 // летящие звёздочки на плашке цены
-const SPKS=Array.from({length:40},(_,i)=>{
-  const f=x=>x-Math.floor(x), z=10+f(i*.754+.5)*6;
-  const ang=(i/40)*6.2832+f(i*.37)*.15, dist=26+f(i*.618+.13)*30;
-  const dx=Math.cos(ang)*dist*1.5, dy=Math.sin(ang)*dist, d=5.2+f(i*.57)*1.8, dl=-f(i*.91)*7;
-  return '<i class="sp" style="left:50%;top:50%;width:'+z.toFixed(1)+'px;height:'+z.toFixed(1)+'px;--dx:'+dx.toFixed(1)+'px;--dy:'+dy.toFixed(1)+'px;animation-duration:'+d.toFixed(2)+'s;animation-delay:'+dl.toFixed(2)+'s"></i>';
-}).join('');
-
-const GIO=window.IntersectionObserver?new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('vis',e.isIntersecting)),{rootMargin:'40px'}):null;
+/* искорки на плашках цен: тот же эффект (40 шт., те же траектории/скорость/плавность),
+   но рисуются на одном крошечном canvas в плашке вместо 40 анимированных DOM-элементов */
+const PS=(function(){
+  const N=40, D=Math.min(window.devicePixelRatio||1,2), f=x=>x-Math.floor(x);
+  const P=Array.from({length:N},(_,i)=>{
+    const z=10+f(i*.754+.5)*6, ang=(i/N)*6.2832+f(i*.37)*.15, dist=26+f(i*.618+.13)*30;
+    return {z,dx:Math.cos(ang)*dist*1.5,dy:Math.sin(ang)*dist,d:5.2+f(i*.57)*1.8,dl:-f(i*.91)*7};
+  });
+  const sprite=document.createElement('canvas');sprite.width=sprite.height=64;
+  const sx=sprite.getContext('2d');sx.scale(64/512,64/512);sx.fillStyle='#ecb23a';sx.fill(new Path2D("M255.2 40.4C247.8 42 245.3 44.1 242.3 51.5C239.6 58.2 239.1 74.6 238.3 82.5C236 104 226.8 200.5 218.7 213.5C216.5 216.9 213.2 219.3 209.5 220.7C196 225.9 177.9 227.4 163.5 229.8C141.2 233.4 118.9 237.4 96.5 240.4C86.8 241.7 75.8 241.9 66.5 245.3C59.9 247.7 55.2 255.5 57.8 262.5C58.9 265.5 61.7 268.6 64.5 270.1C71.6 273.7 94.4 274.5 103.5 275.8C126.7 279.2 150.2 281.7 173.5 284.1C184.4 285.3 200.5 286.1 210.5 290.1C214.7 291.8 218 294.7 220 298.8C229 317.6 236.5 408.6 239.3 434.8C240.1 443 240 451.6 241.7 459.8C244.4 472.5 259.8 476.2 266.7 464.5C269.4 459.8 269.3 453.7 269.9 448.5C272.7 423.7 282.3 307.8 294.5 294.5C301.4 287.1 314.9 286.8 324.2 285.4C326.9 285.1 329.6 284.7 332.2 284.3C345.5 282.8 443 271.6 447.2 269.4C451.6 267.2 454.6 262.3 454.5 257.5C454 241.5 439.5 243 427.5 241.2C406.5 238.2 309.3 226.6 297.5 218.3C294.1 216 292.2 212.6 290.9 208.8C287.5 199 286.4 188 285.1 177.8C281.1 146.1 277.2 114.5 274.5 82.8C273.7 73.7 274.1 57.7 271.2 49.8C270 46.5 265.5 42 262.2 40.8C260.9 40.3 259.6 40.5 258.2 40.5C257.2 40.4 256.3 40.4 255.2 40.4Z"));
+  const ease=t=>t<.5?2*t*t:1-2*(1-t)*(1-t);
+  const opac=u=>u<.18?.95*ease(u/.18):u<.7?.95-.15*ease((u-.18)/.52):.8*(1-ease((u-.7)/.3));
+  const vis=new Set();let raf=0,last=0,T=0;
+  function fit(c){const pr=c.parentNode,w=pr.offsetWidth,h=pr.offsetHeight;if(!w||!h)return false;c.width=Math.round(w*D);c.height=Math.round(h*D);c._w=w;c._h=h;return true}
+  function drawOne(c){
+    if(!c._w&&!fit(c))return;
+    const x=c.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,c.width,c.height);
+    const cx=c._w/2*D,cy=c._h/2*D;
+    for(const p of P){
+      const u=(((T-p.dl)%p.d)+p.d)%p.d/p.d,al=opac(u);if(al<.01)continue;
+      const e=ease(u),s=p.z*(.3+.75*e)*D,r=(-20+40*e)*.017453,co=Math.cos(r),si=Math.sin(r);
+      x.globalAlpha=al;x.setTransform(co,si,-si,co,cx+p.dx*e*D,cy+p.dy*e*D);x.drawImage(sprite,-s/2,-s/2,s,s);
+    }
+    x.globalAlpha=1;
+  }
+  const ok=()=>!document.hidden&&$('#p-gifts').classList.contains('on')&&!document.body.classList.contains('scrolling')&&!document.body.classList.contains('noanim');
+  function loop(now){
+    raf=0;for(const c of vis)if(!c.isConnected)vis.delete(c);
+    if(!vis.size||!ok())return;
+    raf=requestAnimationFrame(loop);
+    T+=Math.min((now-last)/1000||0,.05);last=now;
+    for(const c of vis)drawOne(c);
+  }
+  function kick(){if(!raf&&vis.size&&ok()){last=performance.now();raf=requestAnimationFrame(loop)}}
+  function add(el){const c=el.querySelector('.pc');if(!c)return;vis.add(c);drawOne(c);kick()}
+  function remove(el){const c=el.querySelector('.pc');if(c)vis.delete(c)}
+  document.addEventListener('visibilitychange',kick);
+  return {add,remove,kick};
+})();
+// анимируем только карточки на экране
+const GIO=window.IntersectionObserver?new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?PS.add(e.target):PS.remove(e.target)),{rootMargin:'120px 0px'}):{observe:el=>PS.add(el)};
 function renderGifts(list){
   $('#grid').innerHTML = list.map((g,i)=>{
     const price = i<PRICES.length ? PRICES[i] : rndPrice(g.id||g.name||i);
     return '<div class="gift" data-p="'+price+'"><div class="pic">'+
     (g.image?'<img loading="lazy" src="'+g.image+'" alt="" onerror="this.replaceWith(\'🎁\')">':(g.emoji||'🎁'))+
-    '</div><div class="price">'+SPKS+'<img class="pst" src="'+STAR+'" alt=""><span>'+fmt(price)+'</span></div></div>';
+    '</div><div class="price"><canvas class="pc"></canvas><img class="pst" src="'+STAR+'" alt=""><span>'+fmt(price)+'</span></div></div>';
   }).join('');
-  $$('.gift').forEach(el=>{ if(GIO)GIO.observe(el); else el.classList.add('vis'); el.onclick=()=>toast('Подарок за ★ '+fmt(el.dataset.p)+': скоро'); });
+  $$('.gift').forEach(el=>{ GIO.observe(el); el.onclick=()=>toast('Подарок за ★ '+fmt(el.dataset.p)+': скоро'); });
 }
 renderGifts(FALLBACK);
 if (GIFTS_URL) fetch(GIFTS_URL).then(r=>r.json()).then(d=>{const l=Object.keys(d).map(id=>({id,name:d[id],image:IMG(id)}));if(l.length)renderGifts(l)}).catch(()=>{});
@@ -619,12 +653,12 @@ const SP=(function(){
   let t=0;
   document.addEventListener('scroll',()=>{
     if(!document.body.classList.contains('scrolling')){document.body.classList.add('scrolling');SP.hold(1,true)}
-    clearTimeout(t);t=setTimeout(()=>{document.body.classList.remove('scrolling');SP.hold(1,false)},140);
+    clearTimeout(t);t=setTimeout(()=>{document.body.classList.remove('scrolling');SP.hold(1,false);PS.kick()},140);
   },{capture:true,passive:true});
 })();
 
 function giftsOn(on){
-  if(on){ SP.start(); requestAnimationFrame(()=>placeTab(true)); }
+  if(on){ SP.start(); PS.kick(); requestAnimationFrame(()=>placeTab(true)); }
   else SP.stop();
 }
 
