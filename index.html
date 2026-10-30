@@ -51,10 +51,12 @@ body.nobar #bar{display:none}
 .gift:active{transform:scale(.97)}
 .pic{height:84px;width:100%;display:flex;align-items:center;justify-content:center;font-size:60px}
 .pic img{max-height:84px;max-width:84px;object-fit:contain}
-.price{position:relative;overflow:hidden;margin-top:auto;height:28px;padding:0 10px;border-radius:14px;background:#2b281f;color:#f5b82e;display:flex;align-items:center;gap:1px;font-size:14px;font-weight:600;white-space:nowrap}
+.price{position:relative;overflow:hidden;margin-top:auto;height:28px;padding:0 10px;border-radius:14px;background:#2b281f;color:#f5b82e;display:flex;align-items:center;gap:1px;font-size:14px;font-weight:600;white-space:nowrap;contain:paint}
 .price .ico{flex:none}
 .price>img,.price>span{position:relative;z-index:1}
-.sp{position:absolute;z-index:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20512%20512%27%3E%3Cpath%20fill=%27%23ffd35a%27%20d=%27M255.2%2040.4C247.8%2042%20245.3%2044.1%20242.3%2051.5C239.6%2058.2%20239.1%2074.6%20238.3%2082.5C236%20104%20226.8%20200.5%20218.7%20213.5C216.5%20216.9%20213.2%20219.3%20209.5%20220.7C196%20225.9%20177.9%20227.4%20163.5%20229.8C141.2%20233.4%20118.9%20237.4%2096.5%20240.4C86.8%20241.7%2075.8%20241.9%2066.5%20245.3C59.9%20247.7%2055.2%20255.5%2057.8%20262.5C58.9%20265.5%2061.7%20268.6%2064.5%20270.1C71.6%20273.7%2094.4%20274.5%20103.5%20275.8C126.7%20279.2%20150.2%20281.7%20173.5%20284.1C184.4%20285.3%20200.5%20286.1%20210.5%20290.1C214.7%20291.8%20218%20294.7%20220%20298.8C229%20317.6%20236.5%20408.6%20239.3%20434.8C240.1%20443%20240%20451.6%20241.7%20459.8C244.4%20472.5%20259.8%20476.2%20266.7%20464.5C269.4%20459.8%20269.3%20453.7%20269.9%20448.5C272.7%20423.7%20282.3%20307.8%20294.5%20294.5C301.4%20287.1%20314.9%20286.8%20324.2%20285.4C326.9%20285.1%20329.6%20284.7%20332.2%20284.3C345.5%20282.8%20443%20271.6%20447.2%20269.4C451.6%20267.2%20454.6%20262.3%20454.5%20257.5C454%20241.5%20439.5%20243%20427.5%20241.2C406.5%20238.2%20309.3%20226.6%20297.5%20218.3C294.1%20216%20292.2%20212.6%20290.9%20208.8C287.5%20199%20286.4%20188%20285.1%20177.8C281.1%20146.1%20277.2%20114.5%20274.5%2082.8C273.7%2073.7%20274.1%2057.7%20271.2%2049.8C270%2046.5%20265.5%2042%20262.2%2040.8C260.9%2040.3%20259.6%2040.5%20258.2%2040.5C257.2%2040.4%20256.3%2040.4%20255.2%2040.4Z%27/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;animation:fly 3s ease-in-out infinite}
+.sp{position:absolute;z-index:0;pointer-events:none;animation-play-state:paused;background:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20512%20512%27%3E%3Cpath%20fill=%27%23ffd35a%27%20d=%27M255.2%2040.4C247.8%2042%20245.3%2044.1%20242.3%2051.5C239.6%2058.2%20239.1%2074.6%20238.3%2082.5C236%20104%20226.8%20200.5%20218.7%20213.5C216.5%20216.9%20213.2%20219.3%20209.5%20220.7C196%20225.9%20177.9%20227.4%20163.5%20229.8C141.2%20233.4%20118.9%20237.4%2096.5%20240.4C86.8%20241.7%2075.8%20241.9%2066.5%20245.3C59.9%20247.7%2055.2%20255.5%2057.8%20262.5C58.9%20265.5%2061.7%20268.6%2064.5%20270.1C71.6%20273.7%2094.4%20274.5%20103.5%20275.8C126.7%20279.2%20150.2%20281.7%20173.5%20284.1C184.4%20285.3%20200.5%20286.1%20210.5%20290.1C214.7%20291.8%20218%20294.7%20220%20298.8C229%20317.6%20236.5%20408.6%20239.3%20434.8C240.1%20443%20240%20451.6%20241.7%20459.8C244.4%20472.5%20259.8%20476.2%20266.7%20464.5C269.4%20459.8%20269.3%20453.7%20269.9%20448.5C272.7%20423.7%20282.3%20307.8%20294.5%20294.5C301.4%20287.1%20314.9%20286.8%20324.2%20285.4C326.9%20285.1%20329.6%20284.7%20332.2%20284.3C345.5%20282.8%20443%20271.6%20447.2%20269.4C451.6%20267.2%20454.6%20262.3%20454.5%20257.5C454%20241.5%20439.5%20243%20427.5%20241.2C406.5%20238.2%20309.3%20226.6%20297.5%20218.3C294.1%20216%20292.2%20212.6%20290.9%20208.8C287.5%20199%20286.4%20188%20285.1%20177.8C281.1%20146.1%20277.2%20114.5%20274.5%2082.8C273.7%2073.7%20274.1%2057.7%20271.2%2049.8C270%2046.5%20265.5%2042%20262.2%2040.8C260.9%2040.3%20259.6%2040.5%20258.2%2040.5C257.2%2040.4%20256.3%2040.4%20255.2%2040.4Z%27/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;animation:fly 3s ease-in-out infinite paused}
+.gift.vis .sp{animation-play-state:running}
+body.scrolling .gift .sp{animation-play-state:paused}
 @keyframes fly{0%{opacity:0;transform:translate(0,8px) scale(.3) rotate(-20deg)}25%{opacity:.95}60%{opacity:.9}100%{opacity:0;transform:translate(var(--dx),-12px) scale(1.1) rotate(25deg)}}
 .gempty{margin-top:19px;background:var(--card);border-radius:28px;padding:44px 20px;text-align:center;color:var(--hint)}
 .gbtn{flex:none;width:max-content;min-width:calc(var(--hdr-h) + 24px);flex-direction:column;gap:0;padding:0 18px;line-height:1}
@@ -491,9 +493,10 @@ const POOL=[15,15,25,25,25,50,50,50,100,100,150,250,350,500,750,1000,1500,2000,2
 function rndPrice(k){let h=5381;k=String(k);for(let i=0;i<k.length;i++)h=((h<<5)+h+k.charCodeAt(i))>>>0;return POOL[h%POOL.length]}
 
 // летящие звёздочки на плашке цены
-const SPKS=[[6,18,7,-10,2.6,0],[18,10,6,8,3.1,-1.1],[34,20,8,-6,2.8,-.5],[48,8,6,10,3.4,-2],[26,24,5,12,2.4,-1.6],[58,18,6,-8,3.0,-2.4]]
+const SPKS=[[4,18,6,-10,2.6,0],[12,8,5,8,3.1,-1.1],[22,21,7,-6,2.8,-.5],[30,6,6,10,3.4,-2],[38,19,5,12,2.4,-1.6],[46,9,7,-8,3.0,-2.4],[54,20,6,9,2.7,-.8],[60,7,5,-12,3.3,-1.9],[16,14,5,7,2.9,-2.7],[42,14,6,-9,3.2,-.3]]
   .map(c=>'<i class="sp" style="left:'+c[0]+'px;top:'+c[1]+'px;width:'+c[2]+'px;height:'+c[2]+'px;--dx:'+c[3]+'px;animation-duration:'+c[4]+'s;animation-delay:'+c[5]+'s"></i>').join('');
 
+const GIO=window.IntersectionObserver?new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('vis',e.isIntersecting)),{rootMargin:'40px'}):null;
 function renderGifts(list){
   $('#grid').innerHTML = list.map((g,i)=>{
     const price = i<PRICES.length ? PRICES[i] : rndPrice(g.id||g.name||i);
@@ -501,7 +504,7 @@ function renderGifts(list){
     (g.image?'<img loading="lazy" src="'+g.image+'" alt="" onerror="this.replaceWith(\'🎁\')">':(g.emoji||'🎁'))+
     '</div><div class="price">'+SPKS+'<img class="pst" src="'+STAR+'" alt=""><span>'+fmt(price)+'</span></div></div>';
   }).join('');
-  $$('.gift').forEach(el=>{ el.onclick=()=>toast('Подарок за ★ '+fmt(el.dataset.p)+': скоро'); });
+  $$('.gift').forEach(el=>{ if(GIO)GIO.observe(el); else el.classList.add('vis'); el.onclick=()=>toast('Подарок за ★ '+fmt(el.dataset.p)+': скоро'); });
 }
 renderGifts(FALLBACK);
 if (GIFTS_URL) fetch(GIFTS_URL).then(r=>r.json()).then(d=>{const l=Object.keys(d).map(id=>({id,name:d[id],image:IMG(id)}));if(l.length)renderGifts(l)}).catch(()=>{});
@@ -525,7 +528,7 @@ $$('#gtabs button').forEach(b=>b.onclick=()=>{
 const SP=(function(){
   const cv=$('#gsp'),cx=cv.getContext('2d');
   const COL=['255,204,64','255,184,48','245,166,35','255,224,128','255,238,176'];
-  let W=0,H=0,ps=[],raf=0,last=0;
+  let W=0,H=0,ps=[],raf=0,last=0,held=0,running=0;
   const R=(a,b)=>a+Math.random()*(b-a);
   function spawn(p,first){
     p.x=R(0,W);p.y=R(0,H);
@@ -540,7 +543,7 @@ const SP=(function(){
     const r=cv.getBoundingClientRect(); if(!r.width) return false;
     const d=Math.min(window.devicePixelRatio||1,2); W=r.width;H=r.height;
     cv.width=Math.round(W*d);cv.height=Math.round(H*d);cx.setTransform(d,0,0,d,0,0);
-    const n=Math.round(W*H/1000);
+    const n=Math.round(W*H/520);
     while(ps.length<n)ps.push(spawn({},true)); ps.length=n;
     return true;
   }
@@ -567,17 +570,29 @@ const SP=(function(){
     }
     draw();
   }
+  function kick(){if(running&&!held&&!raf&&W&&store.get('anim','1')==='1'){last=performance.now();raf=requestAnimationFrame(frame)}}
+  function hold(bit,v){held=v?(held|bit):(held&~bit);if(held){cancelAnimationFrame(raf);raf=0}else kick()}
   function start(){
-    stop();
+    stop();running=1;
     raf=requestAnimationFrame(function wait(){
       if(!size()){raf=requestAnimationFrame(wait);return}
-      if(store.get('anim','1')==='1'){last=performance.now();raf=requestAnimationFrame(frame)}
+      if(store.get('anim','1')==='1'&&!held){last=performance.now();raf=requestAnimationFrame(frame)}
       else draw();
     });
   }
-  function stop(){cancelAnimationFrame(raf);raf=0}
+  function stop(){running=0;cancelAnimationFrame(raf);raf=0}
   if(window.ResizeObserver)new ResizeObserver(()=>{if(W&&cv.getBoundingClientRect().width!==W)size()}).observe(cv);
-  return {start,stop};
+  if(window.IntersectionObserver)new IntersectionObserver(e=>hold(2,!e[e.length-1].isIntersecting)).observe(cv);
+  return {start,stop,hold};
+})();
+
+/* пауза анимаций во время скролла + анимация только видимых карточек */
+(function(){
+  let t=0;
+  document.addEventListener('scroll',()=>{
+    if(!document.body.classList.contains('scrolling')){document.body.classList.add('scrolling');SP.hold(1,true)}
+    clearTimeout(t);t=setTimeout(()=>{document.body.classList.remove('scrolling');SP.hold(1,false)},140);
+  },{capture:true,passive:true});
 })();
 
 function giftsOn(on){
