@@ -9,8 +9,9 @@
 <style>
 :root{
 /* ===== РАЗМЕРЫ ИКОНОК: меняй любую отдельно ===== */
---ic-market:33px;--ic-gift:33px;--ic-star:32px;            /* меню */
+--ic-market:34px;--ic-gift:33px;--ic-star:32px;            /* меню */
 --menu-label-gap:0px;                                      /* расстояние от иконки до подписи в меню (меньше = ближе) */
+--menu-icon-y:1px;                                          /* сдвиг всех иконок меню вниз (подписи не двигаются) */
 --ic-star-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
@@ -47,7 +48,8 @@ h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 .row:active{background:#2e2e31}
 .ic{width:var(--ic-plate);height:var(--ic-plate);flex:none;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff}
 .ic svg{fill:#fff;fill-rule:evenodd}
-.menu-item[data-p="stars"] svg{transform:translateY(var(--ic-star-y))}
+.menu-icon-wrap svg{transform:translateY(var(--menu-icon-y))}
+.menu-item[data-p="stars"] svg{transform:translateY(calc(var(--menu-icon-y) + var(--ic-star-y)))}
 .ico{flex:none;width:var(--s,24px);height:var(--s,24px)}
 .row .t{flex:1}
 .row .v{color:var(--hint)}
