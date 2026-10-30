@@ -16,7 +16,7 @@
 --ic-market-y:0.33px;                                        /* доп. сдвиг иконки маркета вниз */
 --ic-settings-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:96px;--ava-top:-10px;--pcard-r:32px;               /* аватар и скругление карточки профиля */
+--ava-size:100px;--ava-top:-14px;--pgap:16px;--pcard-r:32px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --ic-profile:24px;--ic-rating:24px;--ic-stars:24px;--ic-promo:24px;
@@ -45,10 +45,10 @@ h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 
 /* profile */
 .ava{width:var(--ava-size);height:var(--ava-size);border-radius:50%;margin:var(--ava-top) auto 14px;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:700}
-.pname{font-size:28px;font-weight:650;text-align:center}
-.pnum{color:var(--hint);display:flex;align-items:center;justify-content:center;gap:6px;margin:4px 0 22px}
+.pname{font-size:28px;font-weight:600;text-align:center}
+.pnum{color:var(--hint);display:flex;align-items:center;justify-content:center;gap:6px;margin:var(--pgap) 0}
 .pnum svg{fill:var(--accent);fill-rule:evenodd}
-.pstat{display:flex;align-items:center;justify-content:center;gap:6px;color:var(--hint);font-size:17px;font-weight:500;margin:6px 0 28px}
+.pstat{display:flex;align-items:center;justify-content:center;gap:6px;color:var(--hint);font-size:17px;font-weight:500;margin:var(--pgap) 0}
 .pstat svg{fill:var(--accent);fill-rule:evenodd}
 .pf{padding:14px 16px;position:relative}
 .pf b{display:block;font-size:14px;font-weight:550;margin-bottom:4px}
