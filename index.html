@@ -16,7 +16,7 @@
 --ic-contacts-y:0px;                                      /* доп. сдвиг иконки контактов вниз */
 --ic-settings-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:15px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:48px;--set-r-multi:34px;               /* аватар и скругление карточки профиля */
+--ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:13px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:48px;--set-r-multi:34px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;--ic-pf-qr:32px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:24px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
@@ -64,7 +64,9 @@ h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 .list{background:var(--card);border-radius:var(--list-r);margin-bottom:16px;overflow:hidden}
 .row{display:flex;align-items:center;gap:14px;padding:0 16px;height:54px;cursor:pointer}
 .ic{width:var(--ic-plate);height:var(--ic-plate);flex:none;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff}
-.ic svg{fill:#fff;fill-rule:evenodd}
+.ic svg{fill:#fff;fill-rule:evenodd;position:relative}
+.ic{position:relative}
+.ic:before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(to bottom,rgba(255,255,255,.32),rgba(255,255,255,0) 60%,rgba(0,0,0,.1))}
 .menu-icon-wrap svg{transform:translateY(var(--menu-icon-y))}
 .menu-item[data-p="contacts"] svg{transform:translateY(calc(var(--menu-icon-y) + var(--ic-contacts-y)))}
 .menu-item[data-p="chats"] svg{transform:translateY(calc(var(--menu-icon-y) + var(--ic-chats-y)))}
@@ -98,7 +100,7 @@ radial-gradient(ellipse 30px 48% at 100% 50%,rgba(var(--glass-rgb),var(--glass-f
 .glass::after{box-shadow:inset 0 0 var(--glass2-blur) var(--glass2-spread) rgba(var(--glass2-rgb),var(--glass2-a));
 -webkit-mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse var(--glass-h) var(--glass-v) at 100% 100%,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse 30px 48% at 100% 50%,rgba(0,0,0,.4) 0%,transparent 100%);
 mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse var(--glass-h) var(--glass-v) at 100% 100%,#000 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.18) 72%,transparent 100%),radial-gradient(ellipse 30px 48% at 100% 50%,rgba(0,0,0,.4) 0%,transparent 100%)}
-#bar{position:fixed;left:16px;right:16px;bottom:16px;z-index:1001;display:flex;gap:10px;align-items:center}
+#bar{position:fixed;left:17px;right:17px;bottom:17px;z-index:1001;display:flex;gap:10px;align-items:center}
 #menuPill{flex:1;height:67px;border-radius:60px;display:flex;justify-content:space-between;align-items:center;padding:5px 4px 8px}
 #menuSlider.no-transition{transition:none!important}
 #menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1)}
