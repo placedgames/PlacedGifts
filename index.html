@@ -130,7 +130,7 @@ mask-image:radial-gradient(ellipse var(--glass-h) var(--glass-v) at 0 0,#000 0%,
 .page.anim .cimg{transition:left .22s,top .22s,width .22s,height .22s,border-radius .22s,font-size .22s,padding .22s;transition-timing-function:cubic-bezier(.3,.8,.3,1)}
 .page.anim .phead{transition:height .22s cubic-bezier(.3,.8,.3,1)}
 .page.anim .phead>:not(.ava){transition:none}
-.page.anim .cshade{transition:opacity .22s cubic-bezier(.3,.8,.3,1)}
+.page.anim .cshade{transition:opacity .22s cubic-bezier(.3,.8,.3,1),clip-path .22s cubic-bezier(.3,.8,.3,1)}
 .page.anim .cinfo{transition:top .22s cubic-bezier(.3,.8,.3,1)}
 .page.anim .cname,.page.anim .cstat,.page.anim .cstat svg{transition:transform .22s cubic-bezier(.3,.8,.3,1),font-size .22s cubic-bezier(.3,.8,.3,1),margin .22s cubic-bezier(.3,.8,.3,1),color .22s,fill .22s}
 
@@ -354,13 +354,15 @@ function makeCover(id){
     im.style.left=lerp(g.L,0,p)+'px';im.style.top=lerp(g.T,0,p)+'px';
     im.style.width=lerp(g.S,g.W,p)+'px';im.style.height=lerp(g.S,g.CH,p)+'px';
     im.style.borderRadius=lerp(g.S/2,0,p)+'px';
+    {const L=lerp(g.L,0,p),T=lerp(g.T,0,p),Wd=lerp(g.S,g.W,p),Hd=lerp(g.S,g.CH,p);
+     pg.querySelector('.cshade').style.clipPath='inset('+(T-(g.CH-g.SH))+'px '+(g.W-(L+Wd))+'px '+(g.CH-(T+Hd))+'px '+L+'px round '+lerp(g.S/2,0,p)+'px)';}
     im.style.fontSize=lerp(g.S*.44,g.W*.38,p)+'px';
     im.style.paddingBottom=lerp(0,g.CH*.18,p)+'px';
   }
   function measure(){
     pg.classList.remove('anim');hd.style.height='auto';
     h0=hd.offsetHeight;
-    g={L:av.offsetLeft,T:av.offsetTop,S:av.offsetWidth,W:pg.clientWidth,CH:cv.offsetHeight};
+    g={L:av.offsetLeft,T:av.offsetTop,S:av.offsetWidth,W:pg.clientWidth,CH:cv.offsetHeight,SH:pg.querySelector('.cshade').offsetHeight};
     h1=Math.max(h0,g.CH-hd.offsetTop+16);
     try{
       const cr=cv.getBoundingClientRect(),rn=pn.getBoundingClientRect(),rp=pst.getBoundingClientRect();
