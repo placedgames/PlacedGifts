@@ -83,10 +83,17 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 /* stub pages */
 .hb.hb-title{padding:0 24px;border-radius:23.85px/22.5px}
 .hb-ava i{display:flex;align-items:center;justify-content:center;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:50%;background:linear-gradient(to bottom,#4fb0f2,#2b78cf)}
-#p-saved{padding:0}
-#p-saved .sv-msg{position:fixed;left:18px;right:18px;bottom:18px;z-index:5;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
+#p-saved,#p-saved.tr{padding:0;background:#000 url(https://cdn.jsdelivr.net/gh/placedgames/pg/Chat.jpg) center/cover no-repeat}
+#p-saved .sv-bar{position:fixed;left:30px;right:30px;bottom:22px;z-index:5;display:flex;align-items:center;gap:10px}
+#p-saved .sv-msg{flex:1;min-width:0;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
+#p-saved .sv-gift{flex:none;width:41px;height:41px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:transform .2s}
+#p-saved .sv-gift:active{transform:scale(1.1)}
+#p-saved .sv-gift svg{fill:#fff;fill-rule:evenodd}
 #p-saved .sv-msg input{width:100%;height:100%;padding:0;margin:0;text-align:left;line-height:normal;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
-#p-saved .sv-msg input::placeholder{color:#8e8e93}
+#p-saved .sv-msg input::placeholder{color:#fff;opacity:1}
+#p-saved .sv-msg input:disabled{-webkit-text-fill-color:#fff;opacity:1}
+#p-saved .sv-msg input{font-size:18px}
+#p-saved .sv-msg input{text-align:left}
 .hdr-title{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:18px;font-weight:700;pointer-events:none}
 #p-chats{padding-top:0;padding-left:0;padding-right:0}
 .chats{background:var(--card);padding-top:calc(var(--hdr-top) + var(--hdr-h) + 8px);border-bottom:1px solid #333335}
@@ -362,7 +369,10 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 </section>
 
 <section class="page" id="p-saved">
-  <label class="sv-msg glass"><input type="text" placeholder="Сообщение" maxlength="500" autocomplete="off"></label>
+  <div class="sv-bar">
+    <label class="sv-msg glass"><input type="text" placeholder="Сообщения недоступны" disabled readonly autocomplete="off"></label>
+    <button class="sv-gift glass" data-s="Подарок" aria-label="Подарок"><svg class="ico" style="--s:28px"><use href="#i-gift2"/></svg></button>
+  </div>
 </section>
 
 <section class="page" id="p-chats">
