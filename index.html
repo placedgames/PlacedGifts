@@ -81,6 +81,12 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .pst{width:19px;height:19px;object-fit:contain;flex:none;position:relative}
 
 /* stub pages */
+.hb.hb-title{padding:0 24px}
+.hb-ava i{display:flex;align-items:center;justify-content:center;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:50%;background:linear-gradient(to bottom,#4fb0f2,#2b78cf)}
+#p-saved{padding:0}
+#p-saved .sv-msg{position:fixed;left:16px;right:16px;bottom:18px;z-index:5;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
+#p-saved .sv-msg input{width:100%;height:100%;padding:0;margin:0;text-align:left;line-height:normal;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
+#p-saved .sv-msg input::placeholder{color:#8e8e93}
 .hdr-title{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:18px;font-weight:700;pointer-events:none}
 #p-chats{padding-top:0;padding-left:0;padding-right:0}
 .chats{background:var(--card);padding-top:calc(var(--hdr-top) + var(--hdr-h) + 8px);border-bottom:1px solid #333335}
@@ -355,13 +361,17 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
   <div class="empty">Скоро здесь появятся контакты</div>
 </section>
 
+<section class="page" id="p-saved">
+  <label class="sv-msg glass"><input type="text" placeholder="Сообщение" maxlength="500" autocomplete="off"></label>
+</section>
+
 <section class="page" id="p-chats">
   <div class="chats">
     <div class="chat" data-s="Маркет">
       <div class="chat-ava" style="background:linear-gradient(to bottom,#ffa94d,#f0731c)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9.5"/><path d="M3 9.5 4.7 4.6A1 1 0 0 1 5.6 4h12.8a1 1 0 0 1 .9.6L21 9.5a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0Z"/></svg></div>
       <div class="chat-b"><div class="chat-t">Маркет</div><div class="chat-d"></div><div class="chat-m">Покупайте и продавайте подарки, следите за ценами.</div><svg class="chat-pin" viewBox="0 0 24 24"><path d="M14.5 3.2a1 1 0 0 1 1.4 0l4.9 4.9a1 1 0 0 1 0 1.4l-.7.7a1 1 0 0 1-1.2.15l-2.5-1.4-3.3 3.3.5 3.4a1 1 0 0 1-.3.9l-.6.6a1 1 0 0 1-1.4 0L8 14.6l-4.6 4.6a.9.9 0 1 1-1.3-1.3L6.7 13.3 3.6 10.2a1 1 0 0 1 0-1.4l.6-.6a1 1 0 0 1 .9-.3l3.4.5 3.3-3.3-1.4-2.5a1 1 0 0 1 .15-1.2Z"/></svg></div>
     </div>
-    <div class="chat" data-s="Избранное">
+    <div class="chat" data-go="saved">
       <div class="chat-ava" style="background:linear-gradient(to bottom,#4fb0f2,#2b78cf)"><svg viewBox="0 0 24 24" fill="#fff"><path d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v14.6a.7.7 0 0 1-1.1.6L12 16.4l-5.4 3.8a.7.7 0 0 1-1.1-.6V5A1.5 1.5 0 0 1 7 3.5Z"/></svg></div>
       <div class="chat-b"><div class="chat-t">Избранное</div><div class="chat-d"></div><div class="chat-m">Сохраняйте сюда сообщения, ссылки и файлы.</div><svg class="chat-pin" viewBox="0 0 24 24"><path d="M14.5 3.2a1 1 0 0 1 1.4 0l4.9 4.9a1 1 0 0 1 0 1.4l-.7.7a1 1 0 0 1-1.2.15l-2.5-1.4-3.3 3.3.5 3.4a1 1 0 0 1-.3.9l-.6.6a1 1 0 0 1-1.4 0L8 14.6l-4.6 4.6a.9.9 0 1 1-1.3-1.3L6.7 13.3 3.6 10.2a1 1 0 0 1 0-1.4l.6-.6a1 1 0 0 1 .9-.3l3.4.5 3.3-3.3-1.4-2.5a1 1 0 0 1 .15-1.2Z"/></svg></div>
     </div>
@@ -604,9 +614,11 @@ const HDR={
   settings:()=>hRound(QR,'qr')+hTxt('Изм.','edit'),
   me:()=>hRound(BACK,'back')+hTxt('Изм.','edit'),
   gifts:()=>hRound(BACK,'back')+'<div class="hb gbtn glass" data-a="stars"><div class="gin"><div class="gbl">Баланс</div><div class="gv"><img src="'+STAR+'" alt=""><span>'+balHtml()+'</span></div></div></div>',
-  stars:()=>hRound(BACK,'back')
+  stars:()=>hRound(BACK,'back'),
+  saved:()=>hRound(BACK,'back')+'<button class="hb hb-txt hb-title glass" data-a="stitle">Избранное</button><button class="hb hb-round hb-ava glass" data-a="sava"><i>'+SAVED_ICO+'</i></button>'
 };
-const HDR_TOAST={sort:'Сортировка',add:'Добавить',edit:'Изменить',write:'Написать',qr:'QR-код'};
+const SAVED_ICO='<svg viewBox="0 0 24 24" width="24" height="24" fill="#fff"><path d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v14.6a.7.7 0 0 1-1.1.6L12 16.4l-5.4 3.8a.7.7 0 0 1-1.1-.6V5A1.5 1.5 0 0 1 7 3.5Z"/></svg>';
+const HDR_TOAST={stitle:'Избранное',sava:'Избранное',sort:'Сортировка',add:'Добавить',edit:'Изменить',write:'Написать',qr:'QR-код'};
 $('#hdr').addEventListener('click',e=>{
   const t=e.target.closest('[data-a]'); if(!t) return;
   const a=t.dataset.a;
@@ -704,7 +716,7 @@ function slide(p){
 }
 let cur='chats',hist=[];
 function syncInstant(){const s=$('#menuSlider');s.classList.add('no-transition');slide(cur);void s.offsetWidth;s.classList.remove('no-transition')}
-const DETAIL=['gifts','stars','me'], NAV_EASE='cubic-bezier(.32,.72,0,1)', NAV_MS=560;
+const DETAIL=['gifts','stars','me','saved'], NAV_EASE='cubic-bezier(.32,.72,0,1)', NAV_MS=560;
 let navFin=null, swipeOn=false, meFull=false;
 const animOn=()=>store.get('anim','1')==='1';
 function navDone(){if(navFin){const f=navFin;navFin=null;f()}}
@@ -715,7 +727,7 @@ function setHdr(p,pulse){
   if(pulse&&animOn())$$('#hdr .hb').forEach(b=>b.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:520,easing:'cubic-bezier(.4,0,.2,1)'}));
 }
 // o: {noanim:true} — без анимации; {full:true} — страница профиля поверх меню (кнопка «Мой профиль»); {bounce:true} — «подпрыгнуть» кнопками хедера
-const noBar=(n,full)=>n==='gifts'||n==='stars'||(n==='me'&&full);
+const noBar=(n,full)=>n==='gifts'||n==='stars'||n==='saved'||(n==='me'&&full);
 function go(p,instant,back,o){
   o=o||{};
   navDone();
