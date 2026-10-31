@@ -298,7 +298,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-menu.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity 0s,transform .3s cubic-bezier(.3,1.25,.4,1),visibility 0s}
 #bm .bm-menu::before,#bm .bm-menu::after{z-index:0}
 #bm .bm-mi{position:relative;z-index:1;display:block;width:calc(100% - 16px);margin:0 8px;height:46px;padding:0 22px;border:0;border-radius:20px;background:none;color:#fff;font:inherit;font-size:19px;font-weight:450;text-align:left;white-space:nowrap;cursor:pointer;-webkit-appearance:none;appearance:none}
-#bm .bm-thumb{position:absolute;z-index:0;left:8px;right:8px;top:0;height:46px;border-radius:23px;background:rgba(255,255,255,.09);opacity:0;transition:opacity .2s ease;pointer-events:none;will-change:transform}
+#bm .bm-thumb{position:absolute;z-index:0;left:8px;right:8px;top:0;height:46px;border-radius:23px;background:rgba(255,255,255,.09);opacity:0;transition:opacity .2s ease;pointer-events:none;-webkit-backface-visibility:hidden;backface-visibility:hidden}
 #bm .bm-thumb.show{opacity:1}
 #bm .bm-mi.sel{color:#b4b4b9}
 #bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
@@ -1245,9 +1245,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const menu=$b('bmMenu'),sel=$b('bmCnt'),btn=sel.closest('.bm-cnt');
     menu.innerHTML='<i class="bm-thumb" id="bmThumb"></i>'+[1,2,5,10].map(n=>'<button type="button" class="bm-mi" role="menuitem" data-n="'+n+'">'+n+'\u00a0'+plural(n)+'</button>').join('');
     const th=$b('bmThumb'),items=[...menu.querySelectorAll('.bm-mi')];
-    /* ползунок — полностью круглый со сглаженными краями */
-    requestAnimationFrame(()=>{try{smoothFit(th,'pill',true)}catch(e){}});
-    const place=(y,anim)=>{th.style.transition=anim?'transform .3s cubic-bezier(.25,.8,.25,1)':'none';th.style.transform='translateY('+y+'px)'};
+    const place=(y,anim)=>{th.style.transition=anim?'transform .3s cubic-bezier(.25,.8,.25,1)':'none';th.style.transform='translate3d(0,'+y+'px,0)'};
     const idxOf=v=>Math.max(0,items.findIndex(b=>b.dataset.n===String(v)));
     const hide=()=>{menu.classList.remove('on');th.classList.remove('show')};
     const mark=()=>items.forEach(b=>b.classList.toggle('sel',b.dataset.n===String(sel.value)));
@@ -1260,9 +1258,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     menu.addEventListener('pointerdown',e=>{
       if(!menu.classList.contains('on'))return;
       drag={id:e.pointerId};try{menu.setPointerCapture(e.pointerId)}catch(_){}
-      place(yToThumb(e.clientY),false);th.classList.add('show');
+      place(items[nearest(yToThumb(e.clientY))].offsetTop,false);th.classList.add('show');
     });
-    menu.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;place(yToThumb(e.clientY),false)});
+    menu.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;place(items[nearest(yToThumb(e.clientY))].offsetTop,true)});
     const end=e=>{
       if(!drag||e.pointerId!==drag.id)return;drag=null;
       const k=e.type==='pointercancel'?idxOf(sel.value):nearest(yToThumb(e.clientY));
@@ -1361,7 +1359,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     raf=(on||Math.abs(tgt-pos)>.2)?requestAnimationFrame(tick):0;
   }
   sheet.addEventListener('touchstart',e=>{
-    if(e.touches.length!==1||e.target.closest('#bmBuy,select,input'))return;
+    if(e.touches.length!==1||e.target.closest('#bmBuy,#bmMenu,select,input'))return;
     clearTimeout(tmr);
     if(sq){ /* поймали окно посреди возврата */
       const v=new DOMMatrix(getComputedStyle(inner).transform).m42;
