@@ -55,8 +55,8 @@ body.nobar #bar{display:none}
 .gtabs button{position:relative;z-index:1;height:28px;padding:0 12px;border:0;background:none;color:#8a8a8e;font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:color .2s}
 .gtabs button.on{color:#a6a6ab}
 .grid{margin-top:19px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.gift{position:relative;min-width:0;height:153px;background:var(--card);border-radius:21px;padding:18px 0 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .38s cubic-bezier(.22,1,.36,1);backface-visibility:hidden}
-.gift:active{transform:scale(.96);transition:transform .22s cubic-bezier(.3,.7,.4,1)}
+.gift{position:relative;min-width:0;height:153px;background:var(--card);border-radius:21px;padding:18px 0 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .55s cubic-bezier(.22,1,.36,1);backface-visibility:hidden}
+.gift:active{transform:scale(.96);transition:transform .34s cubic-bezier(.3,.7,.4,1)}
 .rib{position:absolute;top:-2.5px;right:-2.5px;width:115px;height:115px;pointer-events:none;z-index:2}
 .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
 .rib span{position:absolute;left:78.2%;top:21.8%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
@@ -250,13 +250,13 @@ body.navanim #bar{z-index:1}
 #bm .bm-buywrap{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:24px 29px 31px;pointer-events:none}
 #bm .bm-buywrap>*{pointer-events:auto}
 #bm .bm-buywrap{isolation:isolate}
-#bm .bm-buywrap::before,#bm .bm-buywrap::after{content:"";position:absolute;left:-48px;right:-48px;bottom:-48px;top:0;z-index:-1;pointer-events:none}
+#bm .bm-buywrap::before,#bm .bm-buywrap::after{content:"";position:absolute;left:-48px;right:-48px;bottom:-48px;top:-6px;z-index:-1;pointer-events:none}
 /* blur считается по расширенной области (нет слабого края), а показывается только внутри скруглённого низа окна */
-#bm .bm-buywrap::before{-webkit-backdrop-filter:blur(22px) saturate(1.6) brightness(.9);backdrop-filter:blur(22px) saturate(1.6) brightness(.9);
+#bm .bm-buywrap::before{-webkit-backdrop-filter:blur(20px) saturate(1.5) brightness(.92);backdrop-filter:blur(20px) saturate(1.5) brightness(.92);
 -webkit-clip-path:inset(0 48px 48px 48px round 0 0 53px 53px);clip-path:inset(0 48px 48px 48px round 0 0 53px 53px);
--webkit-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.15) 7px,rgba(0,0,0,.5) 14px,rgba(0,0,0,.85) 21px,#000 30px);
-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.15) 7px,rgba(0,0,0,.5) 14px,rgba(0,0,0,.85) 21px,#000 30px)}
-#bm .bm-buywrap::after{background:linear-gradient(to bottom,rgba(28,28,30,0) 0,rgba(28,28,30,.15) 7px,rgba(28,28,30,.5) 14px,rgba(28,28,30,.85) 21px,rgba(28,28,30,.97) 28px,#1c1c1e 36px)}
+-webkit-mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px);
+mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px)}
+#bm .bm-buywrap::after{background:linear-gradient(to bottom,rgba(28,28,30,0.000) 0px,rgba(28,28,30,0.010) 2px,rgba(28,28,30,0.038) 4px,rgba(28,28,30,0.082) 6px,rgba(28,28,30,0.140) 8px,rgba(28,28,30,0.209) 10px,rgba(28,28,30,0.286) 12px,rgba(28,28,30,0.369) 14px,rgba(28,28,30,0.456) 16px,rgba(28,28,30,0.544) 18px,rgba(28,28,30,0.631) 20px,rgba(28,28,30,0.714) 22px,rgba(28,28,30,0.791) 24px,rgba(28,28,30,0.860) 26px,rgba(28,28,30,0.918) 28px,rgba(28,28,30,0.962) 30px,rgba(28,28,30,0.990) 32px,rgba(28,28,30,1.000) 34px,#1c1c1e 36px)}
 #bm .bm-sheet{touch-action:none}
 #bm .bm-in{display:flex;flex-direction:column;flex:0 1 auto;min-height:0;will-change:transform}
 #bm .bm-pre{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
@@ -278,6 +278,7 @@ mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.15) 7px,rgba(0,0,
 .noanim #bm .bm-buy.press{transform:none}
 #bm .bm-buy svg{flex:none;width:22px;height:22px;fill:#fff;fill-rule:evenodd;margin:0 -6px 0 -3px}
 </style>
+<link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg">
 </head>
 <body>
 
@@ -1003,6 +1004,7 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     $b('bmPill').style.setProperty('--ps',defH?Math.max(0,(defH-card.offsetHeight)/2)+'px':'0px');
   }
   let defH=0;
+  (function(){const im=new Image();im.src='https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg';if(im.decode)im.decode().catch(()=>{})})();
   function lockMid(){
     const mid=bm.querySelector('.bm-mid'),card=bm.querySelector('.bm-card');
     mid.style.height='';defH=0;renderCd();
