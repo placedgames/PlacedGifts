@@ -93,11 +93,11 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 #svMsgs{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;display:flex;flex-direction:column;align-items:center;gap:10px;padding:calc(var(--hdr-top) + var(--hdr-h) + 20px) 16px 80px}
 #svMsgs::before{content:"";margin-top:auto}
 .svm{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;flex:none}
-.sv-pill{height:22px;padding:0 9px;border-radius:11px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:500;background:rgba(34,34,37,.9);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.sv-pill{height:22px;padding:0 9px;border-radius:11px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:500;background:rgba(36,37,41,.9);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 .sv-pill b{font-weight:600}
 .sv-card{position:relative;width:224px;border-radius:25px;padding:16px 14px 21px;display:flex;flex-direction:column;align-items:center;text-align:center;isolation:isolate;transform:translateZ(0);cursor:pointer}
-#bm .bm-card::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:var(--sqr,25px);-webkit-clip-path:var(--sq);clip-path:var(--sq);background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
-.sv-card::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:var(--sqr,25px);-webkit-clip-path:var(--sq);clip-path:var(--sq);background:rgba(34,34,37,.96);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+#bm .bm-card::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:var(--sqr,25px);-webkit-clip-path:var(--sq);clip-path:var(--sq);background:rgba(66,66,70,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.sv-card::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:var(--sqr,25px);-webkit-clip-path:var(--sq);clip-path:var(--sq);background:rgb(36,37,41);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 .sv-card .rib{position:absolute;top:-1.5px;right:-1.5px;width:115px;height:115px;pointer-events:none;z-index:2}
 .sv-card .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
 .sv-card .rib span{position:absolute;left:77.56%;top:22.44%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:12px;font-weight:550;line-height:1;white-space:nowrap}
@@ -173,9 +173,9 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .sw.on i{background:#34c759}.sw.on i:after{left:22px}
 
 /* меню: оригинальный liquid glass */
-:root{--glass-rgb:88,90,98;--glass-strong:.14;--glass-side:rgba(115,117,126,0);--glass-w:.75px;--glass-h:100%;--glass-v:min(28px,55%);
---glass2-rgb:104,106,114;--glass2-a:.4;--glass2-blur:1px;--glass2-spread:1px;
---menu-glass-bg:rgba(48,48,50,.7);--menu-glass-blur:10px;--menu-inactive:#fff;--menu-slider-bg:rgba(200,200,204,.1)}
+:root{--glass-rgb:104,106,114;--glass-strong:.14;--glass-side:rgba(115,117,126,0);--glass-w:.75px;--glass-h:100%;--glass-v:min(28px,55%);
+--glass2-rgb:120,122,130;--glass2-a:.4;--glass2-blur:1px;--glass2-spread:1px;
+--menu-glass-bg:rgba(62,62,66,.7);--menu-glass-blur:6px;--menu-inactive:#fff;--menu-slider-bg:rgba(200,200,204,.1)}
 .glass{position:relative;border:0;background:var(--menu-glass-bg);
 -webkit-backdrop-filter:blur(var(--menu-glass-blur));backdrop-filter:blur(var(--menu-glass-blur))}
 .glass::before,.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
@@ -299,7 +299,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:6;width:max-content;min-width:140px;border-radius:34px/30px;touch-action:none;user-select:none;-webkit-user-select:none;opacity:0;visibility:hidden;pointer-events:none;transform:scale(.78);transform-origin:top right;transition:opacity .15s ease,transform .3s cubic-bezier(.3,1.25,.4,1),visibility 0s linear .3s;box-shadow:0 12px 36px rgba(0,0,0,.35)}
 #bm .bm-menu.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity 0s,transform .3s cubic-bezier(.3,1.25,.4,1),visibility 0s}
 /* размытие и обводка — на отдельном слое, который не перерисовывается при подсветке пунктов (иначе на нём мерцают блики) */
-#bm .bm-mbg{position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:34px/30px;background:rgba(66,66,70,.5);-webkit-backdrop-filter:blur(30px);backdrop-filter:blur(30px);-webkit-transform:translateZ(0);transform:translateZ(0)}
+#bm .bm-mbg{position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:34px/30px;background:rgba(78,78,83,.5);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);-webkit-transform:translateZ(0);transform:translateZ(0)}
 #bm .bm-items{position:relative;z-index:1;padding:8px 0}
 /* в середине окна обводка и засвет у liquid glass полностью гаснут (маска = 0) — именно там мерцало; оставляем едва заметный минимум и выносим слои отдельно */
 #bm .bm-mbg{--glass-side:rgba(115,117,126,.02)}
@@ -310,7 +310,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-mi.sel{color:#b4b4b9}
 #bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
 #bm .bm-btn svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
-#bm .bm-pill{position:absolute;z-index:1;left:50%;top:var(--pt,calc(50% + 9.5px));transform:translateX(-50%);height:22px;padding:0 9px;border-radius:11px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:500;pointer-events:none;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+#bm .bm-pill{position:absolute;z-index:1;left:50%;top:var(--pt,calc(50% + 9.5px));transform:translateX(-50%);height:22px;padding:0 9px;border-radius:11px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:500;pointer-events:none;background:rgba(66,66,70,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
 #bm .bm-pill b{font-weight:600}
 #bm .bm-btn{position:relative;z-index:2}
 #bm .bm-mid{flex:0 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:9px 0 0}
@@ -372,7 +372,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-buywrap{isolation:isolate}
 #bm .bm-buywrap::before,#bm .bm-buywrap::after{content:"";position:absolute;left:-48px;right:-48px;bottom:-48px;top:-6px;z-index:-1;pointer-events:none}
 /* blur считается по расширенной области (нет слабого края), а показывается только внутри скруглённого низа окна */
-#bm .bm-buywrap::before{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+#bm .bm-buywrap::before{-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
 -webkit-clip-path:var(--bwclip,inset(0 48px 48px 48px round 0 0 63.6px 63.6px/0 0 53px 53px));clip-path:var(--bwclip,inset(0 48px 48px 48px round 0 0 63.6px 63.6px/0 0 53px 53px));
 -webkit-mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px);
 mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px)}
