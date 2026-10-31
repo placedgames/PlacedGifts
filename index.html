@@ -208,9 +208,11 @@ body.navanim #bar{z-index:1}
 .mtabs button.on{color:#fff}
 /* подарки в профиле */
 .pgrid{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.pg{position:relative;min-width:0;aspect-ratio:1/1;background:var(--card);border-radius:16px;display:flex;align-items:center;justify-content:center}
-.pg .pi{width:72%;height:72%;object-fit:contain;margin-top:3%}
-.pg .pe{font-size:48px;line-height:1;margin-top:3%}
+.pg{position:relative;min-width:0;aspect-ratio:1/1;background:linear-gradient(to bottom,#324A56,#193345);border-radius:16px;display:flex;align-items:center;justify-content:center}
+.pg .rib{top:0;right:0;width:115px;height:115px}
+.pg .rib span{left:82.9%;top:17.1%;font-size:9.5px}
+.pg .pi{display:block;width:72%;height:72%;object-fit:contain;margin:0;flex:none}
+.pg .pe{display:block;font-size:48px;line-height:1;margin:0;text-align:center}
 .pbuy{position:absolute;left:5px;top:5px;width:20px;height:20px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;z-index:1}
 .pbuy.an{background:linear-gradient(to bottom,#4fb0f2,#2b78cf)}
 #toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
@@ -795,6 +797,7 @@ const PS=(function(){
 })();
 // анимируем только карточки на экране
 const GIO=window.IntersectionObserver?new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?PS.add(e.target):PS.remove(e.target)),{rootMargin:'120px 0px'}):{observe:el=>PS.add(el)};
+const RIB_P='M61.5 0L70 0Q74 0 76.83 2.83L97.17 23.17Q100 26 100 30L100 38.5Q100 42.5 97.17 39.67L60.33 2.83Q57.5 0 61.5 0Z';
 const RIB_D='M54.80 0.00L65.10 0.00Q69.10 0.00 71.93 2.83L97.17 28.07Q100.00 30.90 100.00 34.90L100.00 45.20Q100.00 56.20 92.22 48.42L51.58 7.78Q43.80 0.00 54.80 0.00Z';
 function renderGifts(list){
   $('#grid').innerHTML = list.map((g,i)=>{
@@ -982,7 +985,7 @@ function renderMyGifts(){
   const uniq=!!b&&b.dataset.m==='uniq',list=uniq?[]:MYGIFTS;
   g.innerHTML=list.map(x=>{
     const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
-    return '<div class="pg">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_D+'" fill="url(#rbB)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
+    return '<div class="pg">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbB)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
       (x.image?'<img class="pi" src="'+x.image+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+'</div>';
   }).join('');
   g.hidden=!list.length;e.hidden=list.length>0;
