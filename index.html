@@ -202,17 +202,16 @@ mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,
 body.navanim #bar{z-index:1}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
-.mtabs{margin-top:16px;height:43px;border-radius:50px;display:flex;align-items:stretch;padding:3px}
+.mtabs{margin-top:16px;height:41px;border-radius:50px;display:flex;align-items:stretch;padding:3px}
 .mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)}
 .mtabs button{position:relative;z-index:2;flex:1;border:0;background:none;color:#bdbdc1;font:inherit;font-size:16px;font-weight:550;cursor:pointer;transition:color .2s;padding:0}
 .mtabs button.on{color:#fff}
 /* подарки в профиле */
 .pgrid{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.pg{position:relative;min-width:0;aspect-ratio:1/1;background:linear-gradient(to bottom,#324A56,#193345);border-radius:16px;display:flex;align-items:center;justify-content:center}
-.pg .rib{top:0;right:0;width:115px;height:115px}
-.pg .rib span{left:82.9%;top:17.1%;font-size:9.5px}
-.pg .pi{display:block;width:72%;height:72%;object-fit:contain;margin:0;flex:none}
-.pg .pe{display:block;font-size:48px;line-height:1;margin:0;text-align:center}
+.pg{position:relative;min-width:0;aspect-ratio:1/1;background:var(--card);border-radius:16px;display:flex;align-items:center;justify-content:center}
+.pg .pi{width:72%;height:72%;object-fit:contain}
+.pg .pe{font-size:48px;line-height:1}
+.pg .rib span{left:79.76%;top:20.24%}
 .pbuy{position:absolute;left:5px;top:5px;width:20px;height:20px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;z-index:1}
 .pbuy.an{background:linear-gradient(to bottom,#4fb0f2,#2b78cf)}
 #toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
@@ -393,6 +392,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 <symbol id="icon-theme" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor" d="M11.156,2.250 L9.516,2.531 L7.641,3.234 L5.766,4.453 L4.453,5.766 L3.281,7.547 L2.625,9.188 L2.250,11.156 L2.250,12.797 L2.531,14.438 L3.281,16.406 L4.453,18.188 L5.766,19.500 L7.641,20.719 L9.188,21.328 L11.156,21.703 L12.797,21.703 L14.625,21.375 L16.594,20.578 L18.188,19.500 L19.500,18.188 L20.578,16.594 L21.328,14.766 L21.703,12.797 L21.703,11.156 L21.328,9.188 L20.578,7.359 L19.500,5.766 L18.188,4.453 L16.500,3.328 L14.625,2.578 L12.797,2.250 Z M12.750,3.750 L14.297,4.031 L15.984,4.734 L17.109,5.484 L18.234,6.562 L19.031,7.641 L19.688,8.953 L20.109,10.406 L20.250,11.625 L20.156,13.266 L19.688,15.000 L19.031,16.312 L18.234,17.391 L17.109,18.469 L15.984,19.219 L14.297,19.922 L12.891,20.203 L12.703,20.156 Z"/></symbol>
 </svg>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#f0a21c"/></linearGradient>
+<linearGradient id="rbP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#324A56"/><stop offset="1" stop-color="#193345"/></linearGradient>
 <linearGradient id="rbB" gradientUnits="userSpaceOnUse" x1="0" y1="53" x2="0" y2="0"><stop offset="0" stop-color="#1c3b52"/><stop offset="1" stop-color="#234660"/></linearGradient>
 <linearGradient id="rbS" gradientUnits="userSpaceOnUse" x1="0" y1="53" x2="0" y2="0"><stop offset="0" stop-color="#651f24"/><stop offset="1" stop-color="#732529"/></linearGradient>
 </defs><symbol id="i-gstar" viewBox="0 0 24 24"><path fill="url(#gg)" stroke="url(#gg)" stroke-width="1.6" stroke-linejoin="round" d="M12 2.6l2.8 6 6.5.8-4.8 4.5 1.3 6.5L12 17.1 6.2 20.4l1.3-6.5-4.8-4.5 6.5-.8z"/></symbol></svg>
@@ -797,7 +797,7 @@ const PS=(function(){
 })();
 // анимируем только карточки на экране
 const GIO=window.IntersectionObserver?new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?PS.add(e.target):PS.remove(e.target)),{rootMargin:'120px 0px'}):{observe:el=>PS.add(el)};
-const RIB_P='M61.5 0L70 0Q74 0 76.83 2.83L97.17 23.17Q100 26 100 30L100 38.5Q100 42.5 97.17 39.67L60.33 2.83Q57.5 0 61.5 0Z';
+const RIB_P='M58.49 0L67.56 0Q71.56 0 74.39 2.83L97.17 25.61Q100 28.44 100 32.44L100 41.51Q100 52.51 92.22 44.73L55.27 7.78Q47.49 0 58.49 0Z';
 const RIB_D='M54.80 0.00L65.10 0.00Q69.10 0.00 71.93 2.83L97.17 28.07Q100.00 30.90 100.00 34.90L100.00 45.20Q100.00 56.20 92.22 48.42L51.58 7.78Q43.80 0.00 54.80 0.00Z';
 function renderGifts(list){
   $('#grid').innerHTML = list.map((g,i)=>{
@@ -985,7 +985,7 @@ function renderMyGifts(){
   const uniq=!!b&&b.dataset.m==='uniq',list=uniq?[]:MYGIFTS;
   g.innerHTML=list.map(x=>{
     const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
-    return '<div class="pg">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbB)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
+    return '<div class="pg">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
       (x.image?'<img class="pi" src="'+x.image+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+'</div>';
   }).join('');
   g.hidden=!list.length;e.hidden=list.length>0;
