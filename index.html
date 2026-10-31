@@ -215,7 +215,7 @@ body.navanim #bar{z-index:1}
 #bm.on,#bm.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
 #bm .bm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .45s}
 #bm.on .bm-dim{opacity:1}
-#bm .bm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .52s cubic-bezier(.32,.72,0,1);will-change:transform}
+#bm .bm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:transparent;border-radius:38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform}
 #bm.on .bm-sheet{transform:translateY(0)}
 #bm .bm-sheet.drag{transition:none}
 #bm .bm-pre{position:relative;flex:0 1 auto;min-height:0;background:#000;isolation:isolate;display:flex;flex-direction:column;align-items:center;padding:16px 16px 14px;overflow:hidden}
@@ -258,7 +258,7 @@ body.navanim #bar{z-index:1}
 mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px)}
 #bm .bm-buywrap::after{background:linear-gradient(to bottom,rgba(28,28,30,0.000) 0px,rgba(28,28,30,0.040) 2px,rgba(28,28,30,0.102) 4px,rgba(28,28,30,0.174) 6px,rgba(28,28,30,0.253) 8px,rgba(28,28,30,0.334) 10px,rgba(28,28,30,0.416) 12px,rgba(28,28,30,0.498) 14px,rgba(28,28,30,0.577) 16px,rgba(28,28,30,0.653) 18px,rgba(28,28,30,0.724) 20px,rgba(28,28,30,0.790) 22px,rgba(28,28,30,0.849) 24px,rgba(28,28,30,0.900) 26px,rgba(28,28,30,0.942) 28px,rgba(28,28,30,0.973) 30px,rgba(28,28,30,0.993) 32px,rgba(28,28,30,1.000) 34px,#1c1c1e 36px)}
 #bm .bm-sheet{touch-action:none;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black)}
-#bm .bm-in{display:flex;flex-direction:column;flex:0 1 auto;min-height:0;will-change:transform}
+#bm .bm-in{display:flex;flex-direction:column;flex:0 1 auto;min-height:0;will-change:transform;background:#1c1c1e;-webkit-clip-path:inset(0 round 38px 38px 53px 53px);clip-path:inset(0 round 38px 38px 53px 53px)}
 #bm .bm-pre{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 #bm .bm-card,#bm .bm-pill{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:transform}
 #bm .bm-pill{transform:translate3d(-50%,calc(-50% + var(--ps,0px)),0)}
@@ -961,7 +961,7 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
   const bm=document.getElementById('bm'),sheet=document.getElementById('bmSheet'),$b=id=>document.getElementById(id);
   const DEF_TOTAL=30000, SOLD=0, EXCH=0.85;   // продано у всех подарков: 0
   const short=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'K':String(n);
-  let cur=null,hidden=false;
+  let cur=null,hidden=false,closeT=0;
   /* кнопка «Купить»: плавные (continuous, как в iOS/Telegram) углы + тонкая обводка */
   const SMOOTH=0.6;
   function squircle(w,h,r,sm){
@@ -1034,7 +1034,7 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
   $b('bmMsg').addEventListener('input',renderCd);
   $b('bmCnt').addEventListener('change',e=>{qty=+e.target.value||1;renderQty()});
   window.openBuy=function(g){
-    cur=g;hidden=true;$b('bmHide').classList.add('on');$b('bmMsg').value='';
+    clearTimeout(closeT);cur=g;hidden=true;$b('bmHide').classList.add('on');$b('bmMsg').value='';
     const p=+g.price,TOTAL=g.total||DEF_TOTAL,left=TOTAL-SOLD;
     $b('bmImg').innerHTML=g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁');
     $b('bmRib').textContent='1 из '+short(TOTAL);
@@ -1052,10 +1052,10 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       if(!bm.classList.contains('pre'))return;
       bm.classList.add('on');bm.setAttribute('aria-hidden','false');
-      $b('bmFill').style.width=(left/TOTAL*100)+'%';
+      setTimeout(()=>{if(bm.classList.contains('on'))$b('bmFill').style.width=(left/TOTAL*100)+'%'},450);
     }));
   };
-  function close(){document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}bm.classList.remove('on','pre');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on'))bm.style.height=''},650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+  function close(){clearTimeout(closeT);closeT=setTimeout(()=>{if(bm.classList.contains('on')||bm.classList.contains('pre'))return;document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}},650);bm.classList.remove('on','pre');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on'))bm.style.height=''},650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
   const keepTop=()=>{if(bm.classList.contains('on'))window.scrollTo(0,0)};
   if(window.visualViewport){visualViewport.addEventListener('resize',keepTop);visualViewport.addEventListener('scroll',keepTop)}
   $b('bmMsg').addEventListener('focus',()=>{keepTop();setTimeout(keepTop,50);setTimeout(keepTop,250)});
@@ -1096,8 +1096,8 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
   const inner=$b('bmIn'),CLIP='px 0 0 0 round 38px 38px 53px 53px)';
   let sy=0,on=false,tmr=0,tgt=0,pos=0,raf=0,sq=false;
   /* окно целиком остаётся своего размера: двигается только содержимое (transform) и обрезка сверху (clip-path) — без перерасчёта вёрстки */
-  function setSq(v){inner.style.transform='translate3d(0,'+v+'px,0)';sheet.style.clipPath=sheet.style.webkitClipPath='inset('+v+CLIP}
-  function clearSq(){inner.style.transition='';inner.style.transform='';sheet.style.transition='';sheet.style.clipPath=sheet.style.webkitClipPath='';sq=false}
+  function setSq(v){inner.style.transform='translate3d(0,'+v+'px,0)'}
+  function clearSq(){inner.style.transition='';inner.style.transform='';sq=false}
   function resetSq(){clearTimeout(tmr);cancelAnimationFrame(raf);raf=0;on=false;tgt=pos=0;clearSq()}
   function tick(){
     pos+=(tgt-pos)*FOLLOW;
@@ -1109,7 +1109,7 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     clearTimeout(tmr);
     if(sq){ /* поймали окно посреди возврата */
       const v=new DOMMatrix(getComputedStyle(inner).transform).m42;
-      inner.style.transition='none';sheet.style.transition='';setSq(v);pos=tgt=v;
+      inner.style.transition='none';setSq(v);pos=tgt=v;
     }else{pos=tgt=0}
     on=true;sy=e.touches[0].clientY;
   },{passive:true});
@@ -1125,7 +1125,6 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     cancelAnimationFrame(raf);raf=0;
     if(!sq)return;   /* обычный тап: ничего не трогаем */
     inner.style.transition='transform '+BACK;
-    sheet.style.transition=OPEN+',clip-path '+BACK;
     tgt=pos=0;setSq(0);
     tmr=setTimeout(clearSq,BACK_MS);
   };
