@@ -95,15 +95,16 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .svm{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;flex:none}
 .sv-pill{height:25px;padding:0 14px;border-radius:12.5px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 .sv-pill b{font-weight:500}
-.sv-card{position:relative;width:224px;border-radius:25px;padding:16px 14px 15px;display:flex;flex-direction:column;align-items:center;text-align:center;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden;cursor:pointer}
+.sv-card{position:relative;width:224px;border-radius:25px;padding:16px 14px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;isolation:isolate;transform:translateZ(0);cursor:pointer}
+#bm .bm-card::before,.sv-card::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:var(--sqr,25px);-webkit-clip-path:var(--sq);clip-path:var(--sq);background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 .sv-card .rib{position:absolute;top:-1.5px;right:-1.5px;width:115px;height:115px;pointer-events:none;z-index:2}
 .sv-card .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
-.sv-card .rib span{position:absolute;left:calc(80.63% - 4.24px);top:calc(19.37% + 4.24px);transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:11px;font-weight:550;line-height:1;white-space:nowrap}
-.sv-img{width:100%;height:112px;display:flex;align-items:center;justify-content:center;font-size:80px}
+.sv-card .rib span{position:absolute;left:77.56%;top:22.44%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:12px;font-weight:550;line-height:1;white-space:nowrap}
+.sv-img{width:100%;height:118px;display:flex;align-items:center;justify-content:center;font-size:86px}
 .sv-img img{max-width:100%;max-height:100%;object-fit:contain}
 .sv-ct{font-size:15px;font-weight:600;margin:10px 0 2px}
 .sv-cd{font-size:13px;line-height:1.2;font-weight:500;margin-top:4px;padding:0 2px}
-.sv-view{margin-top:18px;height:33px;padding:0 15px;border:0;border-radius:16.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:17px;font-weight:550;cursor:pointer}
+.sv-view{margin-top:14px;height:35px;padding:0 16px;border:0;border-radius:16.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:17px;font-weight:550;cursor:pointer}
 #p-saved .sv-bar{position:absolute;left:30px;right:30px;bottom:22px;z-index:5;display:flex;align-items:center;gap:10px}
 #p-saved .sv-msg{flex:1;min-width:0;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
 #p-saved .sv-gift{flex:none;width:41px;height:41px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:transform .2s}
@@ -296,7 +297,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-pill b{font-weight:500}
 #bm .bm-btn{position:relative;z-index:2}
 #bm .bm-mid{flex:0 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:9px 0 0}
-#bm .bm-card{position:relative;width:min(100%,224px);max-height:100%;min-height:0;border-radius:25px;padding:16px 14px 15px;display:flex;flex-direction:column;align-items:center;text-align:center;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+#bm .bm-card{position:relative;width:min(100%,224px);max-height:100%;min-height:0;border-radius:25px;padding:16px 14px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;isolation:isolate}
 #gm{position:fixed;left:0;right:0;top:0;height:100%;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .6s}
 #gm.on,#gm.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
 #gm .gm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .45s}
@@ -337,12 +338,12 @@ body.navanim #bar{z-index:1}
 .noanim #gm .gm-up.press{transform:none}
 #bm .rib{position:absolute;top:-1.5px;right:-1.5px;width:115px;height:115px;pointer-events:none;z-index:2}
 #bm .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
-#bm .rib span{position:absolute;left:calc(80.63% - 4.24px);top:calc(19.37% + 4.24px);transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:11px;font-weight:550;line-height:1;white-space:nowrap}
-#bm .bm-img{width:100%;flex:1 1 auto;min-height:56px;height:112px;max-height:112px;display:flex;align-items:center;justify-content:center;font-size:80px}
+#bm .rib span{position:absolute;left:77.56%;top:22.44%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:12px;font-weight:550;line-height:1;white-space:nowrap}
+#bm .bm-img{width:100%;flex:1 1 auto;min-height:56px;height:118px;max-height:118px;display:flex;align-items:center;justify-content:center;font-size:86px}
 #bm .bm-img img{max-width:100%;max-height:100%;object-fit:contain}
 #bm .bm-ct{flex:none;font-size:15px;font-weight:600;margin:10px 0 2px}
 #bm .bm-cd{flex:none;font-size:13px;line-height:1.2;font-weight:500;margin-top:4px;padding:0 2px}
-#bm .bm-view{flex:none;margin-top:18px;height:33px;padding:0 15px;border:0;border-radius:16.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:17px;font-weight:550;cursor:pointer}
+#bm .bm-view{flex:none;margin-top:14px;height:35px;padding:0 16px;border:0;border-radius:16.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:17px;font-weight:550;cursor:pointer}
 #bm .bm-msg{flex:none;position:relative;z-index:2;width:calc(100% - 8px);height:41px;margin-top:14px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
 #bm .bm-msg input{width:100%;height:100%;padding:0;margin:0;text-align:left;line-height:normal;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
 #bm .bm-msg input::placeholder{color:#8e8e93}
@@ -1140,6 +1141,7 @@ function renderSaved(fresh){
     '<div class="sv-ct">Купленный подарок</div>'+
     '<div class="sv-cd">'+(m.msg?m.msg.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'Добавьте этот подарок в профиль или обменяйте на '+fm(m.price*0.85)+' звёзд.')+'</div>'+
     '<button class="sv-view" data-i="'+i+'">Посмотреть</button></div></div>').join('');
+  window.smoothAll&&smoothAll(box);
   box.querySelectorAll('.sv-card').forEach(c=>c.onclick=()=>{const b=c.querySelector('.sv-view'),m=SVMSGS[+b.dataset.i],x=MYGIFTS.find(g=>g.key===m.key&&g.t===m.t);if(x&&window.openGift)openGift(x);else toast('Просмотр подарка: скоро')});
 }
 renderSaved();
@@ -1508,6 +1510,21 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   });
   watch('bmIn');
   watch('gmSheet');
+  /* карточка подарка и кнопка «Посмотреть»: те же плавные углы; фон карточки — в ::before, чтобы не обрезать выступающую плашку */
+  const SMC=0.66;
+  function smoothPath(w,h,r){const q=corner(Math.min(r,w/2,h/2),w,h);
+    return 'M'+f(q.p)+' 0L'+f(w-q.p)+' 0'+seg(q,0)+'L'+f(w)+' '+f(h-q.p)+seg(q,1)+'L'+f(q.p)+' '+f(h)+seg(q,2)+'L0 '+f(q.p)+seg(q,3)+'Z'}
+  window.smoothFit=function(el,r,own){
+    if(!el||el.__sm)return;el.__sm=1;
+    const run=()=>{const w=el.offsetWidth,h=el.offsetHeight;if(!w||!h)return;
+      const rr=r==='pill'?h/2:r,v='path("'+smoothPath(w,h,rr)+'")';
+      if(own){el.style.borderRadius='0';el.style.webkitClipPath=v;el.style.clipPath=v}
+      else{el.style.setProperty('--sq',v);el.style.setProperty('--sqr','0px')}};
+    if(window.ResizeObserver)new ResizeObserver(run).observe(el);run();
+  };
+  window.smoothAll=function(root){(root||document).querySelectorAll('.sv-card,#bm .bm-card').forEach(e=>smoothFit(e,25,false));
+    (root||document).querySelectorAll('.sv-view,#bm .bm-view').forEach(e=>smoothFit(e,'pill',true))};
+  smoothAll();
 })();
 </script>
 </body>
