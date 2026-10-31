@@ -1161,19 +1161,44 @@ renderMyGifts();
 /* ===== Чат «Избранное»: карточки купленных подарков ===== */
 const SVK='savedMsgs',RIB_C='M48.86 0L63.15 0Q67.15 0 69.98 2.83L97.17 30.02Q100 32.85 100 36.85L100 51.15Q100 56.92 95.91 52.83L47.17 4.09Q43.08 0 48.86 0Z';
 let SVMSGS=[];try{SVMSGS=JSON.parse(store.get(SVK,'[]'))||[]}catch(e){}
-function renderSaved(fresh){
-  const box=document.getElementById('svMsgs');if(!box)return;
-  const fm=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0');
-  box.innerHTML=SVMSGS.map((m,i)=>'<div class="svm">'+
-    '<div class="sv-pill">Вы купили подарок за&nbsp;<b>'+fm(m.price)+'&nbsp;звёзд</b></div>'+
+const SV_PAGE=20;let svFrom=0;
+const svFm=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0');
+function svHtml(from,to){
+  return SVMSGS.slice(from,to).map((m,k)=>{const i=from+k;return '<div class="svm">'+
+    '<div class="sv-pill">Вы купили подарок за&nbsp;<b>'+svFm(m.price)+'&nbsp;звёзд</b></div>'+
     '<div class="sv-card"><div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_C+'" fill="url(#svRg)"/></svg><span>1 из '+shortN(m.total)+'</span></div>'+
-    '<div class="sv-img">'+(m.image?'<img src="'+m.image+'" alt="">':(m.emoji||'🎁'))+'</div>'+
+    '<div class="sv-img">'+(m.image?'<img src="'+m.image+'" alt="" decoding="async">':(m.emoji||'🎁'))+'</div>'+
     '<div class="sv-ct">Купленный подарок</div>'+
-    '<div class="sv-cd">'+(m.msg?m.msg.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'Добавьте этот подарок в профиль или обменяйте на '+fm(m.price*0.85)+' звёзд.')+'</div>'+
-    '<button class="sv-view" data-i="'+i+'">Посмотреть</button></div></div>').join('');
-  window.smoothAll&&smoothAll(box);
+    '<div class="sv-cd">'+(m.msg?m.msg.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'Добавьте этот подарок в профиль или обменяйте на '+svFm(m.price*0.85)+' звёзд.')+'</div>'+
+    '<button class="sv-view" data-i="'+i+'">Посмотреть</button></div></div>'}).join('');
+}
+function svBind(box){
   box.querySelectorAll('.sv-card').forEach(c=>c.onclick=()=>{const b=c.querySelector('.sv-view'),m=SVMSGS[+b.dataset.i],x=MYGIFTS.find(g=>g.key===m.key&&g.t===m.t);if(x&&window.openGift)openGift(x);else toast('Просмотр подарка: скоро')});
 }
+/* в чате рисуются только последние SV_PAGE карточек, более старые подгружаются при прокрутке вверх */
+function renderSaved(fresh){
+  const box=document.getElementById('svMsgs');if(!box)return;
+  svFrom=Math.max(0,SVMSGS.length-SV_PAGE);
+  box.innerHTML=svHtml(svFrom,SVMSGS.length);
+  window.smoothAll&&smoothAll(box);
+  svBind(box);
+}
+(function(){
+  const box=document.getElementById('svMsgs');if(!box)return;let busy=false;
+  box.addEventListener('scroll',()=>{
+    if(busy||svFrom<=0||box.scrollTop>400)return;busy=true;
+    requestAnimationFrame(()=>{
+      const from=Math.max(0,svFrom-SV_PAGE),h0=box.scrollHeight,t0=box.scrollTop;
+      const tmp=document.createElement('div');tmp.innerHTML=svHtml(from,svFrom);
+      const first=box.querySelector('.svm');
+      while(tmp.firstChild)box.insertBefore(tmp.firstChild,first);
+      svFrom=from;
+      window.smoothAll&&smoothAll(box);svBind(box);
+      box.scrollTop=t0+(box.scrollHeight-h0);   // не дёргаем позицию
+      busy=false;
+    });
+  },{passive:true});
+})();
 renderSaved();
 /* фон чата заранее загружается и декодируется — чтобы страница открывалась без подвисания */
 (function(){const im=new Image();im.src='https://cdn.jsdelivr.net/gh/placedgames/pg/Chat.jpg';if(im.decode)im.decode().catch(()=>{})})();
