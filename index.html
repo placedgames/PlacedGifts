@@ -244,7 +244,15 @@ body.navanim #bar{z-index:1}
 #bm .bm-msg{flex:none;position:relative;z-index:2;width:calc(100% - 8px);height:41px;margin-top:14px;border-radius:22px;display:flex;align-items:center;padding:0 14px}
 #bm .bm-msg input{width:100%;height:100%;padding:0;margin:0;text-align:left;line-height:normal;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
 #bm .bm-msg input::placeholder{color:#8e8e93}
-#bm .bm-bot{flex:none;padding:20px 20px 22px;background:#1c1c1e}
+#bm .bm-bot{flex:none;padding:20px 20px 106px;background:#1c1c1e}
+/* кнопка «Купить» лежит поверх контента, под ней — блюр */
+#bm .bm-buywrap{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:24px 29px 31px;pointer-events:none}
+#bm .bm-buywrap>*{pointer-events:auto}
+#bm .bm-buywrap::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);background:linear-gradient(to bottom,rgba(28,28,30,0),rgba(28,28,30,.5));
+-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 45%);mask-image:linear-gradient(to bottom,transparent 0,#000 45%)}
+#bm .bm-sheet{touch-action:none}
+#bm .bm-sheet.squeeze .bm-pre,#bm .bm-sheet.squeeze .bm-bot{flex-shrink:0}
 #bm .bm-hide{height:52px;border-radius:26px;background:#2c2c2e;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 20px;font-size:19px;font-weight:500;cursor:pointer;user-select:none}
 #bm .bm-sw{width:60px;height:30px;border-radius:15px;background:#3a3a3c;position:relative;transition:.2s}
 #bm .bm-sw:after{content:"";position:absolute;top:2px;left:2px;width:38px;height:26px;border-radius:13px;background:#fff;transition:.2s}
@@ -254,7 +262,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:18.5px;background:#4BB6EE;transition:width .6s cubic-bezier(.3,.8,.3,1)}
 #bm .bm-bar span{position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:1}
 #bm .bm-left{left:18px}#bm .bm-sold{right:18px}
-#bm .bm-buy{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:24px 9px 9px;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:calc(100% - 18px);height:51px;border:0;border-radius:25.5px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
+#bm .bm-buy{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:51px;border:0;border-radius:25.5px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
 #bm .bm-buy::after{display:none}
 #bm .bm-buy.press{transform:scale(1.04)}
 .noanim #bm .bm-buy.press{transform:none}
@@ -402,8 +410,8 @@ body.navanim #bar{z-index:1}
       <div class="bm-note">Скрыть моё имя и сообщение от посетителей профиля.</div>
       <div class="bm-bar"><div class="bm-fill" id="bmFill"></div><span class="bm-left" id="bmLeft"></span><span class="bm-sold" id="bmSold"></span></div>
       <div class="bm-note">Когда все подарки будут проданы, вы больше не сможете их купить.</div>
-      <button class="bm-buy" id="bmBuy"></button>
     </div>
+    <div class="bm-buywrap"><button class="bm-buy" id="bmBuy"></button></div>
   </div>
 </div>
 <div id="toast"></div>
@@ -1046,11 +1054,26 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     };
     ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
   })();
-  /* свайп вниз по верхней части окна */
-  let sy=0,dy=0,on=false;
-  sheet.addEventListener('touchstart',e=>{const r=sheet.getBoundingClientRect();if(e.touches[0].clientY-r.top<90){on=true;sy=e.touches[0].clientY;dy=0}},{passive:true});
-  sheet.addEventListener('touchmove',e=>{if(!on)return;dy=Math.max(0,e.touches[0].clientY-sy);sheet.classList.add('drag');sheet.style.transform='translateY('+dy+'px)'},{passive:true});
-  sheet.addEventListener('touchend',()=>{if(!on)return;on=false;sheet.classList.remove('drag');sheet.style.transform='';if(dy>120)close()});
+  /* свайп вниз: окно не закрывается, а сжимается — контент уходит вниз, кнопка «Купить» остаётся на месте поверх него */
+  const MAXC=250;let sy=0,on=false,nat=0,tmr=0;
+  sheet.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1||e.target.closest('#bmBuy,select,input'))return;
+    clearTimeout(tmr);
+    if(!sheet.classList.contains('squeeze'))nat=sheet.offsetHeight;
+    on=true;sy=e.touches[0].clientY;sheet.style.transition='none';
+  },{passive:true});
+  sheet.addEventListener('touchmove',e=>{
+    if(!on)return;
+    const raw=Math.max(0,e.touches[0].clientY-sy),dy=MAXC*Math.tanh(raw/MAXC);
+    sheet.classList.add('squeeze');sheet.style.height=(nat-dy)+'px';
+  },{passive:true});
+  const endSq=()=>{
+    if(!on)return;on=false;
+    if(!sheet.classList.contains('squeeze'))return;
+    sheet.style.transition='height .55s cubic-bezier(.34,1.3,.64,1)';sheet.style.height=nat+'px';
+    tmr=setTimeout(()=>{sheet.style.transition='';sheet.style.height='';sheet.classList.remove('squeeze')},580);
+  };
+  sheet.addEventListener('touchend',endSq);sheet.addEventListener('touchcancel',endSq);
 })();
 </script>
 </body>
