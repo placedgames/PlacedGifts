@@ -278,9 +278,9 @@ body.navanim #bar{z-index:1}
 #gm .gm-h a{color:var(--accent);font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:3px;vertical-align:middle}
 #gm .gm-h a svg{width:10px;height:16px;flex:none}
 #gm .gm-upw{position:relative;z-index:1;padding:20px 29px 31px}
-#gm .gm-up{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:51px;border:0;border-radius:25.5px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
-#gm .gm-up:active{transform:scale(1.04)}
-.noanim #gm .gm-up:active{transform:none}
+#gm .gm-up{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+#gm .gm-up.press{transform:scale(1.04)}
+.noanim #gm .gm-up.press{transform:none}
 #bm .rib{position:absolute;top:-1.5px;right:-1.5px;width:115px;height:115px;pointer-events:none;z-index:2}
 #bm .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
 #bm .rib span{position:absolute;left:80.63%;top:19.37%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
@@ -292,7 +292,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-msg{flex:none;position:relative;z-index:2;width:calc(100% - 8px);height:41px;margin-top:14px;border-radius:22px;display:flex;align-items:center;padding:0 14px}
 #bm .bm-msg input{width:100%;height:100%;padding:0;margin:0;text-align:left;line-height:normal;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
 #bm .bm-msg input::placeholder{color:#8e8e93}
-#bm .bm-bot{flex:none;padding:20px 20px 106px;background:#1c1c1e}
+#bm .bm-bot{flex:none;padding:20px 20px 107px;background:#1c1c1e}
 /* кнопка «Купить» лежит поверх контента, под ней — блюр */
 #bm .bm-buywrap{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:24px 29px 31px;pointer-events:none}
 #bm .bm-buywrap>*{pointer-events:auto}
@@ -319,7 +319,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #bm .bm-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:18.5px;background:#4BB6EE;transition:width .6s cubic-bezier(.3,.8,.3,1)}
 #bm .bm-bar span{position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:1}
 #bm .bm-left{left:18px}#bm .bm-sold{right:18px}
-#bm .bm-buy{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:51px;border:0;border-radius:25.5px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
+#bm .bm-buy{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
 #bm .bm-buy::after{display:none}
 #bm .bm-buy.press{transform:scale(1.04)}
 .noanim #bm .bm-buy.press{transform:none}
@@ -1273,7 +1273,36 @@ renderMyGifts();
   window.openGift=open;
   $g('gmClose').onclick=close;
   gm.querySelector('.gm-dim').onclick=close;
-  $g('gmUp').onclick=()=>toast('Улучшение: скоро');
+  $g('gmUp').onclick=()=>{
+    if(window.__upDrag){window.__upDrag=false;return}
+    toast('Улучшение: скоро');
+  };
+  /* кнопка «Улучшить»: тот же отклик и «слайм», что у кнопки «Купить» */
+  (function(){
+    const btn=$g('gmUp'),MIN=160,R=60;let st=null,t0=0;
+    btn.addEventListener('pointerdown',e=>{
+      if(!animOn())return;
+      st={x:e.clientX,y:e.clientY,id:e.pointerId,drag:false};t0=performance.now();window.__upDrag=false;
+      btn.classList.add('press');try{btn.setPointerCapture(e.pointerId)}catch(_){}
+    });
+    document.addEventListener('pointermove',e=>{
+      if(!st||e.pointerId!==st.id||!animOn())return;
+      const dx=e.clientX-st.x,dy=e.clientY-st.y;
+      if(!st.drag){if(Math.hypot(dx,dy)<4)return;st.drag=true;window.__upDrag=true;btn.style.transition='none'}
+      const ax=Math.abs(Math.tanh(dx/R)),ay=Math.abs(Math.tanh(dy/R));
+      const sx=1.04+.015*ax-.01*ay,sy=1.04+.05*ay-.005*ax;
+      btn.style.transform='scale('+sx.toFixed(3)+','+sy.toFixed(3)+')';
+    });
+    const rel=e=>{
+      if(!st||(e&&e.pointerId!==st.id))return;
+      const d=st.drag;st=null;
+      if(d){
+        btn.style.transition='transform .6s cubic-bezier(.34,1.5,.64,1)';btn.classList.remove('press');btn.style.transform='';
+        setTimeout(()=>{btn.style.transition=''},650);
+      }else setTimeout(()=>btn.classList.remove('press'),Math.max(0,MIN-(performance.now()-t0)));
+    };
+    ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
+  })();
   $g('gmShow').onclick=()=>toast('Показ в профиле: скоро');
   window.addEventListener('resize',()=>{try{if(gm.classList.contains('on'))shapeBtn($g('gmUp'))}catch(e){}});
   document.getElementById('pGrid').addEventListener('click',e=>{
@@ -1283,7 +1312,7 @@ renderMyGifts();
   /* свайп вниз закрывает окно: оно едет за пальцем, при отпускании либо улетает вниз, либо возвращается */
   let sy=0,dy=0,t0=0,tr=false;
   sh.addEventListener('touchstart',e=>{
-    if(e.touches.length!==1)return;
+    if(e.touches.length!==1||e.target.closest('#gmUp'))return;
     sy=e.touches[0].clientY;dy=0;t0=performance.now();tr=true;
   },{passive:true});
   sh.addEventListener('touchmove',e=>{
