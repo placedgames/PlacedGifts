@@ -696,6 +696,8 @@ $('#anim').onclick=()=>{const on=store.get('anim','1')!=='1';store.set('anim',on
 /* ===== Подарки ===== */
 const fmt = n => Number(n).toLocaleString('ru-RU');
 // Цены по порядку из списка (остальные подарки получают случайную, но стабильную цену)
+/* цена и тираж по имени подарка: [цена в звёздах, тираж]. Подарков нет в этом списке — на них плашка «продан» */
+const GD={"Santa Hat":[50,150000],"Signet Ring":[5000,9000],"Precious Peach":[1000,5000],"Plush Pepe":[2000,3000],"Spiced Wine":[15,400000],"Jelly Bunny":[25,200000],"Durov's Cap":[1000,5000],"Perfume Bottle":[500,10000],"Eternal Rose":[100,50000],"Berry Box":[50,100000],"Vintage Cigar":[100,50000],"Magic Potion":[50,5000],"Kissed Frog":[15,15000],"Hex Pot":[16,120000],"Evil Eye":[15,120000],"Sharp Tongue":[50,10000],"Trapped Heart":[25,30000],"Skull Flower":[25,30000],"Spy Agaric":[15,50000],"Homemade Cake":[500,500000],"Genie Lamp":[350,15000],"Lunar Snake":[25,400000],"Party Sparkler":[15,400000],"Jester Hat":[15,400000],"Witch Hat":[15,100000],"Hanging Star":[50,100000],"Love Candle":[100,50000],"Cookie Heart":[15,400000],"Desk Calendar":[150,500000],"Jingle Bells":[25,200000],"Snow Mittens":[100,90000],"Voodoo Doll":[15,30000],"Mad Pumpkin":[25,30000],"Hypno Lollipop":[25,300000],"B-Day Candle":[350,500000],"Bunny Muffin":[50,100000],"Astral Shard":[500,10000],"Flying Broom":[15,30000],"Crystal Ball":[15,30000],"Eternal Candle":[25,50000],"Swiss Watch":[100,50000],"Ginger Cookie":[15,300000],"Mini Oscar":[500,10000],"Lol Pop":[15,500000],"Ion Gem":[100,5000],"Star Notepad":[25,200000],"Loot Bag":[2500,15000],"Love Potion":[1000,35000],"Toy Bear":[500,60000],"Diamond Ring":[150,30000],"Sakura Flower":[25,100000],"Sleigh Bell":[200,50000],"Top Hat":[1000,40000],"Record Player":[50,100000],"Winter Wreath":[25,200000],"Snow Globe":[75,120000],"Electric Skull":[25,10000],"Tama Gadget":[50,200000],"Candy Cane":[10,600000],"Neko Helmet":[2500,18000],"Jack-in-the-Box":[300,100000],"Easter Egg":[200,180000],"Bonded Ring":[1000,35000],"Pet Snake":[25,400000],"Snake Box":[25,400000],"Xmas Stocking":[10,600000],"Big Year":[50,200000],"Holiday Drink":[25,200000],"Gem Signet":[500,10000],"Light Sword":[200,150000],"Restless Jar":[200,150000],"Nail Bracelet":[10000,5000],"Heroic Helmet":[5000,8000],"Bow Tie":[300,100000],"Heart Locket":[500,80000],"Lush Bouquet":[250,180000],"Joyful Bundle":[400,50000],"Cupid Charm":[500,40000],"Valentine Box":[300,150000],"Snoop Dogg":[200,600000],"Swag Bag":[500,240000],"Snoop Cigar":[1000,120000],"Low Rider":[5000,24000],"Westside Sign":[10000,12000],"Stellar Rocket":[200,180000],"Jolly Chimp":[200,150000],"Moon Pendant":[100,200000],"Ionic Dryer":[1000,40000],"Input Key":[200,200000],"Mighty Arm":[10000,5000],"Artisan Brick":[5000,7000],"Clover Pin":[100,300000],"Sky Stilettos":[300,70000],"Fresh Socks":[100,250000],"Happy Brownie":[100,300000],"Ice Cream":[100,350000],"Spring Basket":[150,250000],"Instant Ramen":[50,500000],"Faith Amulet":[100,120000],"Mousse Cake":[100,250000],"Bling Binky":[5000,10000],"Money Pot":[250,120000],"Pretty Posy":[150,200000],"Victory Medal":[300,150000],"Rare Bird":[5000,15000],"Mood Pack":[500,200000],"Pool Float":[300,250000],"Timeless Book":[1000,100000],"Chill Flame":[150,500000],"Vice Cream":[75,500000],"Surge Board":[2500,40000],"Liberty Figure":[250,300000],"Durov's Glasses":[30000,5000],"Fine Pen":[2500,50000],"Mirage Lamp":[100,300000],"Lucky Locket":[10000,2000],"Resistance Dog":[5000,20000]};
 const PRICES=[50,100,1000,2000,15,25,1000,500,100,50,100,50,25,15,15,50,50,25,25,25,500,100,25,25,50,25,50,100,25,150,25,100,25,25,25,350,50,500,25,25];
 const POOL=[15,15,25,25,25,50,50,50,100,100,150,250,350,500,750,1000,1500,2000,2500];
 function rndPrice(k){let h=5381;k=String(k);for(let i=0;i<k.length;i++)h=((h<<5)+h+k.charCodeAt(i))>>>0;return POOL[h%POOL.length]}
@@ -745,13 +747,14 @@ const GIO=window.IntersectionObserver?new IntersectionObserver(es=>es.forEach(e=
 const RIB_D='M54.80 0.00L65.10 0.00Q69.10 0.00 71.93 2.83L97.17 28.07Q100.00 30.90 100.00 34.90L100.00 45.20Q100.00 56.20 92.22 48.42L51.58 7.78Q43.80 0.00 54.80 0.00Z';
 function renderGifts(list){
   $('#grid').innerHTML = list.map((g,i)=>{
-    const price = i<PRICES.length ? PRICES[i] : rndPrice(g.id||g.name||i);
-    const sold=i>=list.length-6;
-    return '<div class="gift" data-p="'+price+'"><div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_D+'" fill="url(#'+(sold?'rbS':'rbB')+')"/></svg><span>'+(sold?'продан':'редкий')+'</span></div><div class="pic">'+
+    const d = GD[g.name];
+    const price = d ? d[0] : (!g.id && i<PRICES.length ? PRICES[i] : rndPrice(g.id||g.name||i));
+    const sold = !!g.id && !d;   // есть в списке GD → «редкий», нет → «продан»
+    return '<div class="gift" data-p="'+price+'" data-t="'+(d?d[1]:30000)+'"><div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_D+'" fill="url(#'+(sold?'rbS':'rbB')+')"/></svg><span>'+(sold?'продан':'редкий')+'</span></div><div class="pic">'+
     (g.image?'<img loading="lazy" src="'+g.image+'" alt="" onerror="this.replaceWith(\'🎁\')">':(g.emoji||'🎁'))+
     '</div><div class="price"><canvas class="pc"></canvas><img class="pst" src="'+STAR+'" alt=""><span>'+fmt(price)+'</span></div></div>';
   }).join('');
-  $$('.gift').forEach(el=>{ GIO.observe(el); el.onclick=()=>{const im=el.querySelector('.pic img');openBuy({price:el.dataset.p,image:im?im.src:null})}; });
+  $$('.gift').forEach(el=>{ GIO.observe(el); el.onclick=()=>{const im=el.querySelector('.pic img');openBuy({price:el.dataset.p,total:+el.dataset.t,image:im?im.src:null})}; });
 }
 renderGifts(FALLBACK);
 if (GIFTS_URL) fetch(GIFTS_URL).then(r=>r.json()).then(d=>{const l=Object.keys(d).map(id=>({id,name:d[id],image:IMG(id)}));if(l.length)renderGifts(l)}).catch(()=>{});
@@ -908,12 +911,12 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
 /* ===== модальное окно покупки ===== */
 (function(){
   const bm=document.getElementById('bm'),sheet=document.getElementById('bmSheet'),$b=id=>document.getElementById(id);
-  const TOTAL=30000, SOLD=4120, EXCH=0.85;
+  const DEF_TOTAL=30000, SOLD=0, EXCH=0.85;   // продано у всех подарков: 0
   const short=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'K':String(n);
   let cur=null,hidden=false;
   window.openBuy=function(g){
     cur=g;hidden=true;$b('bmHide').classList.add('on');$b('bmMsg').value='';
-    const p=+g.price,left=TOTAL-SOLD;
+    const p=+g.price,TOTAL=g.total||DEF_TOTAL,left=TOTAL-SOLD;
     $b('bmImg').innerHTML=g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁');
     $b('bmPill').innerHTML='Вы купили подарок за&nbsp;<b>'+fmt(p)+'&nbsp;звёзд</b>';
     $b('bmRib').textContent='1 из '+short(TOTAL);
