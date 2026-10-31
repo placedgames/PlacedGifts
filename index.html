@@ -262,11 +262,11 @@ body.navanim #bar{z-index:1}
 #gm .gm-x{position:absolute;top:16px;left:16px;z-index:3;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;color:#fff;cursor:pointer;transition:transform .2s}
 #gm .gm-x:active{transform:scale(1.1)}
 #gm .gm-x svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
-#gm .gm-body{position:relative;z-index:1;padding:22px 16px 0;display:flex;flex-direction:column;align-items:center;text-align:center}
-#gm .gm-img{width:100%;height:129px;display:flex;align-items:center;justify-content:center;font-size:93px}
-#gm .gm-img img{max-width:121px;max-height:121px;object-fit:contain}
+#gm .gm-body{position:relative;z-index:1;padding:19px 16px 0;display:flex;flex-direction:column;align-items:center;text-align:center}
+#gm .gm-img{width:100%;height:139px;display:flex;align-items:center;justify-content:center;font-size:103px}
+#gm .gm-img img{max-width:131px;max-height:131px;object-fit:contain}
 #gm .gm-t{font-size:19px;line-height:1.2;font-weight:600;margin:9px 0 0}
-#gm .gm-d{font-size:15px;line-height:1.25;font-weight:400;margin:17px 8px 0}
+#gm .gm-d{font-size:15px;line-height:1.25;font-weight:400;margin:19px 8px 0}
 #gm .gm-s{font-size:13px;line-height:1.25;font-weight:400;color:#8e8e93;margin:15px 0 0}
 #gm .gm-tbl{width:100%;margin-top:20px;border:1px solid #343437;border-radius:20px;overflow:hidden;text-align:left}
 #gm .gm-r{display:flex;min-height:40px;border-top:1px solid #343437;font-size:15px;font-weight:400}
@@ -308,7 +308,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-buywrap::before,#bm .bm-buywrap::after{content:"";position:absolute;left:-48px;right:-48px;bottom:-48px;top:-6px;z-index:-1;pointer-events:none}
 /* blur считается по расширенной области (нет слабого края), а показывается только внутри скруглённого низа окна */
 #bm .bm-buywrap::before{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
--webkit-clip-path:inset(0 48px 48px 48px round 0 0 63.6px 63.6px/0 0 53px 53px);clip-path:inset(0 48px 48px 48px round 0 0 63.6px 63.6px/0 0 53px 53px);
+-webkit-clip-path:var(--bwclip,inset(0 48px 48px 48px round 0 0 63.6px 63.6px/0 0 53px 53px));clip-path:var(--bwclip,inset(0 48px 48px 48px round 0 0 63.6px 63.6px/0 0 53px 53px));
 -webkit-mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px);
 mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px)}
 #bm .bm-buywrap::after{background:linear-gradient(to bottom,rgba(28,28,30,0.000) 0px,rgba(28,28,30,0.040) 2px,rgba(28,28,30,0.102) 4px,rgba(28,28,30,0.174) 6px,rgba(28,28,30,0.253) 8px,rgba(28,28,30,0.334) 10px,rgba(28,28,30,0.416) 12px,rgba(28,28,30,0.498) 14px,rgba(28,28,30,0.577) 16px,rgba(28,28,30,0.653) 18px,rgba(28,28,30,0.724) 20px,rgba(28,28,30,0.790) 22px,rgba(28,28,30,0.849) 24px,rgba(28,28,30,0.900) 26px,rgba(28,28,30,0.942) 28px,rgba(28,28,30,0.973) 30px,rgba(28,28,30,0.993) 32px,rgba(28,28,30,1.000) 34px,#1c1c1e 36px)}
@@ -1247,7 +1247,6 @@ renderMyGifts();
     let who;
     if(x.anon)who='<span class="gm-ava an">А</span><span class="gm-who">Аноним</span>';
     else who=(u.photo_url?'<span class="gm-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="gm-ava">'+esc((name[0]||'').toUpperCase())+'</span>')+'<span class="gm-who">'+esc([...name].length>16?[...name].slice(0,16).join('')+'…':name)+'</span>';
-    who+='<span class="gm-pill">отправить подарок</span>';
     const total=x.total||0;
     let price=x.price;
     if(!price){
@@ -1365,6 +1364,58 @@ renderMyGifts();
     if(window.ResizeObserver)new ResizeObserver(()=>shape(el)).observe(el);
     shape(el);
   });
+})();
+</script>
+<script>
+/* модальные окна: «плавные» углы (continuous corners) — изгиб начинается раньше и вдоль горизонтальной, и вдоль вертикальной стороны */
+(function(){
+  const SM=0.5;          /* сила эффекта: 0 = обычный круг, больше = изгиб начинается раньше (по обеим осям) */
+  const RT=38,RB=53;     /* радиусы сверху и снизу — те же, что были */
+  function corner(r,w,h){
+    r=Math.min(r,w/2,h/2);const bud=Math.min(w,h)/2,rad=x=>x*Math.PI/180;
+    let p=(1+SM)*r;const arcM=90*(1-SM),arcL=Math.sin(rad(arcM/2))*r*Math.SQRT2,al=(90-arcM)/2;
+    const p34=r*Math.tan(rad(al/2)),be=45*SM,c=p34*Math.cos(rad(be)),d=c*Math.tan(rad(be));
+    let b=(p-arcL-c-d)/3,a=2*b;
+    if(p>bud){const m=bud-d-arcL-c,minA=m/6,maxB=m-minA;b=Math.min(b,maxB);a=m-b;p=bud}
+    return {p,a,b,c,d,arcL,R:r};
+  }
+  const f=n=>+n.toFixed(2);
+  const rot=(v,k)=>{let x=v[0],y=v[1];for(let i=0;i<k;i++){const t=x;x=-y;y=t}return [x,y]};
+  function seg(q,k){
+    const m=(x,y)=>{const v=rot([x,y],k);return f(v[0])+' '+f(v[1])};
+    const {a,b,c,d,arcL,R}=q;
+    return 'c'+m(a,0)+' '+m(a+b,0)+' '+m(a+b+c,d)+
+           'a'+f(R)+' '+f(R)+' 0 0 1 '+m(arcL,arcL)+
+           'c'+m(d,c)+' '+m(d,b+c)+' '+m(d,a+b+c);
+  }
+  function path(w,h,ox,oy){
+    ox=ox||0;oy=oy||0;
+    const t=corner(RT,w,h),b=corner(RB,w,h),X=x=>f(x+ox),Y=y=>f(y+oy);
+    return 'M'+X(t.p)+' '+Y(0)+'L'+X(w-t.p)+' '+Y(0)+seg(t,0)+
+           'L'+X(w)+' '+Y(h-b.p)+seg(b,1)+
+           'L'+X(b.p)+' '+Y(h)+seg(b,2)+
+           'L'+X(0)+' '+Y(t.p)+seg(t,3)+'Z';
+  }
+  function shape(el,extra){
+    const w=el.offsetWidth,h=el.offsetHeight;if(!w||!h)return;
+    const v='path("'+path(w,h)+'")';
+    el.style.borderRadius='0';
+    el.style.webkitClipPath=v;el.style.clipPath=v;
+    if(extra)extra(w,h);
+  }
+  function watch(id,extra){
+    const el=document.getElementById(id);if(!el)return;
+    const run=()=>shape(el,extra);
+    if(window.ResizeObserver)new ResizeObserver(run).observe(el);
+    window.addEventListener('resize',run);run();
+  }
+  watch('bmSheet',(w,h)=>{
+    const bw=document.querySelector('#bm .bm-buywrap');if(!bw)return;
+    /* блюр под кнопкой «Купить» обрезается по тому же контуру (псевдоэлемент шире на 48px по бокам и снизу) */
+    bw.style.setProperty('--bwclip','path("'+path(w,h,48,bw.offsetHeight+6-h)+'")');
+  });
+  watch('bmIn');
+  watch('gmSheet');
 })();
 </script>
 </body>
