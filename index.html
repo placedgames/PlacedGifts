@@ -247,6 +247,8 @@ mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,
 .page.tr{position:absolute;left:0;top:0;width:100%;background:var(--bg);will-change:transform,opacity}
 .page.tr.top{z-index:2}
 body.navanim #bar{z-index:1}
+/* на время анимации перехода размытие под элементами чата не пересчитывается — иначе страница рывками едет */
+body.navanim #p-saved *,body.navanim #p-saved *::before,body.navanim #p-saved *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:stretch;padding:3px}
@@ -294,12 +296,17 @@ body.navanim #bar{z-index:1}
 #bm .bm-x{width:var(--hdr-h);flex:none}
 #bm .bm-cnt{padding:0 16px;flex:none;font-size:19px}
 #bm .bm-cnt select{display:none}
-#bm .bm-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:6;width:max-content;min-width:140px;padding:8px 0;border-radius:34px/30px;touch-action:none;user-select:none;-webkit-user-select:none;background:rgba(66,66,70,.5);-webkit-backdrop-filter:blur(30px) saturate(1.5);backdrop-filter:blur(30px) saturate(1.5);opacity:0;visibility:hidden;pointer-events:none;transform:scale(.78);transform-origin:top right;transition:opacity .15s ease,transform .3s cubic-bezier(.3,1.25,.4,1),visibility 0s linear .3s;box-shadow:0 12px 36px rgba(0,0,0,.35)}
+#bm .bm-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:6;width:max-content;min-width:140px;border-radius:34px/30px;touch-action:none;user-select:none;-webkit-user-select:none;opacity:0;visibility:hidden;pointer-events:none;transform:scale(.78);transform-origin:top right;transition:opacity .15s ease,transform .3s cubic-bezier(.3,1.25,.4,1),visibility 0s linear .3s;box-shadow:0 12px 36px rgba(0,0,0,.35)}
 #bm .bm-menu.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity 0s,transform .3s cubic-bezier(.3,1.25,.4,1),visibility 0s}
-#bm .bm-menu::before,#bm .bm-menu::after{z-index:0}
-#bm .bm-mi{position:relative;z-index:1;display:block;width:calc(100% - 16px);margin:0 8px;height:46px;padding:0 22px;border:0;border-radius:20px;background:none;color:#fff;font:inherit;font-size:19px;font-weight:450;text-align:left;white-space:nowrap;cursor:pointer;-webkit-appearance:none;appearance:none}
-#bm .bm-thumb{position:absolute;z-index:0;left:8px;right:8px;top:0;height:46px;border-radius:23px;background:rgba(255,255,255,.09);opacity:0;transition:opacity .2s ease;pointer-events:none;-webkit-backface-visibility:hidden;backface-visibility:hidden}
-#bm .bm-thumb.show{opacity:1}
+/* размытие и обводка — на отдельном слое, который не перерисовывается при подсветке пунктов (иначе на нём мерцают блики) */
+#bm .bm-mbg{position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:34px/30px;background:rgba(66,66,70,.5);-webkit-backdrop-filter:blur(30px);backdrop-filter:blur(30px);-webkit-transform:translateZ(0);transform:translateZ(0)}
+#bm .bm-items{position:relative;z-index:1;padding:8px 0}
+/* в середине окна обводка и засвет у liquid glass полностью гаснут (маска = 0) — именно там мерцало; оставляем едва заметный минимум и выносим слои отдельно */
+#bm .bm-mbg{--glass-side:rgba(115,117,126,.02)}
+#bm .bm-mbg::before,#bm .bm-mbg::after{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+#bm .bm-mbg::after{-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0.03) 42%,rgba(0,0,0,0.02) 50%,rgba(0,0,0,0.03) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%);mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0.03) 42%,rgba(0,0,0,0.02) 50%,rgba(0,0,0,0.03) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%)}
+#bm .bm-mi{position:relative;z-index:1;display:block;width:calc(100% - 16px);margin:0 8px;height:46px;padding:0 22px;border:0;border-radius:23px;background:none;transition:background-color .16s ease;color:#fff;font:inherit;font-size:19px;font-weight:450;text-align:left;white-space:nowrap;cursor:pointer;-webkit-appearance:none;appearance:none}
+#bm .bm-mi.hot{background:rgba(255,255,255,.09)}
 #bm .bm-mi.sel{color:#b4b4b9}
 #bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
 #bm .bm-btn svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
@@ -545,7 +552,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
         <button class="bm-btn bm-x glass" id="bmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
         <div class="bm-pill" id="bmPill"></div>
         <label class="bm-btn bm-cnt glass"><span id="bmCntT">1x</span><select id="bmCnt" aria-label="Количество"><option value="1">1x</option><option value="2">2x</option><option value="5">5x</option><option value="10">10x</option></select></label>
-        <div class="bm-menu glass" id="bmMenu" role="menu"></div>
+        <div class="bm-menu" id="bmMenu" role="menu"></div>
       </div>
       <div class="bm-mid">
         <div class="bm-card">
@@ -1168,6 +1175,8 @@ function renderSaved(fresh){
   box.querySelectorAll('.sv-card').forEach(c=>c.onclick=()=>{const b=c.querySelector('.sv-view'),m=SVMSGS[+b.dataset.i],x=MYGIFTS.find(g=>g.key===m.key&&g.t===m.t);if(x&&window.openGift)openGift(x);else toast('Просмотр подарка: скоро')});
 }
 renderSaved();
+/* фон чата заранее загружается и декодируется — чтобы страница открывалась без подвисания */
+(function(){const im=new Image();im.src='https://cdn.jsdelivr.net/gh/placedgames/pg/Chat.jpg';if(im.decode)im.decode().catch(()=>{})})();
 document.getElementById('svGift').onclick=()=>go('gifts');
 
 /* ===== модальное окно покупки ===== */
@@ -1240,32 +1249,31 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   }
   $b('bmMsg').addEventListener('input',renderCd);
   $b('bmCnt').addEventListener('change',e=>{qty=+e.target.value||1;renderQty()});
-  /* выпадающий список количества — liquid glass, серый ползунок можно тянуть пальцем */
+  /* выпадающий список количества — liquid glass; пункт под пальцем подсвечивается, пока держишь */
   (function(){
     const menu=$b('bmMenu'),sel=$b('bmCnt'),btn=sel.closest('.bm-cnt');
-    menu.innerHTML='<i class="bm-thumb" id="bmThumb"></i>'+[1,2,5,10].map(n=>'<button type="button" class="bm-mi" role="menuitem" data-n="'+n+'">'+n+'\u00a0'+plural(n)+'</button>').join('');
-    const th=$b('bmThumb'),items=[...menu.querySelectorAll('.bm-mi')];
-    const place=(y,anim)=>{th.style.transition=anim?'transform .3s cubic-bezier(.25,.8,.25,1)':'none';th.style.transform='translate3d(0,'+y+'px,0)'};
+    menu.innerHTML='<i class="bm-mbg glass"></i><div class="bm-items">'+[1,2,5,10].map(n=>'<button type="button" class="bm-mi" role="menuitem" data-n="'+n+'">'+n+'\u00a0'+plural(n)+'</button>').join('')+'</div>';
+    const items=[...menu.querySelectorAll('.bm-mi')];
     const idxOf=v=>Math.max(0,items.findIndex(b=>b.dataset.n===String(v)));
-    const hide=()=>{menu.classList.remove('on');th.classList.remove('show')};
+    const hot=k=>items.forEach((b,i)=>b.classList.toggle('hot',i===k));
+    const hide=()=>{menu.classList.remove('on');hot(-1)};
     const mark=()=>items.forEach(b=>b.classList.toggle('sel',b.dataset.n===String(sel.value)));
     window.__bmMenuHide=hide;
     let drag=null;
-    btn.addEventListener('click',e=>{e.preventDefault();if(menu.classList.contains('on')){hide();return}mark();th.classList.remove('show');menu.classList.add('on')});
-    const yToThumb=cy=>{const r=menu.getBoundingClientRect(),k=r.height/menu.offsetHeight||1;
-      return Math.min(items[items.length-1].offsetTop,Math.max(items[0].offsetTop,(cy-r.top)/k-23))};
-    const nearest=ty=>{let bi=0,bd=1e9;items.forEach((b,i)=>{const d=Math.abs(b.offsetTop-ty);if(d<bd){bd=d;bi=i}});return bi};
+    btn.addEventListener('click',e=>{e.preventDefault();if(menu.classList.contains('on')){hide();return}mark();hot(-1);menu.classList.add('on')});
+    /* ближайший пункт к точке касания (в том числе между пунктами и по краям окна) */
+    const nearest=cy=>{const r=menu.getBoundingClientRect(),k=r.height/menu.offsetHeight||1,y=(cy-r.top)/k;
+      let bi=0,bd=1e9;items.forEach((b,i)=>{const d=Math.abs(b.offsetTop+b.offsetHeight/2-y);if(d<bd){bd=d;bi=i}});return bi};
     menu.addEventListener('pointerdown',e=>{
       if(!menu.classList.contains('on'))return;
       drag={id:e.pointerId};try{menu.setPointerCapture(e.pointerId)}catch(_){}
-      place(items[nearest(yToThumb(e.clientY))].offsetTop,false);th.classList.add('show');
+      hot(nearest(e.clientY));
     });
-    menu.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;place(items[nearest(yToThumb(e.clientY))].offsetTop,true)});
+    menu.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;hot(nearest(e.clientY))});
     const end=e=>{
       if(!drag||e.pointerId!==drag.id)return;drag=null;
-      const k=e.type==='pointercancel'?idxOf(sel.value):nearest(yToThumb(e.clientY));
-      place(items[k].offsetTop,true);th.classList.remove('show');
-      if(e.type==='pointercancel'){return}
+      if(e.type==='pointercancel'){hot(-1);return}
+      const k=nearest(e.clientY);
       sel.value=items[k].dataset.n;sel.dispatchEvent(new Event('change'));mark();
       setTimeout(hide,140);
     };
