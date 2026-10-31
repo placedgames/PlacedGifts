@@ -228,7 +228,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-cnt select{position:absolute;inset:0;width:100%;height:100%;opacity:0;z-index:3;border:0;background:none;font-size:16px;cursor:pointer;-webkit-appearance:none;appearance:none}
 #bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
 #bm .bm-btn svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
-#bm .bm-pill{position:absolute;z-index:1;left:50%;top:calc(50% + 8px);transform:translate(-50%,-50%);height:26px;padding:0 14px;border-radius:13px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;pointer-events:none;background:rgba(40,40,43,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+#bm .bm-pill{position:absolute;z-index:1;left:50%;top:calc(50% + 8px);transform:translate(-50%,calc(-50% + var(--ps,0px)));height:26px;padding:0 14px;border-radius:13px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;pointer-events:none;background:rgba(40,40,43,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
 #bm .bm-pill b{font-weight:500}
 #bm .bm-btn{position:relative;z-index:2}
 #bm .bm-mid{flex:0 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:9px 0 0}
@@ -978,6 +978,16 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
   function renderCd(){
     const m=$b('bmMsg').value.trim();
     $b('bmCd').textContent=m||('Добавьте этот подарок в профиль или обменяйте на '+fmt(Math.round(+cur.price*EXCH))+' звёзд.');
+    /* окно не меняет размер: карточка уменьшается внутри своей области симметрично сверху и снизу,
+       а плашка «Вы купили…» опускается вместе с её верхним краем */
+    const card=bm.querySelector('.bm-card');
+    $b('bmPill').style.setProperty('--ps',defH?Math.max(0,(defH-card.offsetHeight)/2)+'px':'0px');
+  }
+  let defH=0;
+  function lockMid(){
+    const mid=bm.querySelector('.bm-mid'),card=bm.querySelector('.bm-card');
+    mid.style.height='';defH=0;renderCd();
+    defH=card.offsetHeight;mid.style.height=mid.offsetHeight+'px';renderCd();
   }
   function renderQty(){
     const p=+cur.price,n=qty,sum=p*n;
@@ -998,7 +1008,7 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     $b('bmFill').style.width='0';
     bm.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     document.body.classList.add('bmopen');try{SP.hold(4,true)}catch(e){}
-    bm.classList.add('on');bm.setAttribute('aria-hidden','false');shapeBuy();
+    bm.classList.add('on');bm.setAttribute('aria-hidden','false');shapeBuy();lockMid();
     requestAnimationFrame(()=>requestAnimationFrame(()=>{$b('bmFill').style.width=(left/TOTAL*100)+'%'}));
   };
   function close(){document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}bm.classList.remove('on');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on'))bm.style.height=''},450);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
