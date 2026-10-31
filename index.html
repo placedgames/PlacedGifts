@@ -92,8 +92,8 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 #p-saved .sv-bot{bottom:0;height:96px;background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,0));-webkit-mask-image:linear-gradient(to top,#000 30%,transparent);mask-image:linear-gradient(to top,#000 30%,transparent);-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px)}
 #svMsgs{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;display:flex;flex-direction:column;align-items:center;gap:10px;padding:calc(var(--hdr-top) + var(--hdr-h) + 20px) 16px 80px}
 #svMsgs::before{content:"";margin-top:auto}
-.svm{display:flex;flex-direction:column;align-items:center;gap:7px;width:100%;flex:none}
-.sv-pill{height:23px;padding:0 11px;border-radius:11.5px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:500;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.svm{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;flex:none}
+.sv-pill{height:22px;padding:0 9px;border-radius:11px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:500;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 .sv-pill b{font-weight:600}
 .sv-card{position:relative;width:224px;border-radius:25px;padding:16px 14px 21px;display:flex;flex-direction:column;align-items:center;text-align:center;isolation:isolate;transform:translateZ(0);cursor:pointer}
 #bm .bm-card::before,.sv-card::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:var(--sqr,25px);-webkit-clip-path:var(--sq);clip-path:var(--sq);background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
@@ -104,7 +104,7 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .sv-img img{max-width:100%;max-height:100%;object-fit:contain}
 .sv-ct{font-size:16px;font-weight:600;margin:12px 0 0}
 .sv-cd{font-size:13px;line-height:1.2;font-weight:500;margin-top:2px;padding:0 2px}
-.sv-view{margin-top:12px;height:34px;padding:0 20px;border:0;border-radius:17px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.sv-view{margin-top:11px;height:34px;padding:0 20px;border:0;border-radius:17px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
 #p-saved .sv-bar{position:absolute;left:30px;right:30px;bottom:22px;z-index:5;display:flex;align-items:center;gap:10px}
 #p-saved .sv-msg{flex:1;min-width:0;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
 #p-saved .sv-gift{flex:none;width:41px;height:41px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:transform .2s}
@@ -293,7 +293,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-cnt select{position:absolute;inset:0;width:100%;height:100%;opacity:0;z-index:3;border:0;background:none;font-size:16px;cursor:pointer;-webkit-appearance:none;appearance:none}
 #bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
 #bm .bm-btn svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
-#bm .bm-pill{position:absolute;z-index:1;left:50%;top:var(--pt,calc(50% + 9.5px));transform:translateX(-50%);height:23px;padding:0 11px;border-radius:11.5px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:500;pointer-events:none;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+#bm .bm-pill{position:absolute;z-index:1;left:50%;top:var(--pt,calc(50% + 9.5px));transform:translateX(-50%);height:22px;padding:0 9px;border-radius:11px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:500;pointer-events:none;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
 #bm .bm-pill b{font-weight:600}
 #bm .bm-btn{position:relative;z-index:2}
 #bm .bm-mid{flex:0 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:9px 0 0}
@@ -343,7 +343,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-img img{max-width:100%;max-height:100%;object-fit:contain}
 #bm .bm-ct{flex:none;font-size:16px;font-weight:600;margin:12px 0 0}
 #bm .bm-cd{flex:none;font-size:13px;line-height:1.2;font-weight:500;margin-top:2px;padding:0 2px}
-#bm .bm-view{flex:none;margin-top:12px;height:34px;padding:0 20px;border:0;border-radius:17px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+#bm .bm-view{flex:none;margin-top:11px;height:34px;padding:0 20px;border:0;border-radius:17px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
 #bm .bm-msg{flex:none;position:relative;z-index:2;width:calc(100% - 8px);height:41px;margin-top:14px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
 #bm .bm-msg input{width:100%;height:100%;padding:0;margin:0;text-align:left;line-height:normal;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
 #bm .bm-msg input::placeholder{color:#8e8e93}
@@ -508,7 +508,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 <symbol id="icon-theme" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor" d="M11.156,2.250 L9.516,2.531 L7.641,3.234 L5.766,4.453 L4.453,5.766 L3.281,7.547 L2.625,9.188 L2.250,11.156 L2.250,12.797 L2.531,14.438 L3.281,16.406 L4.453,18.188 L5.766,19.500 L7.641,20.719 L9.188,21.328 L11.156,21.703 L12.797,21.703 L14.625,21.375 L16.594,20.578 L18.188,19.500 L19.500,18.188 L20.578,16.594 L21.328,14.766 L21.703,12.797 L21.703,11.156 L21.328,9.188 L20.578,7.359 L19.500,5.766 L18.188,4.453 L16.500,3.328 L14.625,2.578 L12.797,2.250 Z M12.750,3.750 L14.297,4.031 L15.984,4.734 L17.109,5.484 L18.234,6.562 L19.031,7.641 L19.688,8.953 L20.109,10.406 L20.250,11.625 L20.156,13.266 L19.688,15.000 L19.031,16.312 L18.234,17.391 L17.109,18.469 L15.984,19.219 L14.297,19.922 L12.891,20.203 L12.703,20.156 Z"/></symbol>
 </svg>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#f0a21c"/></linearGradient>
-<linearGradient id="svRg" gradientUnits="userSpaceOnUse" x1="0" y1="53" x2="0" y2="0"><stop offset="0" stop-color="#74747a"/><stop offset="1" stop-color="#818188"/></linearGradient>
+<linearGradient id="svRg" gradientUnits="userSpaceOnUse" x1="0" y1="53" x2="0" y2="0"><stop offset="0" stop-color="#65656b"/><stop offset="1" stop-color="#707076"/></linearGradient>
 <linearGradient id="rbP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#324A56"/><stop offset="1" stop-color="#193345"/></linearGradient>
 <linearGradient id="rbSP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#653232"/><stop offset="1" stop-color="#542326"/></linearGradient>
 <linearGradient id="rbB" gradientUnits="userSpaceOnUse" x1="0" y1="53" x2="0" y2="0"><stop offset="0" stop-color="#1c3b52"/><stop offset="1" stop-color="#234660"/></linearGradient>
@@ -537,7 +537,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
       </div>
       <div class="bm-mid">
         <div class="bm-card">
-          <div class="rib"><svg viewBox="0 0 100 100"><defs><linearGradient id="bmRg" gradientUnits="userSpaceOnUse" x1="0" y1="53" x2="0" y2="0"><stop offset="0" stop-color="#74747a"/><stop offset="1" stop-color="#818188"/></linearGradient></defs><path d="M48.86 0L63.15 0Q67.15 0 69.98 2.83L97.17 30.02Q100 32.85 100 36.85L100 51.15Q100 56.92 95.91 52.83L47.17 4.09Q43.08 0 48.86 0Z" fill="url(#bmRg)"/></svg><span id="bmRib"></span></div>
+          <div class="rib"><svg viewBox="0 0 100 100"><defs><linearGradient id="bmRg" gradientUnits="userSpaceOnUse" x1="0" y1="53" x2="0" y2="0"><stop offset="0" stop-color="#65656b"/><stop offset="1" stop-color="#707076"/></linearGradient></defs><path d="M48.86 0L63.15 0Q67.15 0 69.98 2.83L97.17 30.02Q100 32.85 100 36.85L100 51.15Q100 56.92 95.91 52.83L47.17 4.09Q43.08 0 48.86 0Z" fill="url(#bmRg)"/></svg><span id="bmRib"></span></div>
           <div class="bm-img" id="bmImg"></div>
           <div class="bm-ct">Купленный подарок</div>
           <div class="bm-cd" id="bmCd"></div>
@@ -1196,11 +1196,11 @@ document.getElementById('svGift').onclick=()=>go('gifts');
        а плашка «Вы купили…» опускается вместе с её верхним краем */
     placePill();
   }
-  /* плашка «Вы купили…» всегда ровно на 7px выше карточки (высота плашки 23px) */
+  /* плашка «Вы купили…» всегда ровно на 6px выше карточки (высота плашки 22px) */
   function placePill(){
     const card=bm.querySelector('.bm-card'),top=bm.querySelector('.bm-top');
     if(!card||!top)return;
-    $b('bmPill').style.setProperty('--pt',(card.offsetTop-top.offsetTop-7-23)+'px');
+    $b('bmPill').style.setProperty('--pt',(card.offsetTop-top.offsetTop-6-22)+'px');
   }
   if(window.ResizeObserver){const _c=bm.querySelector('.bm-card');if(_c)new ResizeObserver(placePill).observe(_c)}
   let defH=0;
