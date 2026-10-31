@@ -16,12 +16,12 @@
 --ic-contacts-y:0px;                                      /* доп. сдвиг иконки контактов вниз */
 --ic-settings-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:12px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:50px;--set-r-multi:32px;               /* аватар и скругление карточки профиля */
+--ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:12px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:53px;--set-r-multi:30px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;--ic-pf-qr:32px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:32px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:24px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
---ic-profile:24px;--ic-buygift:24px;--ic-stars:24px;--ic-promo:24px;
---ic-lang:24px;--ic-theme:24px;--ic-anim:24px;              /* профиль */
+--ic-profile:26px;--ic-buygift:24px;--ic-stars:24px;--ic-promo:26px;
+--ic-lang:26px;--ic-theme:24px;--ic-anim:24px;              /* профиль */
 --bg:#000;--card:#1c1c1d;--text:#fff;--hint:#9e9e9e;--accent:#4cb4e9;--gold:#ffc83d;--r:22px}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 ::-webkit-scrollbar{display:none;width:0;height:0}
@@ -202,10 +202,14 @@ mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,
 body.navanim #bar{z-index:1}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
-.mtabs{margin-top:16px;height:41px;border-radius:50px;display:flex;align-items:stretch;padding:3px}
+.mtabs{margin:16px 36px 0;height:41px;border-radius:50px;display:flex;align-items:stretch;padding:3px}
 .mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)}
 .mtabs button{position:relative;z-index:2;flex:1;border:0;background:none;color:#bdbdc1;font:inherit;font-size:16px;font-weight:550;cursor:pointer;transition:color .2s;padding:0}
 .mtabs button.on{color:#fff}
+.mtabs button{display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.mt-ic{display:flex;align-items:center;gap:2px}
+.mt-ic img{width:22px;height:22px;object-fit:contain;display:block}
+.mt-ic em{font-style:normal;font-size:18px;line-height:22px}
 /* подарки в профиле */
 .pgrid{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .pg{position:relative;min-width:0;aspect-ratio:1/1;background:var(--card);border-radius:16px;display:flex;align-items:center;justify-content:center}
@@ -401,7 +405,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
     <div class="pf"><b>мобильный</b><span id="pNum"></span></div>
     <div class="pf pf-user"><div><b>имя пользователя</b><span class="lnk" id="pUser"></span></div><svg class="ico" style="--s:var(--ic-pf-qr)"><use href="#i-qr"/></svg></div>
   </div>
-  <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="all">Все подарки</button><button data-m="uniq">Уникальные</button></div>
+  <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="gifts"><span>Подарки</span><span class="mt-ic" id="mtIcons"></span></button><button data-m="posts">Публикации</button></div>
   <div class="pgrid" id="pGrid"></div>
   <div class="gempty" id="pEmpty" hidden></div>
 </section>
@@ -890,7 +894,7 @@ $$('#mtabs button').forEach(b=>b.onclick=()=>{pickTab($('#mtabs'),b);try{renderM
   ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
 })();
 function resetTabs(){
-  [['#gtabs','all','t'],['#mtabs','all','m']].forEach(([sel,v,k])=>{
+  [['#gtabs','all','t'],['#mtabs','gifts','m']].forEach(([sel,v,k])=>{
     const box=$(sel),b=box.querySelector('[data-'+k+'="'+v+'"]');
     box.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
     placeTab(box,true);
@@ -1038,14 +1042,16 @@ try{MYGIFTS=JSON.parse(store.get(MYK,'[]'))||[];SOLDMAP=JSON.parse(store.get(SOL
 const shortN=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'K':String(n);
 function renderMyGifts(){
   const g=$('#pGrid'),e=$('#pEmpty'),b=$('#mtabs button.on');if(!g||!e)return;
-  const uniq=!!b&&b.dataset.m==='uniq',list=uniq?[]:MYGIFTS;
+  const uniq=!!b&&b.dataset.m==='posts',list=uniq?[]:MYGIFTS;
   g.innerHTML=list.map((x,i)=>{
     const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
     return '<div class="pg" data-i="'+i+'">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
       (x.image?'<img class="pi" src="'+x.image+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+'</div>';
   }).join('');
   g.hidden=!list.length;e.hidden=list.length>0;
-  e.textContent=uniq?'Уникальных подарков пока нет':'Подарков пока нет';
+  e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
+  const ti=document.getElementById('mtIcons');
+  if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>x.image?'<img src="'+x.image+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
 }
 renderMyGifts();
 
