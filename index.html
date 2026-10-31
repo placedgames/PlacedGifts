@@ -87,18 +87,18 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 #p-saved{overflow:hidden}
 #p-saved:not(.tr){position:relative}
 #p-saved .sv-top,#p-saved .sv-bot{position:absolute;left:0;right:0;z-index:4;pointer-events:none}
-#p-saved .sv-top{top:0;height:calc(var(--hdr-top) + var(--hdr-h)/2);background:linear-gradient(to bottom,rgba(0,0,0,.72) 0%,rgba(0,0,0,.72) 35%,rgba(0,0,0,0) 100%)}
+#p-saved .sv-top{top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 10px);background:linear-gradient(to bottom,rgba(0,0,0,.72) 0%,rgba(0,0,0,.72) 35%,rgba(0,0,0,0) 100%)}
 #p-saved .sv-top::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);-webkit-mask-image:linear-gradient(to bottom,#000 35%,transparent);mask-image:linear-gradient(to bottom,#000 35%,transparent)}
-#p-saved .sv-bot{bottom:0;height:96px;background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,0));-webkit-mask-image:linear-gradient(to top,#000 30%,transparent);mask-image:linear-gradient(to top,#000 30%,transparent);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
-#svMsgs{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;display:flex;flex-direction:column;align-items:center;gap:10px;padding:calc(var(--hdr-top) + var(--hdr-h) + 20px) 16px 96px}
+#p-saved .sv-bot{bottom:0;height:96px;background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,0));-webkit-mask-image:linear-gradient(to top,#000 30%,transparent);mask-image:linear-gradient(to top,#000 30%,transparent);-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px)}
+#svMsgs{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;display:flex;flex-direction:column;align-items:center;gap:10px;padding:calc(var(--hdr-top) + var(--hdr-h) + 20px) 16px 80px}
 #svMsgs::before{content:"";margin-top:auto}
 .svm{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;flex:none}
 .sv-pill{height:25px;padding:0 14px;border-radius:12.5px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 .sv-pill b{font-weight:500}
 .sv-card{position:relative;width:224px;border-radius:25px;padding:16px 14px 15px;display:flex;flex-direction:column;align-items:center;text-align:center;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden;cursor:pointer}
-.sv-card .rib{position:absolute;top:-1.5px;right:-1.5px;width:115px;height:115px;pointer-events:none;z-index:2}
+.sv-card .rib{position:absolute;top:.62px;right:.62px;width:115px;height:115px;pointer-events:none;z-index:2}
 .sv-card .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
-.sv-card .rib span{position:absolute;left:80.63%;top:19.37%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
+.sv-card .rib span{position:absolute;left:calc(80.63% - .71px);top:calc(19.37% + .71px);transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
 .sv-img{width:100%;height:112px;display:flex;align-items:center;justify-content:center;font-size:80px}
 .sv-img img{max-width:100%;max-height:100%;object-fit:contain}
 .sv-ct{font-size:15px;font-weight:600;margin:10px 0 2px}
@@ -335,9 +335,9 @@ body.navanim #bar{z-index:1}
 #gm .gm-up{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
 #gm .gm-up.press{transform:scale(1.04)}
 .noanim #gm .gm-up.press{transform:none}
-#bm .rib{position:absolute;top:-1.5px;right:-1.5px;width:115px;height:115px;pointer-events:none;z-index:2}
+#bm .rib{position:absolute;top:.62px;right:.62px;width:115px;height:115px;pointer-events:none;z-index:2}
 #bm .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
-#bm .rib span{position:absolute;left:80.63%;top:19.37%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
+#bm .rib span{position:absolute;left:calc(80.63% - .71px);top:calc(19.37% + .71px);transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
 #bm .bm-img{width:100%;flex:1 1 auto;min-height:56px;height:112px;max-height:112px;display:flex;align-items:center;justify-content:center;font-size:80px}
 #bm .bm-img img{max-width:100%;max-height:100%;object-fit:contain}
 #bm .bm-ct{flex:none;font-size:15px;font-weight:600;margin:10px 0 2px}
