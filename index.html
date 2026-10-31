@@ -81,15 +81,18 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .pst{width:19px;height:19px;object-fit:contain;flex:none;position:relative}
 
 /* stub pages */
-.chats{background:var(--card);border-radius:var(--list-r);overflow:hidden}
-.chat{position:relative;display:flex;align-items:center;gap:12px;padding:0 16px 0 12px;height:74px;cursor:pointer}
-.chat+.chat:before{content:"";position:absolute;top:0;left:80px;right:0;height:1px;background:#333335}
-.chat-ava{flex:none;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.hdr-title{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:18px;font-weight:700;pointer-events:none}
+#p-chats{padding-top:0;padding-left:0;padding-right:0}
+.chats{background:var(--card);padding-top:calc(var(--hdr-top) + var(--hdr-h) + 8px);border-bottom:1px solid #333335}
+.chat{position:relative;display:flex;align-items:center;gap:12px;padding:0 16px;height:88px;cursor:pointer}
+.chat+.chat:before{content:"";position:absolute;top:0;left:86px;right:0;height:1px;background:#333335}
+.chat-ava{flex:none;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .chat-ava svg{width:28px;height:28px}
-.chat-b{flex:1;min-width:0}
-.chat-t{font-size:17px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chat-m{margin-top:2px;font-size:15px;line-height:1.25;color:var(--hint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chat-pin{flex:none;width:18px;height:18px;fill:#6b6b70}
+.chat-b{flex:1;min-width:0;position:relative;align-self:stretch;padding:14px 0}
+.chat-t{font-size:17px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:60px}
+.chat-d{position:absolute;top:14px;right:0;font-size:15px;line-height:1.2;color:var(--hint)}
+.chat-m{margin-top:2px;padding-right:28px;font-size:15px;line-height:1.25;color:var(--hint);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+.chat-pin{position:absolute;right:0;bottom:14px;width:18px;height:18px;fill:#6b6b70}
 .empty{background:var(--card);border-radius:var(--r);padding:40px 20px;text-align:center;color:var(--hint)}
 .big{font-size:44px;font-weight:700;color:var(--text);margin:6px 0}
 
@@ -353,17 +356,14 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 </section>
 
 <section class="page" id="p-chats">
-  <h1>Чаты</h1><p class="sub">Ваши переписки</p>
   <div class="chats">
     <div class="chat" data-s="Маркет">
       <div class="chat-ava" style="background:linear-gradient(to bottom,#ffa94d,#f0731c)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9.5"/><path d="M3 9.5 4.7 4.6A1 1 0 0 1 5.6 4h12.8a1 1 0 0 1 .9.6L21 9.5a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0Z"/></svg></div>
-      <div class="chat-b"><div class="chat-t">Маркет</div><div class="chat-m">Покупка и продажа</div></div>
-      <svg class="chat-pin" viewBox="0 0 24 24"><path d="M14.5 3.2a1 1 0 0 1 1.4 0l4.9 4.9a1 1 0 0 1 0 1.4l-.7.7a1 1 0 0 1-1.2.15l-2.5-1.4-3.3 3.3.5 3.4a1 1 0 0 1-.3.9l-.6.6a1 1 0 0 1-1.4 0L8 14.6l-4.6 4.6a.9.9 0 1 1-1.3-1.3L6.7 13.3 3.6 10.2a1 1 0 0 1 0-1.4l.6-.6a1 1 0 0 1 .9-.3l3.4.5 3.3-3.3-1.4-2.5a1 1 0 0 1 .15-1.2Z"/></svg>
+      <div class="chat-b"><div class="chat-t">Маркет</div><div class="chat-d"></div><div class="chat-m">Покупайте и продавайте подарки, следите за ценами.</div><svg class="chat-pin" viewBox="0 0 24 24"><path d="M14.5 3.2a1 1 0 0 1 1.4 0l4.9 4.9a1 1 0 0 1 0 1.4l-.7.7a1 1 0 0 1-1.2.15l-2.5-1.4-3.3 3.3.5 3.4a1 1 0 0 1-.3.9l-.6.6a1 1 0 0 1-1.4 0L8 14.6l-4.6 4.6a.9.9 0 1 1-1.3-1.3L6.7 13.3 3.6 10.2a1 1 0 0 1 0-1.4l.6-.6a1 1 0 0 1 .9-.3l3.4.5 3.3-3.3-1.4-2.5a1 1 0 0 1 .15-1.2Z"/></svg></div>
     </div>
     <div class="chat" data-s="Избранное">
       <div class="chat-ava" style="background:linear-gradient(to bottom,#4fb0f2,#2b78cf)"><svg viewBox="0 0 24 24" fill="#fff"><path d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v14.6a.7.7 0 0 1-1.1.6L12 16.4l-5.4 3.8a.7.7 0 0 1-1.1-.6V5A1.5 1.5 0 0 1 7 3.5Z"/></svg></div>
-      <div class="chat-b"><div class="chat-t">Избранное</div><div class="chat-m">Сообщения и файлы</div></div>
-      <svg class="chat-pin" viewBox="0 0 24 24"><path d="M14.5 3.2a1 1 0 0 1 1.4 0l4.9 4.9a1 1 0 0 1 0 1.4l-.7.7a1 1 0 0 1-1.2.15l-2.5-1.4-3.3 3.3.5 3.4a1 1 0 0 1-.3.9l-.6.6a1 1 0 0 1-1.4 0L8 14.6l-4.6 4.6a.9.9 0 1 1-1.3-1.3L6.7 13.3 3.6 10.2a1 1 0 0 1 0-1.4l.6-.6a1 1 0 0 1 .9-.3l3.4.5 3.3-3.3-1.4-2.5a1 1 0 0 1 .15-1.2Z"/></svg>
+      <div class="chat-b"><div class="chat-t">Избранное</div><div class="chat-d"></div><div class="chat-m">Сохраняйте сюда сообщения, ссылки и файлы.</div><svg class="chat-pin" viewBox="0 0 24 24"><path d="M14.5 3.2a1 1 0 0 1 1.4 0l4.9 4.9a1 1 0 0 1 0 1.4l-.7.7a1 1 0 0 1-1.2.15l-2.5-1.4-3.3 3.3.5 3.4a1 1 0 0 1-.3.9l-.6.6a1 1 0 0 1-1.4 0L8 14.6l-4.6 4.6a.9.9 0 1 1-1.3-1.3L6.7 13.3 3.6 10.2a1 1 0 0 1 0-1.4l.6-.6a1 1 0 0 1 .9-.3l3.4.5 3.3-3.3-1.4-2.5a1 1 0 0 1 .15-1.2Z"/></svg></div>
     </div>
   </div>
 </section>
@@ -599,7 +599,7 @@ const hRound=(i,a)=>'<button class="hb hb-round glass" data-a="'+a+'">'+i+'</but
 const hDbl=(a1,i1,a2,i2)=>'<div class="hb hb-dbl glass"><span data-a="'+a1+'">'+i1+'</span><span data-a="'+a2+'">'+i2+'</span></div>';
 const HDR={
   contacts:()=>hTxt('Сортиров.','sort')+hRound(PLUS,'add'),
-  chats:()=>hTxt('Изм.','edit')+hRound(WRITE,'write'),
+  chats:()=>hTxt('Изм.','edit')+'<div class="hdr-title">Чаты</div>'+hRound(WRITE,'write'),
   /* прежний вариант с иконкой подарка: chats:()=>hTxt('Изм.','edit')+hDbl('gifts',GIFT,'write',WRITE), */
   settings:()=>hRound(QR,'qr')+hTxt('Изм.','edit'),
   me:()=>hRound(BACK,'back')+hTxt('Изм.','edit'),
@@ -1394,6 +1394,7 @@ renderMyGifts();
 })();
 </script>
 <script>
+(function(){const d=new Date(),p=n=>String(n).padStart(2,'0'),t=p(d.getDate())+'.'+p(d.getMonth()+1);document.querySelectorAll('.chat-d').forEach(e=>e.textContent=t)})();
 /* модальные окна: «плавные» углы (continuous corners) — изгиб начинается раньше и вдоль горизонтальной, и вдоль вертикальной стороны */
 (function(){
   const SM=0.66;          /* сила эффекта: 0 = обычный круг, больше = изгиб начинается раньше (по обеим осям) */
