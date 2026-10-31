@@ -225,6 +225,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-btn:active{transform:scale(1.1)}
 #bm .bm-x{width:var(--hdr-h);flex:none}
 #bm .bm-cnt{padding:0 16px;flex:none;font-size:19px}
+#bm .bm-cnt select{position:absolute;inset:0;width:100%;height:100%;opacity:0;z-index:3;border:0;background:none;font-size:16px;cursor:pointer;-webkit-appearance:none;appearance:none}
 #bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
 #bm .bm-btn svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
 #bm .bm-pill{position:absolute;z-index:1;left:50%;top:calc(50% + 8px);transform:translate(-50%,-50%);height:26px;padding:0 14px;border-radius:13px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;pointer-events:none;background:rgba(40,40,43,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
@@ -254,7 +255,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:18.5px;background:#4BB6EE;transition:width .6s cubic-bezier(.3,.8,.3,1)}
 #bm .bm-bar span{position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:1}
 #bm .bm-left{left:18px}#bm .bm-sold{right:18px}
-#bm .bm-buy{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:22px 9px 9px;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:calc(100% - 18px);height:51px;border:0;border-radius:25.5px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
+#bm .bm-buy{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:24px 9px 9px;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:calc(100% - 18px);height:51px;border:0;border-radius:25.5px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
 #bm .bm-buy::after{display:none}
 #bm .bm-buy.press{transform:scale(1.04)}
 .noanim #bm .bm-buy.press{transform:none}
@@ -384,7 +385,7 @@ body.navanim #bar{z-index:1}
       <div class="bm-top">
         <button class="bm-btn bm-x glass" id="bmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
         <div class="bm-pill" id="bmPill"></div>
-        <div class="bm-btn bm-cnt glass"><span>1x</span></div>
+        <label class="bm-btn bm-cnt glass"><span id="bmCntT">1x</span><select id="bmCnt" aria-label="Количество"><option value="1">1x</option><option value="2">2x</option><option value="5">5x</option><option value="10">10x</option></select></label>
       </div>
       <div class="bm-mid">
         <div class="bm-card">
@@ -395,7 +396,7 @@ body.navanim #bar{z-index:1}
           <button class="bm-view" id="bmView">Посмотреть</button>
         </div>
       </div>
-      <label class="bm-msg glass"><input id="bmMsg" type="text" placeholder="Введите сообщение (необязательно)" maxlength="255" autocomplete="off"></label>
+      <label class="bm-msg glass"><input id="bmMsg" type="text" placeholder="Введите сообщение (необязательно)" maxlength="24" autocomplete="off"></label>
     </div>
     <div class="bm-bot">
       <div class="bm-hide" id="bmHide"><span>Скрыть моё имя</span><i class="bm-sw"></i></div>
@@ -971,16 +972,29 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
   }
   window.addEventListener('resize',shapeBuy);
   requestAnimationFrame(shapeBuy);
+  let qty=1;
+  const plural=n=>n%10===1&&n%100!==11?'подарок':(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20)?'подарка':'подарков');
+  /* текст в карточке: сообщение пользователя (если введено) вместо стандартного описания */
+  function renderCd(){
+    const m=$b('bmMsg').value.trim();
+    $b('bmCd').textContent=m||('Добавьте этот подарок в профиль или обменяйте на '+fmt(Math.round(+cur.price*EXCH))+' звёзд.');
+  }
+  function renderQty(){
+    const p=+cur.price,n=qty,sum=p*n;
+    $b('bmCntT').textContent=n+'x';
+    $b('bmBuy').innerHTML='<span>'+(n===1?'Купить подарок':'Купить '+n+' '+plural(n))+' за</span><svg viewBox="0 0 512 512"><use href="#i-star"/></svg><span>'+fmt(sum)+'</span>';
+  }
+  $b('bmMsg').addEventListener('input',renderCd);
+  $b('bmCnt').addEventListener('change',e=>{qty=+e.target.value||1;renderQty()});
   window.openBuy=function(g){
     cur=g;hidden=true;$b('bmHide').classList.add('on');$b('bmMsg').value='';
     const p=+g.price,TOTAL=g.total||DEF_TOTAL,left=TOTAL-SOLD;
     $b('bmImg').innerHTML=g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁');
-    $b('bmPill').innerHTML='Вы купили подарок за&nbsp;<b>'+fmt(p)+'&nbsp;звёзд</b>';
     $b('bmRib').textContent='1 из '+short(TOTAL);
-    $b('bmCd').textContent='Добавьте этот подарок в профиль или обменяйте на '+fmt(Math.round(p*EXCH))+' звёзд.';
     $b('bmLeft').textContent=fmt(left)+' осталось';
     $b('bmSold').textContent=fmt(SOLD)+' продано';
-    $b('bmBuy').innerHTML='<span>Купить подарок за</span><svg viewBox="0 0 512 512"><use href="#i-star"/></svg><span>'+fmt(p)+'</span>';
+    $b('bmPill').innerHTML='Вы купили подарок за&nbsp;<b>'+fmt(p)+'&nbsp;звёзд</b>';
+    qty=1;$b('bmCnt').value='1';renderQty();renderCd();
     $b('bmFill').style.width='0';
     bm.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     document.body.classList.add('bmopen');try{SP.hold(4,true)}catch(e){}
