@@ -233,8 +233,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-pill b{font-weight:500}
 #bm .bm-btn{position:relative;z-index:2}
 #bm .bm-mid{flex:0 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:9px 0 0}
-#bm .bm-card{position:relative;width:min(100%,224px);max-height:100%;min-height:0;border-radius:25px;padding:16px 14px 15px;display:flex;flex-direction:column;align-items:center;text-align:center;isolation:isolate}
-#bm .bm-glass{position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:25px;background:rgba(40,40,43,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);-webkit-clip-path:inset(0 round 25px);clip-path:inset(0 round 25px)}
+#bm .bm-card{position:relative;width:min(100%,224px);max-height:100%;min-height:0;border-radius:25px;padding:16px 14px 15px;display:flex;flex-direction:column;align-items:center;text-align:center;background:rgba(40,40,43,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
 #bm .rib{position:absolute;top:-2.5px;right:-2.5px;width:115px;height:115px;pointer-events:none;z-index:2}
 #bm .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
 #bm .rib span{position:absolute;left:78.2%;top:21.8%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
@@ -258,10 +257,10 @@ body.navanim #bar{z-index:1}
 -webkit-mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px);
 mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px)}
 #bm .bm-buywrap::after{background:linear-gradient(to bottom,rgba(28,28,30,0.000) 0px,rgba(28,28,30,0.040) 2px,rgba(28,28,30,0.102) 4px,rgba(28,28,30,0.174) 6px,rgba(28,28,30,0.253) 8px,rgba(28,28,30,0.334) 10px,rgba(28,28,30,0.416) 12px,rgba(28,28,30,0.498) 14px,rgba(28,28,30,0.577) 16px,rgba(28,28,30,0.653) 18px,rgba(28,28,30,0.724) 20px,rgba(28,28,30,0.790) 22px,rgba(28,28,30,0.849) 24px,rgba(28,28,30,0.900) 26px,rgba(28,28,30,0.942) 28px,rgba(28,28,30,0.973) 30px,rgba(28,28,30,0.993) 32px,rgba(28,28,30,1.000) 34px,#1c1c1e 36px)}
-#bm .bm-sheet{touch-action:none}
+#bm .bm-sheet{touch-action:none;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black)}
 #bm .bm-in{display:flex;flex-direction:column;flex:0 1 auto;min-height:0;will-change:transform}
 #bm .bm-pre{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
-#bm .bm-pill{-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:transform;-webkit-clip-path:inset(0 round 12.5px);clip-path:inset(0 round 12.5px)}
+#bm .bm-card,#bm .bm-pill{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:transform}
 #bm .bm-pill{transform:translate3d(-50%,calc(-50% + var(--ps,0px)),0)}
 #bm .bm-sheet.squeeze .bm-pre,#bm .bm-sheet.squeeze .bm-bot{flex-shrink:0}
 #bm .bm-hide{height:52px;border-radius:26px;background:#2c2c2e;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 20px;font-size:19px;font-weight:500;cursor:pointer;user-select:none}
@@ -409,7 +408,6 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
       </div>
       <div class="bm-mid">
         <div class="bm-card">
-          <i class="bm-glass"></i>
           <div class="rib"><svg viewBox="0 0 100 100"><defs><linearGradient id="bmRg" gradientUnits="userSpaceOnUse" x1="0" y1="53" x2="0" y2="0"><stop offset="0" stop-color="#9a9aa0"/><stop offset="1" stop-color="#a8a8ae"/></linearGradient></defs><path d="M54.80 0.00L65.10 0.00Q69.10 0.00 71.93 2.83L97.17 28.07Q100.00 30.90 100.00 34.90L100.00 45.20Q100.00 56.20 92.22 48.42L51.58 7.78Q43.80 0.00 54.80 0.00Z" fill="url(#bmRg)"/></svg><span id="bmRib"></span></div>
           <div class="bm-img" id="bmImg"></div>
           <div class="bm-ct">Купленный подарок</div>
@@ -992,6 +990,22 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     b.style.backgroundColor='transparent';
     b.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
   }
+  /* прогрев слоёв (blur, фон) до первого открытия */
+  (function(){
+    const css=document.createElement('style');
+    css.textContent='#bm.warm{visibility:visible!important;opacity:.01;pointer-events:none!important;transition:none!important}#bm.warm .bm-sheet{transform:none!important;transition:none!important}';
+    document.head.appendChild(css);
+    function end(){
+      bm.style.transition='none';sheet.style.transition='none';
+      bm.classList.remove('warm');void bm.offsetHeight;
+      bm.style.transition='';sheet.style.transition='';
+    }
+    window.addEventListener('load',()=>setTimeout(()=>{
+      if(bm.classList.contains('on')||bm.classList.contains('pre'))return;
+      bm.classList.add('warm');
+      setTimeout(()=>{if(!bm.classList.contains('on')&&!bm.classList.contains('pre'))end();else bm.classList.remove('warm')},700);
+    },400));
+  })();
   window.addEventListener('resize',shapeBuy);
   requestAnimationFrame(shapeBuy);
   let qty=1;
