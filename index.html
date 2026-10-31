@@ -211,14 +211,15 @@ body.navanim #bar{z-index:1}
 .noanim *:not(#menuSlider):not(.cover):not(.cover *):not(.phead){transition:none!important;animation:none!important}
 
 /* ===== модальное окно покупки подарка ===== */
-#bm{position:fixed;left:0;right:0;top:0;height:100%;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .4s}
+#bm{position:fixed;left:0;right:0;top:0;height:100%;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .6s}
 #bm.on{visibility:visible;pointer-events:auto;transition-delay:0s}
-#bm .bm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .3s}
+#bm .bm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .45s}
 #bm.on .bm-dim{opacity:1}
-#bm .bm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .38s cubic-bezier(.32,.72,0,1);will-change:transform}
+#bm .bm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .52s cubic-bezier(.32,.72,0,1);will-change:transform}
 #bm.on .bm-sheet{transform:translateY(0)}
 #bm .bm-sheet.drag{transition:none}
-#bm .bm-pre{position:relative;flex:0 1 auto;min-height:0;background:#000 url(https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg) center/cover;display:flex;flex-direction:column;align-items:center;padding:16px 16px 14px;overflow:hidden}
+#bm .bm-pre{position:relative;flex:0 1 auto;min-height:0;background:#000;isolation:isolate;display:flex;flex-direction:column;align-items:center;padding:16px 16px 14px;overflow:hidden}
+#bm .bm-pre::before{content:"";position:absolute;left:0;top:0;width:100%;height:100%;z-index:-1;pointer-events:none;background:url(https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg) center/cover;transform:translate3d(0,0,0);will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}
 #bm .bm-grab{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:36px;height:5px;border-radius:3px;background:rgba(255,255,255,.35);z-index:3}
 #bm .bm-top{position:relative;z-index:2;width:100%;display:flex;justify-content:space-between;align-items:center;margin-top:0;pointer-events:none}
 #bm .bm-btn{pointer-events:auto;height:var(--hdr-h);border-radius:50px;display:flex;align-items:center;justify-content:center;color:#fff;font:inherit;font-size:18px;font-weight:550;cursor:pointer;padding:0;transition:transform .2s}
@@ -249,11 +250,11 @@ body.navanim #bar{z-index:1}
 #bm .bm-buywrap{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:24px 29px 31px;pointer-events:none}
 #bm .bm-buywrap>*{pointer-events:auto}
 #bm .bm-buywrap{isolation:isolate}
-#bm .bm-buywrap::before,#bm .bm-buywrap::after{content:"";position:absolute;left:0;right:0;bottom:0;top:-34px;z-index:-1;pointer-events:none}
-#bm .bm-buywrap::before{-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+#bm .bm-buywrap::before,#bm .bm-buywrap::after{content:"";position:absolute;left:-48px;right:-48px;bottom:-48px;top:-34px;z-index:-1;pointer-events:none}
+#bm .bm-buywrap::before{-webkit-backdrop-filter:blur(16px) saturate(1.6) brightness(.92);backdrop-filter:blur(16px) saturate(1.6) brightness(.92);
 -webkit-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.03) 10%,rgba(0,0,0,.12) 22%,rgba(0,0,0,.3) 36%,rgba(0,0,0,.55) 52%,rgba(0,0,0,.8) 68%,rgba(0,0,0,.95) 82%,#000 92%);
 mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.03) 10%,rgba(0,0,0,.12) 22%,rgba(0,0,0,.3) 36%,rgba(0,0,0,.55) 52%,rgba(0,0,0,.8) 68%,rgba(0,0,0,.95) 82%,#000 92%)}
-#bm .bm-buywrap::after{background:linear-gradient(to bottom,rgba(28,28,30,0) 0,rgba(28,28,30,.04) 10%,rgba(28,28,30,.14) 22%,rgba(28,28,30,.32) 36%,rgba(28,28,30,.56) 52%,rgba(28,28,30,.78) 68%,rgba(28,28,30,.9) 82%,rgba(28,28,30,.94) 100%)}
+#bm .bm-buywrap::after{background:linear-gradient(to bottom,rgba(28,28,30,0) 0,rgba(28,28,30,.04) 10%,rgba(28,28,30,.14) 22%,rgba(28,28,30,.32) 36%,rgba(28,28,30,.56) 52%,rgba(28,28,30,.78) 68%,rgba(28,28,30,.9) 80%,rgba(28,28,30,.96) 100%)}
 #bm .bm-sheet{touch-action:none}
 #bm .bm-pre{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 #bm .bm-card,#bm .bm-pill{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:transform}
@@ -1026,7 +1027,7 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     bm.classList.add('on');bm.setAttribute('aria-hidden','false');shapeBuy();lockMid();
     requestAnimationFrame(()=>requestAnimationFrame(()=>{$b('bmFill').style.width=(left/TOTAL*100)+'%'}));
   };
-  function close(){document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}bm.classList.remove('on');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on'))bm.style.height=''},450);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+  function close(){document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}bm.classList.remove('on');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on'))bm.style.height=''},650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
   const keepTop=()=>{if(bm.classList.contains('on'))window.scrollTo(0,0)};
   if(window.visualViewport){visualViewport.addEventListener('resize',keepTop);visualViewport.addEventListener('scroll',keepTop)}
   $b('bmMsg').addEventListener('focus',()=>{keepTop();setTimeout(keepTop,50);setTimeout(keepTop,250)});
@@ -1063,7 +1064,7 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
     ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
   })();
   /* свайп вниз: окно не закрывается, а сжимается — контент уходит вниз, кнопка «Купить» остаётся на месте поверх него */
-  const MAXC=250,PULL=.55,FOLLOW=.13,BACK='height 1.1s cubic-bezier(.25,.9,.3,1)',BACK_MS=1150;
+  const MAXC=250,PULL=.7,FOLLOW=.2,BACK='height .85s cubic-bezier(.25,.9,.3,1)',BACK_MS=900;
   const pre=sheet.querySelector('.bm-pre'),bot=sheet.querySelector('.bm-bot');
   let sy=0,on=false,nat=0,tmr=0,tgt=0,pos=0,raf=0,frozen=false;
   /* на время жеста фиксируем размеры блоков, чтобы карточка не прыгала и не мигала */
@@ -1072,7 +1073,7 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
   function resetSq(){clearTimeout(tmr);cancelAnimationFrame(raf);raf=0;on=false;tgt=pos=0;sheet.style.transition='';sheet.style.height='';unfreeze()}
   function tick(){
     pos+=(tgt-pos)*FOLLOW;
-    sheet.style.height=(nat-pos)+'px';
+    sheet.style.height=Math.round(nat-pos)+'px';
     raf=(on||Math.abs(tgt-pos)>.2)?requestAnimationFrame(tick):0;
   }
   sheet.addEventListener('touchstart',e=>{
