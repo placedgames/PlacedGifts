@@ -229,11 +229,11 @@ body.navanim #bar{z-index:1}
 #bm .bm-cnt select{position:absolute;inset:0;width:100%;height:100%;opacity:0;z-index:3;border:0;background:none;font-size:16px;cursor:pointer;-webkit-appearance:none;appearance:none}
 #bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
 #bm .bm-btn svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
-#bm .bm-pill{position:absolute;z-index:1;left:50%;top:calc(50% + 9.5px);transform:translate(-50%,calc(-50% + var(--ps,0px)));height:25px;padding:0 14px;border-radius:12.5px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;pointer-events:none;background:rgba(40,40,43,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+#bm .bm-pill{position:absolute;z-index:1;left:50%;top:calc(50% + 9.5px);transform:translate(-50%,calc(-50% + var(--ps,0px)));height:25px;padding:0 14px;border-radius:12.5px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;pointer-events:none}
 #bm .bm-pill b{font-weight:500}
 #bm .bm-btn{position:relative;z-index:2}
 #bm .bm-mid{flex:0 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:9px 0 0}
-#bm .bm-card{position:relative;width:min(100%,224px);max-height:100%;min-height:0;border-radius:25px;padding:16px 14px 15px;display:flex;flex-direction:column;align-items:center;text-align:center;background:rgba(40,40,43,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+#bm .bm-card{position:relative;width:min(100%,224px);max-height:100%;min-height:0;border-radius:25px;padding:16px 14px 15px;display:flex;flex-direction:column;align-items:center;text-align:center}
 #bm .rib{position:absolute;top:-2.5px;right:-2.5px;width:115px;height:115px;pointer-events:none;z-index:2}
 #bm .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
 #bm .rib span{position:absolute;left:78.2%;top:21.8%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
@@ -251,11 +251,18 @@ body.navanim #bar{z-index:1}
 #bm .bm-buywrap>*{pointer-events:auto}
 #bm .bm-buywrap{isolation:isolate}
 #bm .bm-buywrap::before,#bm .bm-buywrap::after{content:"";position:absolute;left:-48px;right:-48px;bottom:-48px;top:-34px;z-index:-1;pointer-events:none}
-#bm .bm-buywrap::before{-webkit-backdrop-filter:blur(16px) saturate(1.6) brightness(.92);backdrop-filter:blur(16px) saturate(1.6) brightness(.92);
--webkit-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.03) 10%,rgba(0,0,0,.12) 22%,rgba(0,0,0,.3) 36%,rgba(0,0,0,.55) 52%,rgba(0,0,0,.8) 68%,rgba(0,0,0,.95) 82%,#000 92%);
-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.03) 10%,rgba(0,0,0,.12) 22%,rgba(0,0,0,.3) 36%,rgba(0,0,0,.55) 52%,rgba(0,0,0,.8) 68%,rgba(0,0,0,.95) 82%,#000 92%)}
-#bm .bm-buywrap::after{background:linear-gradient(to bottom,rgba(28,28,30,0) 0,rgba(28,28,30,.04) 10%,rgba(28,28,30,.14) 22%,rgba(28,28,30,.32) 36%,rgba(28,28,30,.56) 52%,rgba(28,28,30,.78) 68%,rgba(28,28,30,.9) 80%,rgba(28,28,30,.96) 100%)}
+/* blur считается по расширенной области (нет слабого края), а показывается только внутри скруглённого низа окна — Safari сам не обрезает backdrop-filter по углам */
+#bm .bm-buywrap::before{-webkit-backdrop-filter:blur(22px) saturate(1.6) brightness(.9);backdrop-filter:blur(22px) saturate(1.6) brightness(.9);
+-webkit-clip-path:inset(0 48px 48px 48px round 0 0 53px 53px);clip-path:inset(0 48px 48px 48px round 0 0 53px 53px);
+-webkit-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.1) 8%,rgba(0,0,0,.4) 18%,rgba(0,0,0,.8) 30%,#000 42%);
+mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.1) 8%,rgba(0,0,0,.4) 18%,rgba(0,0,0,.8) 30%,#000 42%)}
+#bm .bm-buywrap::after{background:linear-gradient(to bottom,rgba(28,28,30,0) 0,rgba(28,28,30,.12) 8%,rgba(28,28,30,.45) 18%,rgba(28,28,30,.8) 28%,rgba(28,28,30,.96) 36%,#1c1c1e 46%)}
 #bm .bm-sheet{touch-action:none}
+#bm .bm-card,#bm .bm-pill{isolation:isolate}
+#bm .bm-card{--gr:25px}#bm .bm-pill{--gr:12.5px}
+#bm .bm-card::before,#bm .bm-pill::before{content:"";position:absolute;inset:-100px;z-index:-1;pointer-events:none;background-image:url("https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg");background-repeat:no-repeat;background-size:var(--dw,0px) var(--dh,0px);background-position:var(--gx,0px) var(--gy,0px);-webkit-filter:blur(40px);filter:blur(40px);-webkit-clip-path:inset(100px round var(--gr));clip-path:inset(100px round var(--gr))}
+#bm .bm-card::after,#bm .bm-pill::after{content:"";position:absolute;inset:0;border-radius:var(--gr);z-index:-1;pointer-events:none;background:rgba(40,40,43,.5)}
+#bm .bm-pre.gs::before{background-size:var(--dw) var(--dh);background-position:var(--ox) var(--oy)}
 #bm .bm-pre{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 #bm .bm-card,#bm .bm-pill{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:transform}
 #bm .bm-pill{transform:translate3d(-50%,calc(-50% + var(--ps,0px)),0)}
@@ -996,8 +1003,26 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
        а плашка «Вы купили…» опускается вместе с её верхним краем */
     const card=bm.querySelector('.bm-card');
     $b('bmPill').style.setProperty('--ps',defH?Math.max(0,(defH-card.offsetHeight)/2)+'px':'0px');
+    syncGlass();
   }
   let defH=0;
+  /* фон и размытая подложка карточки считаются по одним и тем же числам, поэтому двигаются строго вместе */
+  let bgAR=0;
+  (function(){const im=new Image();im.onload=()=>{bgAR=im.naturalWidth/im.naturalHeight;syncGlass()};im.src='https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg'})();
+  function syncGlass(){
+    const pre=$b('bmPre');if(!bgAR||!pre.offsetWidth||!pre.offsetHeight)return;
+    const pw=pre.offsetWidth,ph=pre.offsetHeight;let dw,dh;
+    if(pw/ph>bgAR){dw=pw;dh=pw/bgAR}else{dh=ph;dw=ph*bgAR}
+    const ox=(pw-dw)/2,oy=(ph-dh)/2,pr=pre.getBoundingClientRect();
+    pre.style.setProperty('--dw',dw+'px');pre.style.setProperty('--dh',dh+'px');
+    pre.style.setProperty('--ox',ox+'px');pre.style.setProperty('--oy',oy+'px');pre.classList.add('gs');
+    [bm.querySelector('.bm-card'),$b('bmPill')].forEach(el=>{
+      const r=el.getBoundingClientRect();
+      el.style.setProperty('--gx',(ox-(r.left-pr.left)+100)+'px');
+      el.style.setProperty('--gy',(oy-(r.top-pr.top)+100)+'px');
+    });
+  }
+  window.addEventListener('resize',()=>{if(bm.classList.contains('on'))syncGlass()});
   function lockMid(){
     const mid=bm.querySelector('.bm-mid'),card=bm.querySelector('.bm-card');
     mid.style.height='';defH=0;renderCd();
