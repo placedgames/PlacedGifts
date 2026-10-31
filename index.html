@@ -263,19 +263,20 @@ body.navanim #bar{z-index:1}
 #gm .gm-t{font-size:19px;line-height:1.2;font-weight:600;margin:8px 0 0}
 #gm .gm-d{font-size:15px;line-height:1.25;font-weight:400;margin:12px 8px 0}
 #gm .gm-s{font-size:13px;line-height:1.25;font-weight:400;color:#8e8e93;margin:12px 0 0}
-#gm .gm-tbl{width:100%;margin-top:18px;border:1px solid #2c2c2e;border-radius:22px;overflow:hidden;text-align:left}
-#gm .gm-r{display:flex;min-height:38px;border-top:1px solid #2c2c2e;font-size:15px;font-weight:400}
+#gm .gm-tbl{width:100%;margin-top:18px;border:1px solid #343437;border-radius:22px;overflow:hidden;text-align:left}
+#gm .gm-r{display:flex;min-height:38px;border-top:1px solid #343437;font-size:15px;font-weight:400}
 #gm .gm-r:first-child{border-top:0}
-#gm .gm-k{flex:none;width:102px;padding:0 10px 0 14px;display:flex;align-items:center;background:#242426;font-weight:500}
-#gm .gm-v{flex:1;min-width:0;padding:0 12px;display:flex;align-items:center;gap:7px;border-left:1px solid #2c2c2e;white-space:nowrap}
+#gm .gm-k{flex:none;width:102px;padding:0 10px 0 14px;display:flex;align-items:center;background:#2c2c2e;font-weight:500}
+#gm .gm-v{flex:1;min-width:0;padding:0 12px;display:flex;align-items:center;gap:7px;border-left:1px solid #343437;white-space:nowrap}
 #gm .gm-v img{width:18px;height:18px;object-fit:contain;flex:none}
 #gm .gm-who{color:var(--accent);font-weight:550;overflow:hidden;text-overflow:ellipsis}
 #gm .gm-ava{flex:none;width:22px;height:22px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600}
 #gm .gm-ava.an{background:linear-gradient(to bottom,#ff7b7b,#e5405e)}
-#gm .gm-pill{flex:none;height:24px;padding:0 8px;border-radius:12px;background:rgba(76,180,233,.16);color:var(--accent);font-size:12px;font-weight:500;display:flex;align-items:center}
-#gm .gm-h{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:400;color:#8e8e93}
+#gm .gm-pill{flex:none;height:20px;padding:0 8px;border-radius:10px;background:rgba(76,180,233,.16);color:var(--accent);font-size:12px;font-weight:500;display:flex;align-items:center}
+#gm .gm-h{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:400;color:#8e8e93}
 #gm .gm-h svg{flex:none;width:22px;height:22px}
-#gm .gm-h a{color:var(--accent);font-weight:500;cursor:pointer}
+#gm .gm-h a{color:var(--accent);font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:3px;vertical-align:middle}
+#gm .gm-h a svg{width:10px;height:16px;flex:none}
 #gm .gm-upw{position:relative;z-index:1;padding:20px 29px 31px}
 #gm .gm-up{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:51px;border:0;border-radius:25.5px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
 #gm .gm-up:active{transform:scale(1.04)}
@@ -483,13 +484,13 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
     <button class="gm-x glass" id="gmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
     <div class="gm-body">
       <div class="gm-img" id="gmImg"></div>
-      <div class="gm-t">Полученный подарок</div>
+      <div class="gm-t">Сохраненный подарок</div>
       <div class="gm-d">Улучшите этот подарок, чтобы превратить его в уникальный предмет коллекции.</div>
-      <div class="gm-s">Только вы видите имя отправителя.</div>
+      <div class="gm-s">Имя отправителя видите только Вы.</div>
       <div class="gm-tbl" id="gmTbl"></div>
-      <div class="gm-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg><span>Этот подарок скрыт. <a id="gmShow">Показать в профиле ›</a></span></div>
+      <div class="gm-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg><span>Подарок скрыт из профиля. <a id="gmShow">Показать<svg viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5L8 8l-5.5 5.5"/></svg></a></span></div>
     </div>
-    <div class="gm-upw"><button class="gm-up" id="gmUp"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#fff"/><path d="M8.5 15.5L14 10l5.5 5.5M8.5 20L14 14.5 19.5 20" fill="none" stroke="#4BB6EE" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Улучшить</span></button></div>
+    <div class="gm-upw"><button class="gm-up" id="gmUp"><span>Улучшить</span></button></div>
   </div>
 </div>
 <div id="toast"></div>
@@ -1234,7 +1235,7 @@ renderMyGifts();
     let who;
     if(x.anon)who='<span class="gm-ava an">А</span><span class="gm-who">Аноним</span>';
     else who=(u.photo_url?'<span class="gm-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="gm-ava">'+esc((name[0]||'').toUpperCase())+'</span>')+'<span class="gm-who">'+esc(name)+'</span>';
-    who+='<span class="gm-pill">Подарить</span>';
+    who+='<span class="gm-pill">Отправить</span>';
     const total=x.total||0;
     let price=x.price;
     if(!price){
