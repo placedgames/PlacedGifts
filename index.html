@@ -86,15 +86,16 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 #p-saved,#p-saved.tr{padding:0;background:#000 url(https://cdn.jsdelivr.net/gh/placedgames/pg/Chat.jpg) center/cover no-repeat}
 #p-saved{overflow:hidden}
 #p-saved:not(.tr){position:relative}
-#p-saved .sv-top,#p-saved .sv-bot{position:absolute;left:0;right:0;z-index:4;pointer-events:none;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
-#p-saved .sv-top{top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 26px);background:linear-gradient(to bottom,rgba(0,0,0,.5),rgba(0,0,0,0));-webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent);mask-image:linear-gradient(to bottom,#000 30%,transparent)}
-#p-saved .sv-bot{bottom:0;height:96px;background:linear-gradient(to top,rgba(0,0,0,.5),rgba(0,0,0,0));-webkit-mask-image:linear-gradient(to top,#000 30%,transparent);mask-image:linear-gradient(to top,#000 30%,transparent)}
+#p-saved .sv-top,#p-saved .sv-bot{position:absolute;left:0;right:0;z-index:4;pointer-events:none}
+#p-saved .sv-top{top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 26px);background:linear-gradient(to bottom,rgba(0,0,0,.72),rgba(0,0,0,0));-webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent);mask-image:linear-gradient(to bottom,#000 30%,transparent)}
+#p-saved .sv-top::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h)/2 + 6px);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);-webkit-mask-image:linear-gradient(to bottom,#000 65%,transparent);mask-image:linear-gradient(to bottom,#000 65%,transparent)}
+#p-saved .sv-bot{bottom:0;height:96px;background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,0));-webkit-mask-image:linear-gradient(to top,#000 30%,transparent);mask-image:linear-gradient(to top,#000 30%,transparent);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 #svMsgs{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;display:flex;flex-direction:column;align-items:center;gap:10px;padding:calc(var(--hdr-top) + var(--hdr-h) + 20px) 16px 96px}
 #svMsgs::before{content:"";margin-top:auto}
 .svm{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;flex:none}
-.sv-pill{height:25px;padding:0 14px;border-radius:12.5px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;background:#2b2b2e}
+.sv-pill{height:25px;padding:0 14px;border-radius:12.5px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;background:#1c1c1e}
 .sv-pill b{font-weight:500}
-.sv-card{position:relative;width:224px;border-radius:25px;padding:16px 14px 15px;display:flex;flex-direction:column;align-items:center;text-align:center;background:#232326}
+.sv-card{position:relative;width:224px;border-radius:25px;padding:16px 14px 15px;display:flex;flex-direction:column;align-items:center;text-align:center;background:#1c1c1e;cursor:pointer}
 .sv-card .rib{position:absolute;top:-1.5px;right:-1.5px;width:115px;height:115px;pointer-events:none;z-index:2}
 .sv-card .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
 .sv-card .rib span{position:absolute;left:80.63%;top:19.37%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
@@ -102,7 +103,7 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .sv-img img{max-width:100%;max-height:100%;object-fit:contain}
 .sv-ct{font-size:15px;font-weight:600;margin:10px 0 2px}
 .sv-cd{font-size:13px;line-height:1.2;font-weight:500;margin-top:4px;padding:0 2px}
-.sv-view{margin-top:11px;height:33px;padding:0 15px;border:0;border-radius:16.5px;background:#3a3a3d;color:#fff;font:inherit;font-size:15px;font-weight:550;cursor:pointer}
+.sv-view{margin-top:11px;height:33px;padding:0 15px;border:0;border-radius:16.5px;background:#373739;color:#fff;font:inherit;font-size:15px;font-weight:550;cursor:pointer}
 #p-saved .sv-bar{position:absolute;left:30px;right:30px;bottom:22px;z-index:5;display:flex;align-items:center;gap:10px}
 #p-saved .sv-msg{flex:1;min-width:0;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
 #p-saved .sv-gift{flex:none;width:41px;height:41px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:transform .2s}
@@ -1139,7 +1140,7 @@ function renderSaved(fresh){
     '<div class="sv-ct">Купленный подарок</div>'+
     '<div class="sv-cd">'+(m.msg?m.msg.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'Добавьте этот подарок в профиль или обменяйте на '+fm(m.price*0.85)+' звёзд.')+'</div>'+
     '<button class="sv-view" data-i="'+i+'">Посмотреть</button></div></div>').join('');
-  box.querySelectorAll('.sv-view').forEach(b=>b.onclick=()=>{const m=SVMSGS[+b.dataset.i],x=MYGIFTS.find(g=>g.key===m.key&&g.t===m.t);if(x&&window.openGift)openGift(x);else toast('Просмотр подарка: скоро')});
+  box.querySelectorAll('.sv-card').forEach(c=>c.onclick=()=>{const b=c.querySelector('.sv-view'),m=SVMSGS[+b.dataset.i],x=MYGIFTS.find(g=>g.key===m.key&&g.t===m.t);if(x&&window.openGift)openGift(x);else toast('Просмотр подарка: скоро')});
 }
 renderSaved();
 document.getElementById('svGift').onclick=()=>go('gifts');
