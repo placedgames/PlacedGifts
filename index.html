@@ -267,8 +267,8 @@ body.navanim #bar{z-index:1}
 #gm .gm-img img{max-width:131px;max-height:131px;object-fit:contain}
 #gm .gm-t{font-size:20px;line-height:1.2;font-weight:600;margin:9px 0 0}
 #gm .gm-d{font-size:15px;line-height:1.25;font-weight:400;margin:19px 8px 0}
-#gm .gm-s{font-size:13px;line-height:1.25;font-weight:400;color:#8e8e93;margin:15px 0 0}
-#gm .gm-tbl{width:100%;margin-top:20px;border:1px solid #343437;border-radius:20px;overflow:hidden;text-align:left}
+#gm .gm-s{font-size:14px;line-height:1.25;font-weight:400;color:#8e8e93;margin:15px 0 0}
+#gm .gm-tbl{width:100%;margin-top:20px;border:1px solid #343437;border-radius:19px;overflow:hidden;text-align:left}
 #gm .gm-r{display:flex;min-height:40px;border-top:1px solid #343437;font-size:15px;font-weight:400}
 #gm .gm-r:first-child{border-top:0}
 #gm .gm-k{flex:none;width:102px;padding:0 10px 0 12px;display:flex;align-items:center;background:#2c2c2e;font-weight:500}
@@ -281,11 +281,11 @@ body.navanim #bar{z-index:1}
 #gm .gm-ava{flex:none;width:22px;height:22px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600}
 #gm .gm-ava.an{background:linear-gradient(to bottom,#ff7b7b,#e5405e)}
 #gm .gm-pill{flex:0 1 auto;min-width:0;height:20px;padding:0 8px;border-radius:10px;background:rgba(76,180,233,.16);color:var(--accent);font-size:12px;font-weight:500;display:block;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#gm .gm-h{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;font-size:13px;font-weight:400;color:#8e8e93}
+#gm .gm-h{margin-top:15px;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;font-size:13px;font-weight:400;color:#8e8e93}
 #gm .gm-h svg{flex:none;width:22px;height:22px}
 #gm .gm-h a{color:var(--accent);font-weight:500;cursor:pointer;display:inline;vertical-align:baseline}
 #gm .gm-h a svg{display:inline-block;width:6px;height:12px;flex:none;margin-left:3px;vertical-align:-2px}
-#gm .gm-upw{position:relative;z-index:1;padding:18px 29px 24px}
+#gm .gm-upw{position:relative;z-index:1;padding:19px 29px 24px}
 #gm .gm-up{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
 #gm .gm-up.press{transform:scale(1.04)}
 .noanim #gm .gm-up.press{transform:none}
@@ -497,8 +497,8 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
     <button class="gm-x glass" id="gmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
     <div class="gm-body">
       <div class="gm-img" id="gmImg"></div>
-      <div class="gm-t">Сохраненный подарок</div>
-      <div class="gm-d">Улучшите этот подарок, чтобы превратить его в уникальный предмет коллекции.</div>
+      <div class="gm-t">Подарок Вам</div>
+      <div class="gm-d">Улучшите подарок, чтобы превратить<br>его в уникальный коллекционный.</div>
       <div class="gm-s">Имя отправителя видите только Вы.</div>
       <div class="gm-tbl" id="gmTbl"></div>
       <div class="gm-h"><span>Подарок скрыт из профиля. <a id="gmShow">Показать<svg viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5L8 8l-5.5 5.5"/></svg></a></span></div>
@@ -1125,7 +1125,7 @@ renderMyGifts();
   $b('bmMsg').addEventListener('input',renderCd);
   $b('bmCnt').addEventListener('change',e=>{qty=+e.target.value||1;renderQty()});
   window.openBuy=function(g){
-    clearTimeout(closeT);g.key=g.key||('p'+g.price+(g.image||g.emoji||''));cur=g;hidden=true;$b('bmHide').classList.add('on');$b('bmMsg').value='';
+    clearTimeout(closeT);g.key=g.key||('p'+g.price+(g.image||g.emoji||''));cur=g;hidden=false;$b('bmHide').classList.remove('on');$b('bmMsg').value='';
     const p=+g.price,TOTAL=g.total||DEF_TOTAL,sold=SOLDMAP[g.key]||0,left=Math.max(0,TOTAL-sold);
     $b('bmImg').innerHTML=g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁');
     $b('bmRib').textContent='1 из '+short(TOTAL);
@@ -1369,7 +1369,7 @@ renderMyGifts();
 <script>
 /* модальные окна: «плавные» углы (continuous corners) — изгиб начинается раньше и вдоль горизонтальной, и вдоль вертикальной стороны */
 (function(){
-  const SM=0.58;          /* сила эффекта: 0 = обычный круг, больше = изгиб начинается раньше (по обеим осям) */
+  const SM=0.66;          /* сила эффекта: 0 = обычный круг, больше = изгиб начинается раньше (по обеим осям) */
   const RT=38,RB=53;     /* радиусы сверху и снизу — те же, что были */
   function corner(r,w,h){
     r=Math.min(r,w/2,h/2);const bud=Math.min(w,h)/2,rad=x=>x*Math.PI/180;
