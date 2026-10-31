@@ -104,7 +104,7 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .sv-img img{max-width:100%;max-height:100%;object-fit:contain}
 .sv-ct{font-size:16px;font-weight:600;margin:12px 0 0}
 .sv-cd{font-size:13px;line-height:1.2;font-weight:500;margin-top:2px;padding:0 2px}
-.sv-view{margin-top:12px;height:35px;padding:0 20px;border:0;border-radius:17.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.sv-view{margin-top:12px;height:37px;padding:0 20px;border:0;border-radius:18.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
 #p-saved .sv-bar{position:absolute;left:30px;right:30px;bottom:22px;z-index:5;display:flex;align-items:center;gap:10px}
 #p-saved .sv-msg{flex:1;min-width:0;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
 #p-saved .sv-gift{flex:none;width:41px;height:41px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:transform .2s}
@@ -343,7 +343,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-img img{max-width:100%;max-height:100%;object-fit:contain}
 #bm .bm-ct{flex:none;font-size:16px;font-weight:600;margin:12px 0 0}
 #bm .bm-cd{flex:none;font-size:13px;line-height:1.2;font-weight:500;margin-top:2px;padding:0 2px}
-#bm .bm-view{flex:none;margin-top:12px;height:35px;padding:0 20px;border:0;border-radius:17.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+#bm .bm-view{flex:none;margin-top:12px;height:37px;padding:0 20px;border:0;border-radius:18.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
 #bm .bm-msg{flex:none;position:relative;z-index:2;width:calc(100% - 8px);height:41px;margin-top:14px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
 #bm .bm-msg input{width:100%;height:100%;padding:0;margin:0;text-align:left;line-height:normal;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
 #bm .bm-msg input::placeholder{color:#8e8e93}
@@ -1521,14 +1521,17 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function smoothPath(w,h,r,sm){const q=corner(Math.min(r,w/2,h/2),w,h,sm);
     return 'M'+f(q.p)+' 0L'+f(w-q.p)+' 0'+seg(q,0)+'L'+f(w)+' '+f(h-q.p)+seg(q,1)+'L'+f(q.p)+' '+f(h)+seg(q,2)+'L0 '+f(q.p)+seg(q,3)+'Z'}
   /* кнопка-«таблетка»: кривая начинается раньше по горизонтали (PX×радиус) и круче заворачивает — PX/HF/VF = сила сглаживания */
-  const PX=1.55,HF=0.82,VF=0.78;
+  const PX=1.12,HF=0.58,VF=0.58;
   function pillPath(w,h){const r=h/2,px=Math.min(PX*r,w/2),hx=px*HF,vy=r*VF;
     return 'M'+f(px)+' 0L'+f(w-px)+' 0C'+f(w-px+hx)+' 0 '+f(w)+' '+f(r-vy)+' '+f(w)+' '+f(r)+
       'C'+f(w)+' '+f(r+vy)+' '+f(w-px+hx)+' '+f(h)+' '+f(w-px)+' '+f(h)+'L'+f(px)+' '+f(h)+
       'C'+f(px-hx)+' '+f(h)+' 0 '+f(r+vy)+' 0 '+f(r)+'C0 '+f(r-vy)+' '+f(px-hx)+' 0 '+f(px)+' 0Z'}
   window.smoothFit=function(el,r,own,sm){
     if(!el||el.__sm)return;el.__sm=1;
-    const run=()=>{const w=el.offsetWidth,h=el.offsetHeight;if(!w||!h)return;
+    const run=()=>{/* точные дробные размеры: offsetWidth округляет, и край кнопки обрезался на доли пикселя */
+      const cs=getComputedStyle(el);let w=parseFloat(cs.width),h=parseFloat(cs.height);
+      if(cs.boxSizing==='content-box'){w+=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight)+parseFloat(cs.borderLeftWidth)+parseFloat(cs.borderRightWidth);h+=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom)+parseFloat(cs.borderTopWidth)+parseFloat(cs.borderBottomWidth)}
+      if(!(w>0)||!(h>0)){w=el.offsetWidth;h=el.offsetHeight}if(!w||!h)return;
       const rr=r==='pill'?h/2:r,v='path("'+(r==='pill'?pillPath(w,h):smoothPath(w,h,rr,sm))+'")';
       if(own){el.style.borderRadius='0';el.style.webkitClipPath=v;el.style.clipPath=v}
       else{el.style.setProperty('--sq',v);el.style.setProperty('--sqr','0px')}};
