@@ -16,12 +16,12 @@
 --ic-contacts-y:0px;                                      /* доп. сдвиг иконки контактов вниз */
 --ic-settings-y:0px;                                           /* сдвиг иконки звезды в меню по вертикали */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:12px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:53px;--set-r-multi:30px;               /* аватар и скругление карточки профиля */
+--ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:12px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:51px;--set-r-multi:28px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;--ic-pf-qr:32px;                                     /* значок рейтинга на странице профиля */
---ic-plate:32px;                                            /* цветная плашка в профиле */
+--ic-plate:31px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:24px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
---ic-profile:26px;--ic-buygift:24px;--ic-stars:24px;--ic-promo:26px;
---ic-lang:26px;--ic-theme:24px;--ic-anim:24px;              /* профиль */
+--ic-profile:29px;--ic-buygift:27px;--ic-stars:26px;--ic-promo:29px;
+--ic-lang:29px;--ic-theme:24px;--ic-anim:27px;              /* профиль */
 --bg:#000;--card:#1c1c1d;--text:#fff;--hint:#9e9e9e;--accent:#4cb4e9;--gold:#ffc83d;--r:22px}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 ::-webkit-scrollbar{display:none;width:0;height:0}
@@ -102,10 +102,10 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .lnk{color:var(--accent)}
 .list{background:var(--card);border-radius:var(--list-r);margin-bottom:16px;overflow:hidden}
 .row{display:flex;align-items:center;gap:14px;padding:0 16px;height:54px;cursor:pointer}
-.ic{width:var(--ic-plate);height:var(--ic-plate);flex:none;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff}
+.ic{width:var(--ic-plate);height:var(--ic-plate);flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff}
 .ic svg{fill:#fff;fill-rule:evenodd;position:relative}
 .ic{position:relative}
-.ic:before{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.3);background:linear-gradient(to bottom,rgba(255,255,255,.12),rgba(255,255,255,0) 60%,rgba(0,0,0,.1))}
+.ic:before{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 .4px rgba(255,255,255,.22);background:linear-gradient(to bottom,rgba(255,255,255,.12),rgba(255,255,255,0) 60%,rgba(0,0,0,.1))}
 .menu-icon-wrap svg{transform:translateY(var(--menu-icon-y))}
 .menu-item[data-p="contacts"] svg{transform:translateY(calc(var(--menu-icon-y) + var(--ic-contacts-y)))}
 .menu-item[data-p="chats"] svg{transform:translateY(calc(var(--menu-icon-y) + var(--ic-chats-y)))}
@@ -377,7 +377,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
     <div class="pname" id="uname"></div>
     <div class="pnum"><svg class="ico" style="--s:var(--ic-rating-badge)"><use id="uRate" href="#i-n1"/></svg><span id="unum"></span></div>
   </div>
-  <div class="list" style="border-radius:calc(var(--set-r) + 2px)">
+  <div class="list" style="border-radius:57px">
     <div class="row" data-go="me" style="height:53px"><div class="ic" style="background:linear-gradient(to bottom,#ff665a,#ff4b44)"><svg class="ico" style="--s:var(--ic-profile)"><use href="#i-profile"/></svg></div><span class="t">Мой профиль</span></div>
   </div>
   <div class="list">
