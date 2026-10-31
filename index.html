@@ -84,6 +84,23 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .hb.hb-title{padding:0 24px;border-radius:23.85px/22.5px}
 .hb-ava i{display:flex;align-items:center;justify-content:center;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:50%;background:linear-gradient(to bottom,#4fb0f2,#2b78cf)}
 #p-saved,#p-saved.tr{padding:0;background:#000 url(https://cdn.jsdelivr.net/gh/placedgames/pg/Chat.jpg) center/cover no-repeat}
+#p-saved .sv-top,#p-saved .sv-bot{position:fixed;left:0;right:0;z-index:4;pointer-events:none;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#p-saved .sv-top{top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 34px);background:linear-gradient(to bottom,rgba(0,0,0,.62) 0%,rgba(0,0,0,.4) 55%,rgba(0,0,0,0) 100%);-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 100%)}
+#p-saved .sv-bot{bottom:0;height:104px;background:linear-gradient(to top,rgba(0,0,0,.62) 0%,rgba(0,0,0,.4) 55%,rgba(0,0,0,0) 100%);-webkit-mask-image:linear-gradient(to top,#000 0%,#000 55%,transparent 100%);mask-image:linear-gradient(to top,#000 0%,#000 55%,transparent 100%)}
+#svMsgs{min-height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:10px;padding:calc(var(--hdr-top) + var(--hdr-h) + 20px) 16px 100px}
+.svm{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}
+.svm.new{animation:svIn .5s .3s cubic-bezier(.32,.72,0,1) both}
+@keyframes svIn{from{opacity:0;transform:translateY(24px) scale(.9)}to{opacity:1;transform:none}}
+.sv-pill{height:25px;padding:0 14px;border-radius:12.5px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+.sv-pill b{font-weight:500}
+.sv-card{position:relative;width:224px;border-radius:25px;padding:16px 14px 15px;display:flex;flex-direction:column;align-items:center;text-align:center;overflow:hidden;background:rgba(56,56,60,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+.sv-card .rib{top:-1.5px;right:-1.5px}
+.sv-card .rib span{left:80.63%;top:19.37%;font-size:10px;font-weight:550}
+.sv-img{width:100%;height:112px;display:flex;align-items:center;justify-content:center;font-size:80px}
+.sv-img img{max-width:100%;max-height:100%;object-fit:contain}
+.sv-ct{font-size:15px;font-weight:600;margin:10px 0 2px}
+.sv-cd{font-size:13px;line-height:1.2;font-weight:500;margin-top:4px;padding:0 2px}
+.sv-view{margin-top:11px;height:33px;padding:0 15px;border:0;border-radius:16.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:550;cursor:pointer}
 #p-saved .sv-bar{position:fixed;left:30px;right:30px;bottom:22px;z-index:5;display:flex;align-items:center;gap:10px}
 #p-saved .sv-msg{flex:1;min-width:0;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
 #p-saved .sv-gift{flex:none;width:41px;height:41px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:transform .2s}
@@ -369,9 +386,11 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 </section>
 
 <section class="page" id="p-saved">
+  <div id="svMsgs"></div>
+  <div class="sv-top"></div><div class="sv-bot"></div>
   <div class="sv-bar">
     <label class="sv-msg glass"><input type="text" placeholder="Сообщения недоступны" disabled readonly autocomplete="off"></label>
-    <button class="sv-gift glass" data-s="Подарок" aria-label="Подарок"><svg class="ico" style="--s:28px"><use href="#i-gift2"/></svg></button>
+    <button class="sv-gift glass" id="svGift" aria-label="Подарок"><svg class="ico" style="--s:28px"><use href="#i-gift2"/></svg></button>
   </div>
 </section>
 
@@ -760,7 +779,7 @@ function go(p,instant,back,o){
   if(dir<=0)document.body.classList.toggle('nobar',wantNo);
   if(dir<=0){instant?syncInstant():slide(p)}
   // страницы не помнят позицию: всегда открываются сверху и с первой вкладкой
-  if(p!==prev||instant){inc.scrollTop=0;resetTabs()}
+  if(p!==prev||instant){inc.scrollTop=p==='saved'?inc.scrollHeight:0;resetTabs()}
   const later=[];
   Object.keys(covers).forEach(k=>{if(k===p)covers[k].measure();else if(dir!==0&&k===prev)later.push(()=>covers[k].reset());else covers[k].reset()});
   giftsOn(p==='gifts'); starsOn(p==='stars');
@@ -1104,6 +1123,24 @@ function renderMyGifts(){
 }
 renderMyGifts();
 
+/* ===== Чат «Избранное»: карточки купленных подарков ===== */
+const SVK='savedMsgs';
+let SVMSGS=[];try{SVMSGS=JSON.parse(store.get(SVK,'[]'))||[]}catch(e){}
+function renderSaved(fresh){
+  const box=document.getElementById('svMsgs');if(!box)return;
+  const fm=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0');
+  box.innerHTML=SVMSGS.map((m,i)=>'<div class="svm'+(fresh&&i>=SVMSGS.length-fresh?' new':'')+'">'+
+    '<div class="sv-pill">Вы купили подарок за&nbsp;<b>'+fm(m.price)+'&nbsp;звёзд</b></div>'+
+    '<div class="sv-card"><div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(m.total)+'</span></div>'+
+    '<div class="sv-img">'+(m.image?'<img src="'+m.image+'" alt="">':(m.emoji||'🎁'))+'</div>'+
+    '<div class="sv-ct">Купленный подарок</div>'+
+    '<div class="sv-cd">Добавьте этот подарок в профиль или обменяйте на '+fm(m.price*0.85)+' звёзд.</div>'+
+    '<button class="sv-view" data-i="'+i+'">Посмотреть</button></div></div>').join('');
+  box.querySelectorAll('.sv-view').forEach(b=>b.onclick=()=>{const m=SVMSGS[+b.dataset.i],x=MYGIFTS.find(g=>g.key===m.key&&g.t===m.t);if(x&&window.openGift)openGift(x);else toast('Просмотр подарка: скоро')});
+}
+renderSaved();
+document.getElementById('svGift').onclick=()=>go('gifts');
+
 /* ===== модальное окно покупки ===== */
 (function(){
   const bm=document.getElementById('bm'),sheet=document.getElementById('bmSheet'),$b=id=>document.getElementById(id);
@@ -1208,10 +1245,11 @@ renderMyGifts();
     if(MYGIFTS.length>200)MYGIFTS.length=200;
     store.set(MYK,JSON.stringify(MYGIFTS));
     renderMyGifts();
-    toast('Подарок куплен за ★ '+fmt(+cur.price*n));
+    {MYGIFTS.slice(0,n).reverse().forEach(x=>SVMSGS.push({image:x.image,emoji:x.emoji,total:x.total,price:x.price,key:x.key,t:x.t}));
+     if(SVMSGS.length>100)SVMSGS.splice(0,SVMSGS.length-100);store.set(SVK,JSON.stringify(SVMSGS));renderSaved(n)}
     close();
-    /* после закрытия окна — на страницу профиля, где уже лежит новый подарок */
-    setTimeout(()=>go('me',false,false,{full:true}),380);
+    /* после закрытия окна — в чат «Избранное», где появилась карточка подарка */
+    setTimeout(()=>{const i=hist.lastIndexOf('saved');if(i>=0){hist.length=i;go('saved',false,true)}else go('saved')},380);
   };
   /* кнопка «Купить»: тот же отклик и «слайм», что у кнопок хедера (раздувается, тянется за пальцем, пружинит назад) */
   (function(){
