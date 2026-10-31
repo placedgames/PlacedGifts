@@ -104,7 +104,7 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .sv-img img{max-width:100%;max-height:100%;object-fit:contain}
 .sv-ct{font-size:16px;font-weight:600;margin:12px 0 0}
 .sv-cd{font-size:13px;line-height:1.2;font-weight:500;margin-top:2px;padding:0 2px}
-.sv-view{margin-top:11px;height:34px;padding:0 20px;border:0;border-radius:17px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.sv-view{margin-top:11px;height:35px;padding:0 20px;border:0;border-radius:17.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
 #p-saved .sv-bar{position:absolute;left:30px;right:30px;bottom:22px;z-index:5;display:flex;align-items:center;gap:10px}
 #p-saved .sv-msg{flex:1;min-width:0;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
 #p-saved .sv-gift{flex:none;width:41px;height:41px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:transform .2s}
@@ -281,6 +281,8 @@ body.navanim #bar{z-index:1}
 #bm.on .bm-dim{opacity:1}
 #bm .bm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:transparent;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform}
 #bm.on .bm-sheet{transform:translateY(0)}
+#bm.fast .bm-sheet{transition-duration:.4s}
+#bm.fast .bm-dim{transition-duration:.3s}
 #bm .bm-sheet.drag{transition:none}
 #bm .bm-pre{position:relative;flex:0 1 auto;min-height:0;background:#000;isolation:isolate;display:flex;flex-direction:column;align-items:center;padding:16px 16px 14px;overflow:hidden}
 #bm .bm-pre::before{content:"";position:absolute;left:0;top:0;width:100%;height:100%;z-index:-1;pointer-events:none;background:url(https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg) center/cover;transform:translate3d(0,0,0);will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}
@@ -317,6 +319,7 @@ body.navanim #bar{z-index:1}
 #gm .gm-tbl{width:100%;margin-top:20px;border:1px solid #343437;border-radius:19px;overflow:hidden;text-align:left}
 #gm .gm-r{display:flex;min-height:40px;border-top:1px solid #343437;font-size:15px;font-weight:400}
 #gm .gm-r:first-child{border-top:0}
+#gm .gm-c{padding:10px 12px;align-items:center;line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
 #gm .gm-k{flex:none;width:102px;padding:0 10px 0 12px;display:flex;align-items:center;background:#2c2c2e;font-weight:500}
 #gm .gm-v{flex:1;min-width:0;padding:0 12px;display:flex;align-items:center;gap:7px;border-left:1px solid #343437;white-space:nowrap}
 #gm .gm-v img{width:18px;height:18px;object-fit:contain;flex:none}
@@ -343,7 +346,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-img img{max-width:100%;max-height:100%;object-fit:contain}
 #bm .bm-ct{flex:none;font-size:16px;font-weight:600;margin:12px 0 0}
 #bm .bm-cd{flex:none;font-size:13px;line-height:1.2;font-weight:500;margin-top:2px;padding:0 2px}
-#bm .bm-view{flex:none;margin-top:11px;height:34px;padding:0 20px;border:0;border-radius:17px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+#bm .bm-view{flex:none;margin-top:11px;height:35px;padding:0 20px;border:0;border-radius:17.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
 #bm .bm-msg{flex:none;position:relative;z-index:2;width:calc(100% - 8px);height:41px;margin-top:14px;border-radius:21.7px/20.5px;display:flex;align-items:center;padding:0 14px}
 #bm .bm-msg input{width:100%;height:100%;padding:0;margin:0;text-align:left;line-height:normal;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
 #bm .bm-msg input::placeholder{color:#8e8e93}
@@ -394,7 +397,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
   <div class="sv-top"></div><div class="sv-bot"></div>
   <div class="sv-bar">
     <label class="sv-msg glass"><input type="text" placeholder="Сообщения недоступны" disabled readonly autocomplete="off"></label>
-    <button class="sv-gift glass" id="svGift" aria-label="Подарок"><svg class="ico" style="--s:28px"><use href="#i-gift2"/></svg></button>
+    <button class="sv-gift glass" id="svGift" aria-label="Подарок"><svg class="ico" style="--s:31px"><use href="#i-gift2"/></svg></button>
   </div>
 </section>
 
@@ -750,7 +753,7 @@ function slide(p){
 }
 let cur='chats',hist=[];
 function syncInstant(){const s=$('#menuSlider');s.classList.add('no-transition');slide(cur);void s.offsetWidth;s.classList.remove('no-transition')}
-const DETAIL=['gifts','stars','me','saved'], NAV_EASE='cubic-bezier(.32,.72,0,1)', NAV_MS=560;
+const DETAIL=['gifts','stars','me','saved'], NAV_EASE='cubic-bezier(.32,.72,0,1)'; let NAV_MS=560;
 let navFin=null, swipeOn=false, meFull=false;
 const animOn=()=>store.get('anim','1')==='1';
 function navDone(){if(navFin){const f=navFin;navFin=null;f()}}
@@ -1218,7 +1221,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   $b('bmMsg').addEventListener('input',renderCd);
   $b('bmCnt').addEventListener('change',e=>{qty=+e.target.value||1;renderQty()});
   window.openBuy=function(g){
-    clearTimeout(closeT);g.key=g.key||('p'+g.price+(g.image||g.emoji||''));cur=g;hidden=false;$b('bmHide').classList.remove('on');$b('bmMsg').value='';
+    bm.classList.remove('fast');clearTimeout(closeT);g.key=g.key||('p'+g.price+(g.image||g.emoji||''));cur=g;hidden=false;$b('bmHide').classList.remove('on');$b('bmMsg').value='';
     const p=+g.price,TOTAL=g.total||DEF_TOTAL,sold=SOLDMAP[g.key]||0,left=Math.max(0,TOTAL-sold);
     $b('bmImg').innerHTML=g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁');
     $b('bmRib').textContent='1 из '+short(TOTAL);
@@ -1239,7 +1242,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       setTimeout(()=>{if(bm.classList.contains('on'))$b('bmFill').style.width=(left/TOTAL*100)+'%'},250);
     }));
   };
-  function close(){clearTimeout(closeT);closeT=setTimeout(()=>{if(bm.classList.contains('on')||bm.classList.contains('pre'))return;document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}},400);bm.classList.remove('on','pre');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on'))bm.style.height=''},650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+  function close(){clearTimeout(closeT);closeT=setTimeout(()=>{if(bm.classList.contains('on')||bm.classList.contains('pre'))return;document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}},400);bm.classList.remove('on','pre');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on')){bm.style.height='';bm.classList.remove('fast')}},650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
   const keepTop=()=>{if(bm.classList.contains('on'))window.scrollTo(0,0)};
   if(window.visualViewport){visualViewport.addEventListener('resize',keepTop);visualViewport.addEventListener('scroll',keepTop)}
   $b('bmMsg').addEventListener('focus',()=>{keepTop();setTimeout(keepTop,50);setTimeout(keepTop,250)});
@@ -1253,15 +1256,16 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const total=cur.total||DEF_TOTAL,sold=SOLDMAP[cur.key]||0,n=qty;
     if(total-sold<n){toast(total-sold>0?'Осталось только '+fmt(total-sold):'Подарки закончились');return}
     SOLDMAP[cur.key]=sold+n;store.set(SOLDK,JSON.stringify(SOLDMAP));
-    for(let i=0;i<n;i++)MYGIFTS.unshift({image:cur.image||null,emoji:cur.emoji||null,total:total,anon:hidden,t:Date.now(),price:+cur.price,key:cur.key});
+    const cmt=$b('bmMsg').value.trim();
+    for(let i=0;i<n;i++)MYGIFTS.unshift({image:cur.image||null,emoji:cur.emoji||null,total:total,anon:hidden,t:Date.now(),price:+cur.price,key:cur.key,msg:cmt});
     if(MYGIFTS.length>200)MYGIFTS.length=200;
     store.set(MYK,JSON.stringify(MYGIFTS));
     renderMyGifts();
     {const cm=$b('bmMsg').value.trim();MYGIFTS.slice(0,n).reverse().forEach(x=>SVMSGS.push({msg:cm,image:x.image,emoji:x.emoji,total:x.total,price:x.price,key:x.key,t:x.t}));
      if(SVMSGS.length>100)SVMSGS.splice(0,SVMSGS.length-100);store.set(SVK,JSON.stringify(SVMSGS));renderSaved(n);{const sc=document.getElementById('svMsgs');sc.scrollTop=sc.scrollHeight}}
-    close();
-    /* после закрытия окна — в чат «Избранное», где появилась карточка подарка */
-    setTimeout(()=>{const i=hist.lastIndexOf('saved');if(i>=0){hist.length=i;go('saved',false,true)}else go('saved')},380);
+    bm.classList.add('fast');close();
+    /* после закрытия окна — в чат «Избранное», где появилась карточка подарка (немного быстрее обычного) */
+    setTimeout(()=>{const _o=NAV_MS;NAV_MS=430;try{const i=hist.lastIndexOf('saved');if(i>=0){hist.length=i;go('saved',false,true)}else go('saved')}finally{NAV_MS=_o}},280);
   };
   /* кнопка «Купить»: тот же отклик и «слайм», что у кнопок хедера (раздувается, тянется за пальцем, пружинит назад) */
   (function(){
@@ -1359,7 +1363,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       row('Дата',dstr(x.t))+
       row('Стоимость',price?'<span class="gm-cost"><span>'+fmt(price)+'</span><img src="'+STAR+'" alt=""></span><button type="button" class="gm-pill gm-sell">'+sellTxt(price)+'</button>':'—')+
       row('Наличие',total?'1 из '+total:'—')+
-      row('Статус','Неуникальный');
+      row('Статус','Неуникальный')+
+      (x.msg?'<div class="gm-r gm-c">'+esc(x.msg)+'</div>':'');
     $g('gmTbl').style.marginTop=x.anon?'':'23px';
     const sl=$g('gmTbl').querySelector('.gm-sell');if(sl)sl.onclick=()=>toast('Продажа: скоро');
     gm.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
@@ -1521,7 +1526,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function smoothPath(w,h,r,sm){const q=corner(Math.min(r,w/2,h/2),w,h,sm);
     return 'M'+f(q.p)+' 0L'+f(w-q.p)+' 0'+seg(q,0)+'L'+f(w)+' '+f(h-q.p)+seg(q,1)+'L'+f(q.p)+' '+f(h)+seg(q,2)+'L0 '+f(q.p)+seg(q,3)+'Z'}
   /* кнопка-«таблетка»: кривая начинается раньше по горизонтали (PX×радиус) и круче заворачивает — PX/HF/VF = сила сглаживания */
-  const PX=1.12,HF=0.58,VF=0.58;
+  const PX=1.09,HF=0.57,VF=0.57;
   function pillPath(w,h){const r=h/2,px=Math.min(PX*r,w/2),hx=px*HF,vy=r*VF;
     return 'M'+f(px)+' 0L'+f(w-px)+' 0C'+f(w-px+hx)+' 0 '+f(w)+' '+f(r-vy)+' '+f(w)+' '+f(r)+
       'C'+f(w)+' '+f(r+vy)+' '+f(w-px+hx)+' '+f(h)+' '+f(w-px)+' '+f(h)+'L'+f(px)+' '+f(h)+
