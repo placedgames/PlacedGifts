@@ -227,7 +227,7 @@ body.navanim #bar{z-index:1}
 #bm .bm-cnt{padding:0 16px;flex:none;font-size:19px}
 #bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
 #bm .bm-btn svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
-#bm .bm-pill{position:absolute;z-index:1;left:50%;top:calc(50% + 8px);transform:translate(-50%,-50%);height:28px;padding:0 14px;border-radius:14px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:450;pointer-events:none;background:rgba(40,40,43,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+#bm .bm-pill{position:absolute;z-index:1;left:50%;top:calc(50% + 8px);transform:translate(-50%,-50%);height:28px;padding:0 14px;border-radius:14px;display:flex;align-items:center;white-space:nowrap;font-size:11px;font-weight:450;pointer-events:none;background:rgba(40,40,43,.5);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
 #bm .bm-pill b{font-weight:500}
 #bm .bm-btn{position:relative;z-index:2}
 #bm .bm-mid{flex:0 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:9px 0 0}
@@ -241,10 +241,10 @@ body.navanim #bar{z-index:1}
 #bm .bm-cd{flex:none;font-size:13px;line-height:1.2;font-weight:500;margin-top:4px;padding:0 2px}
 #bm .bm-view{flex:none;margin-top:11px;height:33px;padding:0 15px;border:0;border-radius:16.5px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:550;cursor:pointer}
 #bm .bm-view:active{opacity:.7}
-#bm .bm-msg{flex:none;position:relative;z-index:2;width:calc(100% - 12px);height:41px;margin-top:14px;border-radius:22px;display:flex;align-items:center;padding:0 14px}
+#bm .bm-msg{flex:none;position:relative;z-index:2;width:calc(100% - 4px);height:41px;margin-top:14px;border-radius:22px;display:flex;align-items:center;padding:0 14px}
 #bm .bm-msg input{width:100%;height:100%;padding:0;margin:0;text-align:left;line-height:normal;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:500;text-overflow:ellipsis}
 #bm .bm-msg input::placeholder{color:#8e8e93}
-#bm .bm-bot{flex:none;padding:20px 22px 22px;background:#1c1c1e}
+#bm .bm-bot{flex:none;padding:20px 18px 22px;background:#1c1c1e}
 #bm .bm-hide{height:52px;border-radius:26px;background:#2c2c2e;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 20px;font-size:19px;font-weight:500;cursor:pointer;user-select:none}
 #bm .bm-sw{width:60px;height:30px;border-radius:15px;background:#3a3a3c;position:relative;transition:.2s}
 #bm .bm-sw:after{content:"";position:absolute;top:2px;left:2px;width:38px;height:26px;border-radius:13px;background:#fff;transition:.2s}
@@ -254,7 +254,15 @@ body.navanim #bar{z-index:1}
 #bm .bm-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:18.5px;background:#4BB6EE;transition:width .6s cubic-bezier(.3,.8,.3,1)}
 #bm .bm-bar span{position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:1}
 #bm .bm-left{left:18px}#bm .bm-sold{right:18px}
-#bm .bm-buy{margin-top:16px;width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
+#bm .bm-buy{position:relative;overflow:hidden;margin:16px 16px 12px;width:calc(100% - 32px);height:52px;border:0;border-radius:26px;background:linear-gradient(180deg,#63C3F4 0%,#4BB6EE 55%,#3FA9E4 100%);box-shadow:inset 0 1px 1px rgba(255,255,255,.55),inset 0 -1px 2px rgba(255,255,255,.18),0 6px 18px rgba(75,182,238,.28);color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
+#bm .bm-buy>*{position:relative;z-index:1}
+/* liquid glass: обводка + засвет */
+#bm .bm-buy::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;z-index:2;
+background:linear-gradient(160deg,rgba(255,255,255,.95) 0%,rgba(255,255,255,.35) 22%,rgba(255,255,255,.04) 45%,rgba(255,255,255,.04) 60%,rgba(255,255,255,.4) 82%,rgba(255,255,255,.85) 100%);
+-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+#bm .bm-buy::after{content:"";position:absolute;left:-10%;top:-60%;width:120%;height:110%;border-radius:50%;pointer-events:none;z-index:0;
+background:radial-gradient(ellipse at 30% 40%,rgba(255,255,255,.45) 0%,rgba(255,255,255,.12) 45%,rgba(255,255,255,0) 70%)}
+#bm .bm-buy:active{filter:brightness(1.08)}
 #bm .bm-buy svg{flex:none;width:24px;height:24px;fill:#fff;fill-rule:evenodd;margin:0 -4px 0 -3px}
 </style>
 </head>
