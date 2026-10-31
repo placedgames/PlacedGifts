@@ -260,22 +260,22 @@ body.navanim #bar{z-index:1}
 #gm .gm-body{position:relative;z-index:1;padding:16px 16px 0;display:flex;flex-direction:column;align-items:center;text-align:center}
 #gm .gm-img{width:100%;height:120px;display:flex;align-items:center;justify-content:center;font-size:84px}
 #gm .gm-img img{max-width:112px;max-height:112px;object-fit:contain}
-#gm .gm-t{font-size:22px;line-height:1.2;font-weight:700;margin:10px 0 0}
-#gm .gm-d{font-size:17px;line-height:1.25;font-weight:500;margin:14px 8px 0}
-#gm .gm-s{font-size:15px;line-height:1.25;font-weight:500;color:#8e8e93;margin:14px 0 0}
+#gm .gm-t{font-size:19px;line-height:1.2;font-weight:600;margin:8px 0 0}
+#gm .gm-d{font-size:15px;line-height:1.25;font-weight:400;margin:12px 8px 0}
+#gm .gm-s{font-size:13px;line-height:1.25;font-weight:400;color:#8e8e93;margin:12px 0 0}
 #gm .gm-tbl{width:100%;margin-top:18px;border:1px solid #2c2c2e;border-radius:22px;overflow:hidden;text-align:left}
-#gm .gm-r{display:flex;min-height:40px;border-top:1px solid #2c2c2e;font-size:17px;font-weight:500}
+#gm .gm-r{display:flex;min-height:38px;border-top:1px solid #2c2c2e;font-size:15px;font-weight:400}
 #gm .gm-r:first-child{border-top:0}
-#gm .gm-k{flex:none;width:102px;padding:0 10px 0 14px;display:flex;align-items:center;background:#242426;font-weight:550}
+#gm .gm-k{flex:none;width:102px;padding:0 10px 0 14px;display:flex;align-items:center;background:#242426;font-weight:500}
 #gm .gm-v{flex:1;min-width:0;padding:0 12px;display:flex;align-items:center;gap:7px;border-left:1px solid #2c2c2e;white-space:nowrap}
-#gm .gm-v img{width:22px;height:22px;object-fit:contain;flex:none}
-#gm .gm-who{color:var(--accent);font-weight:650;overflow:hidden;text-overflow:ellipsis}
-#gm .gm-ava{flex:none;width:24px;height:24px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700}
+#gm .gm-v img{width:18px;height:18px;object-fit:contain;flex:none}
+#gm .gm-who{color:var(--accent);font-weight:550;overflow:hidden;text-overflow:ellipsis}
+#gm .gm-ava{flex:none;width:22px;height:22px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600}
 #gm .gm-ava.an{background:linear-gradient(to bottom,#ff7b7b,#e5405e)}
-#gm .gm-pill{flex:none;height:26px;padding:0 9px;border-radius:13px;background:rgba(76,180,233,.16);color:var(--accent);font-size:14px;font-weight:550;display:flex;align-items:center}
-#gm .gm-h{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:500;color:#8e8e93}
-#gm .gm-h svg{flex:none;width:26px;height:26px}
-#gm .gm-h a{color:var(--accent);font-weight:600;cursor:pointer}
+#gm .gm-pill{flex:none;height:24px;padding:0 8px;border-radius:12px;background:rgba(76,180,233,.16);color:var(--accent);font-size:12px;font-weight:500;display:flex;align-items:center}
+#gm .gm-h{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:400;color:#8e8e93}
+#gm .gm-h svg{flex:none;width:22px;height:22px}
+#gm .gm-h a{color:var(--accent);font-weight:500;cursor:pointer}
 #gm .gm-upw{position:relative;z-index:1;padding:20px 29px 31px}
 #gm .gm-up{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:51px;border:0;border-radius:25.5px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
 #gm .gm-up:active{transform:scale(1.04)}
@@ -1235,12 +1235,21 @@ renderMyGifts();
     if(x.anon)who='<span class="gm-ava an">А</span><span class="gm-who">Аноним</span>';
     else who=(u.photo_url?'<span class="gm-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="gm-ava">'+esc((name[0]||'').toUpperCase())+'</span>')+'<span class="gm-who">'+esc(name)+'</span>';
     who+='<span class="gm-pill">Подарить</span>';
-    const total=x.total||0,left=x.key?Math.max(0,total-(SOLDMAP[x.key]||0)):null;
+    const total=x.total||0;
+    let price=x.price;
+    if(!price){
+      const el=[...document.querySelectorAll('.gift')].find(el=>{
+        if(x.key)return el.dataset.k===x.key;
+        const im=el.querySelector('.pic img');
+        return x.image?(im&&im.src===x.image):(!im&&x.emoji&&el.querySelector('.pic').textContent.trim()===x.emoji);
+      });
+      if(el)price=+el.dataset.p;
+    }
     $g('gmTbl').innerHTML=
       row('От',who)+
       row('Дата',dstr(x.t))+
-      row('Стоимость',x.price?'<span>'+fmt(x.price)+'</span><img src="'+STAR+'" alt="">':'—')+
-      row('Наличие',total?(left===null?'Всего '+fmt(total):'Осталось '+fmt(left)+' из '+fmt(total)):'—')+
+      row('Стоимость',price?'<span>'+fmt(price)+'</span><img src="'+STAR+'" alt="">':'—')+
+      row('Наличие',total?'1 из '+total:'—')+
       row('Статус','Неуникальный');
     gm.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     document.body.classList.add('bmopen');try{SP.hold(4,true)}catch(e){}
