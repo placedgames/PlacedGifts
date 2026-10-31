@@ -203,13 +203,13 @@ body.navanim #bar{z-index:1}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:41px;border-radius:50px;display:flex;align-items:stretch;padding:3px}
-.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)}
-.mtabs button{position:relative;z-index:2;flex:none;border:0;background:none;color:#bdbdc1;font:inherit;font-size:16px;font-weight:550;cursor:pointer;transition:color .2s;padding:0 16px}
+.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .25s cubic-bezier(.4,0,.2,1),width .25s cubic-bezier(.4,0,.2,1)}
+.mtabs button{position:relative;z-index:2;flex:none;border:0;background:none;color:#fff;font:inherit;font-size:16px;font-weight:550;cursor:pointer;padding:0 16px}
 .mtabs button.on{color:#fff}
-.mtabs button{display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
-.mt-ic{display:flex;align-items:center;gap:2px}
-.mt-ic img{width:22px;height:22px;object-fit:contain;display:block}
-.mt-ic em{font-style:normal;font-size:18px;line-height:22px}
+.mtabs button{display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
+.mt-ic{display:flex;align-items:center;gap:0}
+.mt-ic img{width:21px;height:21px;object-fit:contain;display:block}
+.mt-ic em{font-style:normal;font-size:17px;line-height:21px}
 /* подарки в профиле */
 .pgrid{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .pg{position:relative;min-width:0;aspect-ratio:1/1;background:var(--card);border-radius:16px;display:flex;align-items:center;justify-content:center}
@@ -887,12 +887,6 @@ $$('#gtabs button').forEach(b=>b.onclick=()=>{
   $('#grid').hidden=!all; $('#gempty').hidden=all;
 });
 $$('#mtabs button').forEach(b=>b.onclick=()=>{pickTab($('#mtabs'),b);try{renderMyGifts()}catch(e){}});
-(function(){
-  const box=$('#mtabs'),sl=$('#mtI');let on=0,t0=0;
-  box.addEventListener('pointerdown',e=>{if(!e.target.closest('button')||!animOn())return;on=1;t0=performance.now();sl.classList.add('press')});
-  const rel=()=>{if(on){on=0;setTimeout(()=>sl.classList.remove('press'),Math.max(0,160-(performance.now()-t0)))}};
-  ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
-})();
 function resetTabs(){
   [['#gtabs','all','t'],['#mtabs','gifts','m']].forEach(([sel,v,k])=>{
     const box=$(sel),b=box.querySelector('[data-'+k+'="'+v+'"]');
@@ -1052,7 +1046,7 @@ function renderMyGifts(){
   e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
   const ti=document.getElementById('mtIcons');
   if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>x.image?'<img src="'+x.image+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
-  try{placeTab(document.getElementById('mtabs'),true)}catch(_){}
+  try{placeTab(document.getElementById('mtabs'))}catch(_){}
 }
 renderMyGifts();
 
