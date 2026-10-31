@@ -208,7 +208,7 @@ body.navanim #bar{z-index:1}
 .mtabs button.on{color:#fff}
 /* подарки в профиле */
 .pgrid{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.pg{position:relative;min-width:0;aspect-ratio:1/1;background:var(--card);border-radius:18px;display:flex;align-items:center;justify-content:center}
+.pg{position:relative;min-width:0;aspect-ratio:1/1;background:var(--card);border-radius:16px;display:flex;align-items:center;justify-content:center}
 .pg .pi{width:72%;height:72%;object-fit:contain;margin-top:3%}
 .pg .pe{font-size:48px;line-height:1;margin-top:3%}
 .pbuy{position:absolute;left:5px;top:5px;width:20px;height:20px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;z-index:1}
@@ -1024,22 +1024,6 @@ renderMyGifts();
     b.style.backgroundColor='transparent';
     b.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
   }
-  /* прогрев слоёв (blur, фон) до первого открытия */
-  (function(){
-    const css=document.createElement('style');
-    css.textContent='#bm.warm{visibility:visible!important;opacity:.01;pointer-events:none!important;transition:none!important}#bm.warm .bm-sheet{transform:none!important;transition:none!important}';
-    document.head.appendChild(css);
-    function end(){
-      bm.style.transition='none';sheet.style.transition='none';
-      bm.classList.remove('warm');void bm.offsetHeight;
-      bm.style.transition='';sheet.style.transition='';
-    }
-    window.addEventListener('load',()=>setTimeout(()=>{
-      if(bm.classList.contains('on')||bm.classList.contains('pre'))return;
-      bm.classList.add('warm');
-      setTimeout(()=>{if(!bm.classList.contains('on')&&!bm.classList.contains('pre'))end();else bm.classList.remove('warm')},700);
-    },400));
-  })();
   window.addEventListener('resize',shapeBuy);
   requestAnimationFrame(shapeBuy);
   let qty=1;
