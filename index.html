@@ -186,8 +186,8 @@ mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,
 .hb{transition:transform .3s cubic-bezier(.4,0,.2,1)}
 .hb.press{transform:scale(1.12)}
 .hb{touch-action:none}
-#menuSlider.press{transform:scale(1.1)}
-.noanim .hb.press,.noanim #menuSlider.press{transform:none}
+#menuSlider.press,#mtI.press{transform:scale(1.1)}
+.noanim .hb.press,.noanim #menuSlider.press,.noanim #mtI.press{transform:none}
 .hb:not(.hb-dbl).press,.hb:not(.hb-dbl).press .gbl{color:#a9a9ad}
 .hb:not(.hb-dbl).press svg,.hb-dbl span.press svg{fill:#a9a9ad}
 .hb:not(.hb-dbl).press svg.hs{fill:none;stroke:#a9a9ad}
@@ -202,10 +202,17 @@ mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,
 body.navanim #bar{z-index:1}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
-.mtabs{margin-top:16px;height:46px;border-radius:50px;display:flex;align-items:stretch;padding:4px}
-.mtabs i{position:absolute;top:4px;bottom:4px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1)}
+.mtabs{margin-top:16px;height:43px;border-radius:50px;display:flex;align-items:stretch;padding:3px}
+.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:50px;pointer-events:none;z-index:1;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)}
 .mtabs button{position:relative;z-index:2;flex:1;border:0;background:none;color:#bdbdc1;font:inherit;font-size:16px;font-weight:550;cursor:pointer;transition:color .2s;padding:0}
 .mtabs button.on{color:#fff}
+/* подарки в профиле */
+.pgrid{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pg{position:relative;min-width:0;aspect-ratio:1/1;background:var(--card);border-radius:21px;display:flex;align-items:center;justify-content:center}
+.pg .pi{width:72%;height:72%;object-fit:contain;margin-top:3%}
+.pg .pe{font-size:48px;line-height:1;margin-top:3%}
+.pbuy{position:absolute;left:5px;top:5px;width:20px;height:20px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;z-index:1}
+.pbuy.an{background:linear-gradient(to bottom,#4fb0f2,#2b78cf)}
 #toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
 #toast.on{opacity:1;transform:translateX(-50%)}
 .noanim *:not(#menuSlider):not(.cover):not(.cover *):not(.phead){transition:none!important;animation:none!important}
@@ -355,6 +362,8 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
     <div class="pf pf-user"><div><b>имя пользователя</b><span class="lnk" id="pUser"></span></div><svg class="ico" style="--s:var(--ic-pf-qr)"><use href="#i-qr"/></svg></div>
   </div>
   <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="all">Все подарки</button><button data-m="uniq">Уникальные</button></div>
+  <div class="pgrid" id="pGrid"></div>
+  <div class="gempty" id="pEmpty" hidden></div>
 </section>
 
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
@@ -792,11 +801,11 @@ function renderGifts(list){
     const d = GD[g.name];
     const price = d ? d[0] : (!g.id && i<PRICES.length ? PRICES[i] : rndPrice(g.id||g.name||i));
     const sold = !!g.id && !d;   // есть в списке GD → «редкий», нет → «продан»
-    return '<div class="gift" data-p="'+price+'" data-t="'+(d?d[1]:30000)+'"><div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_D+'" fill="url(#'+(sold?'rbS':'rbB')+')"/></svg><span>'+(sold?'продан':'редкий')+'</span></div><div class="pic">'+
+    return '<div class="gift" data-k="'+String(g.id||g.name||i).replace(/"/g,'')+'" data-p="'+price+'" data-t="'+(d?d[1]:30000)+'"><div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_D+'" fill="url(#'+(sold?'rbS':'rbB')+')"/></svg><span>'+(sold?'продан':'редкий')+'</span></div><div class="pic">'+
     (g.image?'<img loading="lazy" src="'+g.image+'" alt="" onerror="this.replaceWith(\'🎁\')">':(g.emoji||'🎁'))+
     '</div><div class="price"><canvas class="pc"></canvas><img class="pst" src="'+STAR+'" alt=""><span>'+fmt(price)+'</span></div></div>';
   }).join('');
-  $$('.gift').forEach(el=>{ GIO.observe(el); el.onclick=()=>{const im=el.querySelector('.pic img');openBuy({price:el.dataset.p,total:+el.dataset.t,image:im?im.src:null})}; });
+  $$('.gift').forEach(el=>{ GIO.observe(el); el.onclick=()=>{const im=el.querySelector('.pic img');openBuy({price:el.dataset.p,total:+el.dataset.t,key:el.dataset.k,image:im?im.src:null,emoji:im?null:el.querySelector('.pic').textContent.trim()})}; });
 }
 renderGifts(FALLBACK);
 if (GIFTS_URL) fetch(GIFTS_URL).then(r=>r.json()).then(d=>{const l=Object.keys(d).map(id=>({id,name:d[id],image:IMG(id)}));if(l.length)renderGifts(l)}).catch(()=>{});
@@ -814,7 +823,13 @@ $$('#gtabs button').forEach(b=>b.onclick=()=>{
   const all=b.dataset.t==='all';
   $('#grid').hidden=!all; $('#gempty').hidden=all;
 });
-$$('#mtabs button').forEach(b=>b.onclick=()=>pickTab($('#mtabs'),b));
+$$('#mtabs button').forEach(b=>b.onclick=()=>{pickTab($('#mtabs'),b);try{renderMyGifts()}catch(e){}});
+(function(){
+  const box=$('#mtabs'),sl=$('#mtI');let on=0,t0=0;
+  box.addEventListener('pointerdown',e=>{if(!e.target.closest('button')||!animOn())return;on=1;t0=performance.now();sl.classList.add('press')});
+  const rel=()=>{if(on){on=0;setTimeout(()=>sl.classList.remove('press'),Math.max(0,160-(performance.now()-t0)))}};
+  ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
+})();
 function resetTabs(){
   [['#gtabs','all','t'],['#mtabs','all','m']].forEach(([sel,v,k])=>{
     const box=$(sel),b=box.querySelector('[data-'+k+'="'+v+'"]');
@@ -822,6 +837,7 @@ function resetTabs(){
     placeTab(box,true);
   });
   $('#grid').hidden=false; $('#gempty').hidden=true;
+  try{renderMyGifts()}catch(e){}
 }
 if(window.ResizeObserver)new ResizeObserver(()=>{placeTab($('#mtabs'),true);placeTab($('#gtabs'),true)}).observe(document.body);
 
@@ -956,10 +972,28 @@ go('chats',true);
 requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
 </script>
 <script>
+/* ===== мои подарки (профиль) и счётчик проданных ===== */
+const MYK='myGifts',SOLDK='soldMap';
+let MYGIFTS=[],SOLDMAP={};
+try{MYGIFTS=JSON.parse(store.get(MYK,'[]'))||[];SOLDMAP=JSON.parse(store.get(SOLDK,'{}'))||{}}catch(e){}
+const shortN=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'K':String(n);
+function renderMyGifts(){
+  const g=$('#pGrid'),e=$('#pEmpty'),b=$('#mtabs button.on');if(!g||!e)return;
+  const uniq=!!b&&b.dataset.m==='uniq',list=uniq?[]:MYGIFTS;
+  g.innerHTML=list.map(x=>{
+    const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
+    return '<div class="pg">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_D+'" fill="url(#rbB)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
+      (x.image?'<img class="pi" src="'+x.image+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+'</div>';
+  }).join('');
+  g.hidden=!list.length;e.hidden=list.length>0;
+  e.textContent=uniq?'Уникальных подарков пока нет':'Подарков пока нет';
+}
+renderMyGifts();
+
 /* ===== модальное окно покупки ===== */
 (function(){
   const bm=document.getElementById('bm'),sheet=document.getElementById('bmSheet'),$b=id=>document.getElementById(id);
-  const DEF_TOTAL=30000, SOLD=0, EXCH=0.85;   // продано у всех подарков: 0
+  const DEF_TOTAL=30000, EXCH=0.85;
   const short=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'K':String(n);
   let cur=null,hidden=false,closeT=0;
   /* кнопка «Купить»: плавные (continuous, как в iOS/Telegram) углы + тонкая обводка */
@@ -1034,12 +1068,12 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
   $b('bmMsg').addEventListener('input',renderCd);
   $b('bmCnt').addEventListener('change',e=>{qty=+e.target.value||1;renderQty()});
   window.openBuy=function(g){
-    clearTimeout(closeT);cur=g;hidden=true;$b('bmHide').classList.add('on');$b('bmMsg').value='';
-    const p=+g.price,TOTAL=g.total||DEF_TOTAL,left=TOTAL-SOLD;
+    clearTimeout(closeT);g.key=g.key||('p'+g.price+(g.image||g.emoji||''));cur=g;hidden=true;$b('bmHide').classList.add('on');$b('bmMsg').value='';
+    const p=+g.price,TOTAL=g.total||DEF_TOTAL,sold=SOLDMAP[g.key]||0,left=Math.max(0,TOTAL-sold);
     $b('bmImg').innerHTML=g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁');
     $b('bmRib').textContent='1 из '+short(TOTAL);
     $b('bmLeft').textContent=fmt(left)+' осталось';
-    $b('bmSold').textContent=fmt(SOLD)+' продано';
+    $b('bmSold').textContent=fmt(sold)+' продано';
     $b('bmPill').innerHTML='Вы купили подарок за&nbsp;<b>'+fmt(p)+'&nbsp;звёзд</b>';
     qty=1;$b('bmCnt').value='1';renderQty();renderCd();
     {const f=$b('bmFill');f.style.transition='none';f.style.width='0';void f.offsetWidth;f.style.transition=''}
@@ -1064,7 +1098,20 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
   bm.querySelector('.bm-dim').onclick=close;
   $b('bmHide').onclick=()=>{hidden=!hidden;$b('bmHide').classList.toggle('on',hidden)};
   $b('bmView').onclick=()=>toast('Просмотр подарка: скоро');
-  $b('bmBuy').onclick=()=>{if(window.__buyDrag){window.__buyDrag=false;return}toast('Подарок куплен за ★ '+fmt(cur.price));close()};
+  $b('bmBuy').onclick=()=>{
+    if(window.__buyDrag){window.__buyDrag=false;return}
+    const total=cur.total||DEF_TOTAL,sold=SOLDMAP[cur.key]||0,n=qty;
+    if(total-sold<n){toast(total-sold>0?'Осталось только '+fmt(total-sold):'Подарки закончились');return}
+    SOLDMAP[cur.key]=sold+n;store.set(SOLDK,JSON.stringify(SOLDMAP));
+    for(let i=0;i<n;i++)MYGIFTS.unshift({image:cur.image||null,emoji:cur.emoji||null,total:total,anon:hidden,t:Date.now()});
+    if(MYGIFTS.length>200)MYGIFTS.length=200;
+    store.set(MYK,JSON.stringify(MYGIFTS));
+    renderMyGifts();
+    toast('Подарок куплен за ★ '+fmt(+cur.price*n));
+    close();
+    /* после закрытия окна — на страницу профиля, где уже лежит новый подарок */
+    setTimeout(()=>go('me',false,false,{full:true}),380);
+  };
   /* кнопка «Купить»: тот же отклик и «слайм», что у кнопок хедера (раздувается, тянется за пальцем, пружинит назад) */
   (function(){
     const btn=$b('bmBuy'),MIN=160,R=60;let st=null,t0=0;
