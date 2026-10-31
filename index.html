@@ -131,6 +131,7 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 --menu-glass-bg:rgba(48,48,50,.7);--menu-glass-blur:10px;--menu-inactive:#fff;--menu-slider-bg:rgba(200,200,204,.1)}
 .glass{position:relative;border:0;background:var(--menu-glass-bg);
 -webkit-backdrop-filter:blur(var(--menu-glass-blur));backdrop-filter:blur(var(--menu-glass-blur))}
+#hdr .glass,#bm .glass,#gm .glass,.mtabs.glass{--menu-glass-bg:rgba(48,48,50,.58);--menu-glass-blur:7px}
 .glass::before,.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
 .glass::before{padding:var(--glass-w);
 background:linear-gradient(to bottom,rgba(var(--glass-rgb),calc(var(--glass-strong)*1)) 0%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.8)) 8%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.5)) 16%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.26)) 25%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.1)) 34%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.02)) 44%,var(--glass-side) 50%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.02)) 56%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.1)) 66%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.26)) 75%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.5)) 84%,rgba(var(--glass-rgb),calc(var(--glass-strong)*0.8)) 92%,rgba(var(--glass-rgb),calc(var(--glass-strong)*1)) 100%);
@@ -204,7 +205,7 @@ body.navanim #bar{z-index:1}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:stretch;padding:3px}
-.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:18.55px/17.5px;pointer-events:none;z-index:1;transition:left .25s cubic-bezier(.4,0,.2,1),width .25s cubic-bezier(.4,0,.2,1)}
+.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:rgba(200,200,204,.07);border-radius:18.55px/17.5px;pointer-events:none;z-index:1;transition:left .25s cubic-bezier(.4,0,.2,1),width .25s cubic-bezier(.4,0,.2,1)}
 .mtabs button{position:relative;z-index:2;flex:none;border:0;background:none;color:#fff;font:inherit;font-size:16px;font-weight:550;cursor:pointer;padding:0 16px}
 .mtabs button.on{color:#fff}
 .mtabs button{display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
@@ -233,7 +234,7 @@ body.navanim #bar{z-index:1}
 #bm.on,#bm.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
 #bm .bm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .45s}
 #bm.on .bm-dim{opacity:1}
-#bm .bm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:transparent;border-radius:38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform}
+#bm .bm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:transparent;border-radius:40.28px 40.28px 56.18px 56.18px/38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform}
 #bm.on .bm-sheet{transform:translateY(0)}
 #bm .bm-sheet.drag{transition:none}
 #bm .bm-pre{position:relative;flex:0 1 auto;min-height:0;background:#000;isolation:isolate;display:flex;flex-direction:column;align-items:center;padding:16px 16px 14px;overflow:hidden}
@@ -256,33 +257,36 @@ body.navanim #bar{z-index:1}
 #gm.on,#gm.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
 #gm .gm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .45s}
 #gm.on .gm-dim{opacity:1}
-#gm .gm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform;touch-action:none;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black)}
+#gm .gm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:40.28px 40.28px 56.18px 56.18px/38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform;touch-action:none;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black)}
 #gm.on .gm-sheet{transform:translateY(0)}
 #gm .gm-sheet.drag{transition:none}
 #gm .gm-x{position:absolute;top:16px;left:16px;z-index:3;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;color:#fff;cursor:pointer;transition:transform .2s}
 #gm .gm-x:active{transform:scale(1.1)}
 #gm .gm-x svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
-#gm .gm-body{position:relative;z-index:1;padding:16px 16px 0;display:flex;flex-direction:column;align-items:center;text-align:center}
-#gm .gm-img{width:100%;height:120px;display:flex;align-items:center;justify-content:center;font-size:84px}
-#gm .gm-img img{max-width:112px;max-height:112px;object-fit:contain}
+#gm .gm-body{position:relative;z-index:1;padding:19px 16px 0;display:flex;flex-direction:column;align-items:center;text-align:center}
+#gm .gm-img{width:100%;height:123px;display:flex;align-items:center;justify-content:center;font-size:87px}
+#gm .gm-img img{max-width:115px;max-height:115px;object-fit:contain}
 #gm .gm-t{font-size:19px;line-height:1.2;font-weight:600;margin:8px 0 0}
-#gm .gm-d{font-size:15px;line-height:1.25;font-weight:400;margin:12px 8px 0}
-#gm .gm-s{font-size:13px;line-height:1.25;font-weight:400;color:#8e8e93;margin:12px 0 0}
-#gm .gm-tbl{width:100%;margin-top:18px;border:1px solid #343437;border-radius:22px;overflow:hidden;text-align:left}
-#gm .gm-r{display:flex;min-height:38px;border-top:1px solid #343437;font-size:15px;font-weight:400}
+#gm .gm-d{font-size:15px;line-height:1.25;font-weight:400;margin:15px 8px 0}
+#gm .gm-s{font-size:13px;line-height:1.25;font-weight:400;color:#8e8e93;margin:14px 0 0}
+#gm .gm-tbl{width:100%;margin-top:20px;border:1px solid #343437;border-radius:20px;overflow:hidden;text-align:left}
+#gm .gm-r{display:flex;min-height:40px;border-top:1px solid #343437;font-size:15px;font-weight:400}
 #gm .gm-r:first-child{border-top:0}
-#gm .gm-k{flex:none;width:102px;padding:0 10px 0 14px;display:flex;align-items:center;background:#2c2c2e;font-weight:500}
+#gm .gm-k{flex:none;width:102px;padding:0 10px 0 12px;display:flex;align-items:center;background:#2c2c2e;font-weight:500}
 #gm .gm-v{flex:1;min-width:0;padding:0 12px;display:flex;align-items:center;gap:7px;border-left:1px solid #343437;white-space:nowrap}
 #gm .gm-v img{width:18px;height:18px;object-fit:contain;flex:none}
-#gm .gm-who{color:var(--accent);font-weight:550;overflow:hidden;text-overflow:ellipsis}
+#gm .gm-who{color:var(--accent);font-weight:500;overflow:hidden;text-overflow:ellipsis}
+#gm .gm-cost{display:flex;align-items:center;gap:2px}
+#gm .gm-cost span{line-height:1}
+#gm .gm-v .gm-cost img{width:21px;height:21px}
 #gm .gm-ava{flex:none;width:22px;height:22px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600}
 #gm .gm-ava.an{background:linear-gradient(to bottom,#ff7b7b,#e5405e)}
-#gm .gm-pill{flex:none;height:20px;padding:0 8px;border-radius:10px;background:rgba(76,180,233,.16);color:var(--accent);font-size:12px;font-weight:500;display:flex;align-items:center}
-#gm .gm-h{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:400;color:#8e8e93}
+#gm .gm-pill{flex:0 100 auto;min-width:62px;height:20px;padding:0 8px;border-radius:10px;background:rgba(76,180,233,.16);color:var(--accent);font-size:12px;font-weight:500;display:block;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#gm .gm-h{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;font-size:14px;font-weight:400;color:#8e8e93}
 #gm .gm-h svg{flex:none;width:22px;height:22px}
 #gm .gm-h a{color:var(--accent);font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:3px;vertical-align:middle}
-#gm .gm-h a svg{width:10px;height:16px;flex:none}
-#gm .gm-upw{position:relative;z-index:1;padding:20px 29px 31px}
+#gm .gm-h a svg{width:8px;height:14px;flex:none}
+#gm .gm-upw{position:relative;z-index:1;padding:18px 29px 31px}
 #gm .gm-up{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
 #gm .gm-up.press{transform:scale(1.04)}
 .noanim #gm .gm-up.press{transform:none}
@@ -305,12 +309,12 @@ body.navanim #bar{z-index:1}
 #bm .bm-buywrap::before,#bm .bm-buywrap::after{content:"";position:absolute;left:-48px;right:-48px;bottom:-48px;top:-6px;z-index:-1;pointer-events:none}
 /* blur считается по расширенной области (нет слабого края), а показывается только внутри скруглённого низа окна */
 #bm .bm-buywrap::before{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
--webkit-clip-path:inset(0 48px 48px 48px round 0 0 53px 53px);clip-path:inset(0 48px 48px 48px round 0 0 53px 53px);
+-webkit-clip-path:inset(0 48px 48px 48px round 0 0 56.18px 56.18px/0 0 53px 53px);clip-path:inset(0 48px 48px 48px round 0 0 56.18px 56.18px/0 0 53px 53px);
 -webkit-mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px);
 mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(0,0,0,0.038) 4px,rgba(0,0,0,0.082) 6px,rgba(0,0,0,0.140) 8px,rgba(0,0,0,0.209) 10px,rgba(0,0,0,0.286) 12px,rgba(0,0,0,0.369) 14px,rgba(0,0,0,0.456) 16px,rgba(0,0,0,0.544) 18px,rgba(0,0,0,0.631) 20px,rgba(0,0,0,0.714) 22px,rgba(0,0,0,0.791) 24px,rgba(0,0,0,0.860) 26px,rgba(0,0,0,0.918) 28px,rgba(0,0,0,0.962) 30px,rgba(0,0,0,0.990) 32px,#000 34px)}
 #bm .bm-buywrap::after{background:linear-gradient(to bottom,rgba(28,28,30,0.000) 0px,rgba(28,28,30,0.040) 2px,rgba(28,28,30,0.102) 4px,rgba(28,28,30,0.174) 6px,rgba(28,28,30,0.253) 8px,rgba(28,28,30,0.334) 10px,rgba(28,28,30,0.416) 12px,rgba(28,28,30,0.498) 14px,rgba(28,28,30,0.577) 16px,rgba(28,28,30,0.653) 18px,rgba(28,28,30,0.724) 20px,rgba(28,28,30,0.790) 22px,rgba(28,28,30,0.849) 24px,rgba(28,28,30,0.900) 26px,rgba(28,28,30,0.942) 28px,rgba(28,28,30,0.973) 30px,rgba(28,28,30,0.993) 32px,rgba(28,28,30,1.000) 34px,#1c1c1e 36px)}
 #bm .bm-sheet{touch-action:none;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black)}
-#bm .bm-in{display:flex;flex-direction:column;flex:0 1 auto;min-height:0;will-change:transform;background:#1c1c1e;-webkit-clip-path:inset(0 round 38px 38px 53px 53px);clip-path:inset(0 round 38px 38px 53px 53px)}
+#bm .bm-in{display:flex;flex-direction:column;flex:0 1 auto;min-height:0;will-change:transform;background:#1c1c1e;-webkit-clip-path:inset(0 round 40.28px 40.28px 56.18px 56.18px/38px 38px 53px 53px);clip-path:inset(0 round 40.28px 40.28px 56.18px 56.18px/38px 38px 53px 53px)}
 #bm .bm-pre{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 #bm .bm-card,#bm .bm-pill{transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:transform}
 #bm .bm-pill{transform:translate3d(-50%,calc(-50% + var(--ps,0px)),0)}
@@ -498,7 +502,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
       <div class="gm-d">Улучшите этот подарок, чтобы превратить его в уникальный предмет коллекции.</div>
       <div class="gm-s">Имя отправителя видите только Вы.</div>
       <div class="gm-tbl" id="gmTbl"></div>
-      <div class="gm-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg><span>Подарок скрыт из профиля. <a id="gmShow">Показать<svg viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5L8 8l-5.5 5.5"/></svg></a></span></div>
+      <div class="gm-h"><span>Подарок скрыт из профиля. <a id="gmShow">Показать<svg viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5L8 8l-5.5 5.5"/></svg></a></span></div>
     </div>
     <div class="gm-upw"><button class="gm-up" id="gmUp"><span>Улучшить</span></button></div>
   </div>
@@ -1194,7 +1198,7 @@ renderMyGifts();
   })();
   /* свайп вниз: окно не закрывается, а сжимается — контент уходит вниз, кнопка «Купить» остаётся на месте поверх него */
   const MAXC=250,PULL=.7,FOLLOW=.2,BACK='.85s cubic-bezier(.25,.9,.3,1)',BACK_MS=900,OPEN='transform .52s cubic-bezier(.32,.72,0,1)';
-  const inner=$b('bmIn'),CLIP='px 0 0 0 round 38px 38px 53px 53px)';
+  const inner=$b('bmIn'),CLIP='px 0 0 0 round 40.28px 40.28px 56.18px 56.18px/38px 38px 53px 53px)';
   let sy=0,on=false,tmr=0,tgt=0,pos=0,raf=0,sq=false;
   /* окно целиком остаётся своего размера: двигается только содержимое (transform) и обрезка сверху (clip-path) — без перерасчёта вёрстки */
   function setSq(v){inner.style.transform='translate3d(0,'+v+'px,0)'}
@@ -1235,7 +1239,7 @@ renderMyGifts();
   const gm=document.getElementById('gm'),sh=document.getElementById('gmSheet'),$g=id=>document.getElementById(id);
   let closeT=0;
   const p2=n=>String(n).padStart(2,'0');
-  const dstr=t=>{const d=new Date(t||Date.now());return p2(d.getDate())+'.'+p2(d.getMonth()+1)+'.'+String(d.getFullYear()).slice(2)+' в '+p2(d.getHours())+':'+p2(d.getMinutes())+':'+p2(d.getSeconds())};
+  const dstr=t=>{const d=new Date(t||Date.now());return p2(d.getDate())+'.'+p2(d.getMonth()+1)+'.'+String(d.getFullYear()).slice(2)+' в '+p2(d.getHours())+':'+p2(d.getMinutes())};
   const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const row=(k,v)=>'<div class="gm-r"><div class="gm-k">'+k+'</div><div class="gm-v">'+v+'</div></div>';
   function open(x){
@@ -1244,7 +1248,7 @@ renderMyGifts();
     let who;
     if(x.anon)who='<span class="gm-ava an">А</span><span class="gm-who">Аноним</span>';
     else who=(u.photo_url?'<span class="gm-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="gm-ava">'+esc((name[0]||'').toUpperCase())+'</span>')+'<span class="gm-who">'+esc(name)+'</span>';
-    who+='<span class="gm-pill">Отправить</span>';
+    who+='<span class="gm-pill">Отправить подарок</span>';
     const total=x.total||0;
     let price=x.price;
     if(!price){
@@ -1258,7 +1262,7 @@ renderMyGifts();
     $g('gmTbl').innerHTML=
       row('От',who)+
       row('Дата',dstr(x.t))+
-      row('Стоимость',price?'<span>'+fmt(price)+'</span><img src="'+STAR+'" alt="">':'—')+
+      row('Стоимость',price?'<span class="gm-cost"><span>'+fmt(price)+'</span><img src="'+STAR+'" alt=""></span>':'—')+
       row('Наличие',total?'1 из '+total:'—')+
       row('Статус','Неуникальный');
     gm.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
