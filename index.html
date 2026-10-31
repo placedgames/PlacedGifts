@@ -211,8 +211,8 @@ body.navanim #bar{z-index:1}
 .pg{position:relative;min-width:0;aspect-ratio:1/1;background:var(--card);border-radius:16px;display:flex;align-items:center;justify-content:center}
 .pg .pi{width:72%;height:72%;object-fit:contain}
 .pg .pe{font-size:48px;line-height:1}
-.pg .rib{top:-1.5px;right:-1.5px}
-.pg .rib span{left:81.25%;top:18.75%;font-size:10px;font-weight:550}
+.pg .rib,.gift .rib{top:-1.5px;right:-1.5px}
+.pg .rib span,.gift .rib span{left:80.63%;top:19.37%;font-size:10px;font-weight:550}
 .pbuy{position:absolute;left:5px;top:5px;width:20px;height:20px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;z-index:1}
 .pbuy.an{background:linear-gradient(to bottom,#4fb0f2,#2b78cf)}
 #toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:14px}
@@ -394,6 +394,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 </svg>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#f0a21c"/></linearGradient>
 <linearGradient id="rbP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#324A56"/><stop offset="1" stop-color="#193345"/></linearGradient>
+<linearGradient id="rbSP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#653232"/><stop offset="1" stop-color="#542326"/></linearGradient>
 <linearGradient id="rbB" gradientUnits="userSpaceOnUse" x1="0" y1="53" x2="0" y2="0"><stop offset="0" stop-color="#1c3b52"/><stop offset="1" stop-color="#234660"/></linearGradient>
 <linearGradient id="rbS" gradientUnits="userSpaceOnUse" x1="0" y1="53" x2="0" y2="0"><stop offset="0" stop-color="#651f24"/><stop offset="1" stop-color="#732529"/></linearGradient>
 </defs><symbol id="i-gstar" viewBox="0 0 24 24"><path fill="url(#gg)" stroke="url(#gg)" stroke-width="1.6" stroke-linejoin="round" d="M12 2.6l2.8 6 6.5.8-4.8 4.5 1.3 6.5L12 17.1 6.2 20.4l1.3-6.5-4.8-4.5 6.5-.8z"/></symbol></svg>
@@ -798,14 +799,14 @@ const PS=(function(){
 })();
 // анимируем только карточки на экране
 const GIO=window.IntersectionObserver?new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?PS.add(e.target):PS.remove(e.target)),{rootMargin:'120px 0px'}):{observe:el=>PS.add(el)};
-const RIB_P='M56.24 0L70.53 0Q74.53 0 77.36 2.83L97.17 22.64Q100 25.47 100 29.47L100 43.76Q100 49.54 95.91 45.45L54.55 4.09Q50.46 0 56.24 0Z';
+const RIB_P='M55.01 0L69.30 0Q73.30 0 76.13 2.83L97.17 23.87Q100 26.70 100 30.70L100 45.0Q100 50.77 95.91 46.68L53.32 4.09Q49.23 0 55.01 0Z';
 const RIB_D='M54.80 0.00L65.10 0.00Q69.10 0.00 71.93 2.83L97.17 28.07Q100.00 30.90 100.00 34.90L100.00 45.20Q100.00 56.20 92.22 48.42L51.58 7.78Q43.80 0.00 54.80 0.00Z';
 function renderGifts(list){
   $('#grid').innerHTML = list.map((g,i)=>{
     const d = GD[g.name];
     const price = d ? d[0] : (!g.id && i<PRICES.length ? PRICES[i] : rndPrice(g.id||g.name||i));
     const sold = !!g.id && !d;   // есть в списке GD → «редкий», нет → «продан»
-    return '<div class="gift" data-k="'+String(g.id||g.name||i).replace(/"/g,'')+'" data-p="'+price+'" data-t="'+(d?d[1]:30000)+'"><div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_D+'" fill="url(#'+(sold?'rbS':'rbB')+')"/></svg><span>'+(sold?'продан':'редкий')+'</span></div><div class="pic">'+
+    return '<div class="gift" data-k="'+String(g.id||g.name||i).replace(/"/g,'')+'" data-p="'+price+'" data-t="'+(d?d[1]:30000)+'"><div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#'+(sold?'rbSP':'rbP')+')"/></svg><span>'+(sold?'продан':'редкий')+'</span></div><div class="pic">'+
     (g.image?'<img loading="lazy" src="'+g.image+'" alt="" onerror="this.replaceWith(\'🎁\')">':(g.emoji||'🎁'))+
     '</div><div class="price"><canvas class="pc"></canvas><img class="pst" src="'+STAR+'" alt=""><span>'+fmt(price)+'</span></div></div>';
   }).join('');
