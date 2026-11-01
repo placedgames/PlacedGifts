@@ -252,10 +252,19 @@ mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,
 body.navanim #bar{z-index:1}
 /* на время анимации перехода размытие под элементами чата не пересчитывается — иначе страница рывками едет */
 
+/* профиль: при прокрутке имя, рейтинг и «в сети» закрепляются сверху (меньшего размера) на затемнении с размытием, слайдер прилипает под ними */
+#p-me .mtabs{position:sticky;top:8px;z-index:901} /* отступ считается от внутренней границы страницы (у неё уже есть верхний padding под хедер) */
+.mpin{position:fixed;left:0;right:0;top:0;z-index:900;pointer-events:none;visibility:hidden;opacity:0}
+.mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 16px);background:linear-gradient(to bottom,rgba(0,0,0,.92),rgba(0,0,0,.62) 65%,rgba(0,0,0,0));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);-webkit-mask-image:linear-gradient(to bottom,#000 60%,transparent);mask-image:linear-gradient(to bottom,#000 60%,transparent);transition:height .25s cubic-bezier(.4,0,.2,1);will-change:height}
+.mpin.tabs .mpin-bg{height:calc(var(--hdr-top) + var(--hdr-h) + 16px + 40px + 18px)}
+.mpin-in{position:absolute;left:84px;right:84px;top:var(--hdr-top);height:var(--hdr-h);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:translateY(calc((1 - var(--pp,0))*8px))}
+.mpin-n{max-width:100%;font-size:17px;font-weight:600;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mpin-s{display:flex;align-items:center;gap:2px;color:var(--hint);font-size:13px;font-weight:500;line-height:1.2;white-space:nowrap}
+.mpin-s svg{fill:var(--accent);fill-rule:evenodd;margin-left:-2px}
 /* слайдер на странице профиля: стекло и ползунок как у меню */
-.mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:41px;border-radius:21.7px/20.5px;display:flex;align-items:stretch;padding:3px}
-.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:18.55px/17.5px;pointer-events:none;z-index:1;transition:left .25s cubic-bezier(.4,0,.2,1),width .25s cubic-bezier(.4,0,.2,1)}
-.mtabs button{position:relative;z-index:2;flex:none;border:0;background:none;color:#fff;font:inherit;font-size:16px;font-weight:550;cursor:pointer;padding:0 16px}
+.mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:40px;border-radius:21.2px/20px;display:flex;align-items:stretch;padding:3px}
+.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:18.05px/17px;pointer-events:none;z-index:1;transition:left .25s cubic-bezier(.4,0,.2,1),width .25s cubic-bezier(.4,0,.2,1)}
+.mtabs button{position:relative;z-index:2;flex:none;border:0;background:none;color:#fff;font:inherit;font-size:16px;font-weight:550;cursor:pointer;padding:0 15.75px}
 .mtabs button.on{color:#fff}
 .mtabs button{display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
 .mt-ic{display:flex;align-items:center;gap:0}
@@ -568,9 +577,12 @@ html,body{overscroll-behavior:none}
     <div class="pf"><b>мобильный</b><span id="pNum"></span></div>
     <div class="pf pf-user"><div><b>имя пользователя</b><span class="lnk" id="pUser"></span></div><svg class="ico" style="--s:var(--ic-pf-qr)"><use href="#i-qr"/></svg></div>
   </div>
+  <div class="mpin" id="mePin"><div class="mpin-bg"></div><div class="mpin-in"><div class="mpin-n" id="mpN"></div><div class="mpin-s"><svg class="ico" style="--s:16px"><use id="mpR" href="#i-n1"/></svg><span>в сети</span></div></div></div>
+  <div class="mbody">
   <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="gifts"><span>Подарки</span><span class="mt-ic" id="mtIcons"></span></button><button data-m="posts">Публикации</button></div>
   <div class="pgrid" id="pGrid"></div>
   <div class="gempty" id="pEmpty" hidden></div>
+  </div>
 </section>
 
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
@@ -1294,6 +1306,24 @@ function clearAppCache(){ location.reload(); }
   btn.addEventListener('contextmenu',e=>e.preventDefault());
 })();
 
+(function(){
+  const pg=$('#p-me'),pin=$('#mePin'),inn=pin.querySelector('.mpin-in'),rt=$('#mpR'),src=$('#pRate'),stat=pg.querySelector('.pstat'),tabs=$('#mtabs');
+  $('#mpN').textContent=name;
+  let raf=0,lp=-1,ls=null,lh='';
+  const sch=()=>{if(!raf)raf=requestAnimationFrame(upd)};
+  function upd(){
+    raf=0;if(!pg.classList.contains('on'))return;
+    const hb=inn.offsetTop+inn.offsetHeight,sr=stat.getBoundingClientRect();
+    const p=Math.max(0,Math.min(1,(hb+10-sr.bottom)/30));
+    if(p!==lp){lp=p;pin.style.setProperty('--pp',p.toFixed(3));pin.style.opacity=p;pin.style.visibility=p>0?'visible':'hidden'}
+    const st=p>0&&tabs.getBoundingClientRect().top<=hb+16.5;
+    if(st!==ls){ls=st;pin.classList.toggle('tabs',st)}
+    const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}
+  }
+  pg.addEventListener('scroll',sch,{passive:true});
+  window.addEventListener('resize',sch);
+  new MutationObserver(sch).observe(pg,{attributes:true,attributeFilter:['class']});
+})();
 go('chats',true);
 requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
 </script>
