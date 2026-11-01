@@ -545,9 +545,6 @@ html,body{overscroll-behavior:none}
 #ug .ug-x,#ug .ug-more,#ug .ug-a{--glass-rgb:196,198,206;--glass-strong:.3;--glass2-rgb:206,208,216;--glass2-a:.62;background:rgba(255,255,255,.23);box-shadow:inset 0 0 0 .6px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
 
 /* ===== улучшение: «зарядка» маски, плавная смена фона, слайд текста кнопки ===== */
-@property --c1{syntax:'<color>';inherits:false;initial-value:#7b72ea}
-@property --c2{syntax:'<color>';inherits:false;initial-value:#5b3fb8}
-#ug .ug-t1{transition:--c1 var(--bgms,.16s) linear,--c2 var(--bgms,.16s) linear}
 #um .um-glow{position:absolute;left:50%;top:88px;width:320px;height:320px;margin:-160px 0 0 -160px;border-radius:50%;z-index:0;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(220,226,255,.9) 0%,rgba(170,162,255,.45) 34%,rgba(140,110,255,0) 68%);mix-blend-mode:screen;will-change:transform,opacity}
 #um .um-fx{position:absolute;left:0;top:0;width:100%;height:100%;z-index:2;pointer-events:none}
 #um .um-model{will-change:transform}
@@ -2404,7 +2401,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const pr=g?prep(g):null,p=(pr&&pr.v)||null;
     if(g&&p)delete ready[g];
     start(x,p,g);
-    try{pkK=x;pkP=ugPick(g,x)}catch(_){pkP=null;pkK=null}
+    pkK=x;pkP=null;
+    setTimeout(()=>{if(tk===token&&!upBusy&&pkK===x&&!pkP&&um.classList.contains('on')){try{pkP=ugPick(g,x)}catch(_){pkP=null}}},1500);
     if(g){
       if(p)setTimeout(()=>prep(g),500);            /* следующий набор грузим заранее, чтобы и при повторном открытии не было задержки */
       else pr.then(q=>{if(tk===token&&q){delete ready[g];apply(q);prep(g)}});
@@ -2530,8 +2528,16 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     });
   }
   /* фон шапки: цвета плавно перетекают (registered custom properties), без мигания слоёв */
-  function ugBgSet(c){const t=$u('ugT1');t.style.transition='none';t.style.setProperty('--c1',c.c1);t.style.setProperty('--c2',c.c2);void t.offsetWidth;t.style.transition=''}
-  function ugBgTo(c,ms){const t=$u('ugT1');t.style.setProperty('--bgms',Math.round(ms)+'ms');t.style.setProperty('--c1',c.c1);t.style.setProperty('--c2',c.c2)}
+  let bgTo=null;
+  function ugBgSet(c){const a=$u('ugT1'),b=$u('ugT2');clearTimeout(ugBg);b.style.transition='none';b.style.opacity=0;a.style.setProperty('--c1',c.c1);a.style.setProperty('--c2',c.c2);bgTo=null}
+  function ugBgTo(c,ms){
+    const a=$u('ugT1'),b=$u('ugT2');
+    if(bgTo){a.style.setProperty('--c1',bgTo.c1);a.style.setProperty('--c2',bgTo.c2)}
+    clearTimeout(ugBg);
+    b.style.transition='none';b.style.opacity=0;b.style.setProperty('--c1',c.c1);b.style.setProperty('--c2',c.c2);void b.offsetWidth;
+    b.style.transition='opacity '+Math.round(ms)+'ms linear';b.style.opacity=1;bgTo=c;
+    ugBg=setTimeout(()=>{a.style.setProperty('--c1',c.c1);a.style.setProperty('--c2',c.c2);b.style.transition='none';b.style.opacity=0;bgTo=null},ms+30);
+  }
   function drawPat2(cv,top,sym,color){
     const w=top.offsetWidth,h=top.offsetHeight,D=Math.min(window.devicePixelRatio||1,2);
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);
