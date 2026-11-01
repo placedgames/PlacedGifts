@@ -354,6 +354,7 @@ body.navanim #bar{z-index:1}
 #gm .gm-h a{color:var(--accent);font-weight:500;cursor:pointer;display:inline;vertical-align:baseline}
 #gm .gm-h a svg{display:inline-block;width:7px;height:13px;flex:none;margin-left:3px;vertical-align:-2px}
 #gm .gm-upw{position:relative;z-index:1;padding:18px 29px 31px}
+#gm.sold .gm-upw{padding-top:22px}
 #gm .gm-up{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
 #gm .gm-up.press{transform:scale(1.04)}
 .noanim #gm .gm-up.press{transform:none}
@@ -704,6 +705,7 @@ html,body{overscroll-behavior:none}
       box.style.cssText='position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:'+s+'px;height:'+s+'px;opacity:0';
       el.appendChild(box);
       const a=lottie.loadAnimation({container:box,renderer:'svg',loop:false,autoplay:!(opts&&opts.delay),animationData:JSON.parse(JSON.stringify(data))});
+      let busy=true;a.addEventListener('complete',()=>{busy=false});
       if(opts&&opts.onComplete)a.addEventListener('complete',opts.onComplete);
       a.addEventListener('DOMLoaded',()=>{
         if(el.__ga!==tok||!el.contains(img)){try{a.destroy()}catch(_){}return}
@@ -711,7 +713,7 @@ html,body{overscroll-behavior:none}
         requestAnimationFrame(()=>{box.style.opacity='1';requestAnimationFrame(()=>{img.style.visibility='hidden'})});
       });
       if(opts&&opts.once)box.style.cursor='inherit';
-      else box.addEventListener('click',e=>{if(opts&&opts.stop)e.stopPropagation();a.goToAndPlay(0,true)});
+      else box.addEventListener('click',e=>{if(opts&&opts.stop)e.stopPropagation();if(window.__gA===false||busy)return;busy=true;a.goToAndPlay(0,true)});
     }).catch(e=>{console.warn('[giftAnim] не удалось загрузить/запустить',url,e);delete cache[url]});
   };
   window.giftAnimWarm=function(url){if(url&&window.__gA!==false&&!cache[url])cache[url]=fetch(url).then(r=>{if(!r.ok)throw 0;return r.json()}).catch(e=>{delete cache[url]})};
@@ -1605,6 +1607,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     clearTimeout(closeT);gm.classList.remove('sub','up');window.__gmCur=x;try{if(!x.sold)window.umPrefetch&&umPrefetch(x)}catch(_){}
     $g('gmImg').innerHTML=x.image?'<img src="'+x.image+'" alt="">':(x.emoji||'🎁');giftAnimOrig($g('gmImg'),x);
     gm.querySelector('.gm-s').style.display=(x.anon&&!x.sold)?'':'none';
+    gm.classList.toggle('sold',!!x.sold);
     gm.querySelector('.gm-h').style.display=x.sold?'none':'';
     gm.querySelector('.gm-d').innerHTML=x.sold?'Вы обменяли этот подарок<br>на '+fmt(x.sold)+' '+sellWord(x.sold)+'.':GM_D;
     gm.querySelector('#gmUp span').textContent=x.sold?'ОК':'Улучшить';
