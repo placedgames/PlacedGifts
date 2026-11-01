@@ -411,12 +411,15 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-old{gap:8px}
 #um .um-old svg{width:24px;height:24px;margin:0 -2px}
 #um .um-lab{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:5px;pointer-events:none;will-change:transform,opacity}
-#um .um-new{opacity:var(--ut,0);transform:translate3d(0,calc((1 - var(--ut,0))*-14px),0) scale(calc(.55 + .45*var(--ut,0)))}
-#um .um-old{opacity:calc(1 - var(--ut,0));transform:translate3d(0,calc(var(--ut,0)*14px),0) scale(calc(1 - .45*var(--ut,0)))}
+#um .um-new{opacity:var(--ut,0);transform:translate3d(0,calc((1 - var(--ut,0))*-9px),0) scale(calc(.78 + .22*var(--ut,0)))}
+#um .um-old{opacity:calc(1 - 1.6*var(--ut,0));transform:translate3d(0,calc(var(--ut,0)*9px),0) scale(calc(1 - .22*var(--ut,0)))}
 #um .um-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:transparent;overflow:hidden;border-radius:0;isolation:isolate;touch-action:none}
 #gm .gm-sheet{transition:transform .55s cubic-bezier(.25,.8,.25,1),opacity 0s}
 #gm.sub .gm-sheet{opacity:0;pointer-events:none}
 #gm.up .gm-x{visibility:hidden}
+#gm.up .gm-upw{position:absolute;left:0;right:0;bottom:0;margin:0}
+#um .um-top{margin-top:auto}
+#um .um-xc{position:absolute;top:16px;left:16px;z-index:3;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;pointer-events:none;opacity:var(--uco,0);transform:scale(var(--ucs,1));will-change:transform,opacity}
 #gm .gm-upw{margin-top:auto}
 #um .um-top,#um .um-feat,#um .um-chk{transform:translate3d(0,var(--uo,0px),0);will-change:transform}
 #um .um-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:20px 16px 18px}
@@ -437,7 +440,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-mini img{width:23px;height:23px;object-fit:contain;margin-left:-6px}
 #um .um-mini img:first-child{margin-left:0}
 #um .um-var svg{flex:none;width:8px;height:13px;fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-#um .um-feat{flex:1 1 auto;min-height:0;overflow:hidden;padding:26px 22px 4px;display:flex;flex-direction:column;gap:21px}
+#um .um-feat{flex:0 1 auto;min-height:0;overflow:hidden;padding:26px 22px 4px;display:flex;flex-direction:column;gap:21px}
 #um .um-feat::-webkit-scrollbar{display:none}
 #um .um-f{display:flex;gap:14px;align-items:flex-start}
 #um .um-f svg{flex:none;width:32px;height:32px;fill:#4BB6EE;fill-rule:evenodd;margin-top:-3px}
@@ -643,7 +646,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
       <div class="gm-tbl" id="gmTbl"></div>
       <div class="gm-h"><span>Подарок скрыт из профиля. <a id="gmShow">Показать<svg viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5L8 8l-5.5 5.5"/></svg></a></span></div>
     </div>
-    <div class="gm-upw"><button class="gm-up" id="gmUp"><span>Улучшить</span><svg class="gm-upi"><use href="#i-up"/></svg></button></div>
+    <div class="gm-upw"><button class="gm-up" id="gmUp"><span>Улучшить</span></button></div>
   </div>
 </div>
 <div id="um" aria-hidden="true">
@@ -652,6 +655,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
     <div class="um-bg"></div>
     <div class="um-top" id="umTop">
       <div class="um-tint"><canvas class="um-pat" id="umPat"></canvas></div>
+      <span class="um-xc glass" id="umXc"></span>
       <span class="um-xg" id="umXg"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></span>
        <button class="um-back glass" id="umBack" aria-label="Назад"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" width="24" height="24" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg></button>
       <div class="um-model" id="umModel"></div>
@@ -664,7 +668,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
       <div class="um-f"><svg><use href="#i-crown"/></svg><div><b>Носимость</b><span>Показывайте подарки в профиле и ставьте их на обложку или в статус.</span></div></div>
     </div>
     <div class="um-chk" id="umChk"><i class="um-box"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></i><span>Добавить моё имя к подарку</span></div>
-    <div class="um-upw"><button class="um-go" id="umGo"><span class="um-lab um-old"><span>Улучшить</span><svg viewBox="0 0 512 512"><use href="#i-up"/></svg></span><span class="um-lab um-new"><span>Улучшить за</span><svg viewBox="0 0 512 512"><use href="#i-star"/></svg><span id="umPrice">100</span></span></button></div>
+    <div class="um-upw"><button class="um-go" id="umGo"><span class="um-lab um-old"><span>Улучшить</span></span><span class="um-lab um-new"><span>Улучшить за</span><svg viewBox="0 0 512 512"><use href="#i-star"/></svg><span id="umPrice">100</span></span></button></div>
   </div>
 </div>
 <div id="toast"></div>
@@ -1717,7 +1721,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   const gmEl=document.getElementById('gm'),gmSh=document.getElementById('gmSheet');
   const AP='https://api.changes.tg',PRICE=100,cache={},ready={};
   const gmBody=gmEl.querySelector('.gm-body');
-  let token=0,raf=0,gh=0,nh=0,sw=0,busy=false;
+  let token=0,raf=0,gh=0,nh=0,sw=0,H=0,busy=false,closing=false;
   const j=p=>fetch(AP+p).then(r=>{if(!r.ok)throw 0;return r.json()});
   const arr=d=>{
     if(Array.isArray(d))return d;
@@ -1757,18 +1761,19 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     if(c.c1&&c.c2&&c.c3)return Promise.resolve(c);
     return j('/backdrop/'+encodeURIComponent(g)+'/'+encodeURIComponent(nm(b))+'/info').then(d=>{const c2=get(d);return (c2.c1||c2.c2)?c2:c}).catch(()=>c);
   }
-  const img=u=>new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=u});
+  const img=u=>new Promise(res=>{const i=new Image();i.onload=()=>{(i.decode?i.decode():Promise.resolve()).then(()=>res(i),()=>res(i))};i.onerror=()=>res(null);i.src=u});
   /* случайный набор выбирается и полностью подгружается заранее (пока открыто окно подарка), чтобы во время анимации ничего не подменялось */
   function prep(g){
     if(ready[g])return ready[g];
-    return ready[g]=load(g).then(d=>{
+    const pr=ready[g]=load(g).then(d=>{
       if(!d)return null;
       const e=encodeURIComponent(g),ms=shuf(d.models),bd=shuf(d.backdrops)[0],sy=shuf(d.symbols)[0];
       let mini=ms.slice(1,4);if(mini.length<3)mini=mini.concat(ms.slice(0,3-mini.length));
       const mu=m=>AP+'/model/'+e+'/'+encodeURIComponent(nm(m))+'.png?size=';
       return Promise.all([ms[0]?img(mu(ms[0])+'256'):null,Promise.all(mini.map(m=>img(mu(m)+'64'))),sy?img(AP+'/symbol/'+e+'/'+encodeURIComponent(nm(sy))+'.png?size=64'):null,bd?backdropCols(g,bd):{}])
         .then(r=>({model:r[0],minis:r[1].filter(Boolean),sym:r[2],cols:r[3]||{}}));
-    }).then(p=>{if(!p)delete ready[g];return p});
+    }).then(p=>{if(!p)delete ready[g];else pr.v=p;return p});
+    return pr;
   }
   const POS=[[37,7,16,.9],[63,7,16,.9],[21,16,17,.8],[79,16,17,.8],[34,28,19,.9],[66,28,19,.9],[9,42,17,.5],[24,42,18,.7],[76,42,18,.7],[91,42,17,.5],[34,57,19,.9],[66,57,19,.9],[21,67,17,.7],[79,67,17,.7],[37,78,16,.8],[63,78,16,.8],[50,94,16,.6]];
   function drawPattern(sym,color){
@@ -1809,21 +1814,36 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   const EASE=bez(.35,.3,.15,1),OPEN_MS=350,CLOSE_MS=280;
   const cl=(x,a,b)=>x<=a?0:x>=b?1:(x-a)/(b-a);
   const SET=(st,n,v)=>st.setProperty(n,(+v).toFixed(3));
-  /* k — прогресс 0…1. Окно подарка само растёт вверх (одна сплошная форма), поверх проявляется новое содержимое */
+  const ss=t=>t*t*(3-2*t);
+  /* замер: высоты окна подарка (gh) и окна улучшения (nh); контейнер H = большее из двух, чтобы форма не обрезалась, когда окно подарка выше */
+  function measure(){
+    const up=gmEl.classList.contains('up');gmEl.classList.remove('up');
+    gmSh.style.height='';gmSh.style.maxHeight='';sh.style.height='';
+    gh=gmSh.getBoundingClientRect().height;nh=sh.getBoundingClientRect().height;sw=sh.offsetWidth;
+    H=Math.max(gh,nh);
+    if(up)gmEl.classList.add('up');
+    if(H>nh+.5)sh.style.height=H+'px';
+  }
+  /* k — прогресс 0…1. Окно подарка само меняет высоту (одна сплошная форма), поверх проявляется новое содержимое */
   function frame(k){
-    const rise=nh-gh,hh=gh+rise*k,v='path("'+window.__sheetPath(sw,hh,0,nh-hh)+'")',st=sh.style;
-    sh.style.webkitClipPath=v;sh.style.clipPath=v;
-    gmSh.style.maxHeight='none';gmSh.style.height=hh.toFixed(2)+'px';
+    const rise=nh-gh,hh=gh+rise*k,st=sh.style;
+    const v='path("'+window.__sheetPath(sw,hh,0,H-hh)+'")',gp='path("'+window.__sheetPath(sw,hh,0,0)+'")';
+    st.webkitClipPath=v;st.clipPath=v;
+    gmSh.style.maxHeight='none';gmSh.style.height=hh.toFixed(2)+'px';gmSh.style.webkitClipPath=gp;gmSh.style.clipPath=gp;
     st.setProperty('--uo',((1-k)*rise).toFixed(2)+'px');
-    SET(st,'--ug',k);                              /* фиолетовая заливка шапки */
-    SET(st,'--un',k);                              /* модель, заголовок, список, чекбокс */
-    SET(st,'--ut',k);                              /* подпись на кнопке */
-    SET(st,'--ubg',k>=1?1:0);                      /* сплошной фон — только когда старое содержимое ушло */
+    SET(st,'--ug',k);SET(st,'--un',k);
+    SET(st,'--ut',ss(cl(k,0,.6)));                 /* смена подписи на кнопке: быстрее и мягче */
+    SET(st,'--ubg',k>=1?1:0);
     if(gmBody)gmBody.style.opacity=(k>=.9?0:1-Math.pow(cl(k,0,.9),1.3)).toFixed(3);
-    /* крестик: кружок пропал сразу, сам крестик уменьшается и гаснет */
-    SET(st,'--uxo',1-cl(k,.1,.75));SET(st,'--uxs',1-.72*cl(k,0,.6));
-    /* кнопка «назад»: круг растёт 0→1 вместе с окном, стрелка проявляется внутри */
-    SET(st,'--ubo',cl(k,.18,.35));SET(st,'--ubs',k);SET(st,'--ua',cl(k,.42,.7));
+    if(closing){
+      /* возврат: крестик «прилетает» так же, как стрелка при открытии — круг растёт, символ проявляется; стрелка уходит */
+      const c=1-k;
+      SET(st,'--uco',cl(c,.18,.35));SET(st,'--ucs',c);SET(st,'--uxo',cl(c,.42,.7));SET(st,'--uxs',1);
+      SET(st,'--ubo',1-cl(c,0,.3));SET(st,'--ubs',1-.3*cl(c,0,.5));SET(st,'--ua',1-cl(c,0,.2));
+    }else{
+      SET(st,'--uco',0);SET(st,'--ucs',1);SET(st,'--uxo',1-cl(k,.1,.75));SET(st,'--uxs',1-.72*cl(k,0,.6));
+      SET(st,'--ubo',cl(k,.18,.35));SET(st,'--ubs',k);SET(st,'--ua',cl(k,.42,.7));
+    }
   }
   function run(from,to,dur,done){
     cancelAnimationFrame(raf);const t0=performance.now();
@@ -1840,7 +1860,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     reset(x);$u('umChk').classList.remove('on');$u('umPrice').textContent=String(PRICE);
     um.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     um.classList.add('pre');
-    gh=gmSh.getBoundingClientRect().height;nh=sh.getBoundingClientRect().height;sw=sh.offsetWidth;
+    measure();closing=false;
     if(p)apply(p);
     try{shapeBtn($u('umGo'))}catch(_){}
     try{smoothFit($u('umVar'),'pill',true,1)}catch(_){}
@@ -1849,31 +1869,32 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       if(tk!==token)return;
       um.classList.add('on');um.setAttribute('aria-hidden','false');
-      run(0,1,OPEN_MS,()=>{frame(1);gmEl.classList.add('sub');gmSh.style.height='';gmSh.style.maxHeight='';if(gmBody)gmBody.style.opacity='';busy=false});
+      run(0,1,OPEN_MS,()=>{H=nh;sh.style.height='';frame(1);gmEl.classList.add('sub');gmSh.style.height='';gmSh.style.maxHeight='';if(gmBody)gmBody.style.opacity='';busy=false});
     }));
   }
   window.openUpgrade=function(x){
     if(busy||um.classList.contains('on'))return;
     busy=true;const tk=++token,g=gid(x);
-    const pr=g?prep(g):Promise.resolve(null);
-    Promise.race([pr,new Promise(r=>setTimeout(()=>r('t'),350))]).then(res=>{
-      if(tk!==token)return;
-      const p=(res&&res!=='t')?res:null;
-      if(g&&p)delete ready[g];
-      start(x,p,g);
-      if(res==='t')pr.then(q=>{if(tk===token&&q){delete ready[g];apply(q)}});
-    });
+    /* набор уже готов — открываем сразу, без ожидания */
+    const pr=g?prep(g):null,p=(pr&&pr.v)||null;
+    if(g&&p)delete ready[g];
+    start(x,p,g);
+    if(g){
+      if(p)setTimeout(()=>prep(g),500);            /* следующий набор грузим заранее, чтобы и при повторном открытии не было задержки */
+      else pr.then(q=>{if(tk===token&&q){delete ready[g];apply(q);prep(g)}});
+    }
   };
   function close(){
     if(!um.classList.contains('on')||busy)return;
     busy=true;token++;
+    measure();closing=true;
     frame(1);gmEl.classList.remove('sub');
     um.classList.remove('on');um.setAttribute('aria-hidden','true');
-    run(1,0,CLOSE_MS,()=>{frame(0);um.classList.remove('pre');um.style.height='';gmEl.classList.remove('up');gmSh.style.height='';gmSh.style.maxHeight='';if(gmBody)gmBody.style.opacity='';busy=false});
+    run(1,0,CLOSE_MS,()=>{closing=false;frame(0);um.classList.remove('pre');um.style.height='';sh.style.height='';gmEl.classList.remove('up');gmSh.style.height='';gmSh.style.maxHeight='';if(gmBody)gmBody.style.opacity='';busy=false});
   }
   $u('umBack').onclick=close;
   um.querySelector('.um-dim').onclick=close;
-  window.addEventListener('resize',()=>{if(um.classList.contains('on')&&!raf){nh=sh.getBoundingClientRect().height;sw=sh.offsetWidth;frame(1)}});
+  window.addEventListener('resize',()=>{if(um.classList.contains('on')&&!raf&&!busy){measure();H=nh;sh.style.height='';frame(1);gmSh.style.height='';gmSh.style.maxHeight=''}});
   $u('umChk').onclick=()=>$u('umChk').classList.toggle('on');
   $u('umVar').onclick=()=>toast('Все варианты: скоро');
   $u('umGo').onclick=()=>{if(window.__umDrag){window.__umDrag=false;return}toast('Улучшение: скоро')};
