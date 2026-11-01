@@ -267,8 +267,8 @@ body.navanim #bar{z-index:1}
 .pg .pi{width:calc(72% + 2px);height:calc(72% + 2px);object-fit:contain}
 .pg .pe{font-size:50px;line-height:1}
 .pg{cursor:pointer;-webkit-tap-highlight-color:transparent}
-.pg .peye{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:rgba(0,0,0,.32);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:3}
-.pg .peye svg{width:16px;height:16px;fill:#fff;fill-rule:evenodd}
+.pg .peye{position:absolute;left:50%;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:rgba(0,0,0,.32);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:3}
+.pg .peye svg{width:24px;height:24px;fill:#fff;fill-rule:evenodd}
 .pg .rib,.gift .rib{top:-1.5px;right:-1.5px}
 .pg .rib span{left:80.63%;top:19.37%;font-size:9px;font-weight:600}
 .gift .rib span{left:80.02%;top:19.98%;font-size:10px;font-weight:550}
@@ -1280,7 +1280,7 @@ function renderMyGifts(){
   g.innerHTML=list.map((x,i)=>{
     const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
     return '<div class="pg" data-i="'+i+'">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
-      (x.image?'<img class="pi" src="'+x.image+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.vis?'':'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>')+'</div>';
+      (x.image?'<img class="pi" src="'+x.image+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
   }).join('');
   g.hidden=!list.length;e.hidden=list.length>0;
   e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
@@ -1571,7 +1571,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     $g('gmImg').innerHTML=x.image?'<img src="'+x.image+'" alt="">':(x.emoji||'🎁');giftAnimOrig($g('gmImg'),x);
     gm.querySelector('.gm-s').style.display=x.anon?'':'none';
     {const arr='<svg viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5L8 8l-5.5 5.5"/></svg>';
-     gm.querySelector('.gm-h span').innerHTML=x.vis?'Подарок виден в профиле. <a id="gmShow">Скрыть'+arr+'</a>':'Подарок скрыт из профиля. <a id="gmShow">Показать'+arr+'</a>'}
+     gm.querySelector('.gm-h span').innerHTML=x.hid?'Подарок скрыт из профиля. <a id="gmShow">Показать'+arr+'</a>':'Подарок виден в профиле. <a id="gmShow">Скрыть'+arr+'</a>'}
     let who;
     if(x.anon)who='<span class="gm-ava an">А</span><span class="gm-who">Аноним</span>';
     else who=(u.photo_url?'<span class="gm-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="gm-ava">'+esc((name[0]||'').toUpperCase())+'</span>')+'<span class="gm-who">'+esc([...name].length>16?[...name].slice(0,16).join('')+'…':name)+'</span>';
@@ -1650,7 +1650,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   gm.querySelector('.gm-h').addEventListener('click',e=>{
     if(!e.target.closest('a'))return;
     const x=window.__gmCur;if(!x)return;
-    x.vis=!x.vis;
+    x.hid=!x.hid;
     try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
     try{renderMyGifts()}catch(_){}
     close();
