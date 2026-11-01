@@ -914,18 +914,24 @@ function makeCover(id){
   pg.addEventListener('touchstart',e=>{ts={x:e.touches[0].clientX,y:e.touches[0].clientY,drag:false,ok:pg.scrollTop+(pg._off||0)<=0}},{passive:true});
   pg.addEventListener('touchmove',e=>{
     if(!ts||swipeOn)return;const dy=e.touches[0].clientY-ts.y;
+    if(ts.closed){if(e.cancelable)e.preventDefault();return}      // обложка закрылась — остаток жеста страницу не двигает
     if(!ts.drag&&Math.abs(e.touches[0].clientX-ts.x)>Math.abs(dy))return;
     if(!exp){
       if(ts.ok&&dy>0){ if(e.cancelable)e.preventDefault();
         if(!ts.drag&&dy>6){ts.drag=true;set(true,true)}}
-    }else{ if(dy>0&&ts.ok&&e.cancelable)e.preventDefault() }
+    }else{
+      /* только два состояния: круг или обложка. Раскрытая обложка не листается — любое движение вверх сразу сворачивает её в круг */
+      if(e.cancelable)e.preventDefault();
+      if(dy<-2){collapse();ts.closed=true}
+    }
   },{passive:false});
   /* листаем страницу вниз при раскрытой обложке — сначала обложка сворачивается в аватар, и только потом работает закрепление имени */
-  pg.addEventListener('scroll',()=>{
-    if(!exp||pg.scrollTop<=2||(ts&&ts.drag))return;
+  function collapse(){
+    if(!exp)return;
     exp=false;collapsing=1;pg.classList.add('anim');render(0);pg.scrollTop=0;
     clearTimeout(ct);ct=setTimeout(()=>{collapsing=0;pg.dispatchEvent(new Event('scroll'))},260);
-  },{passive:true});
+  }
+  pg.addEventListener('scroll',()=>{if(exp&&pg.scrollTop>2)collapse()},{passive:true});   // запасной путь: колесо мыши, инерция
   const end=()=>{ts=null;pull=0};
   pg.addEventListener('touchend',end);pg.addEventListener('touchcancel',end);
   const remeasure=()=>{if(pg.classList.contains('on'))measure()};
