@@ -255,9 +255,9 @@ body.navanim #bar{z-index:1}
 /* профиль: при прокрутке имя, рейтинг и «в сети» закрепляются сверху (меньшего размера) на затемнении с размытием, слайдер прилипает под ними */
 #p-me .mtabs{position:sticky;top:8px;z-index:901} /* отступ считается от внутренней границы страницы (у неё уже есть верхний padding под хедер) */
 .mpin{position:fixed;left:0;right:0;top:0;z-index:900;pointer-events:none;visibility:hidden}
-.mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h));opacity:0;background:linear-gradient(to bottom,rgba(0,0,0,1) 0,rgba(0,0,0,.97) 30%,rgba(0,0,0,.86) 52%,rgba(0,0,0,.6) 72%,rgba(0,0,0,.28) 88%,rgba(0,0,0,0) 100%)}
+.mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h));opacity:0;background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,0.989) 25.0%,rgba(0,0,0,0.946) 31.2%,rgba(0,0,0,0.877) 37.5%,rgba(0,0,0,0.788) 43.8%,rgba(0,0,0,0.684) 50.0%,rgba(0,0,0,0.570) 56.2%,rgba(0,0,0,0.453) 62.5%,rgba(0,0,0,0.339) 68.8%,rgba(0,0,0,0.232) 75.0%,rgba(0,0,0,0.139) 81.2%,rgba(0,0,0,0.066) 87.5%,rgba(0,0,0,0.017) 93.8%,rgba(0,0,0,0.000) 100.0%)}
 .mpin-band{position:absolute;left:0;top:var(--hdr-top);height:var(--hdr-h);width:0}
-.mpin-bg2{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 16px + 40px + 16px);opacity:0;transition:opacity .25s cubic-bezier(.4,0,.2,1);background:linear-gradient(to bottom,rgba(0,0,0,1) 0,rgba(0,0,0,.97) 45%,rgba(0,0,0,.85) 65%,rgba(0,0,0,.55) 82%,rgba(0,0,0,.2) 93%,rgba(0,0,0,0) 100%)}
+.mpin-bg2{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 16px + 40px + 16px);opacity:0;transition:opacity .25s cubic-bezier(.4,0,.2,1);background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,1.000) 25.0%,rgba(0,0,0,1.000) 31.2%,rgba(0,0,0,1.000) 37.5%,rgba(0,0,0,0.997) 43.8%,rgba(0,0,0,0.948) 50.0%,rgba(0,0,0,0.849) 56.2%,rgba(0,0,0,0.714) 62.5%,rgba(0,0,0,0.558) 68.8%,rgba(0,0,0,0.397) 75.0%,rgba(0,0,0,0.246) 81.2%,rgba(0,0,0,0.119) 87.5%,rgba(0,0,0,0.032) 93.8%,rgba(0,0,0,0.000) 100.0%)}
 .mpin.tabs .mpin-bg2{opacity:1}
 .mpin-n{position:absolute;top:0;left:16px;right:16px;text-align:center;font-size:28px;font-weight:550;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform-origin:50% 0;will-change:transform}
 .mpin-s{position:absolute;top:0;left:16px;right:16px;display:flex;align-items:center;justify-content:center;gap:3px;font-size:17px;font-weight:500;color:var(--hint);white-space:nowrap;transform-origin:50% 0;will-change:transform}
@@ -1345,7 +1345,18 @@ function clearAppCache(){ location.reload(); }
     bg.style.opacity=p;
     const tb=sc>=M.tabsAt;if(tb!==lt){lt=tb;pin.classList.toggle('tabs',tb)}
   }
-  pg.addEventListener('scroll',upd,{passive:true});
+  /* жест снизу вверх: как только слайдер дошёл до кнопок хедера, страница в этом жесте дальше не едет (и по инерции тоже) —
+     чтобы пролистнуть дальше, нужно отпустить палец и начать заново */
+  let lock=false,ly=0;
+  pg.addEventListener('touchstart',e=>{if(!M)measure();lock=!!M&&pg.scrollTop<M.tabsAt-1;ly=e.touches[0].clientY},{passive:true});
+  pg.addEventListener('touchmove',e=>{
+    const y=e.touches[0].clientY,up=y<ly;ly=y;
+    if(lock&&M&&up&&pg.scrollTop>=M.tabsAt-0.5&&e.cancelable)e.preventDefault();
+  },{passive:false});
+  pg.addEventListener('scroll',()=>{
+    if(lock&&M&&pg.scrollTop>M.tabsAt)pg.scrollTop=M.tabsAt;
+    upd();
+  },{passive:true});
   const inv=()=>{M=null;requestAnimationFrame(upd)};
   window.addEventListener('resize',inv);
   new MutationObserver(inv).observe(pg,{attributes:true,attributeFilter:['class']});
