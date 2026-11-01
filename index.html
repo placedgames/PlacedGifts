@@ -1861,6 +1861,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   window.umPrefetch=x=>{const g=gid(x);if(g)prep(g)};
   function start(x,p,g){
     const tk=token;
+    um.style.visibility='';sh.style.transition='';sh.style.transform='';
     reset(x);$u('umChk').classList.remove('on');$u('umPrice').textContent=String(PRICE);
     um.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     um.classList.add('pre');
@@ -1915,6 +1916,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     um.classList.remove('on');um.setAttribute('aria-hidden','true');
     if(window.closeGift)closeGift();
     setTimeout(()=>{
+      um.style.visibility='hidden';
       closing=false;frame(0);um.classList.remove('pre');um.style.height='';
       sh.style.transition='';sh.style.transform='';sh.style.height='';
       gmSh.style.height='';gmSh.style.maxHeight='';if(gmBody)gmBody.style.opacity='';
@@ -1962,6 +1964,19 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     };
     ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
   })();
+})();
+</script>
+<script>
+/* клики внутри модальных окон (#gm, #um) не срабатывают, пока палец тянет окно и ~0,4 с после — кнопка только откликается анимацией */
+(function(){
+  let down=false,moved=false,sx=0,sy=0,until=0;
+  document.addEventListener('pointerdown',e=>{if(!e.isPrimary)return;down=true;moved=false;until=0;sx=e.clientX;sy=e.clientY},true);
+  document.addEventListener('pointermove',e=>{if(!e.isPrimary||!down||moved)return;if(Math.hypot(e.clientX-sx,e.clientY-sy)>6)moved=true},true);
+  const up=e=>{if(!e.isPrimary)return;if(moved)until=performance.now()+400;down=false};
+  document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
+  document.addEventListener('click',e=>{
+    if(((down&&moved)||performance.now()<until)&&e.target.closest&&e.target.closest('#gm,#um')){e.stopImmediatePropagation();e.stopPropagation();e.preventDefault()}
+  },true);
 })();
 </script>
 </body>
