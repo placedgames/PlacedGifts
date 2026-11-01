@@ -327,7 +327,11 @@ body.navanim #bar{z-index:1}
 #gm .gm-x.press{transform:scale(1.1)}
 #gm .gm-x svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
 #gm .gm-body{position:relative;z-index:1;padding:19px 16px 0;display:flex;flex-direction:column;align-items:center;text-align:center}
-#gm .gm-img{width:100%;height:139px;display:flex;align-items:center;justify-content:center;font-size:103px}
+#gm .ga{cursor:pointer;-webkit-tap-highlight-color:transparent;flex:none}
+.gm-img .ga,#um .um-model .ga{width:131px;height:131px}
+.bm-img .ga{height:100%;aspect-ratio:1/1;max-width:100%}
+#um .um-model .ga{filter:drop-shadow(0 6px 14px rgba(0,0,0,.25))}
+.gm-img{width:100%;height:139px;display:flex;align-items:center;justify-content:center;font-size:103px}
 #gm .gm-img img{max-width:131px;max-height:131px;object-fit:contain}
 #gm .gm-t{font-size:21px;line-height:1.2;font-weight:600;margin:9px 0 0}
 #gm .gm-d{font-size:15px;line-height:1.25;font-weight:400;margin:19px 8px 0}
@@ -461,6 +465,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-go svg{flex:none;width:22px;height:22px;fill:#fff;fill-rule:evenodd;margin:0 -6px 0 -3px}
 </style>
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
 </head>
 <body>
 
@@ -675,6 +680,27 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
   </div>
 </div>
 <div id="toast"></div>
+<script>
+/* Анимация подарка: Lottie (.json с api.changes.tg), играет один раз, повтор по нажатию; пока грузится — показывается PNG */
+(function(){
+  const cache={};
+  window.giftAnim=function(el,url){
+    if(!el||!url||!window.lottie)return;
+    const img=el.querySelector('img');if(!img)return;
+    const tok=el.__ga=(el.__ga||0)+1;
+    (cache[url]||(cache[url]=fetch(url).then(r=>{if(!r.ok)throw 0;return r.json()}))).then(data=>{
+      if(el.__ga!==tok||!el.contains(img))return;
+      const box=document.createElement('div');box.className='ga';
+      img.replaceWith(box);
+      const a=lottie.loadAnimation({container:box,renderer:'svg',loop:false,autoplay:true,animationData:JSON.parse(JSON.stringify(data))});
+      box.addEventListener('click',()=>{a.goToAndPlay(0,true)});
+    }).catch(()=>{delete cache[url]});
+  };
+  window.giftAnimOrig=function(el,x){
+    const s=x&&x.image;if(s&&/\/original\//.test(s))giftAnim(el,s.replace(/\.png.*$/,'.json'));
+  };
+})();
+</script>
 
 <script>
 /* ===== Настройки ===== */
@@ -1392,7 +1418,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   window.openBuy=function(g){
     try{window.__bmMenuHide()}catch(e){}bm.classList.remove('fast');clearTimeout(closeT);g.key=g.key||('p'+g.price+(g.image||g.emoji||''));cur=g;hidden=false;$b('bmHide').classList.remove('on');$b('bmMsg').value='';
     const p=+g.price,TOTAL=g.total||DEF_TOTAL,sold=SOLDMAP[g.key]||0,left=Math.max(0,TOTAL-sold);
-    $b('bmImg').innerHTML=g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁');
+    $b('bmImg').innerHTML=g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁');giftAnimOrig($b('bmImg'),g);
     $b('bmRib').textContent='1 из '+short(TOTAL);
     $b('bmLeft').textContent=fmt(left)+' осталось';
     $b('bmSold').textContent=fmt(sold)+' продано';
@@ -1512,7 +1538,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   const row=(k,v)=>'<div class="gm-r"><div class="gm-k">'+k+'</div><div class="gm-v">'+v+'</div></div>';
   function open(x){
     clearTimeout(closeT);gm.classList.remove('sub','up');window.__gmCur=x;try{window.umPrefetch&&umPrefetch(x)}catch(_){}
-    $g('gmImg').innerHTML=x.image?'<img src="'+x.image+'" alt="">':(x.emoji||'🎁');
+    $g('gmImg').innerHTML=x.image?'<img src="'+x.image+'" alt="">':(x.emoji||'🎁');giftAnimOrig($g('gmImg'),x);
     gm.querySelector('.gm-s').style.display=x.anon?'':'none';
     let who;
     if(x.anon)who='<span class="gm-ava an">А</span><span class="gm-who">Аноним</span>';
@@ -1800,7 +1826,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   }
   function apply(p){
     const top=$u('umTop');
-    if(p.model)$u('umModel').innerHTML='<img src="'+p.model.src+'" alt="">';
+    if(p.model){$u('umModel').innerHTML='<img src="'+p.model.src+'" alt="">';giftAnim($u('umModel'),p.model.src.replace(/\.png\?size=\d+$/,'.json'))}
     $u('umMini').innerHTML=p.minis.map(i=>'<img src="'+i.src+'" alt="">').join('');
     if(p.cols.c1)top.style.setProperty('--um-c1',p.cols.c1);
     if(p.cols.c2)top.style.setProperty('--um-c2',p.cols.c2);
