@@ -1243,6 +1243,8 @@ const SP={hold(b,v){SPg.hold(b,v);SPs.hold(b,v)}};
 })();
 
 function renderBal(){ $('#balShow').innerHTML=balHtml(); }
+const getStars=()=>parseFloat($('#bal').textContent)||0;
+function addStars(d){const nb=getStars()+d;$('#bal').textContent=nb;store.set('starBal',String(nb));renderBal();$$('.gbtn .gv span').forEach(el=>el.innerHTML=balHtml())}
 function starsOn(on){
   if(on){ renderBal(); SPs.start(); } else SPs.stop();
 }
@@ -1487,6 +1489,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     if(window.__buyDrag){window.__buyDrag=false;return}
     const total=cur.total||DEF_TOTAL,sold=SOLDMAP[cur.key]||0,n=qty;
     if(total-sold<n){toast(total-sold>0?'Осталось только '+fmt(total-sold):'Подарки закончились');return}
+    const cost=(+cur.price)*n;
+    if(getStars()<cost){toast('Недостаточно звёзд');return}
+    addStars(-cost);
     SOLDMAP[cur.key]=sold+n;store.set(SOLDK,JSON.stringify(SOLDMAP));
     const cmt=$b('bmMsg').value.trim();
     for(let i=0;i<n;i++)MYGIFTS.unshift({image:cur.image||null,emoji:cur.emoji||null,total:total,anon:hidden,t:Date.now(),price:+cur.price,key:cur.key,msg:cmt});
@@ -1584,16 +1589,13 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       MYGIFTS.splice(i,1);store.set(MYK,JSON.stringify(MYGIFTS));
       const j=SVMSGS.findIndex(m=>m.key===x.key&&m.t===x.t);
       if(j>=0){SVMSGS.splice(j,1);store.set(SVK,JSON.stringify(SVMSGS));try{renderSaved(0)}catch(_){}}
-      const bal=document.getElementById('bal'),nb=(parseFloat(bal.textContent)||0)+n;
-      bal.textContent=nb;store.set('starBal',String(nb));
-      try{renderBal()}catch(_){}
-      document.querySelectorAll('.gbtn .gv span').forEach(el=>el.innerHTML=balHtml());
+      addStars(n);
       try{renderMyGifts()}catch(_){}
       close();
     };
     selling=true;const fin=ok=>{selling=false;if(ok)done()};
     if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){
-      try{tg.showPopup({message:msg,buttons:[{id:'cancel',type:'default',text:'Отмена'},{id:'sell',type:'default',text:'Обменять'}]},id=>fin(id==='sell'));return}catch(e){}
+      try{tg.showPopup({message:msg,buttons:[{id:'sell',type:'default',text:'Обменять'},{id:'cancel',type:'default',text:'Отмена'}]},id=>fin(id==='sell'));return}catch(e){}
     }
     fin(confirm(msg));
   }
