@@ -254,13 +254,12 @@ body.navanim #bar{z-index:1}
 
 /* профиль: при прокрутке имя, рейтинг и «в сети» закрепляются сверху (меньшего размера) на затемнении с размытием, слайдер прилипает под ними */
 #p-me .mtabs{position:sticky;top:8px;z-index:901} /* отступ считается от внутренней границы страницы (у неё уже есть верхний padding под хедер) */
-.mpin{position:fixed;left:0;right:0;top:0;z-index:900;pointer-events:none;visibility:hidden;opacity:0}
-.mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 16px);background:linear-gradient(to bottom,rgba(0,0,0,.92),rgba(0,0,0,.62) 65%,rgba(0,0,0,0));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);-webkit-mask-image:linear-gradient(to bottom,#000 60%,transparent);mask-image:linear-gradient(to bottom,#000 60%,transparent);transition:height .25s cubic-bezier(.4,0,.2,1);will-change:height}
-.mpin.tabs .mpin-bg{height:calc(var(--hdr-top) + var(--hdr-h) + 16px + 40px + 18px)}
-.mpin-in{position:absolute;left:84px;right:84px;top:var(--hdr-top);height:var(--hdr-h);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:translateY(calc((1 - var(--pp,0))*8px))}
-.mpin-n{max-width:100%;font-size:17px;font-weight:600;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mpin-s{display:flex;align-items:center;gap:2px;color:var(--hint);font-size:13px;font-weight:500;line-height:1.2;white-space:nowrap}
-.mpin-s svg{fill:var(--accent);fill-rule:evenodd;margin-left:-2px}
+.mpin{position:fixed;left:0;right:0;top:0;z-index:900;pointer-events:none;visibility:hidden}
+.mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h));opacity:0;background:linear-gradient(to bottom,rgba(0,0,0,1) 0,rgba(0,0,0,.97) 30%,rgba(0,0,0,.86) 52%,rgba(0,0,0,.6) 72%,rgba(0,0,0,.28) 88%,rgba(0,0,0,0) 100%)}
+.mpin-band{position:absolute;left:0;top:var(--hdr-top);height:var(--hdr-h);width:0}
+.mpin-n{position:absolute;top:0;left:16px;right:16px;text-align:center;font-weight:550;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;will-change:transform}
+.mpin-s{position:absolute;top:0;left:16px;right:16px;display:flex;align-items:center;justify-content:center;color:var(--hint);font-weight:500;white-space:nowrap;will-change:transform}
+.mpin-s svg{fill:var(--accent);fill-rule:evenodd;flex:none}
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:40px;border-radius:21.2px/20px;display:flex;align-items:stretch;padding:3px}
 .mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:18.05px/17px;pointer-events:none;z-index:1;transition:left .25s cubic-bezier(.4,0,.2,1),width .25s cubic-bezier(.4,0,.2,1)}
@@ -577,7 +576,7 @@ html,body{overscroll-behavior:none}
     <div class="pf"><b>мобильный</b><span id="pNum"></span></div>
     <div class="pf pf-user"><div><b>имя пользователя</b><span class="lnk" id="pUser"></span></div><svg class="ico" style="--s:var(--ic-pf-qr)"><use href="#i-qr"/></svg></div>
   </div>
-  <div class="mpin" id="mePin"><div class="mpin-bg"></div><div class="mpin-in"><div class="mpin-n" id="mpN"></div><div class="mpin-s"><svg class="ico" style="--s:16px"><use id="mpR" href="#i-n1"/></svg><span>в сети</span></div></div></div>
+  <div class="mpin" id="mePin"><div class="mpin-bg"></div><div class="mpin-band"></div><div class="mpin-n" id="mpN"></div><div class="mpin-s" id="mpS"><svg class="ico" id="mpSv"><use id="mpR" href="#i-n1"/></svg><span></span></div></div>
   <div class="mbody">
   <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="gifts"><span>Подарки</span><span class="mt-ic" id="mtIcons"></span></button><button data-m="posts">Публикации</button></div>
   <div class="pgrid" id="pGrid"></div>
@@ -1307,18 +1306,37 @@ function clearAppCache(){ location.reload(); }
 })();
 
 (function(){
-  const pg=$('#p-me'),pin=$('#mePin'),inn=pin.querySelector('.mpin-in'),rt=$('#mpR'),src=$('#pRate'),stat=pg.querySelector('.pstat'),tabs=$('#mtabs');
-  $('#mpN').textContent=name;
-  let raf=0,lp=-1,ls=null,lh='';
+  /* имя, рейтинг и «в сети» не появляются новым блоком, а уменьшаются и «приезжают» в хедер вместе с прокруткой */
+  const pg=$('#p-me'),pin=$('#mePin'),bg=pin.querySelector('.mpin-bg'),band=pin.querySelector('.mpin-band'),nm=$('#mpN'),st=$('#mpS'),sv=$('#mpSv'),rt=$('#mpR'),stTxt=st.querySelector('span');
+  const pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),psv=ps.querySelector('svg'),pst=ps.querySelector('span');
+  const N0=28,S0=17,I0=22,G0=3,N1=17,S1=14,I1=17,G1=2,LH_N1=N1*1.15,LH_S1=S1*1.2,TRAVEL=110;
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  let raf=0,lp=-1,lh='',ln='';
   const sch=()=>{if(!raf)raf=requestAnimationFrame(upd)};
   function upd(){
     raf=0;if(!pg.classList.contains('on'))return;
-    const hb=inn.offsetTop+inn.offsetHeight,sr=stat.getBoundingClientRect();
-    const p=Math.max(0,Math.min(1,(hb+10-sr.bottom)/30));
-    if(p!==lp){lp=p;pin.style.setProperty('--pp',p.toFixed(3));pin.style.opacity=p;pin.style.visibility=p>0?'visible':'hidden'}
-    const st=p>0&&tabs.getBoundingClientRect().top<=hb+16.5;
-    if(st!==ls){ls=st;pin.classList.toggle('tabs',st)}
+    const pr=pn.getBoundingClientRect(),sr=ps.getBoundingClientRect();
+    if(!pr.height)return;
+    const bt=band.offsetTop,bh=band.offsetHeight;
+    const y1=bt+(bh-(LH_N1+LH_S1))/2,ls=y1+TRAVEL;
+    const p=Math.max(0,Math.min(1,(ls-pr.top)/(ls-y1)));
+    if(p<=0){
+      if(lp!==0){lp=0;pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0}
+      return;
+    }
+    if(lp===0||lp<0){pin.style.visibility='visible';pn.style.visibility=ps.style.visibility='hidden'}
+    lp=p;
+    const t=pn.textContent;if(t!==ln){ln=t;nm.textContent=t}
+    if(pst.textContent!==stTxt.textContent)stTxt.textContent=pst.textContent;
     const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}
+    const hn=lerp(pr.height,LH_N1,p),hs=lerp(sr.height,LH_S1,p),gap=lerp(sr.top-pr.bottom,0,p);
+    const top=Math.max(pr.top,y1),side=lerp(16,84,p);
+    nm.style.fontSize=lerp(N0,N1,p)+'px';nm.style.lineHeight=hn+'px';nm.style.height=hn+'px';
+    nm.style.left=nm.style.right=side+'px';nm.style.transform='translate3d(0,'+top+'px,0)';
+    st.style.fontSize=lerp(S0,S1,p)+'px';st.style.height=hs+'px';st.style.gap=lerp(G0,G1,p)+'px';
+    st.style.left=st.style.right=side+'px';st.style.transform='translate3d('+(-3*(1-p))+'px,'+(top+hn+gap)+'px,0)';
+    const is=lerp(I0,I1,p)+'px';sv.style.width=sv.style.height=is;
+    bg.style.opacity=p;
   }
   pg.addEventListener('scroll',sch,{passive:true});
   window.addEventListener('resize',sch);
