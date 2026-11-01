@@ -1855,14 +1855,20 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     cx.globalAlpha=1;
   }
   /* бесконечный цикл: когда анимация модели доиграла, сразу подставляется следующий случайный набор (модель, фон, узор) и снова играет */
-  let cyc=0,curG=null;
+  let cyc=0,curG=null,ring=[],ri=0;
+  /* три набора (модель, фон, узор) грузятся один раз, дальше цикл идёт по кругу: 1 → 2 → 3 → 1 … без новых загрузок */
+  function fillRing(g){
+    if(g!==curG)return;
+    if(ring.length>=3){prep(g);return}
+    prep(g).then(q=>{if(!q||g!==curG)return;if(ready[g]&&ready[g].v===q)delete ready[g];ring.push(q);fillRing(g)});
+  }
   function onDone(my){
     if(my!==cyc||!um.classList.contains('on')||closing)return;
     setTimeout(()=>{
       if(my!==cyc||!um.classList.contains('on')||closing||!curG)return;
-      const g=curG,pr=prep(g);
-      const go=q=>{if(my!==cyc||!q||!um.classList.contains('on')||closing)return;delete ready[g];xfade(()=>apply(q,{keep:true}));setTimeout(()=>prep(g),300)};
-      if(pr.v)go(pr.v);else pr.then(go);
+      if(ring.length<2){onDone(my);return}            /* второй набор ещё грузится — ждём */
+      ri=(ri+1)%ring.length;const q=ring[ri];
+      xfade(()=>apply(q,{keep:true}));
     },300);
   }
   /* плавная смена (как на референсе): старые фон, узор и модель растворяются поверх нового набора ≈ 0.2 с */
@@ -1883,11 +1889,14 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     gt.animate([{opacity:1},{opacity:0}],Object.assign({fill:'forwards'},o)).onfinish=()=>gt.remove();
     gm.animate([{opacity:1},{opacity:0}],Object.assign({fill:'forwards'},o)).onfinish=()=>gm.remove();
     mdl.animate([{opacity:0},{opacity:1}],o);
+    /* узоры: старые разъезжаются чуть дальше от центра и гаснут, новые появляются чуть дальше и сходятся на своё место */
+    if(gc)gc.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(1.14)'}],{duration:FADE_MS+60,easing:'ease-out',fill:'forwards'});
+    cv.animate([{opacity:0,transform:'scale(1.14)'},{opacity:1,transform:'scale(1)'}],{duration:380,easing:'cubic-bezier(.2,.7,.2,1)'});
   }
   function apply(p,o){
     o=o||{};const top=$u('umTop'),my=++cyc;
     if(p.model){$u('umModel').innerHTML='<img src="'+p.model.src+'" alt="">';if(p.modelJ)giftAnim($u('umModel'),p.modelJ,{delay:o.delay,onComplete:()=>onDone(my)})}
-    if(!o.keep){
+    if(!o.keep){ring=[p];ri=0;fillRing(curG);
       $u('umMini').innerHTML=p.minis.map(m=>'<span class="mm"><img src="'+m.i.src+'" alt=""></span>').join('');
       $u('umMini').querySelectorAll('.mm').forEach((el,k)=>giftAnim(el,p.minis[k].j,{delay:o.delay,once:true}));
     }
