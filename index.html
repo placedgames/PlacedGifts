@@ -441,7 +441,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-var{position:relative;z-index:1;margin-top:9px;height:24px;padding:0 8px 0 6px;border-radius:12px;color:#fff;font:inherit;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;transition:transform .2s}
 #um .um-var:active{transform:scale(1.04)}
 #um .um-mini{display:flex;align-items:center}
-#um .um-mini .mm{position:relative;flex:none;width:19px;height:19px;margin-left:-3px}
+#um .um-mini .mm{position:relative;flex:none;width:19px;height:19px;margin-left:-2px}
 #um .um-mini .mm:first-child{margin-left:0}
 #um .um-mini .mm img{display:block;width:19px;height:19px;object-fit:contain}
 #um .um-var svg{flex:none;width:6px;height:11px;fill:none;stroke:#fff;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
@@ -1856,10 +1856,10 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   }
   /* бесконечный цикл: когда анимация модели доиграла, сразу подставляется следующий случайный набор (модель, фон, узор) и снова играет */
   let cyc=0,curG=null,ring=[],ri=0;
-  /* три набора (модель, фон, узор) грузятся один раз, дальше цикл идёт по кругу: 1 → 2 → 3 → 1 … без новых загрузок */
+  /* пять наборов (модель, фон, узор) грузятся один раз, дальше цикл идёт по кругу: 1 → 2 → … → 5 → 1 … без новых загрузок */
   function fillRing(g){
     if(g!==curG)return;
-    if(ring.length>=3){prep(g);return}
+    if(ring.length>=5){prep(g);return}
     prep(g).then(q=>{if(!q||g!==curG)return;if(ready[g]&&ready[g].v===q)delete ready[g];ring.push(q);fillRing(g)});
   }
   function onDone(my){
@@ -1890,8 +1890,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     gm.animate([{opacity:1},{opacity:0}],Object.assign({fill:'forwards'},o)).onfinish=()=>gm.remove();
     mdl.animate([{opacity:0},{opacity:1}],o);
     /* узоры: старые разъезжаются чуть дальше от центра и гаснут, новые появляются чуть дальше и сходятся на своё место */
-    if(gc)gc.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(1.14)'}],{duration:FADE_MS+60,easing:'ease-out',fill:'forwards'});
-    cv.animate([{opacity:0,transform:'scale(1.14)'},{opacity:1,transform:'scale(1)'}],{duration:380,easing:'cubic-bezier(.2,.7,.2,1)'});
+    if(gc)gc.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(1.14)'}],{duration:360,easing:'cubic-bezier(.4,0,.3,1)',fill:'forwards'});
+    cv.animate([{opacity:0,transform:'scale(1.14)'},{opacity:1,transform:'scale(1)'}],{duration:560,easing:'cubic-bezier(.3,.1,.2,1)'});
   }
   function apply(p,o){
     o=o||{};const top=$u('umTop'),my=++cyc;
