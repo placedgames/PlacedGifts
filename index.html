@@ -1308,7 +1308,9 @@ function renderSaved(fresh){
   svFrom=Math.max(0,SVMSGS.length-SV_PAGE);
   box.innerHTML=svHtml(svFrom,SVMSGS.length);
   window.smoothAll&&smoothAll(box);
-  svBind(box);try{giftAnimScan(box)}catch(_){}
+  svBind(box);
+  /* анимируются только что купленные подарки (последние fresh карточек), остальные — по нажатию на подарок */
+  if(fresh>0)try{[].slice.call(box.querySelectorAll('.svm'),-fresh).forEach(giftAnimScan)}catch(_){}
 }
 (function(){
   const box=document.getElementById('svMsgs');if(!box)return;let busy=false;
@@ -1320,13 +1322,19 @@ function renderSaved(fresh){
       const first=box.querySelector('.svm');
       while(tmp.firstChild)box.insertBefore(tmp.firstChild,first);
       svFrom=from;
-      window.smoothAll&&smoothAll(box);svBind(box);try{giftAnimScan(box)}catch(_){}
+      window.smoothAll&&smoothAll(box);svBind(box);
       box.scrollTop=t0+(box.scrollHeight-h0);   // не дёргаем позицию
       busy=false;
     });
   },{passive:true});
 })();
 renderSaved();
+/* нажатие на подарок в карточке, где анимация ещё не запускалась, проигрывает её (до открытия карточки) */
+document.getElementById('svMsgs').addEventListener('click',e=>{
+  const el=e.target.closest&&e.target.closest('.sv-img[data-anim]');
+  if(!el||el.querySelector('.ga'))return;
+  e.stopPropagation();giftAnim(el,el.dataset.anim,{stop:true});
+},true);
 /* фон чата заранее загружается и декодируется — чтобы страница открывалась без подвисания */
 (function(){const im=new Image();im.src='https://cdn.jsdelivr.net/gh/placedgames/pg/Chat.jpg';if(im.decode)im.decode().catch(()=>{})})();
 document.getElementById('svGift').onclick=()=>go('gifts');
