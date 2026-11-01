@@ -403,13 +403,11 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um{position:fixed;left:0;right:0;top:0;height:100%;z-index:2100;visibility:hidden;pointer-events:none;transition:visibility 0s linear .3s}
 #um.on,#um.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
 #um .um-dim{position:absolute;inset:0;background:transparent}
-#um .um-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;opacity:0;transition:opacity .16s ease,height .24s cubic-bezier(.22,.8,.3,1);isolation:isolate;touch-action:none;-webkit-mask-image:-webkit-radial-gradient(white,black)}
-#um.on .um-sheet{opacity:1}
+#um .um-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;opacity:0;border-radius:0;isolation:isolate;touch-action:none}
 #gm .gm-sheet{transition:transform .55s cubic-bezier(.25,.8,.25,1),opacity 0s}
-#gm.sub .gm-sheet{opacity:0;pointer-events:none;transition:transform .55s cubic-bezier(.25,.8,.25,1),opacity 0s linear .24s}
+#gm.sub .gm-sheet{opacity:0;pointer-events:none}
 #um .um-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:20px 16px 18px;background:radial-gradient(circle at 50% 42%,var(--um-c1,#7b72ea) 0%,var(--um-c2,#5b3fb8) 100%);transition:background .3s}
-#um .um-pat{position:absolute;inset:0;pointer-events:none;z-index:0}
-#um .um-pat img{position:absolute;transform:translate(-50%,-50%);filter:url(#umTint);object-fit:contain}
+#um .um-pat{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0}
 #um .um-top::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 40%,rgba(0,0,0,.24) 100%)}
 #um .um-back{position:absolute;top:16px;left:16px;z-index:3;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;color:#fff;cursor:pointer}
 #um .um-back svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
@@ -631,12 +629,11 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
     <div class="gm-upw"><button class="gm-up" id="gmUp"><span>Улучшить</span><svg class="gm-upi"><use href="#i-up"/></svg></button></div>
   </div>
 </div>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="umTint" color-interpolation-filters="sRGB"><feFlood id="umFl" flood-color="#ffffff"/><feComposite in2="SourceGraphic" operator="in"/></filter></svg>
 <div id="um" aria-hidden="true">
   <div class="um-dim"></div>
   <div class="um-sheet" id="umSheet">
     <div class="um-top" id="umTop">
-      <div class="um-pat" id="umPat"></div>
+      <canvas class="um-pat" id="umPat"></canvas>
       <button class="um-back glass" id="umBack" aria-label="Назад"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" width="24" height="24" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg></button>
       <div class="um-model" id="umModel"></div>
       <div class="um-t">Улучшение подарка</div>
@@ -1647,6 +1644,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
            'L'+X(b.p)+' '+Y(h)+seg(b,2)+
            'L'+X(0)+' '+Y(t.p)+seg(t,3)+'Z';
   }
+  window.__sheetPath=path;
   function shape(el,extra){
     const w=el.offsetWidth,h=el.offsetHeight;if(!w||!h)return;
     const v='path("'+path(w,h)+'")';
@@ -1667,7 +1665,6 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   });
   watch('bmIn');
   watch('gmSheet');
-  watch('umSheet');
   /* карточка подарка и кнопка «Посмотреть»: те же плавные углы; фон карточки — в ::before, чтобы не обрезать выступающую плашку */
   const SMC=0.66;
   function smoothPath(w,h,r,sm){const q=corner(Math.min(r,w/2,h/2),w,h,sm);
@@ -1698,8 +1695,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
 /* ===== Окно «Подтверждение перед улучшением» ===== */
 (function(){
   const um=document.getElementById('um'),sh=document.getElementById('umSheet'),$u=id=>document.getElementById(id);
-  const AP='https://api.changes.tg',PRICE=100,cache={},cols={};
-  let closeT=0,token=0;
+  const gmEl=document.getElementById('gm'),gmSh=document.getElementById('gmSheet');
+  const AP='https://api.changes.tg',PRICE=100,cache={},ready={};
+  let token=0,raf=0,gh=0,nh=0,sw=0,busy=false;
   const j=p=>fetch(AP+p).then(r=>{if(!r.ok)throw 0;return r.json()});
   const arr=d=>{
     if(Array.isArray(d))return d;
@@ -1735,72 +1733,113 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   }
   function backdropCols(g,b){
     const get=o=>({c1:css(deep(o,/center/i)),c2:css(deep(o,/edge/i)),c3:css(deep(o,/pattern/i))});
-    let c=get(b);
+    const c=get(b);
     if(c.c1&&c.c2&&c.c3)return Promise.resolve(c);
-    const url='/backdrop/'+encodeURIComponent(g)+'/'+encodeURIComponent(nm(b))+'/info';
-    return j(url).then(d=>{const c2=get(d);return (c2.c1||c2.c2)?c2:c}).catch(()=>c);
+    return j('/backdrop/'+encodeURIComponent(g)+'/'+encodeURIComponent(nm(b))+'/info').then(d=>{const c2=get(d);return (c2.c1||c2.c2)?c2:c}).catch(()=>c);
+  }
+  const img=u=>new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=u});
+  /* случайный набор выбирается и полностью подгружается заранее (пока открыто окно подарка), чтобы во время анимации ничего не подменялось */
+  function prep(g){
+    if(ready[g])return ready[g];
+    return ready[g]=load(g).then(d=>{
+      if(!d)return null;
+      const e=encodeURIComponent(g),ms=shuf(d.models),bd=shuf(d.backdrops)[0],sy=shuf(d.symbols)[0];
+      let mini=ms.slice(1,4);if(mini.length<3)mini=mini.concat(ms.slice(0,3-mini.length));
+      const mu=m=>AP+'/model/'+e+'/'+encodeURIComponent(nm(m))+'.png?size=';
+      return Promise.all([ms[0]?img(mu(ms[0])+'256'):null,Promise.all(mini.map(m=>img(mu(m)+'64'))),sy?img(AP+'/symbol/'+e+'/'+encodeURIComponent(nm(sy))+'.png?size=64'):null,bd?backdropCols(g,bd):{}])
+        .then(r=>({model:r[0],minis:r[1].filter(Boolean),sym:r[2],cols:r[3]||{}}));
+    }).then(p=>{if(!p)delete ready[g];return p});
   }
   const POS=[[37,7,16,.9],[63,7,16,.9],[21,16,17,.8],[79,16,17,.8],[34,28,19,.9],[66,28,19,.9],[9,42,17,.5],[24,42,18,.7],[76,42,18,.7],[91,42,17,.5],[34,57,19,.9],[66,57,19,.9],[21,67,17,.7],[79,67,17,.7],[37,78,16,.8],[63,78,16,.8],[50,94,16,.6]];
+  function drawPattern(sym,color){
+    const cv=$u('umPat'),top=$u('umTop'),w=top.offsetWidth,h=top.offsetHeight,D=Math.min(window.devicePixelRatio||1,2);
+    cv.width=Math.round(w*D);cv.height=Math.round(h*D);
+    const cx=cv.getContext('2d');cx.clearRect(0,0,cv.width,cv.height);
+    if(!sym)return;
+    const tc=document.createElement('canvas'),tx=tc.getContext('2d');
+    POS.forEach(p=>{
+      const s=p[2];tc.width=tc.height=Math.round(s*D);
+      tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(sym,0,0,tc.width,tc.height);
+      tx.globalCompositeOperation='source-in';tx.fillStyle=color||'#ffffff';tx.fillRect(0,0,tc.width,tc.height);
+      cx.globalAlpha=p[3]*.5;cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]/100*h-s/2)*D);
+    });
+    cx.globalAlpha=1;
+  }
+  function apply(p){
+    const top=$u('umTop');
+    if(p.model)$u('umModel').innerHTML='<img src="'+p.model.src+'" alt="">';
+    $u('umMini').innerHTML=p.minis.map(i=>'<img src="'+i.src+'" alt="">').join('');
+    if(p.cols.c1)top.style.setProperty('--um-c1',p.cols.c1);
+    if(p.cols.c2)top.style.setProperty('--um-c2',p.cols.c2);
+    drawPattern(p.sym,p.cols.c3);
+  }
   function reset(x){
     const top=$u('umTop');top.style.removeProperty('--um-c1');top.style.removeProperty('--um-c2');
-    $u('umFl')&&$u('umFl').setAttribute('flood-color','#ffffff');$u('umPat').innerHTML='';$u('umMini').innerHTML='';
+    $u('umMini').innerHTML='';
     $u('umModel').innerHTML=x&&x.image?'<img src="'+x.image+'" alt="">':((x&&x.emoji)||'🎁');
+    const cv=$u('umPat');cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
   }
-  function paint(g,data,tk){
-    if(!data||tk!==token)return;
-    const e=encodeURIComponent(g);
-    const ms=shuf(data.models),bd=shuf(data.backdrops)[0],sy=shuf(data.symbols)[0];
-    if(ms[0]){
-      const url=AP+'/model/'+e+'/'+encodeURIComponent(nm(ms[0]))+'.png?size=256',im=new Image();
-      im.onload=()=>{if(tk===token)$u('umModel').innerHTML='<img src="'+url+'" alt="">'};im.src=url;
-    }
-    $u('umMini').innerHTML=ms.slice(1,4).concat(ms.length<4?ms.slice(0,4-ms.length):[]).slice(0,3)
-      .map(m=>'<img src="'+AP+'/model/'+e+'/'+encodeURIComponent(nm(m))+'.png?size=64" alt="" onerror="this.remove()">').join('');
-    if(sy){
-      const su=AP+'/symbol/'+e+'/'+encodeURIComponent(nm(sy))+'.png?size=64';
-      $u('umPat').innerHTML=POS.map(p=>'<img src="'+su+'" alt="" style="left:'+p[0]+'%;top:'+p[1]+'%;width:'+p[2]+'px;height:'+p[2]+'px;opacity:'+(p[3]*.5)+'" onerror="this.remove()">').join('');
-    }
-    if(bd)backdropCols(g,bd).then(c=>{
-      if(tk!==token)return;const top=$u('umTop');
-      if(c.c1)top.style.setProperty('--um-c1',c.c1);
-      if(c.c2)top.style.setProperty('--um-c2',c.c2);
-      $u('umFl')&&$u('umFl').setAttribute('flood-color',c.c3||'#ffffff');
-    });
+  /* анимация целиком по кадрам: контур окна растёт от высоты окна подарка до своей высоты, низ и кнопка стоят на месте */
+  const bez=(x1,y1,x2,y2)=>t=>{
+    if(t<=0||t>=1)return t;let a=0,b=1,u=t;
+    for(let i=0;i<24;i++){const x=3*(1-u)*(1-u)*u*x1+3*(1-u)*u*u*x2+u*u*u;if(Math.abs(x-t)<1e-4)break;if(x<t)a=u;else b=u;u=(a+b)/2}
+    return 3*(1-u)*(1-u)*u*y1+3*(1-u)*u*u*y2+u*u*u;
+  };
+  const EASE=bez(.22,.8,.3,1);
+  function frame(k,op){
+    const hh=gh+(nh-gh)*k,v='path("'+window.__sheetPath(sw,hh,0,nh-hh)+'")';
+    sh.style.webkitClipPath=v;sh.style.clipPath=v;sh.style.opacity=op;
+    if(nh<gh)gmSh.style.opacity=String(1-op);
   }
-  window.umPrefetch=x=>{const g=gid(x);if(g)load(g)};
-  const gmEl=document.getElementById('gm'),gmSh=document.getElementById('gmSheet');
-  let gh=0,tm=0;
-  window.openUpgrade=function(x){
-    clearTimeout(closeT);clearTimeout(tm);
-    const tk=++token,g=gid(x);
+  function run(from,to,dur,done){
+    cancelAnimationFrame(raf);const t0=performance.now();
+    const step=now=>{
+      const el=now-t0,t=Math.min(1,el/dur),k=from+(to-from)*EASE(t),f=Math.min(1,el/160);
+      frame(k,to>from?f:1-f);
+      if(t<1)raf=requestAnimationFrame(step);else{raf=0;done&&done()}
+    };
+    raf=requestAnimationFrame(step);
+  }
+  window.umPrefetch=x=>{const g=gid(x);if(g)prep(g)};
+  function start(x,p,g){
+    const tk=token;
     reset(x);$u('umChk').classList.remove('on');$u('umPrice').textContent=String(PRICE);
-    if(g)load(g).then(d=>paint(g,d,tk));
     um.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
-    gh=gmSh.offsetHeight;
-    sh.style.transition='none';sh.style.height='auto';
-    um.classList.add('pre');
-    const nh=sh.offsetHeight;
-    sh.style.height=gh+'px';void sh.offsetHeight;sh.style.transition='';
+    sh.style.opacity='0';um.classList.add('pre');
+    gh=gmSh.offsetHeight;nh=sh.offsetHeight;sw=sh.offsetWidth;
+    if(p)apply(p);
     try{shapeBtn($u('umGo'))}catch(_){}
     try{smoothFit($u('umVar'),'pill',true,1)}catch(_){}
-    requestAnimationFrame(()=>{
-      if(!um.classList.contains('pre'))return;
+    frame(0,0);
+    /* два кадра на подготовку слоёв, затем сама анимация */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      if(tk!==token)return;
       um.classList.add('on');um.setAttribute('aria-hidden','false');
-      gmEl.classList.add('sub');
-      sh.style.height=nh+'px';
-      tm=setTimeout(()=>{if(um.classList.contains('on')){sh.style.height='';try{shapeBtn($u('umGo'))}catch(_){}}},300);
+      run(0,1,240,()=>{frame(1,1);gmEl.classList.add('sub');gmSh.style.opacity='';busy=false});
+    }));
+  }
+  window.openUpgrade=function(x){
+    if(busy||um.classList.contains('on'))return;
+    busy=true;const tk=++token,g=gid(x);
+    const pr=g?prep(g):Promise.resolve(null);
+    Promise.race([pr,new Promise(r=>setTimeout(()=>r('t'),350))]).then(res=>{
+      if(tk!==token)return;
+      const p=(res&&res!=='t')?res:null;
+      if(g&&p)delete ready[g];
+      start(x,p,g);
+      if(res==='t')pr.then(q=>{if(tk===token&&q){delete ready[g];apply(q)}});
     });
   };
   function close(){
-    token++;clearTimeout(closeT);clearTimeout(tm);
-    sh.style.transition='none';sh.style.height=sh.offsetHeight+'px';void sh.offsetHeight;sh.style.transition='';
-    um.classList.remove('on');um.setAttribute('aria-hidden','true');
+    if(!um.classList.contains('on')||busy)return;
+    busy=true;token++;
     gmEl.classList.remove('sub');
-    sh.style.height=(gh||sh.offsetHeight)+'px';
-    closeT=setTimeout(()=>{if(!um.classList.contains('on')){um.classList.remove('pre');um.style.height='';sh.style.height=''}},300);
+    um.classList.remove('on');um.setAttribute('aria-hidden','true');
+    run(1,0,220,()=>{um.classList.remove('pre');um.style.height='';sh.style.opacity='0';gmSh.style.opacity='';busy=false});
   }
   $u('umBack').onclick=close;
   um.querySelector('.um-dim').onclick=close;
+  window.addEventListener('resize',()=>{if(um.classList.contains('on')&&!raf){nh=sh.offsetHeight;sw=sh.offsetWidth;frame(1,1)}});
   $u('umChk').onclick=()=>$u('umChk').classList.toggle('on');
   $u('umVar').onclick=()=>toast('Все варианты: скоро');
   $u('umGo').onclick=()=>{if(window.__umDrag){window.__umDrag=false;return}toast('Улучшение: скоро')};
@@ -1829,8 +1868,6 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     };
     ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
   })();
-  window.addEventListener('resize',()=>{try{if(um.classList.contains('on'))shapeBtn($u('umGo'))}catch(_){}});
-
 })();
 </script>
 </body>
