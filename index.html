@@ -685,7 +685,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 (function(){
   const cache={};
   window.giftAnim=function(el,url){
-    if(!el||!url||!window.lottie)return;
+    if(!el||!url)return;if(!window.lottie){console.warn('[giftAnim] lottie-web не загрузился (cdnjs заблокирован?)');return}
     const img=el.querySelector('img');if(!img)return;
     const tok=el.__ga=(el.__ga||0)+1;
     (cache[url]||(cache[url]=fetch(url).then(r=>{if(!r.ok)throw 0;return r.json()}))).then(data=>{
@@ -694,7 +694,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
       img.replaceWith(box);
       const a=lottie.loadAnimation({container:box,renderer:'svg',loop:false,autoplay:true,animationData:JSON.parse(JSON.stringify(data))});
       box.addEventListener('click',()=>{a.goToAndPlay(0,true)});
-    }).catch(()=>{delete cache[url]});
+    }).catch(e=>{console.warn('[giftAnim] не удалось загрузить/запустить',url,e);delete cache[url]});
   };
   window.giftAnimOrig=function(el,x){
     const s=x&&x.image;if(s&&/\/original\//.test(s))giftAnim(el,s.replace(/\.png.*$/,'.json'));
