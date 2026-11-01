@@ -441,8 +441,9 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-var{position:relative;z-index:1;margin-top:9px;height:24px;padding:0 8px 0 6px;border-radius:12px;color:#fff;font:inherit;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;transition:transform .2s}
 #um .um-var:active{transform:scale(1.04)}
 #um .um-mini{display:flex;align-items:center}
-#um .um-mini img{width:19px;height:19px;object-fit:contain;margin-left:-3px}
-#um .um-mini img:first-child{margin-left:0}
+#um .um-mini .mm{position:relative;flex:none;width:19px;height:19px;margin-left:-3px}
+#um .um-mini .mm:first-child{margin-left:0}
+#um .um-mini .mm img{display:block;width:19px;height:19px;object-fit:contain}
 #um .um-var svg{flex:none;width:6px;height:11px;fill:none;stroke:#fff;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
 #um .um-feat{flex:0 1 auto;min-height:0;overflow:hidden;padding:31px 30px 7px;display:flex;flex-direction:column;gap:23px} #um .um-f:nth-child(3){margin-top:3px}
 #um .um-feat::-webkit-scrollbar{display:none}
@@ -543,7 +544,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
     <div class="row" data-s="Промокод"><div class="ic" style="background:linear-gradient(to bottom,#d073fe,#b358e1)"><svg class="ico" style="--s:var(--ic-promo)"><use href="#i-sell"/></svg></div><span class="t">Промокод</span></div>
     <div class="row" data-s="Язык"><div class="ic" style="background:linear-gradient(to bottom,#62e27d,#31cc62)"><svg class="ico" style="--s:var(--ic-lang)"><use href="#i-lang"/></svg></div><span class="t">Язык</span><span class="v">Русский</span></div>
     <div class="row" data-s="Оформление"><div class="ic" style="background:linear-gradient(to bottom,#56caff,#3bb1e9)"><svg class="ico" style="--s:var(--ic-theme)" viewBox="0 0 24 24"><use href="#icon-theme"/></svg></div><span class="t">Оформление</span><span class="v">Чёрная</span></div>
-    <div class="row sw on" id="anim"><div class="ic" style="background:linear-gradient(to bottom,#ff665a,#ff4b44)"><svg class="ico" style="--s:var(--ic-anim)"><use href="#i-gift"/></svg></div><span class="t">Анимации</span><i></i></div>
+    <div class="row sw on" id="anim"><div class="ic" style="background:linear-gradient(to bottom,#ff665a,#ff4b44)"><svg class="ico" style="--s:var(--ic-anim)"><use href="#i-gift"/></svg></div><span class="t">Анимации подарков</span><i></i></div>
   </div>
   <a class="credit" href="https://t.me/GiftChanges" target="_blank" rel="noopener">Gift assets powered by @GiftChanges</a>
 </section>
@@ -685,7 +686,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 (function(){
   const cache={};
   window.giftAnim=function(el,url,opts){
-    if(!el||!url)return;
+    if(!el||!url||window.__gA===false)return;
     if(!window.lottie){console.warn('[giftAnim] lottie-web не загрузился (cdnjs заблокирован?)');return}
     const img=el.querySelector('img');if(!img)return;
     const tok=el.__ga=(el.__ga||0)+1;
@@ -696,14 +697,17 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
       const box=document.createElement('div');box.className='ga';
       box.style.cssText='position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:'+s+'px;height:'+s+'px;opacity:0';
       el.appendChild(box);
-      const a=lottie.loadAnimation({container:box,renderer:'svg',loop:false,autoplay:true,animationData:JSON.parse(JSON.stringify(data))});
+      const a=lottie.loadAnimation({container:box,renderer:'svg',loop:false,autoplay:!(opts&&opts.delay),animationData:JSON.parse(JSON.stringify(data))});
+      if(opts&&opts.onComplete)a.addEventListener('complete',opts.onComplete);
       a.addEventListener('DOMLoaded',()=>{
         if(el.__ga!==tok||!el.contains(img)){try{a.destroy()}catch(_){}return}
+        if(opts&&opts.delay)setTimeout(()=>{if(el.__ga===tok)a.play()},opts.delay);
         requestAnimationFrame(()=>{box.style.opacity='1';requestAnimationFrame(()=>{img.style.visibility='hidden'})});
       });
       box.addEventListener('click',e=>{if(opts&&opts.stop)e.stopPropagation();a.goToAndPlay(0,true)});
     }).catch(e=>{console.warn('[giftAnim] не удалось загрузить/запустить',url,e);delete cache[url]});
   };
+  window.giftAnimWarm=function(url){if(url&&window.__gA!==false&&!cache[url])cache[url]=fetch(url).then(r=>{if(!r.ok)throw 0;return r.json()}).catch(e=>{delete cache[url]})};
   window.giftAnimOrig=function(el,x,opts){
     const s=x&&x.image;if(s&&/\/original\//.test(s))giftAnim(el,s.replace(/\.png.*$/,'.json'),opts);
   };
@@ -898,7 +902,7 @@ let cur='chats',hist=[];
 function syncInstant(){const s=$('#menuSlider');s.classList.add('no-transition');slide(cur);void s.offsetWidth;s.classList.remove('no-transition')}
 const DETAIL=['gifts','stars','me','saved'], NAV_EASE='cubic-bezier(.32,.72,0,1)'; let NAV_MS=560;
 let navFin=null, swipeOn=false, meFull=false;
-const animOn=()=>store.get('anim','1')==='1';
+const animOn=()=>true;
 function navDone(){if(navFin){const f=navFin;navFin=null;f()}}
 // кнопки хедера просто меняются и на миг «разбухают»
 function setHdr(p,pulse){
@@ -1036,7 +1040,7 @@ function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');c
 $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
 
 /* ===== Анимации ===== */
-function applyAnim(on){document.body.classList.toggle('noanim',!on);$('#anim').classList.toggle('on',on)}
+function applyAnim(on){window.__gA=!!on;$('#anim').classList.toggle('on',on)}
 applyAnim(store.get('anim','1')==='1');
 $('#anim').onclick=()=>{const on=store.get('anim','1')!=='1';store.set('anim',on?'1':'0');applyAnim(on)};
 
@@ -1187,7 +1191,7 @@ function makeSP(cvSel,avaSel){
     }
     cx.globalAlpha=1;cx.setTransform(1,0,0,1,0,0);
   }
-  const animOn=()=>store.get('anim','1')==='1';
+  const animOn=()=>true;
   const want=()=>running&&!held&&!document.hidden&&animOn();
   function loop(now){
     raf=0; if(!want()) return;
@@ -1829,8 +1833,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       const e=encodeURIComponent(g),ms=shuf(d.models),bd=shuf(d.backdrops)[0],sy=shuf(d.symbols)[0];
       let mini=ms.slice(1,4);if(mini.length<3)mini=mini.concat(ms.slice(0,3-mini.length));
       const mu=m=>AP+'/model/'+e+'/'+encodeURIComponent(nm(m))+'.png?size=';
-      return Promise.all([ms[0]?img(mu(ms[0])+'256'):null,Promise.all(mini.map(m=>img(mu(m)+'64'))),sy?img(AP+'/symbol/'+e+'/'+encodeURIComponent(nm(sy))+'.png?size=64'):null,bd?backdropCols(g,bd):{}])
-        .then(r=>({model:r[0],minis:r[1].filter(Boolean),sym:r[2],cols:r[3]||{}}));
+      return Promise.all([ms[0]?img(mu(ms[0])+'256'):null,Promise.all(mini.map(m=>img(mu(m)+'64').then(i=>i&&{i:i,j:AP+'/model/'+e+'/'+encodeURIComponent(nm(m))+'.json'}))),sy?img(AP+'/symbol/'+e+'/'+encodeURIComponent(nm(sy))+'.png?size=64'):null,bd?backdropCols(g,bd):{}])
+        .then(r=>{const mj=ms[0]?AP+'/model/'+e+'/'+encodeURIComponent(nm(ms[0]))+'.json':null;try{giftAnimWarm(mj);r[1].forEach(o=>o&&giftAnimWarm(o.j))}catch(_){}return {model:r[0],modelJ:mj,minis:r[1].filter(Boolean),sym:r[2],cols:r[3]||{}}});
     }).then(p=>{if(!p)delete ready[g];else pr.v=p;return p});
     return pr;
   }
@@ -1849,10 +1853,24 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     });
     cx.globalAlpha=1;
   }
-  function apply(p){
-    const top=$u('umTop');
-    if(p.model){$u('umModel').innerHTML='<img src="'+p.model.src+'" alt="">';giftAnim($u('umModel'),p.model.src.replace(/\.png\?size=\d+$/,'.json'))}
-    $u('umMini').innerHTML=p.minis.map(i=>'<img src="'+i.src+'" alt="">').join('');
+  /* бесконечный цикл: когда анимация модели доиграла, сразу подставляется следующий случайный набор (модель, фон, узор) и снова играет */
+  let cyc=0,curG=null;
+  function onDone(my){
+    if(my!==cyc||!um.classList.contains('on')||closing)return;
+    setTimeout(()=>{
+      if(my!==cyc||!um.classList.contains('on')||closing||!curG)return;
+      const g=curG,pr=prep(g);
+      const go=q=>{if(my!==cyc||!q||!um.classList.contains('on')||closing)return;delete ready[g];apply(q,{keep:true});setTimeout(()=>prep(g),300)};
+      if(pr.v)go(pr.v);else pr.then(go);
+    },300);
+  }
+  function apply(p,o){
+    o=o||{};const top=$u('umTop'),my=++cyc;
+    if(p.model){$u('umModel').innerHTML='<img src="'+p.model.src+'" alt="">';if(p.modelJ)giftAnim($u('umModel'),p.modelJ,{delay:o.delay,onComplete:()=>onDone(my)})}
+    if(!o.keep){
+      $u('umMini').innerHTML=p.minis.map(m=>'<span class="mm"><img src="'+m.i.src+'" alt=""></span>').join('');
+      $u('umMini').querySelectorAll('.mm').forEach((el,k)=>giftAnim(el,p.minis[k].j,{delay:o.delay}));
+    }
     if(p.cols.c1)top.style.setProperty('--um-c1',p.cols.c1);
     if(p.cols.c2)top.style.setProperty('--um-c2',p.cols.c2);
     drawPattern(p.sym,p.cols.c3);
@@ -1939,7 +1957,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     um.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     um.classList.add('pre');
     measure();closing=false;
-    if(p)apply(p);
+    if(p)apply(p,{delay:OPEN_MS+60});
     try{shapeBtn($u('umGo'))}catch(_){}
     try{smoothFit($u('umVar'),'pill',true,1)}catch(_){}
     try{shapeVar()}catch(_){}
@@ -1953,7 +1971,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   }
   window.openUpgrade=function(x){
     if(busy||um.classList.contains('on'))return;
-    busy=true;const tk=++token,g=gid(x);
+    busy=true;const tk=++token,g=gid(x);curG=g;
     /* набор уже готов — открываем сразу, без ожидания */
     const pr=g?prep(g):null,p=(pr&&pr.v)||null;
     if(g&&p)delete ready[g];
