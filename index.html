@@ -1918,7 +1918,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     setTimeout(()=>{
       um.style.visibility='hidden';
       closing=false;frame(0);um.classList.remove('pre');um.style.height='';
-      sh.style.transition='';sh.style.transform='';sh.style.height='';
+      sh.style.transition='';sh.style.height='';
       gmSh.style.height='';gmSh.style.maxHeight='';if(gmBody)gmBody.style.opacity='';
       busy=false;
       setTimeout(()=>gmEl.classList.remove('up','sub'),500);
@@ -1974,8 +1974,11 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   document.addEventListener('pointermove',e=>{if(!e.isPrimary||!down||moved)return;if(Math.hypot(e.clientX-sx,e.clientY-sy)>6)moved=true},true);
   const up=e=>{if(!e.isPrimary)return;if(moved)until=performance.now()+400;down=false};
   document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
+  const off=sh=>{try{const t=getComputedStyle(sh).transform;if(!t||t==='none')return false;return Math.abs(new DOMMatrix(t).f)>1}catch(_){return false}};
   document.addEventListener('click',e=>{
-    if(((down&&moved)||performance.now()<until)&&e.target.closest&&e.target.closest('#gm,#um')){e.stopImmediatePropagation();e.stopPropagation();e.preventDefault()}
+    const t=e.target;if(!t||!t.closest)return;
+    const sh=t.closest('#gmSheet,#umSheet');
+    if(t.closest('#gm,#um')&&(((down&&moved)||performance.now()<until)||(sh&&off(sh)))){e.stopImmediatePropagation();e.stopPropagation();e.preventDefault()}
   },true);
 })();
 </script>
