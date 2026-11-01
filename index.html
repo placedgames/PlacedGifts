@@ -257,7 +257,7 @@ body.navanim #bar{z-index:1}
 .mpin{position:fixed;left:0;right:0;top:0;z-index:900;pointer-events:none;visibility:hidden}
 .mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h));opacity:0;background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,0.989) 25.0%,rgba(0,0,0,0.946) 31.2%,rgba(0,0,0,0.877) 37.5%,rgba(0,0,0,0.788) 43.8%,rgba(0,0,0,0.684) 50.0%,rgba(0,0,0,0.570) 56.2%,rgba(0,0,0,0.453) 62.5%,rgba(0,0,0,0.339) 68.8%,rgba(0,0,0,0.232) 75.0%,rgba(0,0,0,0.139) 81.2%,rgba(0,0,0,0.066) 87.5%,rgba(0,0,0,0.017) 93.8%,rgba(0,0,0,0.000) 100.0%)}
 .mpin-band{position:absolute;left:0;top:var(--hdr-top);height:var(--hdr-h);width:0}
-.mpin-bg2{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 16px + 40px + 16px);opacity:0;transition:opacity .25s cubic-bezier(.4,0,.2,1);background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,1.000) 25.0%,rgba(0,0,0,1.000) 31.2%,rgba(0,0,0,1.000) 37.5%,rgba(0,0,0,0.997) 43.8%,rgba(0,0,0,0.948) 50.0%,rgba(0,0,0,0.849) 56.2%,rgba(0,0,0,0.714) 62.5%,rgba(0,0,0,0.558) 68.8%,rgba(0,0,0,0.397) 75.0%,rgba(0,0,0,0.246) 81.2%,rgba(0,0,0,0.119) 87.5%,rgba(0,0,0,0.032) 93.8%,rgba(0,0,0,0.000) 100.0%)}
+.mpin-bg2{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 16px + 40px + 16px);opacity:0;transition:opacity .25s cubic-bezier(.4,0,.2,1);background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,1.000) 25.0%,rgba(0,0,0,1.000) 31.2%,rgba(0,0,0,1.000) 37.5%,rgba(0,0,0,1.000) 43.8%,rgba(0,0,0,1.000) 50.0%,rgba(0,0,0,1.000) 56.2%,rgba(0,0,0,1.000) 62.5%,rgba(0,0,0,1.000) 68.8%,rgba(0,0,0,1.000) 75.0%,rgba(0,0,0,0.989) 81.2%,rgba(0,0,0,0.684) 87.5%,rgba(0,0,0,0.232) 93.8%,rgba(0,0,0,0.000) 100.0%)}
 .mpin.tabs .mpin-bg2{opacity:1}
 .mpin-n{position:absolute;top:0;left:16px;right:16px;text-align:center;font-size:28px;font-weight:550;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform-origin:50% 0;will-change:transform}
 .mpin-s{position:absolute;top:0;left:16px;right:16px;display:flex;align-items:center;justify-content:center;gap:3px;font-size:17px;font-weight:500;color:var(--hint);white-space:nowrap;transform-origin:50% 0;will-change:transform}
@@ -1345,16 +1345,29 @@ function clearAppCache(){ location.reload(); }
     bg.style.opacity=p;
     const tb=sc>=M.tabsAt;if(tb!==lt){lt=tb;pin.classList.toggle('tabs',tb)}
   }
-  /* жест снизу вверх: как только слайдер дошёл до кнопок хедера, страница в этом жесте дальше не едет (и по инерции тоже) —
-     чтобы пролистнуть дальше, нужно отпустить палец и начать заново */
-  let lock=false,ly=0;
-  pg.addEventListener('touchstart',e=>{if(!M)measure();lock=!!M&&pg.scrollTop<M.tabsAt-1;ly=e.touches[0].clientY},{passive:true});
+  /* «ступенька» на слайдере: жест, начатый выше/ниже места, где слайдер встаёт под кнопки хедера, не может проехать это место —
+     ни пальцем, ни по инерции. Чтобы ехать дальше, нужно отпустить палец и начать новый жест.
+     В touchmove смещение считается заранее (скролл не успевает «проскочить»), а инерция гасится кратким overflow:hidden. */
+  let lock=0,ly=0,ft=0;   // lock: 1 — едем вниз по странице (палец вверх), 2 — возвращаемся вверх
+  const freeze=T=>{pg.style.overflowY='hidden';pg.scrollTop=T;clearTimeout(ft);ft=setTimeout(()=>{pg.style.overflowY=''},70)};
+  pg.addEventListener('touchstart',e=>{
+    clearTimeout(ft);pg.style.overflowY='';
+    if(!M)measure();ly=e.touches[0].clientY;lock=0;
+    if(!M)return;const sc=pg.scrollTop,T=M.tabsAt;
+    if(T>2&&sc<T-1)lock=1;else if(T>2&&sc>T+1)lock=2;
+  },{passive:true});
   pg.addEventListener('touchmove',e=>{
-    const y=e.touches[0].clientY,up=y<ly;ly=y;
-    if(lock&&M&&up&&pg.scrollTop>=M.tabsAt-0.5&&e.cancelable)e.preventDefault();
+    const y=e.touches[0].clientY,d=ly-y;ly=y;   // d>0: страница едет вниз по содержимому
+    if(!lock||!M)return;
+    const T=M.tabsAt,cur=pg.scrollTop;
+    if((lock===1&&d>0&&cur+d>=T-0.5)||(lock===2&&d<0&&cur+d<=T+0.5)){
+      if(e.cancelable)e.preventDefault();
+      if(Math.abs(cur-T)>0.5)pg.scrollTop=T;
+    }
   },{passive:false});
   pg.addEventListener('scroll',()=>{
-    if(lock&&M&&pg.scrollTop>M.tabsAt)pg.scrollTop=M.tabsAt;
+    if(lock&&M){const sc=pg.scrollTop,T=M.tabsAt;
+      if((lock===1&&sc>T+0.5)||(lock===2&&sc<T-0.5))freeze(T)}
     upd();
   },{passive:true});
   const inv=()=>{M=null;requestAnimationFrame(upd)};
