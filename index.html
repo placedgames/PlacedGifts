@@ -546,6 +546,7 @@ html,body{overscroll-behavior:none}
     <div class="pname" id="uname"></div>
     <div class="pnum"><svg class="ico" style="--s:var(--ic-rating-badge)"><use id="uRate" href="#i-n1"/></svg><span id="unum"></span></div>
   </div>
+  <div class="mpin" id="setPin"><div class="mpin-bg"></div><div class="mpin-band"></div><div class="mpin-n" id="spN"></div><div class="mpin-s" id="spS"><svg class="ico" id="spSv"><use id="spR" href="#i-n1"/></svg><span></span></div></div>
   <div class="list sq-card" style="border-radius:59px">
     <div class="row" data-go="me" style="height:53px"><div class="ic" style="background:linear-gradient(to bottom,#ff665a,#ff4b44)"><svg class="ico" style="--s:var(--ic-profile)"><use href="#i-profile"/></svg></div><span class="t">Мой профиль</span></div>
   </div>
@@ -856,21 +857,20 @@ const covers={};
 function makeCover(id){
   const pg=$('#p-'+id),hd=pg.querySelector('.phead'),cv=pg.querySelector('.cover'),av=pg.querySelector('.ava'),im=pg.querySelector('.cimg');
   const cn=pg.querySelector('.cname'),cs=pg.querySelector('.cstat'),csv=cs.querySelector('svg'),ctx=cs.querySelector('span'),pn=pg.querySelector('.pname'),pst=pg.querySelector('.pnum,.pstat'),ci=pg.querySelector('.cinfo');
-  let exp=false,h0=0,h1=0,g=null,N=null,tm=0;
+  let exp=false,h0=0,h1=0,g=null,N=null;
+  const NFS=26,NGAP=-1;   // размер имени и отступ до строки «в сети» в раскрытой обложке (было 24 и 0)
   const SHv=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stat-shift')),SH=isNaN(SHv)?0:SHv;
   const SGv=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stat-gap')),SG=isNaN(SGv)?3:SGv,MR0=SG-6;
   const lerp=(a,b,p)=>a+(b-a)*p;
   function render(p){
     if(!g)return;
     hd.style.height=lerp(h0,h1,p)+'px';
-    clearTimeout(tm);
     if(p>0){hd.style.setProperty('--hf',0);pg.style.setProperty('--cn',1)}
-    else if(pg.classList.contains('anim')){tm=setTimeout(()=>{if(!exp){hd.style.setProperty('--hf',1);pg.style.setProperty('--cn',0)}},240)}
     else{hd.style.setProperty('--hf',1);pg.style.setProperty('--cn',0)}
     if(N){
       ci.style.top=lerp(N.y0,N.y1,p)+'px';
-      cn.style.transform='translateX('+lerp((g.W-N.wn0)/2,16,p)+'px)';cn.style.fontSize=lerp(28,24,p)+'px';
-      cs.style.transform='translateX('+lerp(N.xs0,16,p)+'px)';cs.style.marginTop=lerp(N.gap0,0,p)+'px';cs.style.fontSize=lerp(N.fs0,17,p)+'px';
+      cn.style.transform='translateX('+lerp((g.W-N.wn0)/2,16,p)+'px)';cn.style.fontSize=lerp(28,NFS,p)+'px';
+      cs.style.transform='translateX('+lerp(N.xs0,16,p)+'px)';cs.style.marginTop=lerp(N.gap0,NGAP,p)+'px';cs.style.fontSize=lerp(N.fs0,17,p)+'px';
       cs.style.color=p>0?'rgba(255,255,255,.78)':'rgb(158,158,158)';
       const pu=pst.querySelector('use'),cu=cs.querySelector('use'),rt=pu&&(pu.getAttribute('href')||'').replace('#i-n','');
       if(cu&&rt)cu.setAttribute('href',(p>0?'#i-h':'#i-n')+rt);
@@ -900,7 +900,7 @@ function makeCover(id){
       const wt=ctx.offsetWidth,ws=csv.getBoundingClientRect().width;
       cs.style.fontSize='17px';const hs=cs.offsetHeight;
       const y0=rn.top-cr.top+(rn.height-28*1.1)/2;
-      N={y0,y1:g.CH-14-(24*1.1+hs),wn0,fs0,xs0:g.W/2-(ws+SG+wt)/2-SH,gap0:(rp.top-cr.top+(rp.height-hs)/2)-(y0+28*1.1)};
+      N={y0,y1:g.CH-14-(NFS*1.1+hs+NGAP),wn0,fs0,xs0:g.W/2-(ws+SG+wt)/2-SH,gap0:(rp.top-cr.top+(rp.height-hs)/2)-(y0+28*1.1)};
       cn.style.transition=cs.style.transition=csv.style.transition='';
     }catch(e){N=null}
     render(exp?1:0);
@@ -912,19 +912,17 @@ function makeCover(id){
   pg.addEventListener('touchstart',e=>{ts={x:e.touches[0].clientX,y:e.touches[0].clientY,drag:false,ok:pg.scrollTop+(pg._off||0)<=0}},{passive:true});
   pg.addEventListener('touchmove',e=>{
     if(!ts||swipeOn)return;const dy=e.touches[0].clientY-ts.y;
-    if(ts.closed){if(e.cancelable)e.preventDefault();return}
     if(!ts.drag&&Math.abs(e.touches[0].clientX-ts.x)>Math.abs(dy))return;
     if(!exp){
       if(ts.ok&&dy>0){ if(e.cancelable)e.preventDefault();
         if(!ts.drag&&dy>6){ts.drag=true;set(true,true)}}
-    }else{ if(dy>0&&ts.ok&&e.cancelable)e.preventDefault();
-      if(dy<-2){ if(e.cancelable)e.preventDefault(); set(false,true); ts.closed=true } }
+    }else{ if(dy>0&&ts.ok&&e.cancelable)e.preventDefault() }
   },{passive:false});
   const end=()=>{ts=null;pull=0};
   pg.addEventListener('touchend',end);pg.addEventListener('touchcancel',end);
   const remeasure=()=>{if(pg.classList.contains('on'))measure()};
   if(window.ResizeObserver)new ResizeObserver(remeasure).observe(pg);
-  covers[id]={measure,remeasure,reset:()=>{if(exp){exp=false;render(0)}},isExp:()=>exp};
+  covers[id]={measure,remeasure,reset:()=>{if(exp){exp=false;pg.classList.remove('anim');render(0)}},isExp:()=>exp};
 }
 makeCover('me');makeCover('settings');
 addEventListener('resize',()=>{const c=covers[cur];if(c)c.measure()});
@@ -1445,6 +1443,50 @@ function clearAppCache(){ location.reload(); }
   const inv=()=>{M=null;requestAnimationFrame(upd)};
   window.addEventListener('resize',inv);
   new MutationObserver(()=>{if(!pg.classList.contains('on'))release();inv()}).observe(pg,{attributes:true,attributeFilter:['class']});
+  if(window.ResizeObserver){const ro=new ResizeObserver(inv);ro.observe(pg);const ph=pg.querySelector('.phead');if(ph)ro.observe(ph)}
+})();
+
+/* ===== Настройки: имя и рейтинг «приезжают» в хедер при прокрутке (как в профиле).
+   Затемнение — только фиксированная полоса под хедером, без роста по мере прокрутки. ===== */
+(function(){
+  const pg=$('#p-settings'),pin=$('#setPin'),bg=pin.querySelector('.mpin-bg'),band=pin.querySelector('.mpin-band'),nm=$('#spN'),st=$('#spS'),sv=$('#spSv'),rt=$('#spR'),stTxt=st.querySelector('span');
+  const pn=$('#uname'),ps=pg.querySelector('.pnum'),src=$('#uRate'),pst=$('#unum');
+  const KN=17/28,KS=14/17,KI=(17/22)/KS,TRAVEL=60;
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  let M=null,lp=-1,lh='',ln='';
+  function measure(){
+    if(!pg.classList.contains('on')){M=null;return}
+    const sc=pg.scrollTop,pr=pn.getBoundingClientRect(),sr=ps.getBoundingClientRect();
+    if(!pr.height){M=null;return}
+    const bt=band.offsetTop,bh=band.offsetHeight,hn=pr.height,hs=sr.height;
+    nm.style.lineHeight=hn+'px';nm.style.height=hn+'px';st.style.height=hs+'px';
+    const y1=bt+(bh-(hn*KN+hs*KS))/2;
+    M={dn:pr.top+sc,hn,hs,gap:sr.top-pr.bottom,y1,ls:y1+TRAVEL};
+    lp=-2;
+  }
+  function upd(){
+    if(!M){measure();if(!M)return}
+    const top0=M.dn-pg.scrollTop;
+    const p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
+    if(p<=0){
+      if(lp!==0){lp=0;pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0}
+      return;
+    }
+    if(lp<=0){pin.style.visibility='visible';pn.style.visibility=ps.style.visibility='hidden';
+      const t=pn.textContent;if(t!==ln){ln=t;nm.textContent=t}
+      if(pst.textContent!==stTxt.textContent)stTxt.textContent=pst.textContent;
+      const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}}
+    lp=p;
+    const kn=lerp(1,KN,p),ks=lerp(1,KS,p),top=Math.max(top0,M.y1);
+    nm.style.transform='translate3d(0,'+top+'px,0) scale('+kn+')';
+    st.style.transform='translate3d('+(-3*(1-p))+'px,'+(top+M.hn*kn+M.gap*(1-p))+'px,0) scale('+ks+')';
+    sv.style.transform='scale('+lerp(1,KI,p)+')';
+    bg.style.opacity=p;   // полоса затемнения фиксированной высоты (высота хедера), дальше вниз не растёт
+  }
+  pg.addEventListener('scroll',upd,{passive:true});
+  const inv=()=>{M=null;requestAnimationFrame(upd)};
+  window.addEventListener('resize',inv);
+  new MutationObserver(inv).observe(pg,{attributes:true,attributeFilter:['class']});
   if(window.ResizeObserver){const ro=new ResizeObserver(inv);ro.observe(pg);const ph=pg.querySelector('.phead');if(ph)ro.observe(ph)}
 })();
 go('chats',true);
