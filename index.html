@@ -408,7 +408,8 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um.on .um-sheet{transform:translateY(0)}
 #um .um-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:20px 16px 18px;background:radial-gradient(circle at 50% 42%,var(--um-c1,#7b72ea) 0%,var(--um-c2,#5b3fb8) 100%);transition:background .3s}
 #um .um-pat{position:absolute;inset:0;pointer-events:none;z-index:0}
-#um .um-pat img{position:absolute;transform:translate(-50%,-50%);filter:brightness(0) invert(1);object-fit:contain}
+#um .um-pat img{position:absolute;transform:translate(-50%,-50%);filter:url(#umTint);object-fit:contain}
+#um .um-top::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 40%,rgba(0,0,0,.24) 100%)}
 #um .um-back{position:absolute;top:16px;left:16px;z-index:3;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;color:#fff;cursor:pointer}
 #um .um-back svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
 #um .um-model{position:relative;z-index:1;width:132px;height:132px;margin-top:6px;display:flex;align-items:center;justify-content:center;font-size:90px}
@@ -629,6 +630,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
     <div class="gm-upw"><button class="gm-up" id="gmUp"><span>Улучшить</span><svg class="gm-upi"><use href="#i-up"/></svg></button></div>
   </div>
 </div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="umTint" color-interpolation-filters="sRGB"><feFlood id="umFl" flood-color="#ffffff"/><feComposite in2="SourceGraphic" operator="in"/></filter></svg>
 <div id="um" aria-hidden="true">
   <div class="um-dim"></div>
   <div class="um-sheet" id="umSheet">
@@ -1664,6 +1666,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   });
   watch('bmIn');
   watch('gmSheet');
+  watch('umSheet');
   /* карточка подарка и кнопка «Посмотреть»: те же плавные углы; фон карточки — в ::before, чтобы не обрезать выступающую плашку */
   const SMC=0.66;
   function smoothPath(w,h,r,sm){const q=corner(Math.min(r,w/2,h/2),w,h,sm);
@@ -1730,16 +1733,16 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       .catch(()=>{delete cache[g];return null});
   }
   function backdropCols(g,b){
-    const get=o=>({c1:css(deep(o,/center/i)),c2:css(deep(o,/edge/i))});
+    const get=o=>({c1:css(deep(o,/center/i)),c2:css(deep(o,/edge/i)),c3:css(deep(o,/pattern/i))});
     let c=get(b);
-    if(c.c1&&c.c2)return Promise.resolve(c);
+    if(c.c1&&c.c2&&c.c3)return Promise.resolve(c);
     const url='/backdrop/'+encodeURIComponent(g)+'/'+encodeURIComponent(nm(b))+'/info';
     return j(url).then(d=>{const c2=get(d);return (c2.c1||c2.c2)?c2:c}).catch(()=>c);
   }
-  const POS=[[50,7,16,.5],[21,13,16,.45],[79,13,16,.45],[7,33,18,.35],[93,33,18,.35],[28,27,22,.5],[72,27,22,.5],[9,60,18,.3],[91,60,18,.3],[24,54,22,.5],[76,54,22,.5],[50,93,16,.3],[18,82,16,.3],[82,82,16,.3]];
+  const POS=[[37,7,16,.9],[63,7,16,.9],[21,16,17,.8],[79,16,17,.8],[34,28,19,.9],[66,28,19,.9],[9,42,17,.5],[24,42,18,.7],[76,42,18,.7],[91,42,17,.5],[34,57,19,.9],[66,57,19,.9],[21,67,17,.7],[79,67,17,.7],[37,78,16,.8],[63,78,16,.8],[50,94,16,.6]];
   function reset(x){
     const top=$u('umTop');top.style.removeProperty('--um-c1');top.style.removeProperty('--um-c2');
-    $u('umPat').innerHTML='';$u('umMini').innerHTML='';
+    $u('umFl')&&$u('umFl').setAttribute('flood-color','#ffffff');$u('umPat').innerHTML='';$u('umMini').innerHTML='';
     $u('umModel').innerHTML=x&&x.image?'<img src="'+x.image+'" alt="">':((x&&x.emoji)||'🎁');
   }
   function paint(g,data,tk){
@@ -1754,12 +1757,13 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       .map(m=>'<img src="'+AP+'/model/'+e+'/'+encodeURIComponent(nm(m))+'.png?size=64" alt="" onerror="this.remove()">').join('');
     if(sy){
       const su=AP+'/symbol/'+e+'/'+encodeURIComponent(nm(sy))+'.png?size=64';
-      $u('umPat').innerHTML=POS.map(p=>'<img src="'+su+'" alt="" style="left:'+p[0]+'%;top:'+p[1]+'%;width:'+p[2]*1.1+'px;height:'+p[2]*1.1+'px;opacity:'+(p[3]*.6)+'" onerror="this.remove()">').join('');
+      $u('umPat').innerHTML=POS.map(p=>'<img src="'+su+'" alt="" style="left:'+p[0]+'%;top:'+p[1]+'%;width:'+p[2]+'px;height:'+p[2]+'px;opacity:'+(p[3]*.5)+'" onerror="this.remove()">').join('');
     }
     if(bd)backdropCols(g,bd).then(c=>{
       if(tk!==token)return;const top=$u('umTop');
       if(c.c1)top.style.setProperty('--um-c1',c.c1);
       if(c.c2)top.style.setProperty('--um-c2',c.c2);
+      $u('umFl')&&$u('umFl').setAttribute('flood-color',c.c3||'#ffffff');
     });
   }
   window.umPrefetch=x=>{const g=gid(x);if(g)load(g)};
@@ -1771,6 +1775,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     um.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     um.classList.add('pre');
     try{shapeBtn($u('umGo'))}catch(_){}
+    try{smoothFit($u('umVar'),'pill',true,1)}catch(_){}
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       if(!um.classList.contains('pre'))return;
       um.classList.add('on');um.setAttribute('aria-hidden','false');
