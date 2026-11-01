@@ -422,7 +422,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-xc{position:absolute;top:16px;left:16px;z-index:3;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;pointer-events:none;opacity:var(--uco,0);transform:scale(var(--ucs,1));will-change:transform,opacity}
 #gm .gm-upw{margin-top:auto}
 #um .um-top,#um .um-feat,#um .um-chk{transform:translate3d(0,var(--uo,0px),0);will-change:transform}
-#um .um-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:19px 16px 18px}
+#um .um-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:19px 16px 21px}
 #um .um-tint{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:var(--ug,0);background:radial-gradient(circle at 50% 42%,var(--um-c1,#7b72ea) 0%,var(--um-c2,#5b3fb8) 100%)}
 #um .um-pat{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0}
 #um .um-tint::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 40%,rgba(0,0,0,.24) 100%)}
@@ -442,10 +442,10 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-mini img{width:19px;height:19px;object-fit:contain;margin-left:-3px}
 #um .um-mini img:first-child{margin-left:0}
 #um .um-var svg{flex:none;width:6px;height:11px;fill:none;stroke:#fff;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
-#um .um-feat{flex:0 1 auto;min-height:0;overflow:hidden;padding:26px 31px 4px;display:flex;flex-direction:column;gap:21px}
+#um .um-feat{flex:0 1 auto;min-height:0;overflow:hidden;padding:26px 30px 4px;display:flex;flex-direction:column;gap:21px}
 #um .um-feat::-webkit-scrollbar{display:none}
 #um .um-f{display:flex;gap:10px;align-items:flex-start}
-#um .um-f svg{flex:none;width:34px;height:34px;fill:#4BB6EE;fill-rule:evenodd;margin-top:0}
+#um .um-f svg{flex:none;width:35px;height:35px;fill:#4BB6EE;fill-rule:evenodd;margin-top:1px}
 #um .um-f b{display:block;font-size:16px;line-height:1.2;font-weight:600}
 #um .um-f span{display:block;margin-top:5px;font-size:15px;line-height:20px;color:#8e8e93}
 #um .um-chk{flex:none;display:flex;align-items:center;justify-content:center;gap:9px;padding:24px 0 0;cursor:pointer;user-select:none;-webkit-user-select:none;font-size:14px;color:#8e8e93}
@@ -666,8 +666,8 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
       <button class="um-var" id="umVar"><span class="um-mini" id="umMini"></span><span>Смотреть все варианты</span><svg viewBox="0 0 8 14"><path d="M1.5 1.5L7 7l-5.5 5.5"/></svg></button>
     </div>
     <div class="um-feat">
-      <div class="um-f"><svg><use href="#i-diamond"/></svg><div><b>Уникальность</b><span>Подарку будут присвоены уникальный номер, модель, фон и узор.</span></div></div>
-      <div class="um-f"><svg><use href="#i-transfer"/></svg><div><b>Можно передать</b><span>Коллекционный подарок можно отправить любому другу в Telegram.</span></div></div>
+      <div class="um-f"><svg><use href="#i-diamond"/></svg><div><b>Уникальность</b><span>Подарок получит уникальный номер, модель, фон и символ.</span></div></div>
+      <div class="um-f"><svg><use href="#i-transfer"/></svg><div><b>Можно передать</b><span>Коллекционный подарок можно отправить любому пользователю.</span></div></div>
       <div class="um-f"><svg><use href="#i-hammer"/></svg><div><b>Можно продать</b><span>Подарок можно продать или выставить на внутренний маркет.</span></div></div>
     </div>
     <div class="um-chk" id="umChk"><i class="um-box"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></i><span>С именем отправителя</span></div>
@@ -1871,7 +1871,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     if(!(w>0)||!(h>0))return;
     const f=n=>+n.toFixed(2),r=h/2,px=Math.min(1.09*r,w/2),hx=px*.57,vy=r*.57;
     const d='M'+f(px)+' 0L'+f(w-px)+' 0C'+f(w-px+hx)+' 0 '+f(w)+' '+f(r-vy)+' '+f(w)+' '+f(r)+'C'+f(w)+' '+f(r+vy)+' '+f(w-px+hx)+' '+f(h)+' '+f(w-px)+' '+f(h)+'L'+f(px)+' '+f(h)+'C'+f(px-hx)+' '+f(h)+' 0 '+f(r+vy)+' 0 '+f(r)+'C0 '+f(r-vy)+' '+f(px-hx)+' 0 '+f(px)+' 0Z';
-    const st=(o,a)=>'<stop offset="'+o+'" stop-color="#9c9ea8" stop-opacity="'+a+'"/>';
+    const st=(o,a)=>'<stop offset="'+o+'" stop-color="#a8aab3" stop-opacity="'+a+'"/>';
     const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">'+
       st(0,.55)+st(.14,.3)+st(.32,.07)+st(.5,0)+st(.68,.07)+st(.86,.3)+st(1,.55)+'</linearGradient></defs>'+
       '<path d="'+d+'" fill="#c9cbd3" fill-opacity=".34"/><path d="'+d+'" fill="none" stroke="url(#g)" stroke-width="2"/></svg>';
