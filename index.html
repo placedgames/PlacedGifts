@@ -29,6 +29,7 @@ html,body{height:100%;width:100%;overflow:hidden;touch-action:pan-y;background:v
 body{overflow:hidden}
 .page{scrollbar-width:none;-ms-overflow-style:none;display:none;height:100%;overflow-y:auto;padding:calc(var(--hdr-top) + var(--hdr-h) + 8px) 16px 130px;overflow-x:hidden;overscroll-behavior:none}
 .page.on{display:block}
+.credit{display:block;text-align:center;margin:20px 0 0;font-size:13px;color:#8e8e93;text-decoration:none;-webkit-tap-highlight-color:transparent}
 h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 .sub{color:var(--hint);text-align:center;font-size:15px;margin-bottom:18px}
 
@@ -327,10 +328,9 @@ body.navanim #bar{z-index:1}
 #gm .gm-x.press{transform:scale(1.1)}
 #gm .gm-x svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
 #gm .gm-body{position:relative;z-index:1;padding:19px 16px 0;display:flex;flex-direction:column;align-items:center;text-align:center}
-#gm .ga{cursor:pointer;-webkit-tap-highlight-color:transparent;flex:none}
+#gm .ga{transform:translateZ(0);cursor:pointer;-webkit-tap-highlight-color:transparent;flex:none}
 .gm-img .ga,#um .um-model .ga{width:131px;height:131px}
 .bm-img .ga{height:100%;aspect-ratio:1/1;max-width:100%}
-#um .um-model .ga{filter:drop-shadow(0 6px 14px rgba(0,0,0,.25))}
 .gm-img{width:100%;height:139px;display:flex;align-items:center;justify-content:center;font-size:103px}
 #gm .gm-img img{max-width:131px;max-height:131px;object-fit:contain}
 #gm .gm-t{font-size:21px;line-height:1.2;font-weight:600;margin:9px 0 0}
@@ -547,6 +547,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
     <div class="row" data-s="Оформление"><div class="ic" style="background:linear-gradient(to bottom,#56caff,#3bb1e9)"><svg class="ico" style="--s:var(--ic-theme)" viewBox="0 0 24 24"><use href="#icon-theme"/></svg></div><span class="t">Оформление</span><span class="v">Чёрная</span></div>
     <div class="row sw on" id="anim"><div class="ic" style="background:linear-gradient(to bottom,#ff665a,#ff4b44)"><svg class="ico" style="--s:var(--ic-anim)"><use href="#i-gift"/></svg></div><span class="t">Анимации</span><i></i></div>
   </div>
+  <a class="credit" href="https://t.me/GiftChanges" target="_blank" rel="noopener">Gift assets powered by @GiftChanges</a>
 </section>
 
 <section class="page" id="p-me">
