@@ -424,8 +424,8 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-top,#um .um-feat,#um .um-chk{transform:translate3d(0,var(--uo,0px),0);will-change:transform}
 #um .um-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:19px 16px 21px}
 #um .um-tint{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:var(--ug,0);background:radial-gradient(circle at 50% 42%,var(--um-c1,#7b72ea) 0%,var(--um-c2,#5b3fb8) 100%)}
-#um .um-pat{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0}
-#um .um-tint::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 40%,rgba(0,0,0,.24) 100%)}
+#um .um-pat{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0;-webkit-mask-image:radial-gradient(ellipse 75% 80% at 50% 45%,#000 35%,rgba(0,0,0,.4) 100%);mask-image:radial-gradient(ellipse 75% 80% at 50% 45%,#000 35%,rgba(0,0,0,.4) 100%)}
+#um .um-tint::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.4) 100%)}
 #um .um-back{position:absolute;top:16px;left:16px;z-index:3;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;color:#fff;cursor:pointer}
 #um .um-back,#um .um-var{--glass-rgb:196,198,206;--glass-strong:.3;--glass2-rgb:206,208,216;--glass2-a:.62}
 #um .um-var{border:0;background:rgba(200,202,210,.34);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
@@ -1794,7 +1794,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       const s=p[2];tc.width=tc.height=Math.round(s*D);
       tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(sym,0,0,tc.width,tc.height);
       tx.globalCompositeOperation='source-in';tx.fillStyle=color||'#ffffff';tx.fillRect(0,0,tc.width,tc.height);
-      cx.globalAlpha=p[3]*.5;cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]/100*h-s/2)*D);
+      cx.globalAlpha=p[3]*.38;cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]/100*h-s/2)*D);
     });
     cx.globalAlpha=1;
   }
