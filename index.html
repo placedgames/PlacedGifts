@@ -1304,17 +1304,18 @@ const SVK='savedMsgs',RIB_C='M48.86 0L63.15 0Q67.15 0 69.98 2.83L97.17 30.02Q100
 let SVMSGS=[];try{SVMSGS=JSON.parse(store.get(SVK,'[]'))||[]}catch(e){}
 const SV_PAGE=20;let svFrom=0;
 const svFm=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0');
+const starWord=n=>{const a=n%10,b=n%100;return a===1&&b!==11?'звезду':(a>=2&&a<=4&&(b<10||b>=20)?'звезды':'звёзд')};
 function svHtml(from,to){
   return SVMSGS.slice(from,to).map((m,k)=>{const i=from+k;return '<div class="svm">'+
     '<div class="sv-pill">Вы купили подарок за&nbsp;<b>'+svFm(m.price)+'&nbsp;звёзд</b></div>'+
     '<div class="sv-card"><div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_C+'" fill="url(#svRg)"/></svg><span>1 из '+shortN(m.total)+'</span></div>'+
     '<div class="sv-img"'+(m.image&&/\/original\//.test(m.image)?' data-anim="'+m.image.replace(/\.png.*$/,'.json')+'"':'')+'>'+(m.image?'<img src="'+m.image+'" alt="" decoding="async">':(m.emoji||'🎁'))+'</div>'+
     '<div class="sv-ct">Купленный подарок</div>'+
-    '<div class="sv-cd">'+(m.msg?m.msg.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'Добавьте этот подарок в профиль или обменяйте на '+svFm(m.price*0.85)+' звёзд.')+'</div>'+
+    '<div class="sv-cd">'+(m.sold?'Вы обменяли этот подарок на '+svFm(m.sold)+'&nbsp;'+starWord(m.sold)+'.':m.msg?m.msg.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'Добавьте этот подарок в профиль или обменяйте на '+svFm(m.price*0.85)+' звёзд.')+'</div>'+
     '<button class="sv-view" data-i="'+i+'">Посмотреть</button></div></div>'}).join('');
 }
 function svBind(box){
-  box.querySelectorAll('.sv-card').forEach(c=>c.onclick=()=>{const b=c.querySelector('.sv-view'),m=SVMSGS[+b.dataset.i],x=MYGIFTS.find(g=>g.key===m.key&&g.t===m.t);if(x&&window.openGift)openGift(x);else toast('Просмотр подарка: скоро')});
+  box.querySelectorAll('.sv-card').forEach(c=>c.onclick=()=>{const b=c.querySelector('.sv-view'),m=SVMSGS[+b.dataset.i];if(m.sold){if(window.openGift)openGift({image:m.image,emoji:m.emoji,total:m.total,price:m.price,key:m.key,t:m.t,msg:m.msg,sold:m.sold});return}const x=MYGIFTS.find(g=>g.key===m.key&&g.t===m.t);if(x&&window.openGift)openGift(x);else toast('Просмотр подарка: скоро')});
 }
 /* в чате рисуются только последние SV_PAGE карточек, более старые подгружаются при прокрутке вверх */
 function renderSaved(fresh){
@@ -1579,7 +1580,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   const sellWord=n=>{const a=n%10,b=n%100;return a===1&&b!==11?'звезду':(a>=2&&a<=4&&(b<10||b>=20)?'звезды':'звёзд')};
   const sellTxt=p=>{const n=sellN(p);return 'продать за '+fmt(n)+' '+sellWord(n)};
   const row=(k,v)=>'<div class="gm-r"><div class="gm-k">'+k+'</div><div class="gm-v">'+v+'</div></div>';
-  let selling=false;
+  let selling=false;const GM_D=gm.querySelector('.gm-d').innerHTML;
   function sellGift(x,price){
     if(selling||!x)return;
     const n=sellN(price),who=x.anon?'Аноним':name;
@@ -1587,11 +1588,12 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const done=()=>{
       const i=MYGIFTS.indexOf(x);if(i<0)return;
       MYGIFTS.splice(i,1);store.set(MYK,JSON.stringify(MYGIFTS));
-      const j=SVMSGS.findIndex(m=>m.key===x.key&&m.t===x.t);
-      if(j>=0){SVMSGS.splice(j,1);store.set(SVK,JSON.stringify(SVMSGS));try{renderSaved(0)}catch(_){}}
+      const j=SVMSGS.findIndex(m=>m.key===x.key&&m.t===x.t&&!m.sold);
+      if(j>=0){SVMSGS[j].sold=n;store.set(SVK,JSON.stringify(SVMSGS));try{renderSaved(0)}catch(_){}}
       addStars(n);
       try{renderMyGifts()}catch(_){}
       close();
+      try{go('stars')}catch(_){}
     };
     selling=true;const fin=ok=>{selling=false;if(ok)done()};
     if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){
@@ -1600,9 +1602,12 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     fin(confirm(msg));
   }
   function open(x){
-    clearTimeout(closeT);gm.classList.remove('sub','up');window.__gmCur=x;try{window.umPrefetch&&umPrefetch(x)}catch(_){}
+    clearTimeout(closeT);gm.classList.remove('sub','up');window.__gmCur=x;try{if(!x.sold)window.umPrefetch&&umPrefetch(x)}catch(_){}
     $g('gmImg').innerHTML=x.image?'<img src="'+x.image+'" alt="">':(x.emoji||'🎁');giftAnimOrig($g('gmImg'),x);
-    gm.querySelector('.gm-s').style.display=x.anon?'':'none';
+    gm.querySelector('.gm-s').style.display=(x.anon&&!x.sold)?'':'none';
+    gm.querySelector('.gm-h').style.display=x.sold?'none':'';
+    gm.querySelector('.gm-d').innerHTML=x.sold?'Вы обменяли этот подарок<br>на '+fmt(x.sold)+' '+sellWord(x.sold)+'.':GM_D;
+    gm.querySelector('#gmUp span').textContent=x.sold?'ОК':'Улучшить';
     {const arr='<svg viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5L8 8l-5.5 5.5"/></svg>';
      gm.querySelector('.gm-h span').innerHTML=x.hid?'Подарок скрыт из профиля. <a id="gmShow">Показать'+arr+'</a>':'Подарок виден в профиле. <a id="gmShow">Скрыть'+arr+'</a>'}
     let who;
@@ -1618,7 +1623,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       });
       if(el)price=+el.dataset.p;
     }
-    $g('gmTbl').innerHTML=
+    $g('gmTbl').innerHTML=x.sold?
+      row('Дата',dstr(x.t))+row('Стоимость',price?'<span class="gm-cost"><span>'+fmt(price)+'</span><img src="'+STAR+'" alt=""></span>':'—'):
       row('От',who)+
       row('Дата',dstr(x.t))+
       row('Стоимость',price?'<span class="gm-cost"><span>'+fmt(price)+'</span><img src="'+STAR+'" alt=""></span><button type="button" class="gm-pill gm-sell">'+sellTxt(price)+'</button>':'—')+
@@ -1646,11 +1652,19 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     setTimeout(()=>{if(!gm.classList.contains('on'))gm.style.height=''},650);
   }
   window.openGift=open;window.closeGift=close;
+  /* оптимизация: данные для окна улучшения начинают грузиться уже при касании карточки и в простое после запуска */
+  document.addEventListener('pointerdown',e=>{try{
+    const pg=e.target.closest&&e.target.closest('.pg'),sc=e.target.closest&&e.target.closest('.sv-card');
+    const x=pg?MYGIFTS[+pg.dataset.i]:(sc?SVMSGS[+sc.querySelector('.sv-view').dataset.i]:null);
+    if(x&&!x.sold&&window.umPrefetch)umPrefetch(x);
+  }catch(_){}},{passive:true,capture:true});
+  setTimeout(()=>{try{const x=MYGIFTS[0];if(x&&window.umPrefetch)umPrefetch(x)}catch(_){}},3500);
   const moving=()=>{try{if(sh.classList.contains('drag')||(sh.style.transform&&sh.style.transform!=='none'))return true;const t=getComputedStyle(sh).transform;return !!t&&t!=='none'&&Math.abs(new DOMMatrix(t).f)>1}catch(_){return false}};
   $g('gmClose').onclick=()=>{if(moving())return;close()};
   gm.querySelector('.gm-dim').onclick=close;
   $g('gmUp').onclick=()=>{
     if(window.__upDrag){window.__upDrag=false;return}
+    if(window.__gmCur&&window.__gmCur.sold){close();return}
     if(window.openUpgrade)openUpgrade(window.__gmCur);else toast('Улучшение: скоро');
   };
   /* кнопка «Улучшить»: тот же отклик и «слайм», что у кнопки «Купить» */
