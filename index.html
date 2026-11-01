@@ -535,6 +535,15 @@ html,body{overscroll-behavior:none}
 #um .um-go.press{transform:scale(1.04)}
 .noanim #um .um-go.press{transform:none}
 #um .um-go svg{flex:none;width:22px;height:22px;fill:#fff;fill-rule:evenodd;margin:0 -6px 0 -3px}
+/* окно результата: те же сглаженные углы (clip-path), отступы и кнопка, что у остальных окон; стеклянные кнопки как «назад» */
+#ug .ug-sheet{border-radius:0}
+#ug .ug-btnw{padding:18px 29px 31px}
+#ug .ug-skip{touch-action:none;transition:transform .3s cubic-bezier(.4,0,.2,1);margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+#ug .ug-skip:active{transform:none}
+#ug .ug-skip.press{transform:scale(1.04)}
+.noanim #ug .ug-skip.press{transform:none}
+#ug .ug-x,#ug .ug-more,#ug .ug-a{--glass-rgb:196,198,206;--glass-strong:.3;--glass2-rgb:206,208,216;--glass2-a:.62;background:rgba(255,255,255,.23);box-shadow:inset 0 0 0 .6px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+
 /* ===== улучшение: «зарядка» маски, плавная смена фона, слайд текста кнопки ===== */
 @property --c1{syntax:'<color>';inherits:false;initial-value:#7b72ea}
 @property --c2{syntax:'<color>';inherits:false;initial-value:#5b3fb8}
@@ -772,15 +781,15 @@ html,body{overscroll-behavior:none}
     <div class="ug-top" id="ugTop">
       <div class="ug-t1" id="ugT1"></div><div class="ug-t2" id="ugT2"></div>
       <canvas class="ug-pat" id="ugPat"></canvas>
-      <button class="ug-x" id="ugX" aria-label="Закрыть"><svg viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
-      <button class="ug-more" id="ugMore" aria-label="Ещё"><svg viewBox="0 0 512 512"><use href="#i-dots"/></svg></button>
+      <button class="ug-x glass" id="ugX" aria-label="Закрыть"><svg viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
+      <button class="ug-more glass" id="ugMore" aria-label="Ещё"><svg viewBox="0 0 512 512"><use href="#i-dots"/></svg></button>
       <div class="ug-car" id="ugCar"><div class="ug-track" id="ugTrack"></div></div>
       <div class="ug-title"><span id="ugName"></span><i id="ugNum"></i></div>
       <div class="ug-sub" id="ugSub"></div>
       <div class="ug-acts">
-        <button class="ug-a" data-a="Отправить"><svg viewBox="0 0 512 512"><use href="#i-out"/></svg><span>Отправить</span></button>
-        <button class="ug-a" data-a="Носить"><svg viewBox="0 0 512 512"><use href="#i-wear"/></svg><span>Носить</span></button>
-        <button class="ug-a" data-a="Продать"><svg viewBox="0 0 512 512"><use href="#i-sellit"/></svg><span>Продать</span></button>
+        <button class="ug-a glass" data-a="Отправить"><svg viewBox="0 0 512 512"><use href="#i-out"/></svg><span>Отправить</span></button>
+        <button class="ug-a glass" data-a="Носить"><svg viewBox="0 0 512 512"><use href="#i-wear"/></svg><span>Носить</span></button>
+        <button class="ug-a glass" data-a="Продать"><svg viewBox="0 0 512 512"><use href="#i-sellit"/></svg><span>Продать</span></button>
       </div>
     </div>
     <div class="ug-tbl">
@@ -2395,6 +2404,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const pr=g?prep(g):null,p=(pr&&pr.v)||null;
     if(g&&p)delete ready[g];
     start(x,p,g);
+    try{pkK=x;pkP=ugPick(g,x)}catch(_){pkP=null;pkK=null}
     if(g){
       if(p)setTimeout(()=>prep(g),500);            /* следующий набор грузим заранее, чтобы и при повторном открытии не было задержки */
       else pr.then(q=>{if(tk===token&&q){delete ready[g];apply(q);prep(g)}});
@@ -2478,7 +2488,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
 
   /* ===== Улучшение: спиннер на кнопке → новое окно «Подарок улучшен» с каруселью, прокруткой значений и конфетти ===== */
   const UG=document.getElementById('ug'),ugS=document.getElementById('ugSheet');
-  let upBusy=false,ugT=[],ugCf=0,ugX=null,ugBg=null,ugRaf=0;const CHG=1000;
+  let pkP=null,pkK=null,upBusy=false,ugT=[],ugCf=0,ugX=null,ugBg=null,ugRaf=0;const CHG=650;
   const ugLater=(f,ms)=>{const t=setTimeout(f,ms);ugT.push(t);return t};
   const rnd=(a,b)=>a+Math.random()*(b-a),pick1=a=>a[Math.floor(Math.random()*a.length)];
   const spaced=n=>Number(n).toLocaleString('ru-RU'),escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -2487,8 +2497,15 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   const pcOf=o=>{const n=parseFloat(deep(o,/permille|rarity/i));return isFinite(n)&&n>0?Math.min(30,n/10):+rnd(.3,3).toFixed(1)};
   const ent=o=>({n:nm(o),p:pcOf(o)});
   /* набор для улучшения: итоговые модель/символ/фон + варианты для прокрутки, всё заранее подгружено */
+  let idNames=null;
+  const names=()=>idNames||(idNames=j('/ids').catch(()=>{idNames=null;return {}}));
+  const nameOf=(m,g)=>{
+    const v=m&&m[g];if(v==null)return null;
+    return typeof v==='string'?v:(nm(v)||null);
+  };
+  names();
   function ugPick(g,x){
-    return (g?load(g):Promise.resolve(null)).then(d=>{
+    return Promise.all([g?load(g):Promise.resolve(null),names()]).then(rr=>{const d=rr[0],idm=rr[1];
       const ok=d&&d.models.length&&d.symbols.length&&d.backdrops.length,e=encodeURIComponent(g||'');
       const ms=ok?shuf(d.models):[],ss=ok?shuf(d.symbols):[],bs=ok?shuf(d.backdrops):[];
       const sm=ms.slice(1,13),sb=bs.slice(1,6),sy=ss.slice(1,10);
@@ -2501,6 +2518,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         const cols=r[3].map((c,i)=>{const f=FB_PAL[i%FB_PAL.length];return {c1:c.c1||f[0],c2:c.c2||f[1],c3:c.c3||f[2]}});
         while(cols.length<2)cols.push({c1:FB_PAL[cols.length][0],c2:FB_PAL[cols.length][1],c3:FB_PAL[cols.length][2]});
         let gn=g||'';try{gn=decodeURIComponent(gn)}catch(_){}
+        if(/^\d+$/.test(gn))gn=nameOf(idm,gn)||(x&&(x.title||x.name))||'Подарок';
         const fb=n=>({n:pick1(FB_M),p:+rnd(.3,3).toFixed(1)});
         return {g:g,gname:gn||'Подарок',
           mImgs:r[0].filter(Boolean),fImg:r[1],sImg:r[2],cols:cols,
@@ -2682,7 +2700,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     ugLater(()=>go.classList.add('busy'),240);
     umFxStart();
     const t0=performance.now();
-    ugPick(curG||gid(x),x).then(pk=>{ugLater(()=>{ugShow(x,pk)},Math.max(0,CHG-(performance.now()-t0)))});
+    const pp=(pkP&&pkK===x)?pkP:ugPick(curG||gid(x),x);pkP=null;pkK=null;
+    pp.then(pk=>{ugLater(()=>{ugShow(x,pk)},Math.max(0,CHG-(performance.now()-t0)))});
   }
   function ugShow(x,pk){
     const top=$u('ugTop'),umTop=$u('umTop'),cs=getComputedStyle(umTop);
@@ -2710,7 +2729,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     UG.classList.add('on');UG.setAttribute('aria-hidden','false');ugShape();
     const cv=$u('ugPat');requestAnimationFrame(()=>{
       try{cv.width=top.offsetWidth;cv.height=top.offsetHeight;cv.getContext('2d').drawImage($u('umPat'),0,0,cv.width,cv.height)}catch(_){}
-      ugShape();
+      ugShape();try{shapeBtn($u('ugSkip'))}catch(_){}
       ugLater(()=>{
         /* пока ug-окно уже поверх — окно подарка и окно улучшения закрываются тихо */
         quietClose();
@@ -2736,7 +2755,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         };
         ugRaf=requestAnimationFrame(tick);
         ugLater(()=>ugDone(x,pk,num,cl[cl.length-1]),T-200);
-      },340);
+      },200);
     });
   }
   function quietClose(){
@@ -2772,7 +2791,30 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     setTimeout(()=>{ugS.style.clipPath='';ugS.style.webkitClipPath='';upBusy=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}$u('ugTrack').innerHTML=''},450);
   }
   $u('ugX').onclick=ugClose;UG.querySelector('.ug-dim').onclick=()=>{};
+  (function(){
+    const btn=$u('ugSkip'),MIN=160,R=60;let st=null,t0=0;
+    btn.addEventListener('pointerdown',e=>{
+      if(!animOn())return;
+      st={x:e.clientX,y:e.clientY,id:e.pointerId,drag:false};t0=performance.now();window.__ugDrag=false;
+      btn.classList.add('press');try{btn.setPointerCapture(e.pointerId)}catch(_){}
+    });
+    document.addEventListener('pointermove',e=>{
+      if(!st||e.pointerId!==st.id||!animOn())return;
+      const dx=e.clientX-st.x,dy=e.clientY-st.y;
+      if(!st.drag){if(Math.hypot(dx,dy)<4)return;st.drag=true;window.__ugDrag=true;btn.style.transition='none'}
+      const ax=Math.abs(Math.tanh(dx/R)),ay=Math.abs(Math.tanh(dy/R));
+      btn.style.transform='scale('+(1.04+.015*ax-.01*ay).toFixed(3)+','+(1.04+.05*ay-.005*ax).toFixed(3)+')';
+    });
+    const rel=e=>{
+      if(!st||(e&&e.pointerId!==st.id))return;
+      const d=st.drag;st=null;
+      if(d){btn.style.transition='transform .6s cubic-bezier(.34,1.5,.64,1)';btn.classList.remove('press');btn.style.transform='';setTimeout(()=>{btn.style.transition=''},650)}
+      else setTimeout(()=>btn.classList.remove('press'),Math.max(0,MIN-(performance.now()-t0)));
+    };
+    ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
+  })();
   $u('ugSkip').onclick=()=>{
+    if(window.__ugDrag){window.__ugDrag=false;return}
     const done=$u('ugSkip').dataset.done==='1',x=window.__gmCur;
     if(done&&x){x.hid=false;try{if(MYGIFTS.indexOf(x)>=0)store.set(MYK,JSON.stringify(MYGIFTS));renderMyGifts()}catch(_){}toast('Подарок добавлен в профиль')}
     ugClose();
