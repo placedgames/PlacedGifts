@@ -257,8 +257,7 @@ body.navanim #bar{z-index:1}
 .mpin{position:fixed;left:0;right:0;top:0;z-index:900;pointer-events:none;visibility:hidden}
 .mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h));opacity:0;background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,0.989) 25.0%,rgba(0,0,0,0.946) 31.2%,rgba(0,0,0,0.877) 37.5%,rgba(0,0,0,0.788) 43.8%,rgba(0,0,0,0.684) 50.0%,rgba(0,0,0,0.570) 56.2%,rgba(0,0,0,0.453) 62.5%,rgba(0,0,0,0.339) 68.8%,rgba(0,0,0,0.232) 75.0%,rgba(0,0,0,0.139) 81.2%,rgba(0,0,0,0.066) 87.5%,rgba(0,0,0,0.017) 93.8%,rgba(0,0,0,0.000) 100.0%)}
 .mpin-band{position:absolute;left:0;top:var(--hdr-top);height:var(--hdr-h);width:0}
-.mpin-bg2{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 16px + 40px + 16px);opacity:0;transition:opacity .25s cubic-bezier(.4,0,.2,1);background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,1.000) 25.0%,rgba(0,0,0,1.000) 31.2%,rgba(0,0,0,1.000) 37.5%,rgba(0,0,0,1.000) 43.8%,rgba(0,0,0,1.000) 50.0%,rgba(0,0,0,1.000) 56.2%,rgba(0,0,0,1.000) 62.5%,rgba(0,0,0,1.000) 68.8%,rgba(0,0,0,1.000) 75.0%,rgba(0,0,0,0.989) 81.2%,rgba(0,0,0,0.684) 87.5%,rgba(0,0,0,0.232) 93.8%,rgba(0,0,0,0.000) 100.0%)}
-.mpin.tabs .mpin-bg2{opacity:1}
+.mpin-bg2{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 16px + 40px + 16px);opacity:0;will-change:transform,opacity;background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,1.000) 25.0%,rgba(0,0,0,1.000) 31.2%,rgba(0,0,0,1.000) 37.5%,rgba(0,0,0,1.000) 43.8%,rgba(0,0,0,1.000) 50.0%,rgba(0,0,0,1.000) 56.2%,rgba(0,0,0,1.000) 62.5%,rgba(0,0,0,1.000) 68.8%,rgba(0,0,0,1.000) 75.0%,rgba(0,0,0,0.989) 81.2%,rgba(0,0,0,0.684) 87.5%,rgba(0,0,0,0.232) 93.8%,rgba(0,0,0,0.000) 100.0%)}
 .mpin-n{position:absolute;top:0;left:16px;right:16px;text-align:center;font-size:28px;font-weight:550;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform-origin:50% 0;will-change:transform}
 .mpin-s{position:absolute;top:0;left:16px;right:16px;display:flex;align-items:center;justify-content:center;gap:3px;font-size:17px;font-weight:500;color:var(--hint);white-space:nowrap;transform-origin:50% 0;will-change:transform}
 .mpin-s svg{width:22px;height:22px;fill:var(--accent);fill-rule:evenodd;flex:none}
@@ -1310,11 +1309,12 @@ function clearAppCache(){ location.reload(); }
 (function(){
   /* имя, рейтинг и «в сети» не появляются новым блоком, а уменьшаются и «приезжают» в хедер вместе с прокруткой.
      Только transform и opacity (без перерасчёта раскладки на каждый кадр); размеры замеряются один раз и при изменении раскладки. */
-  const pg=$('#p-me'),pin=$('#mePin'),bg=pin.querySelector('.mpin-bg'),band=pin.querySelector('.mpin-band'),nm=$('#mpN'),st=$('#mpS'),sv=$('#mpSv'),rt=$('#mpR'),stTxt=st.querySelector('span');
+  const pg=$('#p-me'),pin=$('#mePin'),bg=pin.querySelector('.mpin-bg'),bg2=pin.querySelector('.mpin-bg2'),band=pin.querySelector('.mpin-band'),nm=$('#mpN'),st=$('#mpS'),sv=$('#mpSv'),rt=$('#mpR'),stTxt=st.querySelector('span');
   const pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),pst=ps.querySelector('span'),mb=pg.querySelector('.mbody');
   const KN=17/28,KS=14/17,KI=(17/22)/KS,TRAVEL=60,GAP_TABS=16;
+  const SHADE_RAMP=110;   // за сколько px прокрутки до «прилипания» слайдера затемнение полностью выезжает под него
   const lerp=(a,b,t)=>a+(b-a)*t;
-  let M=null,lp=-1,lh='',ln='',lt=null;
+  let M=null,lp=-1,lh='',ln='';
   function measure(){
     if(!pg.classList.contains('on')){M=null;return}
     const sc=pg.scrollTop,pr=pn.getBoundingClientRect(),sr=ps.getBoundingClientRect();
@@ -1322,7 +1322,7 @@ function clearAppCache(){ location.reload(); }
     const bt=band.offsetTop,bh=band.offsetHeight,hn=pr.height,hs=sr.height;
     nm.style.lineHeight=hn+'px';nm.style.height=hn+'px';st.style.height=hs+'px';
     const y1=bt+(bh-(hn*KN+hs*KS))/2;
-    M={dn:pr.top+sc,hn,hs,gap:sr.top-pr.bottom,y1,ls:y1+TRAVEL,tabsAt:mb.offsetTop-(bt+bh+GAP_TABS)};
+    M={dn:pr.top+sc,hn,hs,gap:sr.top-pr.bottom,y1,ls:y1+TRAVEL,tabsAt:mb.offsetTop-(bt+bh+GAP_TABS),ext:Math.max(0,bg2.offsetHeight-bg.offsetHeight)};
     lp=-2;
   }
   function upd(){
@@ -1330,7 +1330,7 @@ function clearAppCache(){ location.reload(); }
     const sc=pg.scrollTop,top0=M.dn-sc;
     const p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
     if(p<=0){
-      if(lp!==0){lp=0;pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0;if(lt){lt=false;pin.classList.remove('tabs')}}
+      if(lp!==0){lp=0;pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0;bg2.style.opacity=0}
       return;
     }
     if(lp<=0){pin.style.visibility='visible';pn.style.visibility=ps.style.visibility='hidden';
@@ -1343,28 +1343,52 @@ function clearAppCache(){ location.reload(); }
     st.style.transform='translate3d('+(-3*(1-p))+'px,'+(top+M.hn*kn+M.gap*(1-p))+'px,0) scale('+ks+')';
     sv.style.transform='scale('+lerp(1,KI,p)+')';
     bg.style.opacity=p;
-    const tb=sc>=M.tabsAt;if(tb!==lt){lt=tb;pin.classList.toggle('tabs',tb)}
+    /* затемнение под слайдером растёт вместе с прокруткой: чем ближе слайдер к месту, где он встаёт под хедер, тем больше площадь затемнения
+       (выезжает сверху вниз). Никаких таймерных transition — на месте ничего не меняется. */
+    const q=Math.max(0,Math.min(1,1-(M.tabsAt-sc)/SHADE_RAMP));
+    bg2.style.opacity=q;bg2.style.transform='translate3d(0,'+(-(1-q)*M.ext)+'px,0)';
   }
   /* «ступенька» на слайдере: жест, начатый выше/ниже места, где слайдер встаёт под кнопки хедера, не может проехать это место —
      ни пальцем, ни по инерции. Чтобы ехать дальше, нужно отпустить палец и начать новый жест.
-     В touchmove смещение считается заранее (скролл не успевает «проскочить»), а инерция гасится кратким overflow:hidden. */
-  let lock=0,ly=0,ft=0;   // lock: 1 — едем вниз по странице (палец вверх), 2 — возвращаемся вверх
-  const freeze=T=>{pg.style.overflowY='hidden';pg.scrollTop=T;clearTimeout(ft);ft=setTimeout(()=>{pg.style.overflowY=''},70)};
+     lock: 1 — жест начат выше ступеньки (едем вниз по странице), 2 — начат ниже (возвращаемся вверх).
+     Вниз (lock 1) упор делает САМ браузер: на время жеста длина прокрутки обрезается ровно до ступеньки (см. capOn) —
+     инерция упирается в «конец страницы» без проскока и без отката, независимо от того, успевают ли отработать JS-события.
+     Вверх (lock 2) нативного «нижнего предела» нет, поэтому там упор держит JS: в touchmove (пока палец на экране) и,
+     если инерция всё же проскочила, через overflow:hidden до конца жеста (а не на фиксированные 70 мс, как раньше). */
+  let lock=0,ly=0,ft=0,touching=false,frozen=false,capped=false;
+  const CAP_OK=!!(window.CSS&&CSS.supports&&CSS.supports('overflow','clip'));
+  const unfreeze=()=>{clearTimeout(ft);if(frozen){frozen=false;pg.style.overflowY=''}};
+  const freeze=T=>{frozen=true;pg.style.overflowY='hidden';pg.scrollTop=T;clearTimeout(ft);if(!touching)ft=setTimeout(unfreeze,120)};
+  /* обрезаем прокручиваемую область до T+высота экрана: .mbody клипуется (overflow:clip не ломает sticky слайдера), нижний padding страницы гасится отрицательным margin */
+  const capOn=T=>{
+    if(!CAP_OK||capped)return;
+    const need=T+pg.clientHeight-mb.offsetTop;                 // высота .mbody, при которой scrollHeight = T + clientHeight
+    if(need<=0||mb.offsetHeight<=need)return;                  // страница и так короче — упор не нужен
+    const pb=parseFloat(getComputedStyle(pg).paddingBottom)||0;
+    mb.style.maxHeight=need+'px';mb.style.overflow='clip';mb.style.marginBottom=(-pb)+'px';capped=true;
+  };
+  const capOff=()=>{if(capped){capped=false;mb.style.maxHeight=mb.style.overflow=mb.style.marginBottom=''}};
+  const release=()=>{lock=0;unfreeze();capOff()};
   pg.addEventListener('touchstart',e=>{
-    clearTimeout(ft);pg.style.overflowY='';
+    touching=true;unfreeze();capOff();                         // новый жест — все ограничения снимаются
     if(!M)measure();ly=e.touches[0].clientY;lock=0;
     if(!M)return;const sc=pg.scrollTop,T=M.tabsAt;
-    if(T>2&&sc<T-1)lock=1;else if(T>2&&sc>T+1)lock=2;
+    if(T>2&&sc<T-1){lock=1;capOn(T)}else if(T>2&&sc>T+1)lock=2;
   },{passive:true});
   pg.addEventListener('touchmove',e=>{
     const y=e.touches[0].clientY,d=ly-y;ly=y;   // d>0: страница едет вниз по содержимому
     if(!lock||!M)return;
     const T=M.tabsAt,cur=pg.scrollTop;
     if((lock===1&&d>0&&cur+d>=T-0.5)||(lock===2&&d<0&&cur+d<=T+0.5)){
-      if(e.cancelable)e.preventDefault();
+      if(lock===1&&capped&&cur<T-0.5)return;     // до ступеньки ещё есть путь — нативная прокрутка сама упрётся ровно в T
+      if(e.cancelable)e.preventDefault();         // на самой ступеньке: никакой пружины/продолжения под пальцем
       if(Math.abs(cur-T)>0.5)pg.scrollTop=T;
     }
   },{passive:false});
+  const endTouch=()=>{touching=false;if(frozen){clearTimeout(ft);ft=setTimeout(unfreeze,120)}};
+  pg.addEventListener('touchend',endTouch,{passive:true});
+  pg.addEventListener('touchcancel',endTouch,{passive:true});
+  ['wheel','mousedown','keydown'].forEach(t=>pg.addEventListener(t,release,{passive:true,capture:true}));   // мышь/клавиатура: ступеньки нет
   pg.addEventListener('scroll',()=>{
     if(lock&&M){const sc=pg.scrollTop,T=M.tabsAt;
       if((lock===1&&sc>T+0.5)||(lock===2&&sc<T-0.5))freeze(T)}
