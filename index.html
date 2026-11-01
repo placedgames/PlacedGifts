@@ -403,8 +403,9 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um{position:fixed;left:0;right:0;top:0;height:100%;z-index:2100;visibility:hidden;pointer-events:none;transition:visibility 0s linear .3s}
 #um.on,#um.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
 #um .um-dim{position:absolute;inset:0;background:transparent}
-#um .um-bg{position:absolute;inset:0;z-index:0;background:#1c1c1e;opacity:var(--uop,0)}
-#um .um-top,#um .um-feat,#um .um-chk{opacity:var(--uop,0);z-index:1}
+#um .um-bg{position:absolute;inset:0;z-index:0;background:#1c1c1e;opacity:var(--ubg,0)}
+#um .um-top,#um .um-feat,#um .um-chk{z-index:1}
+#um .um-feat,#um .um-chk,#um .um-model,#um .um-t,#um .um-var{opacity:var(--un,0)}
 #um .um-upw{position:relative;z-index:2}
 #um .um-go{position:relative}
 #um .um-old{gap:8px}
@@ -415,12 +416,18 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:transparent;overflow:hidden;border-radius:0;isolation:isolate;touch-action:none}
 #gm .gm-sheet{transition:transform .55s cubic-bezier(.25,.8,.25,1),opacity 0s}
 #gm.sub .gm-sheet{opacity:0;pointer-events:none}
+#gm.up .gm-x{visibility:hidden}
+#gm .gm-upw{margin-top:auto}
 #um .um-top,#um .um-feat,#um .um-chk{transform:translate3d(0,var(--uo,0px),0);will-change:transform}
-#um .um-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:20px 16px 18px;background:radial-gradient(circle at 50% 42%,var(--um-c1,#7b72ea) 0%,var(--um-c2,#5b3fb8) 100%);transition:background .3s}
+#um .um-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:20px 16px 18px}
+#um .um-tint{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:var(--ug,0);background:radial-gradient(circle at 50% 42%,var(--um-c1,#7b72ea) 0%,var(--um-c2,#5b3fb8) 100%)}
 #um .um-pat{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0}
-#um .um-top::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 40%,rgba(0,0,0,.24) 100%)}
+#um .um-tint::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 40%,rgba(0,0,0,.24) 100%)}
 #um .um-back{position:absolute;top:16px;left:16px;z-index:3;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;color:#fff;cursor:pointer}
-#um .um-back svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
+#um .um-back{box-shadow:inset 0 0 0 .6px rgba(0,0,0,.28);background:rgba(255,255,255,.23);-webkit-backdrop-filter:none;backdrop-filter:none;opacity:var(--ubo,0);transform:scale(var(--ubs,0));will-change:transform,opacity}
+#um .um-back svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;opacity:var(--ua,0)}
+#um .um-xg{position:absolute;top:16px;left:16px;z-index:4;width:var(--hdr-h);height:var(--hdr-h);display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:var(--uxo,1);transform:scale(var(--uxs,1));will-change:transform,opacity}
+#um .um-xg svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
 #um .um-model{position:relative;z-index:1;width:132px;height:132px;margin-top:6px;display:flex;align-items:center;justify-content:center;font-size:90px}
 #um .um-model img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.25))}
 #um .um-t{position:relative;z-index:1;font-size:22px;line-height:1.2;font-weight:700;margin-top:12px;text-align:center}
@@ -644,8 +651,9 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
   <div class="um-sheet" id="umSheet">
     <div class="um-bg"></div>
     <div class="um-top" id="umTop">
-      <canvas class="um-pat" id="umPat"></canvas>
-      <button class="um-back glass" id="umBack" aria-label="Назад"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" width="24" height="24" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg></button>
+      <div class="um-tint"><canvas class="um-pat" id="umPat"></canvas></div>
+      <span class="um-xg" id="umXg"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></span>
+       <button class="um-back glass" id="umBack" aria-label="Назад"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" width="24" height="24" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg></button>
       <div class="um-model" id="umModel"></div>
       <div class="um-t">Улучшение подарка</div>
       <button class="um-var" id="umVar"><span class="um-mini" id="umMini"></span><span>Смотреть все варианты</span><svg viewBox="0 0 8 14"><path d="M1.5 1.5L7 7l-5.5 5.5"/></svg></button>
@@ -1797,19 +1805,31 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     for(let i=0;i<24;i++){const x=3*(1-u)*(1-u)*u*x1+3*(1-u)*u*u*x2+u*u*u;if(Math.abs(x-t)<1e-4)break;if(x<t)a=u;else b=u;u=(a+b)/2}
     return 3*(1-u)*(1-u)*u*y1+3*(1-u)*u*u*y2+u*u*u;
   };
-  const EASE=bez(.22,.8,.3,1);
-  function frame(k,op,tt){
-    const hh=gh+(nh-gh)*k,v='path("'+window.__sheetPath(sw,hh,0,nh-hh)+'")';
-    sh.style.webkitClipPath=v;sh.style.clipPath=v;sh.style.setProperty('--uop',op.toFixed(3));sh.style.setProperty('--ut',(tt==null?op:tt).toFixed(3));
-    if(nh<gh)gmSh.style.opacity=String(1-op);
-    const rise=nh-gh;sh.style.setProperty('--uo',((1-k)*rise).toFixed(2)+'px');
-    if(gmBody)gmBody.style.transform='translate3d(0,'+(-k*rise).toFixed(2)+'px,0)';
+  /* кривая и длительность сняты с референса покадрово (60 fps): медленный старт, пик скорости на 4-6 кадре, длинный хвост ≈ 350 мс */
+  const EASE=bez(.35,.3,.15,1),OPEN_MS=350,CLOSE_MS=280;
+  const cl=(x,a,b)=>x<=a?0:x>=b?1:(x-a)/(b-a);
+  const SET=(st,n,v)=>st.setProperty(n,(+v).toFixed(3));
+  /* k — прогресс 0…1. Окно подарка само растёт вверх (одна сплошная форма), поверх проявляется новое содержимое */
+  function frame(k){
+    const rise=nh-gh,hh=gh+rise*k,v='path("'+window.__sheetPath(sw,hh,0,nh-hh)+'")',st=sh.style;
+    sh.style.webkitClipPath=v;sh.style.clipPath=v;
+    gmSh.style.maxHeight='none';gmSh.style.height=hh.toFixed(2)+'px';
+    st.setProperty('--uo',((1-k)*rise).toFixed(2)+'px');
+    SET(st,'--ug',k);                              /* фиолетовая заливка шапки */
+    SET(st,'--un',k);                              /* модель, заголовок, список, чекбокс */
+    SET(st,'--ut',k);                              /* подпись на кнопке */
+    SET(st,'--ubg',k>=1?1:0);                      /* сплошной фон — только когда старое содержимое ушло */
+    if(gmBody)gmBody.style.opacity=(k>=.9?0:1-Math.pow(cl(k,0,.9),1.3)).toFixed(3);
+    /* крестик: кружок пропал сразу, сам крестик уменьшается и гаснет */
+    SET(st,'--uxo',1-cl(k,.1,.75));SET(st,'--uxs',1-.72*cl(k,0,.6));
+    /* кнопка «назад»: круг растёт 0→1 вместе с окном, стрелка проявляется внутри */
+    SET(st,'--ubo',cl(k,.18,.35));SET(st,'--ubs',k);SET(st,'--ua',cl(k,.42,.7));
   }
   function run(from,to,dur,done){
     cancelAnimationFrame(raf);const t0=performance.now();
     const step=now=>{
-      const el=now-t0,t=Math.min(1,el/dur),k=from+(to-from)*EASE(t),f=Math.min(1,el/160),tp=EASE(Math.min(1,el/190));
-      frame(k,to>from?f:1-f,to>from?tp:1-tp);
+      const t=Math.max(0,Math.min(1,(now-t0)/dur));
+      frame(from+(to-from)*EASE(t));
       if(t<1)raf=requestAnimationFrame(step);else{raf=0;done&&done()}
     };
     raf=requestAnimationFrame(step);
@@ -1819,17 +1839,17 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const tk=token;
     reset(x);$u('umChk').classList.remove('on');$u('umPrice').textContent=String(PRICE);
     um.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
-    sh.style.setProperty('--uop','0');sh.style.setProperty('--ut','0');um.classList.add('pre');
-    gh=gmSh.offsetHeight;nh=sh.offsetHeight;sw=sh.offsetWidth;
+    um.classList.add('pre');
+    gh=gmSh.getBoundingClientRect().height;nh=sh.getBoundingClientRect().height;sw=sh.offsetWidth;
     if(p)apply(p);
     try{shapeBtn($u('umGo'))}catch(_){}
     try{smoothFit($u('umVar'),'pill',true,1)}catch(_){}
-    frame(0,0,0);
+    gmEl.classList.add('up');frame(0);
     /* два кадра на подготовку слоёв, затем сама анимация */
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       if(tk!==token)return;
       um.classList.add('on');um.setAttribute('aria-hidden','false');
-      run(0,1,240,()=>{frame(1,1,1);gmEl.classList.add('sub');gmSh.style.opacity='';if(gmBody)gmBody.style.transform='';busy=false});
+      run(0,1,OPEN_MS,()=>{frame(1);gmEl.classList.add('sub');gmSh.style.height='';gmSh.style.maxHeight='';if(gmBody)gmBody.style.opacity='';busy=false});
     }));
   }
   window.openUpgrade=function(x){
@@ -1847,13 +1867,13 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function close(){
     if(!um.classList.contains('on')||busy)return;
     busy=true;token++;
-    gmEl.classList.remove('sub');
+    frame(1);gmEl.classList.remove('sub');
     um.classList.remove('on');um.setAttribute('aria-hidden','true');
-    run(1,0,220,()=>{um.classList.remove('pre');um.style.height='';sh.style.setProperty('--uop','0');sh.style.setProperty('--ut','0');gmSh.style.opacity='';if(gmBody)gmBody.style.transform='';busy=false});
+    run(1,0,CLOSE_MS,()=>{frame(0);um.classList.remove('pre');um.style.height='';gmEl.classList.remove('up');gmSh.style.height='';gmSh.style.maxHeight='';if(gmBody)gmBody.style.opacity='';busy=false});
   }
   $u('umBack').onclick=close;
   um.querySelector('.um-dim').onclick=close;
-  window.addEventListener('resize',()=>{if(um.classList.contains('on')&&!raf){nh=sh.offsetHeight;sw=sh.offsetWidth;frame(1,1,1)}});
+  window.addEventListener('resize',()=>{if(um.classList.contains('on')&&!raf){nh=sh.getBoundingClientRect().height;sw=sh.offsetWidth;frame(1)}});
   $u('umChk').onclick=()=>$u('umChk').classList.toggle('on');
   $u('umVar').onclick=()=>toast('Все варианты: скоро');
   $u('umGo').onclick=()=>{if(window.__umDrag){window.__umDrag=false;return}toast('Улучшение: скоро')};
