@@ -436,13 +436,13 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-model{position:relative;z-index:1;width:100%;height:139px;margin-top:0;display:flex;align-items:center;justify-content:center;font-size:103px}
 #um .um-model img{max-width:131px;max-height:131px;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.25))}
 #um .um-t{position:relative;z-index:1;font-size:21px;line-height:1.2;font-weight:600;margin-top:9px;text-align:center}
-#um .um-var{position:relative;z-index:1;margin-top:10px;height:24px;padding:0 10px 0 8px;border-radius:12px;color:#fff;font:inherit;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;transition:transform .2s}
+#um .um-var{position:relative;z-index:1;margin-top:9px;height:24px;padding:0 10px 0 8px;border-radius:12px;color:#fff;font:inherit;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;transition:transform .2s}
 #um .um-var:active{transform:scale(1.04)}
 #um .um-mini{display:flex;align-items:center}
 #um .um-mini img{width:19px;height:19px;object-fit:contain;margin-left:-3px}
 #um .um-mini img:first-child{margin-left:0}
 #um .um-var svg{flex:none;width:6px;height:11px;fill:none;stroke:#fff;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
-#um .um-feat{flex:0 1 auto;min-height:0;overflow:hidden;padding:26px 30px 6px;display:flex;flex-direction:column;gap:23px} #um .um-f:nth-child(3){margin-top:3px}
+#um .um-feat{flex:0 1 auto;min-height:0;overflow:hidden;padding:27px 30px 7px;display:flex;flex-direction:column;gap:23px} #um .um-f:nth-child(3){margin-top:3px}
 #um .um-feat::-webkit-scrollbar{display:none}
 #um .um-f{display:flex;gap:10px;align-items:flex-start}
 #um .um-f svg{flex:none;width:35px;height:35px;fill:#4BB6EE;fill-rule:evenodd;margin-top:1px}
@@ -1871,12 +1871,12 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     if(!(w>0)||!(h>0))return;
     const f=n=>+n.toFixed(2),r=h/2,px=Math.min(1.09*r,w/2),hx=px*.57,vy=r*.57;
     const d='M'+f(px)+' 0L'+f(w-px)+' 0C'+f(w-px+hx)+' 0 '+f(w)+' '+f(r-vy)+' '+f(w)+' '+f(r)+'C'+f(w)+' '+f(r+vy)+' '+f(w-px+hx)+' '+f(h)+' '+f(w-px)+' '+f(h)+'L'+f(px)+' '+f(h)+'C'+f(px-hx)+' '+f(h)+' 0 '+f(r+vy)+' 0 '+f(r)+'C0 '+f(r-vy)+' '+f(px-hx)+' 0 '+f(px)+' 0Z';
-    const st=(o,a)=>'<stop offset="'+o+'" stop-color="#a8aab3" stop-opacity="'+a+'"/>';
+    const st=(o,a)=>'<stop offset="'+o+'" stop-color="#b0b2ba" stop-opacity="'+a+'"/>';
     const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">'+
       st(0,.55)+st(.14,.3)+st(.32,.07)+st(.5,0)+st(.68,.07)+st(.86,.3)+st(1,.55)+'</linearGradient><linearGradient id=\"h\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">'+
-      '<stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".85\"/><stop offset=\".3\" stop-color=\"#fff\" stop-opacity=\".25\"/><stop offset=\".5\" stop-color=\"#fff\" stop-opacity=\"0\"/><stop offset=\".7\" stop-color=\"#fff\" stop-opacity=\".25\"/><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\".85\"/></linearGradient>'+
-      '<clipPath id=\"c\"><path d=\"'+d+'\"/></clipPath><filter id=\"b\" x=\"-20%\" y=\"-50%\" width=\"140%\" height=\"200%\"><feGaussianBlur stdDeviation=\"1.6\"/></filter></defs>'+
-      '<g clip-path=\"url(#c)\"><path d=\"'+d+'\" fill=\"none\" stroke=\"url(#h)\" stroke-width=\"7\" filter=\"url(#b)\"/></g>'+
+      '<stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\".3\"/><stop offset=\".3\" stop-color=\"#fff\" stop-opacity=\".08\"/><stop offset=\".5\" stop-color=\"#fff\" stop-opacity=\"0\"/><stop offset=\".7\" stop-color=\"#fff\" stop-opacity=\".08\"/><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\".3\"/></linearGradient>'+
+      '<clipPath id=\"c\"><path d=\"'+d+'\"/></clipPath><filter id=\"b\" x=\"-20%\" y=\"-50%\" width=\"140%\" height=\"200%\"><feGaussianBlur stdDeviation=\"0.4\"/></filter></defs>'+
+      '<g clip-path=\"url(#c)\"><path d=\"'+d+'\" fill=\"none\" stroke=\"url(#h)\" stroke-width=\"2\" filter=\"url(#b)\"/></g>'+
       '<path d="'+d+'" fill="#c9cbd3" fill-opacity=".34"/><path d="'+d+'" fill="none" stroke="url(#g)" stroke-width="2"/></svg>';
     b.style.backgroundColor='transparent';b.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';b.style.backgroundSize='100% 100%';
     if(!b.__sv){b.__sv=1;if(window.ResizeObserver)new ResizeObserver(()=>shapeVar()).observe(b)}
