@@ -403,7 +403,16 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um{position:fixed;left:0;right:0;top:0;height:100%;z-index:2100;visibility:hidden;pointer-events:none;transition:visibility 0s linear .3s}
 #um.on,#um.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
 #um .um-dim{position:absolute;inset:0;background:transparent}
-#um .um-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;opacity:0;border-radius:0;isolation:isolate;touch-action:none}
+#um .um-bg{position:absolute;inset:0;z-index:0;background:#1c1c1e;opacity:var(--uop,0)}
+#um .um-top,#um .um-feat,#um .um-chk{opacity:var(--uop,0);z-index:1}
+#um .um-upw{position:relative;z-index:2}
+#um .um-go{position:relative}
+#um .um-old{gap:8px}
+#um .um-old svg{width:24px;height:24px;margin:0 -2px}
+#um .um-lab{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:5px;pointer-events:none;will-change:transform,opacity}
+#um .um-new{opacity:var(--ut,0);transform:translate3d(0,calc((1 - var(--ut,0))*-14px),0) scale(calc(.55 + .45*var(--ut,0)))}
+#um .um-old{opacity:calc(1 - var(--ut,0));transform:translate3d(0,calc(var(--ut,0)*14px),0) scale(calc(1 - .45*var(--ut,0)))}
+#um .um-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:transparent;overflow:hidden;border-radius:0;isolation:isolate;touch-action:none}
 #gm .gm-sheet{transition:transform .55s cubic-bezier(.25,.8,.25,1),opacity 0s}
 #gm.sub .gm-sheet{opacity:0;pointer-events:none}
 #um .um-top,#um .um-feat,#um .um-chk{transform:translate3d(0,var(--uo,0px),0);will-change:transform}
@@ -633,6 +642,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 <div id="um" aria-hidden="true">
   <div class="um-dim"></div>
   <div class="um-sheet" id="umSheet">
+    <div class="um-bg"></div>
     <div class="um-top" id="umTop">
       <canvas class="um-pat" id="umPat"></canvas>
       <button class="um-back glass" id="umBack" aria-label="Назад"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" width="24" height="24" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg></button>
@@ -646,7 +656,7 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
       <div class="um-f"><svg><use href="#i-crown"/></svg><div><b>Носимость</b><span>Показывайте подарки в профиле и ставьте их на обложку или в статус.</span></div></div>
     </div>
     <div class="um-chk" id="umChk"><i class="um-box"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></i><span>Добавить моё имя к подарку</span></div>
-    <div class="um-upw"><button class="um-go" id="umGo"><span>Улучшить за</span><svg viewBox="0 0 512 512"><use href="#i-star"/></svg><span id="umPrice">100</span></button></div>
+    <div class="um-upw"><button class="um-go" id="umGo"><span class="um-lab um-old"><span>Улучшить</span><svg viewBox="0 0 512 512"><use href="#i-up"/></svg></span><span class="um-lab um-new"><span>Улучшить за</span><svg viewBox="0 0 512 512"><use href="#i-star"/></svg><span id="umPrice">100</span></span></button></div>
   </div>
 </div>
 <div id="toast"></div>
@@ -1788,9 +1798,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     return 3*(1-u)*(1-u)*u*y1+3*(1-u)*u*u*y2+u*u*u;
   };
   const EASE=bez(.22,.8,.3,1);
-  function frame(k,op){
+  function frame(k,op,tt){
     const hh=gh+(nh-gh)*k,v='path("'+window.__sheetPath(sw,hh,0,nh-hh)+'")';
-    sh.style.webkitClipPath=v;sh.style.clipPath=v;sh.style.opacity=op;
+    sh.style.webkitClipPath=v;sh.style.clipPath=v;sh.style.setProperty('--uop',op.toFixed(3));sh.style.setProperty('--ut',(tt==null?op:tt).toFixed(3));
     if(nh<gh)gmSh.style.opacity=String(1-op);
     const rise=nh-gh;sh.style.setProperty('--uo',((1-k)*rise).toFixed(2)+'px');
     if(gmBody)gmBody.style.transform='translate3d(0,'+(-k*rise).toFixed(2)+'px,0)';
@@ -1798,8 +1808,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function run(from,to,dur,done){
     cancelAnimationFrame(raf);const t0=performance.now();
     const step=now=>{
-      const el=now-t0,t=Math.min(1,el/dur),k=from+(to-from)*EASE(t),f=Math.min(1,el/160);
-      frame(k,to>from?f:1-f);
+      const el=now-t0,t=Math.min(1,el/dur),k=from+(to-from)*EASE(t),f=Math.min(1,el/160),tp=EASE(Math.min(1,el/190));
+      frame(k,to>from?f:1-f,to>from?tp:1-tp);
       if(t<1)raf=requestAnimationFrame(step);else{raf=0;done&&done()}
     };
     raf=requestAnimationFrame(step);
@@ -1809,17 +1819,17 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const tk=token;
     reset(x);$u('umChk').classList.remove('on');$u('umPrice').textContent=String(PRICE);
     um.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
-    sh.style.opacity='0';um.classList.add('pre');
+    sh.style.setProperty('--uop','0');sh.style.setProperty('--ut','0');um.classList.add('pre');
     gh=gmSh.offsetHeight;nh=sh.offsetHeight;sw=sh.offsetWidth;
     if(p)apply(p);
     try{shapeBtn($u('umGo'))}catch(_){}
     try{smoothFit($u('umVar'),'pill',true,1)}catch(_){}
-    frame(0,0);
+    frame(0,0,0);
     /* два кадра на подготовку слоёв, затем сама анимация */
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       if(tk!==token)return;
       um.classList.add('on');um.setAttribute('aria-hidden','false');
-      run(0,1,240,()=>{frame(1,1);gmEl.classList.add('sub');gmSh.style.opacity='';if(gmBody)gmBody.style.transform='';busy=false});
+      run(0,1,240,()=>{frame(1,1,1);gmEl.classList.add('sub');gmSh.style.opacity='';if(gmBody)gmBody.style.transform='';busy=false});
     }));
   }
   window.openUpgrade=function(x){
@@ -1839,11 +1849,11 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     busy=true;token++;
     gmEl.classList.remove('sub');
     um.classList.remove('on');um.setAttribute('aria-hidden','true');
-    run(1,0,220,()=>{um.classList.remove('pre');um.style.height='';sh.style.opacity='0';gmSh.style.opacity='';if(gmBody)gmBody.style.transform='';busy=false});
+    run(1,0,220,()=>{um.classList.remove('pre');um.style.height='';sh.style.setProperty('--uop','0');sh.style.setProperty('--ut','0');gmSh.style.opacity='';if(gmBody)gmBody.style.transform='';busy=false});
   }
   $u('umBack').onclick=close;
   um.querySelector('.um-dim').onclick=close;
-  window.addEventListener('resize',()=>{if(um.classList.contains('on')&&!raf){nh=sh.offsetHeight;sw=sh.offsetWidth;frame(1,1)}});
+  window.addEventListener('resize',()=>{if(um.classList.contains('on')&&!raf){nh=sh.offsetHeight;sw=sh.offsetWidth;frame(1,1,1)}});
   $u('umChk').onclick=()=>$u('umChk').classList.toggle('on');
   $u('umVar').onclick=()=>toast('Все варианты: скоро');
   $u('umGo').onclick=()=>{if(window.__umDrag){window.__umDrag=false;return}toast('Улучшение: скоро')};
