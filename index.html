@@ -328,9 +328,7 @@ body.navanim #bar{z-index:1}
 #gm .gm-x.press{transform:scale(1.1)}
 #gm .gm-x svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
 #gm .gm-body{position:relative;z-index:1;padding:19px 16px 0;display:flex;flex-direction:column;align-items:center;text-align:center}
-#gm .ga{transform:translateZ(0);cursor:pointer;-webkit-tap-highlight-color:transparent;flex:none}
-.gm-img .ga,#um .um-model .ga{width:131px;height:131px}
-.bm-img .ga{height:100%;aspect-ratio:1/1;max-width:100%}
+#gm .ga{cursor:pointer;-webkit-tap-highlight-color:transparent;flex:none}
 .gm-img{width:100%;height:139px;display:flex;align-items:center;justify-content:center;font-size:103px}
 #gm .gm-img img{max-width:131px;max-height:131px;object-fit:contain}
 #gm .gm-t{font-size:21px;line-height:1.2;font-weight:600;margin:9px 0 0}
@@ -682,23 +680,41 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 </div>
 <div id="toast"></div>
 <script>
-/* Анимация подарка: Lottie (.json с api.changes.tg), играет один раз, повтор по нажатию; пока грузится — показывается PNG */
+/* Анимация подарка: Lottie (.json с api.changes.tg), играет один раз, повтор по нажатию.
+   Пока грузится — виден PNG; анимация создаётся поверх него и заменяет его только после первого кадра (без мигания). */
 (function(){
   const cache={};
-  window.giftAnim=function(el,url){
-    if(!el||!url)return;if(!window.lottie){console.warn('[giftAnim] lottie-web не загрузился (cdnjs заблокирован?)');return}
+  window.giftAnim=function(el,url,opts){
+    if(!el||!url)return;
+    if(!window.lottie){console.warn('[giftAnim] lottie-web не загрузился (cdnjs заблокирован?)');return}
     const img=el.querySelector('img');if(!img)return;
     const tok=el.__ga=(el.__ga||0)+1;
     (cache[url]||(cache[url]=fetch(url).then(r=>{if(!r.ok)throw 0;return r.json()}))).then(data=>{
       if(el.__ga!==tok||!el.contains(img))return;
+      const s=Math.min(el.offsetHeight||131,131);
+      if(getComputedStyle(el).position==='static')el.style.position='relative';
       const box=document.createElement('div');box.className='ga';
-      img.replaceWith(box);
+      box.style.cssText='position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:'+s+'px;height:'+s+'px;opacity:0';
+      el.appendChild(box);
       const a=lottie.loadAnimation({container:box,renderer:'svg',loop:false,autoplay:true,animationData:JSON.parse(JSON.stringify(data))});
-      box.addEventListener('click',()=>{a.goToAndPlay(0,true)});
+      a.addEventListener('DOMLoaded',()=>{
+        if(el.__ga!==tok||!el.contains(img)){try{a.destroy()}catch(_){}return}
+        requestAnimationFrame(()=>{box.style.opacity='1';requestAnimationFrame(()=>{img.style.visibility='hidden'})});
+      });
+      box.addEventListener('click',e=>{if(opts&&opts.stop)e.stopPropagation();a.goToAndPlay(0,true)});
     }).catch(e=>{console.warn('[giftAnim] не удалось загрузить/запустить',url,e);delete cache[url]});
   };
-  window.giftAnimOrig=function(el,x){
-    const s=x&&x.image;if(s&&/\/original\//.test(s))giftAnim(el,s.replace(/\.png.*$/,'.json'));
+  window.giftAnimOrig=function(el,x,opts){
+    const s=x&&x.image;if(s&&/\/original\//.test(s))giftAnim(el,s.replace(/\.png.*$/,'.json'),opts);
+  };
+  /* карточки в чате: анимация стартует, когда карточка появляется на экране */
+  const io=window.IntersectionObserver?new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting)return;io.unobserve(e.target);giftAnim(e.target,e.target.dataset.anim,{stop:true});
+  }),{threshold:.3}):null;
+  window.giftAnimScan=function(root){
+    root.querySelectorAll('.sv-img[data-anim]:not([data-obs])').forEach(el=>{
+      el.dataset.obs='1';if(io)io.observe(el);else giftAnim(el,el.dataset.anim,{stop:true});
+    });
   };
 })();
 </script>
@@ -1278,7 +1294,7 @@ function svHtml(from,to){
   return SVMSGS.slice(from,to).map((m,k)=>{const i=from+k;return '<div class="svm">'+
     '<div class="sv-pill">Вы купили подарок за&nbsp;<b>'+svFm(m.price)+'&nbsp;звёзд</b></div>'+
     '<div class="sv-card"><div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_C+'" fill="url(#svRg)"/></svg><span>1 из '+shortN(m.total)+'</span></div>'+
-    '<div class="sv-img">'+(m.image?'<img src="'+m.image+'" alt="" decoding="async">':(m.emoji||'🎁'))+'</div>'+
+    '<div class="sv-img"'+(m.image&&/\/original\//.test(m.image)?' data-anim="'+m.image.replace(/\.png.*$/,'.json')+'"':'')+'>'+(m.image?'<img src="'+m.image+'" alt="" decoding="async">':(m.emoji||'🎁'))+'</div>'+
     '<div class="sv-ct">Купленный подарок</div>'+
     '<div class="sv-cd">'+(m.msg?m.msg.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'Добавьте этот подарок в профиль или обменяйте на '+svFm(m.price*0.85)+' звёзд.')+'</div>'+
     '<button class="sv-view" data-i="'+i+'">Посмотреть</button></div></div>'}).join('');
@@ -1292,7 +1308,7 @@ function renderSaved(fresh){
   svFrom=Math.max(0,SVMSGS.length-SV_PAGE);
   box.innerHTML=svHtml(svFrom,SVMSGS.length);
   window.smoothAll&&smoothAll(box);
-  svBind(box);
+  svBind(box);try{giftAnimScan(box)}catch(_){}
 }
 (function(){
   const box=document.getElementById('svMsgs');if(!box)return;let busy=false;
@@ -1304,7 +1320,7 @@ function renderSaved(fresh){
       const first=box.querySelector('.svm');
       while(tmp.firstChild)box.insertBefore(tmp.firstChild,first);
       svFrom=from;
-      window.smoothAll&&smoothAll(box);svBind(box);
+      window.smoothAll&&smoothAll(box);svBind(box);try{giftAnimScan(box)}catch(_){}
       box.scrollTop=t0+(box.scrollHeight-h0);   // не дёргаем позицию
       busy=false;
     });
