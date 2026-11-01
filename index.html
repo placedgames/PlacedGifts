@@ -400,12 +400,13 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #bm .bm-buy svg{flex:none;width:22px;height:22px;fill:#fff;fill-rule:evenodd;margin:0 -6px 0 -3px}
 
 #gm .gm-up .gm-upi{flex:none;width:24px;height:24px;fill:#fff;fill-rule:evenodd;margin:0 -2px 0 -2px}
-#um{position:fixed;left:0;right:0;top:0;height:100%;z-index:2100;visibility:hidden;pointer-events:none;transition:visibility 0s linear .6s}
+#um{position:fixed;left:0;right:0;top:0;height:100%;z-index:2100;visibility:hidden;pointer-events:none;transition:visibility 0s linear .5s}
 #um.on,#um.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
-#um .um-dim{position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:opacity .45s}
-#um.on .um-dim{opacity:1}
-#um .um-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform;isolation:isolate;touch-action:none;-webkit-mask-image:-webkit-radial-gradient(white,black)}
-#um.on .um-sheet{transform:translateY(0)}
+#um .um-dim{position:absolute;inset:0;background:transparent}
+#um .um-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;opacity:0;transition:opacity .3s ease,height .45s cubic-bezier(.25,.8,.25,1);isolation:isolate;touch-action:none;-webkit-mask-image:-webkit-radial-gradient(white,black)}
+#um.on .um-sheet{opacity:1}
+#gm .gm-sheet{transition:transform .55s cubic-bezier(.25,.8,.25,1),opacity .3s ease}
+#gm.sub .gm-sheet{opacity:0;pointer-events:none}
 #um .um-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:20px 16px 18px;background:radial-gradient(circle at 50% 42%,var(--um-c1,#7b72ea) 0%,var(--um-c2,#5b3fb8) 100%);transition:background .3s}
 #um .um-pat{position:absolute;inset:0;pointer-events:none;z-index:0}
 #um .um-pat img{position:absolute;transform:translate(-50%,-50%);filter:url(#umTint);object-fit:contain}
@@ -1767,24 +1768,36 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     });
   }
   window.umPrefetch=x=>{const g=gid(x);if(g)load(g)};
+  const gmEl=document.getElementById('gm'),gmSh=document.getElementById('gmSheet');
+  let gh=0,tm=0;
   window.openUpgrade=function(x){
-    clearTimeout(closeT);
+    clearTimeout(closeT);clearTimeout(tm);
     const tk=++token,g=gid(x);
     reset(x);$u('umChk').classList.remove('on');$u('umPrice').textContent=String(PRICE);
     if(g)load(g).then(d=>paint(g,d,tk));
     um.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
+    gh=gmSh.offsetHeight;
+    sh.style.transition='none';sh.style.height='auto';
     um.classList.add('pre');
+    const nh=sh.offsetHeight;
+    sh.style.height=gh+'px';void sh.offsetHeight;sh.style.transition='';
     try{shapeBtn($u('umGo'))}catch(_){}
     try{smoothFit($u('umVar'),'pill',true,1)}catch(_){}
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
       if(!um.classList.contains('pre'))return;
       um.classList.add('on');um.setAttribute('aria-hidden','false');
-    }));
+      gmEl.classList.add('sub');
+      sh.style.height=nh+'px';
+      tm=setTimeout(()=>{if(um.classList.contains('on')){sh.style.height='';try{shapeBtn($u('umGo'))}catch(_){}}},520);
+    });
   };
   function close(){
-    token++;clearTimeout(closeT);
-    um.classList.remove('on','pre');um.setAttribute('aria-hidden','true');
-    closeT=setTimeout(()=>{if(!um.classList.contains('on'))um.style.height=''},650);
+    token++;clearTimeout(closeT);clearTimeout(tm);
+    sh.style.transition='none';sh.style.height=sh.offsetHeight+'px';void sh.offsetHeight;sh.style.transition='';
+    um.classList.remove('on');um.setAttribute('aria-hidden','true');
+    gmEl.classList.remove('sub');
+    sh.style.height=(gh||sh.offsetHeight)+'px';
+    closeT=setTimeout(()=>{if(!um.classList.contains('on')){um.classList.remove('pre');um.style.height='';sh.style.height=''}},520);
   }
   $u('umBack').onclick=close;
   um.querySelector('.um-dim').onclick=close;
