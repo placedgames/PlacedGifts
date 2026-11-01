@@ -494,7 +494,7 @@ html,body{overscroll-behavior:none}
 #ug .ug-more svg{width:28px;height:28px;fill:#fff;fill-rule:evenodd}
 #ug .ug-car{position:relative;z-index:1;width:calc(100% + 32px);margin:0 -16px;height:150px;overflow:hidden}
 #ug .ug-track{position:absolute;left:0;top:0;height:100%;display:flex;will-change:transform}
-#ug .ug-i{flex:none;width:150px;height:150px;display:flex;align-items:center;justify-content:center;font-size:96px}
+#ug .ug-i{flex:none;width:var(--iw,150px);height:150px;display:flex;align-items:center;justify-content:center;font-size:96px}
 #ug .ug-i img{max-width:132px;max-height:132px;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.28))}
 #ug .ug-title{position:relative;z-index:1;margin-top:6px;font-size:21px;line-height:1.2;font-weight:600;text-align:center}
 #ug .ug-title i{font-style:normal;margin-left:6px;color:rgba(255,255,255,.62)}
@@ -535,6 +535,15 @@ html,body{overscroll-behavior:none}
 #um .um-go.press{transform:scale(1.04)}
 .noanim #um .um-go.press{transform:none}
 #um .um-go svg{flex:none;width:22px;height:22px;fill:#fff;fill-rule:evenodd;margin:0 -6px 0 -3px}
+/* ===== улучшение: «зарядка» маски, плавная смена фона, слайд текста кнопки ===== */
+@property --c1{syntax:'<color>';inherits:false;initial-value:#7b72ea}
+@property --c2{syntax:'<color>';inherits:false;initial-value:#5b3fb8}
+#ug .ug-t1{transition:--c1 var(--bgms,.16s) linear,--c2 var(--bgms,.16s) linear}
+#um .um-glow{position:absolute;left:50%;top:88px;width:320px;height:320px;margin:-160px 0 0 -160px;border-radius:50%;z-index:0;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(220,226,255,.9) 0%,rgba(170,162,255,.45) 34%,rgba(140,110,255,0) 68%);mix-blend-mode:screen;will-change:transform,opacity}
+#um .um-fx{position:absolute;left:0;top:0;width:100%;height:100%;z-index:2;pointer-events:none}
+#um .um-model{will-change:transform}
+#ug .ug-skip{position:relative;overflow:hidden}
+#ug .ug-sl{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;will-change:transform,opacity}
 </style>
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
@@ -744,6 +753,7 @@ html,body{overscroll-behavior:none}
       <span class="um-xg" id="umXg"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></span>
        <button class="um-back glass" id="umBack" aria-label="Назад"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" width="24" height="24" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg></button>
       <div class="um-model" id="umModel"></div>
+      <div class="um-glow" id="umGl"></div><canvas class="um-fx" id="umFx"></canvas>
       <div class="um-t">Улучшение подарка</div>
       <button class="um-var" id="umVar"><span class="um-mini" id="umMini"></span><span>Смотреть все варианты</span><svg viewBox="0 0 8 14"><path d="M1.5 1.5L7 7l-5.5 5.5"/></svg></button>
     </div>
@@ -2468,7 +2478,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
 
   /* ===== Улучшение: спиннер на кнопке → новое окно «Подарок улучшен» с каруселью, прокруткой значений и конфетти ===== */
   const UG=document.getElementById('ug'),ugS=document.getElementById('ugSheet');
-  let upBusy=false,ugT=[],ugCf=0,ugX=null,ugBg=null;
+  let upBusy=false,ugT=[],ugCf=0,ugX=null,ugBg=null,ugRaf=0;const CHG=1000;
   const ugLater=(f,ms)=>{const t=setTimeout(f,ms);ugT.push(t);return t};
   const rnd=(a,b)=>a+Math.random()*(b-a),pick1=a=>a[Math.floor(Math.random()*a.length)];
   const spaced=n=>Number(n).toLocaleString('ru-RU'),escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -2501,13 +2511,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       });
     });
   }
-  /* смена фона шапки: новый слой проявляется поверх старого */
-  function ugSetBg(c,ms){
-    const a=$u('ugT1'),b=$u('ugT2');
-    b.style.setProperty('--c1',c.c1);b.style.setProperty('--c2',c.c2);
-    b.style.transition='opacity '+ms+'ms ease';b.style.opacity=1;
-    clearTimeout(ugBg);ugBg=setTimeout(()=>{a.style.setProperty('--c1',c.c1);a.style.setProperty('--c2',c.c2);b.style.transition='none';b.style.opacity=0},ms+20);
-  }
+  /* фон шапки: цвета плавно перетекают (registered custom properties), без мигания слоёв */
+  function ugBgSet(c){const t=$u('ugT1');t.style.transition='none';t.style.setProperty('--c1',c.c1);t.style.setProperty('--c2',c.c2);void t.offsetWidth;t.style.transition=''}
+  function ugBgTo(c,ms){const t=$u('ugT1');t.style.setProperty('--bgms',Math.round(ms)+'ms');t.style.setProperty('--c1',c.c1);t.style.setProperty('--c2',c.c2)}
   function drawPat2(cv,top,sym,color){
     const w=top.offsetWidth,h=top.offsetHeight,D=Math.min(window.devicePixelRatio||1,2);
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);
@@ -2534,15 +2540,136 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const cv=$u('ugConf'),D=Math.min(window.devicePixelRatio||1,2),w=innerWidth,h=innerHeight;
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);cv.style.display='block';
     const c=cv.getContext('2d');c.setTransform(D,0,0,D,0,0);
-    const cols=['#4BB6EE','#ff9f0a','#34c759','#bf5af2','#ff375f','#ffd60a'],P=[];
-    for(let i=0;i<150;i++){const a=rnd(-Math.PI*.95,-Math.PI*.05),sp=rnd(250,900);P.push({x:w/2+rnd(-70,70),y:h*.4,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(2.5,5),c:pick1(cols),l:rnd(1.8,3.1)})}
+    const cols=['#2f9bff','#ff8a1f','#34c759','#c46cf0','#ff4f8b','#ffd60a'],P=[];
+    const tb=$u('ugTop').getBoundingClientRect(),y0=tb.top+tb.height*.82;
+    for(let side=0;side<2;side++)for(let i=0;i<70;i++){
+      const dir=side?-1:1,a=rnd(-1.45,-.55),sp=rnd(520,1250);
+      P.push({x:side?w+6:-6,y:y0+rnd(-30,30),vx:dir*Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(2.4,4.6),c:pick1(cols),l:rnd(2.2,3.4),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:rnd(0,.25)});
+    }
+    for(let i=0;i<34;i++){const a=rnd(-Math.PI*.9,-Math.PI*.1),sp=rnd(120,420);P.push({x:w/2+rnd(-60,60),y:tb.top+tb.height*.42,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(2.2,4.2),c:pick1(cols),l:rnd(1.8,2.8),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:.12+rnd(0,.2)})}
     const t0=performance.now();let last=t0;
     const step=now=>{
       const dt=Math.min(.04,(now-last)/1000);last=now;const t=(now-t0)/1000;c.clearRect(0,0,w,h);let alive=0;
-      P.forEach(p=>{p.vy+=1100*dt;p.vx*=1-1.3*dt;p.vy*=1-.7*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;const k=1-t/p.l;if(k<=0||p.y>h+20)return;alive++;c.globalAlpha=Math.min(1,k*2);c.fillStyle=p.c;c.beginPath();c.arc(p.x,p.y,p.r,0,6.283);c.fill()});
+      P.forEach(p=>{
+        if(t<p.d){alive++;return}
+        p.vy+=760*dt;p.vx*=1-1.5*dt;p.vy*=1-1.05*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.an+=p.va*dt;
+        const k=1-(t-p.d)/p.l;if(k<=0||p.y>h+20)return;alive++;
+        c.globalAlpha=Math.min(1,k*3);c.fillStyle=p.c;
+        if(p.st){c.save();c.translate(p.x,p.y);c.rotate(p.an);c.fillRect(-1.1,-4.2,2.2,8.4);c.restore()}
+        else{c.beginPath();c.arc(p.x,p.y,p.r,0,6.283);c.fill()}
+      });
       if(alive&&UG.classList.contains('on'))ugCf=requestAnimationFrame(step);else{c.clearRect(0,0,w,h);cv.style.display='none';ugCf=0}
     };
     ugCf=requestAnimationFrame(step);
+  }
+  /* смена подписи на кнопке: старая уходит вверх, новая поднимается снизу */
+  function ugSkipSwap(sk,txt){
+    const old=sk.textContent;
+    sk.innerHTML='<span class="ug-sl">'+escH(old)+'</span><span class="ug-sl">'+escH(txt)+'</span>';
+    const a=sk.children[0],b=sk.children[1];
+    a.animate([{transform:'translateY(0) scale(1)',opacity:1},{transform:'translateY(-16px) scale(.85)',opacity:0}],{duration:320,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+    const an=b.animate([{transform:'translateY(18px) scale(.85)',opacity:0},{transform:'translateY(0) scale(1)',opacity:1}],{duration:400,easing:'cubic-bezier(.3,.8,.3,1)',fill:'forwards'});
+    an.onfinish=()=>{sk.textContent=txt};
+  }
+  /* ===== «зарядка» маски: поворот в 3D, свечение, золотые самородки и блики ===== */
+  let fxRaf=0,fxA=[],fxSpr=null;
+  function fxSprites(){
+    if(fxSpr)return fxSpr;
+    const mk=pts=>{
+      const cv=document.createElement('canvas');cv.width=cv.height=28;const g=cv.getContext('2d');g.translate(14,14);
+      const n=pts.length;g.beginPath();
+      for(let i=0;i<n;i++){
+        const p=pts[i],q=pts[(i+1)%n],m=[(p[0]+q[0])/2,(p[1]+q[1])/2];
+        if(i===0){const l=pts[n-1];g.moveTo((l[0]+p[0])/2,(l[1]+p[1])/2)}
+        g.quadraticCurveTo(p[0],p[1],m[0],m[1]);
+      }
+      g.closePath();
+      const gr=g.createLinearGradient(-8,-9,8,9);gr.addColorStop(0,'#fff3b4');gr.addColorStop(.42,'#f7c13a');gr.addColorStop(1,'#a65f0e');
+      g.fillStyle=gr;g.fill();g.lineWidth=1.3;g.strokeStyle='rgba(112,54,4,.72)';g.stroke();
+      g.fillStyle='rgba(255,255,255,.88)';g.beginPath();g.ellipse(-3,-4,3.2,1.8,-.6,0,6.283);g.fill();
+      return cv;
+    };
+    const orb=document.createElement('canvas');orb.width=orb.height=64;const og=orb.getContext('2d');
+    const rg=og.createRadialGradient(32,32,0,32,32,32);rg.addColorStop(0,'rgba(255,255,255,.95)');rg.addColorStop(.45,'rgba(255,255,255,.5)');rg.addColorStop(1,'rgba(255,255,255,0)');
+    og.fillStyle=rg;og.fillRect(0,0,64,64);
+    return fxSpr={n:[
+      mk([[-9,-3],[-3,-9],[7,-6],[10,2],[3,9],[-7,7]]),
+      mk([[-10,0],[-2,-8],[8,-5],[9,4],[0,9],[-8,6]]),
+      mk([[-8,-6],[2,-9],[10,-1],[6,8],[-4,9],[-10,2]])
+    ],o:orb};
+  }
+  const easeOutBack=u=>{u-=1;return 1+2.7*u*u*u+1.7*u*u};
+  function umFxStop(){
+    cancelAnimationFrame(fxRaf);fxRaf=0;
+    fxA.forEach(a=>{try{a.cancel()}catch(_){}});fxA=[];
+    const cv=$u('umFx');try{cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}catch(_){}
+  }
+  function umFxStart(){
+    if(!animOn())return;
+    umFxStop();
+    const top=$u('umTop'),md=$u('umModel'),gl=$u('umGl'),cv=$u('umFx');
+    const w=top.offsetWidth,h=top.offsetHeight,D=Math.min(window.devicePixelRatio||1,2);
+    const tr=top.getBoundingClientRect(),mr=md.getBoundingClientRect(),sc=(tr.width/w)||1;
+    const cx=(mr.left+mr.width/2-tr.left)/sc,cy=(mr.top+mr.height/2-tr.top)/sc;
+    /* маска: наклон в 3D → разворот анфас → лёгкое покачивание */
+    const P='perspective(520px) ';
+    fxA.push(md.animate([
+      {transform:P+'rotateY(-38deg) scale(.8) translateY(5px)',offset:0,easing:'cubic-bezier(.2,.9,.3,1.2)'},
+      {transform:P+'rotateY(6deg) scale(1.15) translateY(-2px)',offset:.3,easing:'ease-in-out'},
+      {transform:P+'rotateY(-3.5deg) scale(1.11) rotate(-1.2deg)',offset:.55,easing:'ease-in-out'},
+      {transform:P+'rotateY(3deg) scale(1.13) rotate(1deg) translateY(-1px)',offset:.8,easing:'ease-in-out'},
+      {transform:P+'rotateY(0deg) scale(1.12)',offset:1}
+    ],{duration:CHG,fill:'forwards'}));
+    /* свечение за маской нарастает */
+    gl.style.left=cx+'px';gl.style.top=cy+'px';
+    fxA.push(gl.animate([
+      {opacity:0,transform:'scale(.45)'},
+      {opacity:.8,transform:'scale(.95)',offset:.35},
+      {opacity:.65,transform:'scale(.85)',offset:.65},
+      {opacity:1,transform:'scale(1.12)'}
+    ],{duration:CHG+250,easing:'ease-out',fill:'forwards'}));
+    const spr=fxSprites(),c=cv.getContext('2d');
+    cv.width=Math.round(w*D);cv.height=Math.round(h*D);c.setTransform(D,0,0,D,0,0);
+    const rx=50,ry=64,t0=performance.now();let last=t0,aN=0,aO=0,early=2;
+    const ps=[],os=[],gs=[];
+    const spawnN=(top0)=>{
+      const now=performance.now();let x,y;
+      if(top0){x=cx+rnd(-8,10);y=cy-ry+rnd(-6,2)}
+      else{const a=rnd(0,6.283),rr=Math.sqrt(rnd(.05,1.2));x=cx+Math.cos(a)*rx*rr;y=cy+Math.sin(a)*ry*rr}
+      const dx=x-cx,dy=y-cy,d=Math.hypot(dx,dy)||1,v=rnd(8,26);
+      ps.push({x,y,vx:dx/d*v,vy:dy/d*v-rnd(4,14),s:rnd(7,13),sp:Math.floor(rnd(0,3)),a:rnd(0,6.283),va:rnd(-3.5,3.5),b:now,l:rnd(520,900)});
+      if(Math.random()<.55)gs.push({x:x+rnd(-5,5),y:y+rnd(-5,5),s:rnd(5,10),b:now,l:rnd(220,380)});
+    };
+    const spawnO=()=>{const a=rnd(0,6.283),rr=rnd(.5,1.35);os.push({x:cx+Math.cos(a)*rx*rr*1.1,y:cy+Math.sin(a)*ry*rr*.95,r:rnd(5,12),vy:-rnd(4,14),b:performance.now(),l:rnd(700,1200),pk:rnd(.3,.6)})};
+    const star=s=>{c.beginPath();c.moveTo(0,-s);c.quadraticCurveTo(s*.12,-s*.12,s,0);c.quadraticCurveTo(s*.12,s*.12,0,s);c.quadraticCurveTo(-s*.12,s*.12,-s,0);c.quadraticCurveTo(-s*.12,-s*.12,0,-s);c.fill()};
+    const step=now=>{
+      const dt=Math.min(.05,(now-last)/1000);last=now;
+      const k=Math.min(1,(now-t0)/CHG);
+      c.clearRect(0,0,w,h);
+      if(early>0&&now-t0>(early===2?60:300)){early--;spawnN(true)}
+      aN+=dt*(5+26*k*k);while(aN>=1){aN--;spawnN(false)}
+      aO+=dt*(3+8*k);while(aO>=1){aO--;spawnO()}
+      for(let i=os.length-1;i>=0;i--){
+        const o=os[i],age=now-o.b;if(age>o.l){os.splice(i,1);continue}
+        const u=age/o.l,al=Math.sin(u*Math.PI)*o.pk,r=o.r*(.7+.5*u);
+        c.globalAlpha=al;c.drawImage(spr.o,o.x-r,o.y+o.vy*age/1000-r,r*2,r*2);
+      }
+      for(let i=ps.length-1;i>=0;i--){
+        const p=ps[i],age=now-p.b;if(age>p.l){ps.splice(i,1);continue}
+        const u=Math.min(1,age/150),z=(u<1?easeOutBack(u):1)*p.s/20,fade=Math.min(1,(p.l-age)/(p.l*.3));
+        c.save();c.globalAlpha=Math.max(0,fade);c.translate(p.x+p.vx*age/1000,p.y+p.vy*age/1000);c.rotate(p.a+p.va*age/1000);c.scale(z,z);
+        c.drawImage(spr.n[p.sp],-14,-14);c.restore();
+      }
+      c.fillStyle='#fff';
+      for(let i=gs.length-1;i>=0;i--){
+        const g=gs[i],age=now-g.b;if(age>g.l){gs.splice(i,1);continue}
+        const u=age/g.l,s=g.s*Math.sin(u*Math.PI);
+        c.save();c.globalAlpha=.95;c.translate(g.x,g.y);c.rotate(.3);star(Math.max(.1,s));c.restore();
+      }
+      c.globalAlpha=1;
+      fxRaf=requestAnimationFrame(step);
+    };
+    fxRaf=requestAnimationFrame(step);
   }
   /* спиннер на кнопке, шапка окна улучшения быстро перебирает наборы, затем появляется новое окно */
   function startUpgrade(){
@@ -2551,19 +2678,16 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     if(x.upg){toast('Подарок уже улучшен');return}
     if(getStars()<PRICE){toast('Недостаточно звёзд');return}
     upBusy=true;addStars(-PRICE);
-    const go=$u('umGo');go.classList.add('busy');cyc++;
-    let k=0;const iv=setInterval(()=>{
-      if(ring.length<2)return;k=(k+1)%ring.length;const q=ring[k],top=$u('umTop');
-      if(q.model)$u('umModel').innerHTML='<img src="'+q.model.src+'" alt="">';
-      if(q.cols.c1)top.style.setProperty('--um-c1',q.cols.c1);if(q.cols.c2)top.style.setProperty('--um-c2',q.cols.c2);
-    },170);
+    const go=$u('umGo');cyc++;
+    ugLater(()=>go.classList.add('busy'),240);
+    umFxStart();
     const t0=performance.now();
-    ugPick(curG||gid(x),x).then(pk=>{ugLater(()=>{clearInterval(iv);ugShow(x,pk)},Math.max(0,1300-(performance.now()-t0)))});
+    ugPick(curG||gid(x),x).then(pk=>{ugLater(()=>{ugShow(x,pk)},Math.max(0,CHG-(performance.now()-t0)))});
   }
   function ugShow(x,pk){
     const top=$u('ugTop'),umTop=$u('umTop'),cs=getComputedStyle(umTop);
     const c0={c1:cs.getPropertyValue('--um-c1').trim()||'#7b72ea',c2:cs.getPropertyValue('--um-c2').trim()||'#5b3fb8'};
-    const t1=$u('ugT1'),t2=$u('ugT2');t1.style.setProperty('--c1',c0.c1);t1.style.setProperty('--c2',c0.c2);t2.style.transition='none';t2.style.opacity=0;
+    ugBgSet(c0);
     const num=1+Math.floor(Math.random()*Math.max(1000,(x.total||300000))),tot=Math.max(num+1,x.total||237393),iss=Math.min(tot,num+Math.floor(Math.random()*tot*.3));
     $u('ugName').textContent=pk.gname;$u('ugNum').textContent='#'+spaced(num);$u('ugSub').textContent=pk.fm.n;
     const pr=x.price||PRICE;
@@ -2573,32 +2697,50 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     $u('ugLm').onclick=()=>toast('Подробнее: скоро');
     ['ugM','ugS','ugB'].forEach((id,i)=>{const c=$u(id);c.classList.add('c');const f=[pk.lm,pk.ls,pk.lb][i][0]||{n:'—',p:1};c.innerHTML='<div class="ug-it"><span>'+escH(f.n)+'</span></div>'});
     const sk=$u('ugSkip');sk.textContent='Пропустить';sk.dataset.done='';
-    /* карусель: первая — текущая модель из окна улучшения, затем перебор, последняя — итоговая */
+    /* карусель едет вправо, как в оригинале: новые маски выезжают слева, прежняя уходит вправо */
     const first=(umTop.querySelector('#umModel img')||{}).src||pk.fallbackSrc;
-    const srcs=[first].concat(pk.mImgs.map(i=>i.src)),F=srcs.length;pk.F=F;srcs.push(pk.fImg?pk.fImg.src:(pk.fallbackSrc||first));
-    pk.mImgs.slice(0,2).forEach(i=>srcs.push(i.src));
-    $u('ugTrack').innerHTML=srcs.map(s=>'<div class="ug-i">'+(s?'<img src="'+s+'" alt="">':pk.emoji)+'</div>').join('');
-    $u('ugTrack').style.transform='';
+    const fin=pk.fImg?pk.fImg.src:(pk.fallbackSrc||first);
+    const pool=pk.mImgs.map(i=>i.src).filter(Boolean),mids=[];
+    for(let g=0;pool.length&&mids.length<15&&g<40;g++){shuf(pool).forEach(s=>{if(mids.length<15&&(pool.length<2||s!==mids[mids.length-1]))mids.push(s)})}
+    const srcs=[fin].concat(mids,[first]),N=srcs.length;pk.F=0;
+    const trk=$u('ugTrack');
+    trk.innerHTML=srcs.map((s,i)=>'<div class="ug-i"'+(i===N-1?' style="transform:scale(1.12)"':'')+'>'+(s?'<img src="'+s+'" alt="">':pk.emoji)+'</div>').join('');
+    const W=top.offsetWidth,iw=Math.round(W*.56),tx1=W/2-iw/2,tx0=tx1-(N-1)*iw,D=(N-1)*iw,T=3000;
+    trk.style.setProperty('--iw',iw+'px');trk.style.transform='translateX('+tx0+'px)';
     UG.classList.add('on');UG.setAttribute('aria-hidden','false');ugShape();
     const cv=$u('ugPat');requestAnimationFrame(()=>{
-      const W=top.offsetWidth,iw=150,sx=W/2-iw/2,ex=sx-F*iw;
       try{cv.width=top.offsetWidth;cv.height=top.offsetHeight;cv.getContext('2d').drawImage($u('umPat'),0,0,cv.width,cv.height)}catch(_){}
       ugShape();
       ugLater(()=>{
         /* пока ug-окно уже поверх — окно подарка и окно улучшения закрываются тихо */
         quietClose();
-        ugX=$u('ugTrack').animate([{transform:'translateX('+sx+'px)'},{transform:'translateX('+ex+'px)'}],{duration:2600,easing:'cubic-bezier(.15,.7,.1,1)',fill:'forwards'});
-        ugSpin($u('ugM'),shuf(pk.lm).slice(0,9),pk.fm,2300);ugSpin($u('ugS'),shuf(pk.ls).slice(0,9),pk.fs,2600);ugSpin($u('ugB'),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4)),pk.fb,2900);
-        /* цвет шапки меняется на каждом варианте и останавливается на итоговом */
-        const cl=pk.cols;let i=0;
-        for(let t=250;t<2500;t+=260){const c=cl[i++%Math.max(1,cl.length-1)];ugLater(()=>ugSetBg(c,220),t)}
-        ugLater(()=>ugSetBg(cl[cl.length-1],360),2760);
-        ugLater(()=>ugDone(x,pk,num,cl[cl.length-1]),3000);
+        /* ровная скорость, затем плавное торможение до итоговой маски */
+        ugX=trk.animate([
+          {transform:'translateX('+tx0+'px)',offset:0,easing:'linear'},
+          {transform:'translateX('+(tx0+D*.76)+'px)',offset:.62,easing:'cubic-bezier(.2,.39,.25,1)'},
+          {transform:'translateX('+tx1+'px)',offset:1}
+        ],{duration:T,fill:'forwards'});
+        trk.children[N-1].animate([{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:420,easing:'cubic-bezier(.3,.8,.3,1)',fill:'forwards'});
+        ugSpin($u('ugM'),shuf(pk.lm).slice(0,9),pk.fm,2400);ugSpin($u('ugS'),shuf(pk.ls).slice(0,9),pk.fs,2700);ugSpin($u('ugB'),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4)),pk.fb,3000);
+        /* фон шапки следит за маской в центре: каждая новая — новый цвет, плавным перетеканием; итоговая — финальный фон */
+        const cl=pk.cols,nc=Math.max(1,cl.length-1);let cur=N-1,lastCh=performance.now();
+        const tick=()=>{
+          if(!ugX||!UG.classList.contains('on'))return;
+          let tx=tx0;try{const m=getComputedStyle(trk).transform;if(m&&m!=='none')tx=new DOMMatrix(m).m41}catch(_){}
+          const i=Math.max(0,Math.min(N-1,Math.round((tx1-tx)/iw)));
+          if(i!==cur){
+            const now=performance.now(),ms=Math.min(420,Math.max(120,(now-lastCh)*.85));lastCh=now;cur=i;
+            ugBgTo(i===0?cl[cl.length-1]:cl[(N-1-i-1)%nc],ms);
+          }
+          if(ugX.playState!=='finished')ugRaf=requestAnimationFrame(tick);
+        };
+        ugRaf=requestAnimationFrame(tick);
+        ugLater(()=>ugDone(x,pk,num,cl[cl.length-1]),T-200);
       },340);
     });
   }
   function quietClose(){
-    busy=true;token++;um.classList.remove('on');um.setAttribute('aria-hidden','true');
+    umFxStop();busy=true;token++;um.classList.remove('on');um.setAttribute('aria-hidden','true');
     if(window.closeGift)closeGift();
     setTimeout(()=>{
       um.style.visibility='hidden';closing=false;frame(0);um.classList.remove('pre');um.style.height='';
@@ -2614,16 +2756,18 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     drawPat2(cv,top,pk.sImg,c.c3);
     cv.animate([{opacity:0,transform:'scale(1.14)'},{opacity:1,transform:'scale(1)'}],{duration:560,easing:'cubic-bezier(.3,.1,.2,1)'});
     if(pk.mj&&window.giftAnim){try{const it=$u('ugTrack').children[pk.F];giftAnim(it,pk.mj,{once:true})}catch(_){}}
+    {const trk=$u('ugTrack'),fi=trk.children[0],pv=trk.children[1];
+      if(fi)fi.animate([{transform:'scale(1)'},{transform:'scale(1.14)'}],{duration:640,easing:'cubic-bezier(.3,1.5,.5,1)',fill:'forwards'});
+      if(pv)pv.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.7)'}],{duration:380,easing:'ease-out',fill:'forwards'})}
     ugConfetti();
     const bn=$u('ugBn');bn.classList.add('on');ugLater(()=>bn.classList.remove('on'),4200);
     x.upg={n:num,g:pk.gname,m:pk.fm.n,s:pk.fs.n,b:pk.fb.n};x.hid=true;
     try{if(MYGIFTS.indexOf(x)>=0)store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
-    const sk=$u('ugSkip');sk.style.opacity='.0';
-    ugLater(()=>{sk.textContent='Добавить в профиль';sk.dataset.done='1';sk.style.opacity=''},180);
+    const sk=$u('ugSkip');sk.dataset.done='1';ugSkipSwap(sk,'Добавить в профиль');
   }
   function ugClose(){
     if(!UG.classList.contains('on'))return;
-    ugT.forEach(clearTimeout);ugT=[];clearTimeout(ugBg);cancelAnimationFrame(ugCf);$u('ugConf').style.display='none';$u('ugBn').classList.remove('on');
+    ugT.forEach(clearTimeout);ugT=[];clearTimeout(ugBg);cancelAnimationFrame(ugCf);cancelAnimationFrame(ugRaf);$u('ugConf').style.display='none';$u('ugBn').classList.remove('on');
     UG.classList.remove('on');UG.setAttribute('aria-hidden','true');
     setTimeout(()=>{ugS.style.clipPath='';ugS.style.webkitClipPath='';upBusy=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}$u('ugTrack').innerHTML=''},450);
   }
