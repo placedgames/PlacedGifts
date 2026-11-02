@@ -593,6 +593,13 @@ html,body{overscroll-behavior:none}
 #ug .ug-pc{flex:0 1 auto;min-width:0;display:block;height:20px;padding:0 8px;border-radius:10px;background:#202b31;color:#4bb6f0;font-size:12px;font-weight:500;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
 #ug .ug-ava{width:22px;height:22px;font-size:11px;font-weight:600;color:#fff}
 #ug .ug-own{color:var(--accent);font-weight:500;font-size:16px}
+
+/* карточки подарков (профиль и «Купить подарок»): сглаженные углы; фон вынесен в ::before, чтобы не обрезать выступающую плашку */
+.gift,.pg{background:none;isolation:isolate}
+.gift::before,.pg::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:var(--sqr,20px);-webkit-clip-path:var(--sq);clip-path:var(--sq);background:var(--card)}
+.pg::before{border-radius:var(--sqr,16px)}
+.pgu::before{display:none}
+.pgu .pu-bg{-webkit-clip-path:var(--sq);clip-path:var(--sq)}
 </style>
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
@@ -838,7 +845,6 @@ html,body{overscroll-behavior:none}
       <div class="ug-r"><div class="ug-k">Символ</div><div class="ug-v" id="ugS"></div></div>
       <div class="ug-r"><div class="ug-k">Фон</div><div class="ug-v" id="ugB"></div></div>
       <div class="ug-r"><div class="ug-k">Выпущено</div><div class="ug-v" id="ugAv"></div></div>
-      <div class="ug-r"><div class="ug-k">Цена</div><div class="ug-v" id="ugVal"></div></div>
     </div>
     <div class="ug-note"><svg viewBox="0 0 512 512"><use href="#i-eyeoff"/></svg><span>Этот подарок не виден в вашем профиле.</span></div>
     <div class="ug-btnw"><button class="ug-skip" id="ugSkip">Пропустить</button></div>
@@ -1314,6 +1320,7 @@ function renderGifts(list){
     (g.image?'<img loading="lazy" src="'+g.image+'" alt="" onerror="this.replaceWith(\'🎁\')">':(g.emoji||'🎁'))+
     '</div><div class="price"><canvas class="pc"></canvas><img class="pst" src="'+STAR+'" alt=""><span>'+fmt(price)+'</span></div></div>';
   }).join('');
+  try{window.smoothAll&&smoothAll($('#grid'))}catch(_){}
   $$('.gift').forEach(el=>{ GIO.observe(el); el.onclick=()=>{const im=el.querySelector('.pic img');openBuy({price:el.dataset.p,total:+el.dataset.t,key:el.dataset.k,image:im?im.src:null,emoji:im?null:el.querySelector('.pic').textContent.trim()})}; });
 }
 renderGifts(FALLBACK);
@@ -1709,7 +1716,7 @@ function renderMyGifts(){
     return '<div class="pg" data-i="'+i+'">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
       (x.image?'<img class="pi" src="'+x.image+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
   }).join('');
-  g.hidden=!list.length;e.hidden=list.length>0;try{pgPaint(g)}catch(_){}
+  g.hidden=!list.length;e.hidden=list.length>0;try{pgPaint(g)}catch(_){}try{window.smoothAll&&smoothAll(g)}catch(_){}
   e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
   const ti=document.getElementById('mtIcons');
   if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
@@ -2251,6 +2258,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   };
   window.smoothAll=function(root){(root||document).querySelectorAll('.list.pcard').forEach(e=>smoothFit(e,30,true));
     (root||document).querySelectorAll('.sv-card,#bm .bm-card').forEach(e=>smoothFit(e,25,false));
+    (root||document).querySelectorAll('.gift').forEach(e=>smoothFit(e,20,false));
+    (root||document).querySelectorAll('.pg').forEach(e=>smoothFit(e,16,false));
     (root||document).querySelectorAll('.sv-view,#bm .bm-view').forEach(e=>smoothFit(e,'pill',true,1))};
   smoothAll();
 })();
@@ -2805,8 +2814,6 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const pr=x.price||PRICE;pk.meta={iss:iss,tot:tot,pr:pr};
     $u('ugOwn').classList.remove('c');$u('ugOwn').innerHTML=(u.photo_url?'<span class="ug-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="ug-ava">'+escH((name[0]||'').toUpperCase())+'</span>')+'<span class="ug-own">'+escH(name)+'</span>';
     $u('ugAv').classList.remove('c');$u('ugAv').textContent=spaced(iss)+'/'+spaced(tot)+' выпущено';
-    $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+(pr*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
-    $u('ugLm').onclick=()=>toast('Подробнее: скоро');
     pk.spl=[shuf(pk.lm).slice(0,9),shuf(pk.ls).slice(0,9),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4))];
     ['ugM','ugS','ugB'].forEach((id,i)=>{const c=$u(id);c.classList.add('c');const f=pk.spl[i][0]||{n:'—',p:1};c.innerHTML='<div class="ug-it"><span>'+escH(f.n)+'</span><i class="ug-pc">'+String((+f.p||0).toFixed(1)).replace('.',',')+'%</i></div>'});
     const sk=$u('ugSkip');sk.dataset.done='';ugSkipFromSpin(sk,'Пропустить');
@@ -3026,8 +3033,6 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     $u('ugName').textContent=d.g||'Подарок';$u('ugNum').textContent='#'+spaced(d.n);$u('ugSub').textContent=d.m||'';
     $u('ugOwn').classList.remove('c');$u('ugOwn').innerHTML=(u.photo_url?'<span class="ug-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="ug-ava">'+escH((name[0]||'').toUpperCase())+'</span>')+'<span class="ug-own">'+escH(name)+'</span>';
     $u('ugAv').classList.remove('c');$u('ugAv').textContent=spaced(d.iss||0)+'/'+spaced(d.tot||0)+' выпущено';
-    $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+((d.pr||PRICE)*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
-    $u('ugLm').onclick=()=>toast('Подробнее: скоро');
     const pc=p=>String((+p||0).toFixed(1)).replace('.',',')+'%';
     [['ugM',d.m,d.mp],['ugS',d.s,d.sp],['ugB',d.b,d.bp]].forEach(r=>{const cc=$u(r[0]);cc.classList.add('c');cc.innerHTML='<div class="ug-it"><span>'+escH(r[1]||'—')+'</span><i class="ug-pc">'+pc(r[2])+'</i></div>'});
     UG.querySelector('.ug-note').style.display=x.hid?'':'none';
