@@ -817,12 +817,13 @@ html,body{overscroll-behavior:none}
       const box=document.createElement('div');box.className='ga';
       box.style.cssText='position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:'+s+'px;height:'+s+'px;opacity:0';
       el.appendChild(box);el.__box=box;
-      const a=lottie.loadAnimation({container:box,renderer:'svg',loop:false,autoplay:!(opts&&opts.delay),animationData:JSON.parse(JSON.stringify(data))});
+      const a=lottie.loadAnimation({container:box,renderer:'svg',loop:false,autoplay:!(opts&&(opts.delay||opts.at)),animationData:JSON.parse(JSON.stringify(data))});
       let busy=true;a.addEventListener('complete',()=>{busy=false});
       if(opts&&opts.onComplete)a.addEventListener('complete',opts.onComplete);
       a.addEventListener('DOMLoaded',()=>{
         if(el.__ga!==tok||!el.contains(img)){try{a.destroy()}catch(_){}return}
         if(opts&&opts.delay)setTimeout(()=>{if(el.__ga===tok)a.play()},opts.delay);
+        if(opts&&opts.at)setTimeout(()=>{if(el.__ga===tok)a.play()},Math.max(0,opts.at-performance.now()));
         requestAnimationFrame(()=>{box.style.opacity='1';requestAnimationFrame(()=>{img.style.visibility='hidden'})});
       });
       if(opts&&opts.once)box.style.cursor='inherit';
@@ -2519,7 +2520,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         if(/^\d+$/.test(gn))gn=nameOf(idm,gn)||(x&&(x.title||x.name))||'Подарок';
         const fb=n=>({n:pick1(FB_M),p:+rnd(.3,3).toFixed(1)});
         return {g:g,gname:gn||'Подарок',
-          mImgs:r[0].filter(Boolean),fImg:r[1],sImg:r[2],cols:cols,
+          mImgs:r[0].filter(Boolean),mSet:sm.slice(0,10).map((m,i)=>r[0][i]?{s:r[0][i].src,j:AP+'/model/'+e+'/'+encodeURIComponent(nm(m))+'.json'}:null).filter(Boolean),fImg:r[1],sImg:r[2],cols:cols,
           fm:ok?ent(ms[0]):{n:pick1(FB_M),p:.5},fs:ok?ent(ss[0]):{n:pick1(FB_S),p:.3},fb:ok?ent(bs[0]):{n:pick1(FB_B),p:1.1},
           lm:ok?sm.map(ent):FB_M.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),ls:ok?sy.map(ent):FB_S.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),lb:ok?sb.map(ent):FB_B.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),
           mj:ms[0]?AP+'/model/'+e+'/'+encodeURIComponent(nm(ms[0]))+'.json':null,
@@ -2670,8 +2671,6 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       const dt=Math.min(.05,(now-last)/1000);last=now;
       const k=Math.min(1,(now-t0)/CHG);
       c.clearRect(0,0,w,h);
-      if(early>0&&now-t0>(early===2?60:300)){early--;spawnN(true)}
-      aN+=dt*(5+26*k*k);while(aN>=1){aN--;spawnN(false)}
       aO+=dt*(3+8*k);while(aO>=1){aO--;spawnO()}
       for(let i=os.length-1;i>=0;i--){
         const o=os[i],age=now-o.b;if(age>o.l){os.splice(i,1);continue}
@@ -2724,13 +2723,21 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const sk=$u('ugSkip');sk.textContent='Пропустить';sk.dataset.done='';
     /* карусель едет вправо, как в оригинале: новые маски выезжают слева, прежняя уходит вправо */
     const first=(umTop.querySelector('#umModel img')||{}).src||pk.fallbackSrc;
+    const jsonOf=u=>u&&/\/model\//.test(u)?u.replace(/\.png.*$/,'.json'):null;
+    /* как в оригинале: 11 моделей (первая — та, что была в окне улучшения последней), два одинаковых круга,
+       третий круг — 10 из них в другом порядке, и в конце выпадает итоговая модель */
+    const S=[{s:first,j:jsonOf(first)}].concat((pk.mSet||[]).filter(o=>o.s&&o.s!==first));
+    const rest=S.slice(1);for(let q=0;S.length<11&&rest.length&&q<30;q++)S.push(rest[q%rest.length]);
+    let lap3=shuf(S);
+    for(let t=0;t<8&&S.length>2&&(lap3[0]===S[S.length-1]||lap3.every((o,q)=>o===S[q]));t++)lap3=shuf(S);
+    if(S.length>1)lap3=lap3.slice(0,S.length-1);
     const fin=pk.fImg?pk.fImg.src:(pk.fallbackSrc||first);
-    const pool=pk.mImgs.map(i=>i.src).filter(Boolean),mids=[];
-    for(let g=0;pool.length&&mids.length<15&&g<40;g++){shuf(pool).forEach(s=>{if(mids.length<15&&(pool.length<2||s!==mids[mids.length-1]))mids.push(s)})}
-    const srcs=[fin].concat(mids,[first]),N=srcs.length;pk.F=0;
+    const seq=S.concat(S,lap3,[{s:fin,j:pk.mj}]),N=seq.length,items=seq.slice().reverse();pk.F=0;
     const trk=$u('ugTrack');
-    trk.innerHTML=srcs.map((s,i)=>'<div class="ug-i"'+(i===N-1?' style="transform:scale(1.12)"':'')+'>'+(s?'<img src="'+s+'" alt="">':pk.emoji)+'</div>').join('');
-    const W=top.offsetWidth,iw=Math.round(W*.56),tx1=W/2-iw/2,tx0=tx1-(N-1)*iw,D=(N-1)*iw,T=3000;
+    trk.innerHTML=items.map((o,q)=>'<div class="ug-i"'+(q===N-1?' style="transform:scale(1.12)"':'')+'>'+(o.s?'<img src="'+o.s+'" alt="">':pk.emoji)+'</div>').join('');
+    /* скорость как в оригинале: ~15 моделей в секунду ровным ходом, затем торможение на последних пяти */
+    const STEPS=N-1,V=15,W=top.offsetWidth,iw=Math.round(W*.56),tx1=W/2-iw/2,tx0=tx1-STEPS*iw,D=STEPS*iw;
+    const L=STEPS>=8?Math.round(STEPS*.84):0,T1=L?L/V*1000:0,T2=L?(STEPS-L)*1.95/V*1000:900,T=T1+T2;
     trk.style.setProperty('--iw',iw+'px');trk.style.transform='translateX('+tx0+'px)';
     UG.classList.add('on');UG.setAttribute('aria-hidden','false');ugShape();
     const cv=$u('ugPat');requestAnimationFrame(()=>{
@@ -2739,28 +2746,33 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       ugLater(()=>{
         /* пока ug-окно уже поверх — окно подарка и окно улучшения закрываются тихо */
         quietClose();
-        /* ровная скорость, затем плавное торможение до итоговой маски */
-        ugX=trk.animate([
+        ugX=trk.animate(L?[
           {transform:'translateX('+tx0+'px)',offset:0,easing:'linear'},
-          {transform:'translateX('+(tx0+D*.76)+'px)',offset:.62,easing:'cubic-bezier(.2,.39,.25,1)'},
+          {transform:'translateX('+(tx0+L*iw)+'px)',offset:T1/T,easing:'cubic-bezier(.2,.39,.25,1)'},
           {transform:'translateX('+tx1+'px)',offset:1}
+        ]:[
+          {transform:'translateX('+tx0+'px)',easing:'cubic-bezier(.2,.6,.25,1)'},
+          {transform:'translateX('+tx1+'px)'}
         ],{duration:T,fill:'forwards'});
         trk.children[N-1].animate([{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:420,easing:'cubic-bezier(.3,.8,.3,1)',fill:'forwards'});
-        ugSpin($u('ugM'),shuf(pk.lm).slice(0,9),pk.fm,2400);ugSpin($u('ugS'),shuf(pk.ls).slice(0,9),pk.fs,2700);ugSpin($u('ugB'),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4)),pk.fb,3000);
-        /* фон шапки следит за маской в центре: каждая новая — новый цвет, плавным перетеканием; итоговая — финальный фон */
+        /* последние 5 (4 перед итоговой + итоговая) — анимированные, старт у всех в один момент */
+        if(window.giftAnim){const at=performance.now()+(L?T1-120:250);
+          items.slice(0,Math.min(5,N)).forEach((o,q)=>{const el=trk.children[q];if(o.j&&el)giftAnim(el,o.j,{once:true,at})})}
+        ugSpin($u('ugM'),shuf(pk.lm).slice(0,9),pk.fm,Math.max(900,T-500));ugSpin($u('ugS'),shuf(pk.ls).slice(0,9),pk.fs,Math.max(1000,T-250));ugSpin($u('ugB'),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4)),pk.fb,Math.max(1100,T));
+        /* фон шапки следит за маской в центре: каждая новая — новый цвет; итоговая — финальный фон */
         const cl=pk.cols,nc=Math.max(1,cl.length-1);let cur=N-1,lastCh=performance.now();
         const tick=()=>{
           if(!ugX||!UG.classList.contains('on'))return;
           let tx=tx0;try{const m=getComputedStyle(trk).transform;if(m&&m!=='none')tx=new DOMMatrix(m).m41}catch(_){}
-          const i=Math.max(0,Math.min(N-1,Math.round((tx1-tx)/iw)));
-          if(i!==cur){
-            const now=performance.now(),ms=Math.min(420,Math.max(120,(now-lastCh)*.85));lastCh=now;cur=i;
-            ugBgTo(i===0?cl[cl.length-1]:cl[(N-1-i-1)%nc],ms);
+          const q=Math.max(0,Math.min(N-1,Math.round((tx1-tx)/iw)));
+          if(q!==cur){
+            const now=performance.now(),ms=Math.min(420,Math.max(50,(now-lastCh)*.9));lastCh=now;cur=q;
+            ugBgTo(q===0?cl[cl.length-1]:cl[(N-1-q-1)%nc],ms);
           }
           if(ugX.playState!=='finished')ugRaf=requestAnimationFrame(tick);
         };
         ugRaf=requestAnimationFrame(tick);
-        ugLater(()=>ugDone(x,pk,num,cl[cl.length-1]),T-200);
+        ugLater(()=>ugDone(x,pk,num,cl[cl.length-1]),Math.max(600,T-200));
       },200);
     });
   }
@@ -2780,7 +2792,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     try{old.getContext('2d').drawImage(cv,0,0);cv.after(old);old.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(1.14)'}],{duration:360,easing:'cubic-bezier(.4,0,.3,1)',fill:'forwards'}).onfinish=()=>old.remove()}catch(_){}
     drawPat2(cv,top,pk.sImg,c.c3);
     cv.animate([{opacity:0,transform:'scale(1.14)'},{opacity:1,transform:'scale(1)'}],{duration:560,easing:'cubic-bezier(.3,.1,.2,1)'});
-    if(pk.mj&&window.giftAnim){try{const it=$u('ugTrack').children[pk.F];giftAnim(it,pk.mj,{once:true})}catch(_){}}
+    if(pk.mj&&window.giftAnim){try{const it=$u('ugTrack').children[pk.F];if(it&&!it.__ga)giftAnim(it,pk.mj,{once:true})}catch(_){}}
     {const trk=$u('ugTrack'),fi=trk.children[0],pv=trk.children[1];
       if(fi)fi.animate([{transform:'scale(1)'},{transform:'scale(1.14)'}],{duration:640,easing:'cubic-bezier(.3,1.5,.5,1)',fill:'forwards'});
       if(pv)pv.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.7)'}],{duration:380,easing:'ease-out',fill:'forwards'})}
