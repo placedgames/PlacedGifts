@@ -485,6 +485,9 @@ html,body{overscroll-behavior:none}
 #ug .ug-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:16px 16px 16px}
 #ug .ug-t1,#ug .ug-t2{position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 50% 36%,var(--c1,#7b72ea) 0%,var(--c2,#5b3fb8) 100%)}
 #ug .ug-t2{opacity:0}
+/* слой нового фона выезжает слева направо с мягким краем (маска едет по ширине) */
+#ug .ug-t3{position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 50% 36%,var(--c1,#7b72ea) 0%,var(--c2,#5b3fb8) 100%);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 33.34%,transparent 66.66%,transparent 100%);mask-image:linear-gradient(90deg,#000 0,#000 33.34%,transparent 66.66%,transparent 100%);-webkit-mask-size:300% 100%;mask-size:300% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:100% 0;mask-position:100% 0;will-change:mask-position}
+#ug.morph .ug-t3{opacity:var(--gt,0)}
 #ug .ug-top::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.4) 100%)}
 #ug .ug-pat{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0;-webkit-mask-image:radial-gradient(ellipse 75% 80% at 50% 45%,#000 35%,rgba(0,0,0,.4) 100%);mask-image:radial-gradient(ellipse 75% 80% at 50% 45%,#000 35%,rgba(0,0,0,.4) 100%)}
 #ug .ug-x,#ug .ug-more{position:absolute;top:16px;z-index:4;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;border:0;padding:0;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;background:rgba(255,255,255,.23);box-shadow:inset 0 0 0 .6px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);transition:transform .3s cubic-bezier(.4,0,.2,1)}
@@ -2539,7 +2542,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       return Promise.all([
         Promise.all(sm.map(m=>img(mu(m,160)))),ms[0]?img(mu(ms[0],256)):null,
         ss[0]?img(AP+'/symbol/'+e+'/'+encodeURIComponent(nm(ss[0]))+'.png?size=64'):null,
-        Promise.all(sb.concat(bs[0]?[bs[0]]:[]).map(b=>backdropCols(g,b)))
+        Promise.all(sb.concat(bs[0]?[bs[0]]:[]).map(b=>backdropCols(g,b))),
+        Promise.all(ss.slice(1,6).map(q2=>img(AP+'/symbol/'+e+'/'+encodeURIComponent(nm(q2))+'.png?size=64')))
       ]).then(r=>{
         const cols=r[3].map((c,i)=>{const f=FB_PAL[i%FB_PAL.length];return {c1:c.c1||f[0],c2:c.c2||f[1],c3:c.c3||f[2]}});
         while(cols.length<2)cols.push({c1:FB_PAL[cols.length][0],c2:FB_PAL[cols.length][1],c3:FB_PAL[cols.length][2]});
@@ -2551,7 +2555,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
           fm:okM?ent(ms[0]):{n:pick1(FB_M),p:.5},fs:okS?ent(ss[0]):{n:pick1(FB_S),p:.3},fb:okB?ent(bs[0]):{n:pick1(FB_B),p:1.1},
           lm:okM?sm.map(ent):FB_M.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),ls:okS?sy.map(ent):FB_S.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),lb:okB?sb.map(ent):FB_B.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),
           mj:ms[0]?AP+'/model/'+e+'/'+encodeURIComponent(nm(ms[0]))+'.json':null,
-          fallbackSrc:x&&x.image||null,emoji:x&&x.emoji||'🎁'};
+          sImgs:(r[4]||[]).filter(Boolean),fallbackSrc:x&&x.image||null,emoji:x&&x.emoji||'🎁'};
       });
     });
   }
@@ -2680,12 +2684,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     ],{duration:CHG,fill:'forwards'}));
     /* свечение за маской нарастает */
     gl.style.left=cx+'px';gl.style.top=cy+'px';
-    fxA.push(gl.animate([
-      {opacity:0,transform:'scale(.45)'},
-      {opacity:.8,transform:'scale(.95)',offset:.35},
-      {opacity:.65,transform:'scale(.85)',offset:.65},
-      {opacity:1,transform:'scale(1.12)'}
-    ],{duration:CHG+250,easing:'ease-out',fill:'forwards'}));
+    /* свечение за маской убрано: фон под подарком в начале не подсвечивается */
     const spr=fxSprites(),c=cv.getContext('2d');
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);c.setTransform(D,0,0,D,0,0);
     const rx=50,ry=64,t0=performance.now();let last=t0,aN=0,aO=0,early=2;
@@ -2744,7 +2743,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function ugShow(x,pk){
     const top=$u('ugTop'),umTop=$u('umTop'),cs=getComputedStyle(umTop);
     const c0={c1:cs.getPropertyValue('--um-c1').trim()||'#7b72ea',c2:cs.getPropertyValue('--um-c2').trim()||'#5b3fb8'};
-    ugBgSet(c0);bgFin=false;patFin=false;
+    $u('ugSheet').querySelectorAll('.ug-t3').forEach(n=>n.remove());ugBgSet(c0);finSet=false;
     const num=1+Math.floor(Math.random()*Math.max(1000,(x.total||300000))),tot=Math.max(num+1,x.total||237393),iss=Math.min(tot,num+Math.floor(Math.random()*tot*.3));
     $u('ugName').textContent=pk.gname;$u('ugNum').textContent='#'+spaced(num);$u('ugSub').textContent=pk.fm.n;
     const pr=x.price||PRICE;
@@ -2837,13 +2836,15 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         /* фон шапки следит за маской в центре: каждая новая — новый цвет; итоговая — финальный фон */
         const cl=pk.cols,fc=cl[cl.length-1];
         /* фон один на всю прокрутку: примерно на середине он плавно становится итоговым, чуть позже так же определяется узор */
-        ugLater(()=>{ugBgDone(fc,650)},Math.round(T*.45));
-        ugLater(()=>{ugPatDone(pk,fc)},Math.round(T*.45)+520);
+        const nc=Math.max(1,cl.length-1);let lastK=-1;
         const tick=()=>{
           if(!ugX||!UG.classList.contains('on'))return;
           let tx=tx0;try{const m=getComputedStyle(trk).transform;if(m&&m!=='none')tx=new DOMMatrix(m).m41}catch(_){}
           const q=Math.max(0,Math.min(N-1,Math.round((tx1-tx)/iw)));
           setS(tx);
+          /* фон и узор меняются в самом начале и затем каждые две модели; на итоговой — финальные */
+          if(q===0)ugFinalSet(pk,fc,520);
+          else{const kk=(N-1-q)>>1;if(kk!==lastK){lastK=kk;const c=cl[kk%nc],sy=(pk.sImgs&&pk.sImgs.length)?pk.sImgs[kk%pk.sImgs.length]:pk.sImg;ugBgSlide(c,520);ugPatSwap(sy,c.c3)}}
           for(let z=1;z<3&&z<N;z++){
             const d=(tx+z*iw+iw/2-W/2)/iw,el=trk.children[z];if(!el)continue;
             if(el.__lot&&!el.__stp&&d>1.25){el.__stp=1;try{el.__lot.pause()}catch(_){}}
@@ -2868,18 +2869,30 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       setTimeout(()=>gmEl.classList.remove('up','sub'),500);
     },80);
   }
-  let bgFin=false,patFin=false;
-  function ugBgDone(c,ms){if(bgFin)return;bgFin=true;ugBgTo(c,ms)}
-  /* узор нового символа: старый разъезжается от центра в стороны и гаснет, новый сходится на место — как в окне предпросмотра */
-  function ugPatDone(pk,c){
-    if(patFin)return;patFin=true;
+  let finSet=false;
+  /* новый фон выезжает слева направо слоем с мягким краем; когда слой доехал, он становится основным, лишние слои убираются */
+  function ugBgSlide(c,ms){
+    const t1=$u('ugT1'),L=document.createElement('div');
+    L.className='ug-t3';L.style.setProperty('--c1',c.c1);L.style.setProperty('--c2',c.c2);
+    $u('ugPat').before(L);
+    const fin=()=>{
+      if(!L.parentNode)return;
+      t1.style.setProperty('--c1',c.c1);t1.style.setProperty('--c2',c.c2);
+      let p;while((p=L.previousElementSibling)&&p.classList.contains('ug-t3'))p.remove();
+      L.remove();
+    };
+    try{L.animate([{webkitMaskPosition:'100% 0',maskPosition:'100% 0'},{webkitMaskPosition:'0% 0',maskPosition:'0% 0'}],{duration:ms,easing:'cubic-bezier(.3,.1,.2,1)',fill:'forwards'}).onfinish=fin}catch(_){setTimeout(fin,ms)}
+  }
+  /* узор: старый разъезжается от центра в стороны и гаснет, новый сходится на место — как в окне предпросмотра */
+  function ugPatSwap(sym,c3){
     const cv=$u('ugPat'),top=$u('ugTop'),old=cv.cloneNode();
     try{old.getContext('2d').drawImage(cv,0,0);cv.after(old);old.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(1.14)'}],{duration:360,easing:'cubic-bezier(.4,0,.3,1)',fill:'forwards'}).onfinish=()=>old.remove()}catch(_){}
-    drawPat2(cv,top,pk.sImg,c.c3);
+    drawPat2(cv,top,sym,c3);
     cv.animate([{opacity:0,transform:'scale(1.14)'},{opacity:1,transform:'scale(1)'}],{duration:560,easing:'cubic-bezier(.3,.1,.2,1)'});
   }
+  function ugFinalSet(pk,c,ms){if(finSet)return;finSet=true;ugBgSlide(c,ms);ugPatSwap(pk.sImg,c.c3)}
   function ugDone(x,pk,num,c){
-    ugBgDone(c,300);ugPatDone(pk,c);
+    ugFinalSet(pk,c,300);
     /* страховка: если анимация итоговой модели не загрузилась или так и не стартовала — запускаем её сейчас */
     if(pk.mj&&window.giftAnim&&window.__gA!==false){try{const it=$u('ugTrack').children[pk.F];
       if(it){if(!it.__lot)giftAnim(it,pk.mj,{stop:true});else if(!it.__played)it.__lot.goToAndPlay(0,true)}}catch(_){}}
@@ -2902,7 +2915,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     $u('ugConf').style.display='none';$u('ugBn').classList.remove('on');
     ugS.style.opacity='1';ugS.style.transition='transform .32s cubic-bezier(.4,0,1,1)';ugS.style.transform='translateY('+window.innerHeight+'px)';
     UG.classList.remove('on');UG.setAttribute('aria-hidden','true');
-    setTimeout(()=>{ugS.style.clipPath='';ugS.style.webkitClipPath='';ugS.style.transition='';ugS.style.transform='';ugS.style.opacity='';upBusy=false;ugClosing=false;ugLock=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}$u('ugTrack').innerHTML=''},450);
+    setTimeout(()=>{ugS.querySelectorAll('.ug-t3').forEach(n=>n.remove());ugS.style.clipPath='';ugS.style.webkitClipPath='';ugS.style.transition='';ugS.style.transform='';ugS.style.opacity='';upBusy=false;ugClosing=false;ugLock=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}$u('ugTrack').innerHTML=''},450);
   }
   $u('ugX').onclick=()=>ugClose();UG.querySelector('.ug-dim').onclick=()=>{};
   (function(){
