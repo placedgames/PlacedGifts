@@ -280,6 +280,10 @@ body.navanim #bar{z-index:1}
 .pg{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .pg .peye{position:absolute;left:50%;top:50%;width:31px;height:31px;margin:-15.5px 0 0 -15.5px;border-radius:50%;background:rgba(0,0,0,.32);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:3}
 .pg .peye svg{width:25px;height:25px;fill:#fff;fill-rule:evenodd}
+.pgu{background:none}
+.pgu .pu-bg{position:absolute;inset:0;border-radius:inherit;overflow:hidden;background:radial-gradient(circle at 50% 42%,var(--pc1,#7b72ea) 0%,var(--pc2,#5b3fb8) 100%)}
+.pgu .pu-pat{position:absolute;left:0;top:0;width:100%;height:100%;-webkit-mask-image:radial-gradient(ellipse 75% 80% at 50% 45%,#000 35%,rgba(0,0,0,.4) 100%);mask-image:radial-gradient(ellipse 75% 80% at 50% 45%,#000 35%,rgba(0,0,0,.4) 100%)}
+.pgu .pi,.pgu .pe{position:relative;z-index:1}
 .pg .rib,.gift .rib{top:-1.5px;right:-1.5px}
 .pg .rib span{left:80.63%;top:19.37%;font-size:9px;font-weight:600}
 .gift .rib span{left:80.02%;top:19.98%;font-size:10px;font-weight:550}
@@ -493,8 +497,8 @@ html,body{overscroll-behavior:none}
 #ug .ug-x,#ug .ug-more{position:absolute;top:16px;z-index:4;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;border:0;padding:0;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;background:rgba(255,255,255,.23);box-shadow:inset 0 0 0 .6px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);transition:transform .3s cubic-bezier(.4,0,.2,1)}
 #ug .ug-x{left:16px}#ug .ug-more{right:16px}
 #ug .ug-x:active,#ug .ug-more:active{transform:scale(1.1)}
-#ug .ug-x svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
-#ug .ug-more svg{width:28px;height:28px;fill:#fff;fill-rule:evenodd}
+#ug .ug-x svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
+#ug .ug-more svg{width:34px;height:34px;fill:#fff;fill-rule:evenodd}
 #ug .ug-car{position:relative;z-index:1;width:calc(100% + 32px);margin:0 -16px;height:150px;overflow:hidden}
 #ug .ug-track{position:absolute;left:0;top:0;height:100%;display:flex;will-change:transform}
 #ug .ug-i{flex:none;width:var(--iw,150px);height:150px;display:flex;align-items:center;justify-content:center;font-size:96px}
@@ -523,11 +527,6 @@ html,body{overscroll-behavior:none}
 #ug .ug-skip{width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE;color:#fff;font:inherit;font-size:17px;font-weight:600;cursor:pointer;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .2s}
 #ug .ug-skip:active{transform:scale(1.04)}
 #ugConf{position:fixed;left:0;top:0;width:100%;height:100%;z-index:2300;pointer-events:none;display:none}
-#ugBn{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 8px);z-index:2400;display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border-radius:20px;background:rgba(44,44,46,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 8px 28px rgba(0,0,0,.4);transform:translateY(-140%);opacity:0;pointer-events:none;transition:transform .5s cubic-bezier(.25,.8,.25,1),opacity .3s}
-#ugBn.on{transform:none;opacity:1}
-#ugBn svg{flex:none;width:30px;height:30px;fill:#4BB6EE;fill-rule:evenodd;margin-top:1px}
-#ugBn b{display:block;font-size:14.5px;font-weight:600}
-#ugBn span{display:block;margin-top:2px;font-size:13.5px;line-height:1.25;color:#c7c7cc}
 #um .um-go.busy .um-lab{opacity:0!important;transition:opacity .15s}
 #um .um-sp{position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;border:2.5px solid rgba(255,255,255,.32);border-top-color:#fff;opacity:0;pointer-events:none;animation:ugspin .75s linear infinite}
 #um .um-go.busy .um-sp{opacity:1;transition:opacity .15s}
@@ -575,6 +574,8 @@ html,body{overscroll-behavior:none}
 #ug .ug-a,#ug .ug-x,#ug .ug-more{transition:transform .3s cubic-bezier(.4,0,.2,1),-webkit-backdrop-filter .45s ease,backdrop-filter .45s ease}
 #ug.fxon .ug-a,#ug.fxon .ug-x,#ug.fxon .ug-more{-webkit-backdrop-filter:none;backdrop-filter:none}
 #um.mf .um-back,#um.mf .um-var{-webkit-backdrop-filter:none;backdrop-filter:none}
+/* обводка только у «Отправить / Носить / Продать» чуть темнее */
+#ug .ug-a{--glass-rgb:168,170,180;--glass2-rgb:182,184,194;--glass2-a:.54;box-shadow:inset 0 0 0 .6px rgba(0,0,0,.22)}
 </style>
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
@@ -733,7 +734,7 @@ html,body{overscroll-behavior:none}
     <div class="bm-pre" id="bmPre">
       <div class="bm-grab"></div>
       <div class="bm-top">
-        <button class="bm-btn bm-x glass" id="bmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
+        <button class="bm-btn bm-x glass" id="bmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:26px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
         <div class="bm-pill" id="bmPill"></div>
         <label class="bm-btn bm-cnt glass"><span id="bmCntT">1x</span><select id="bmCnt" aria-label="Количество"><option value="1">1x</option><option value="2">2x</option><option value="5">5x</option><option value="10">10x</option></select></label>
         <div class="bm-menu" id="bmMenu" role="menu"></div>
@@ -762,7 +763,7 @@ html,body{overscroll-behavior:none}
 <div id="gm" aria-hidden="true">
   <div class="gm-dim"></div>
   <div class="gm-sheet" id="gmSheet">
-    <button class="gm-x glass" id="gmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
+    <button class="gm-x glass" id="gmClose" aria-label="Закрыть"><svg class="ico hs" style="--s:26px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></button>
     <div class="gm-body">
       <div class="gm-img" id="gmImg"></div>
       <div class="gm-t">Подарок Вам</div>
@@ -781,7 +782,7 @@ html,body{overscroll-behavior:none}
     <div class="um-top" id="umTop">
       <div class="um-tint"><canvas class="um-pat" id="umPat"></canvas></div>
       <span class="um-xc glass" id="umXc"></span>
-      <span class="um-xg" id="umXg"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></span>
+      <span class="um-xg" id="umXg"><svg class="ico hs" style="--s:26px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></span>
        <button class="um-back glass" id="umBack" aria-label="Назад"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" width="24" height="24" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg></button>
       <div class="um-model" id="umModel"></div>
       <div class="um-glow" id="umGl"></div><canvas class="um-fx" id="umFx"></canvas>
@@ -827,7 +828,6 @@ html,body{overscroll-behavior:none}
   </div>
 </div>
 <canvas id="ugConf"></canvas>
-<div id="ugBn"><svg viewBox="0 0 512 512"><use href="#i-diamond"/></svg><div><b>Подарок стал коллекционным</b><span>Вы получили уникальный номер, модель, фон и символ для вашего подарка.</span></div></div>
 <div id="toast"></div>
 <script>
 /* Анимация подарка: Lottie (.json с api.changes.tg), играет один раз, повтор по нажатию.
@@ -1654,18 +1654,48 @@ const MYK='myGifts',SOLDK='soldMap';
 let MYGIFTS=[],SOLDMAP={};
 try{MYGIFTS=JSON.parse(store.get(MYK,'[]'))||[];SOLDMAP=JSON.parse(store.get(SOLDK,'{}'))||{}}catch(e){}
 const shortN=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'K':String(n);
+/* карточка улучшенного подарка: фон, узор, модель и плашка с номером */
+const PG_POS=[[37,7,16],[63,7,16],[21,16,17],[79,16,17],[34,28,19],[66,28,19],[9,42,17],[24,42,18],[76,42,18],[91,42,17],[34,57,19],[66,57,19],[21,67,17],[79,67,17],[37,78,16],[63,78,16],[50,94,16]];
+const PG_IMG={},PG_RO=window.ResizeObserver?new ResizeObserver(es=>es.forEach(e=>pgDraw(e.target))):null;
+const pgCol=v=>/^#[0-9a-f]{3,8}$/i.test(String(v||''))?v:null;
+function pgShade(c,k){const m=/^#([0-9a-f]{6})$/i.exec(String(c||''));if(!m)return null;const n=parseInt(m[1],16),f=v=>Math.round(v*k);return '#'+[f(n>>16&255),f(n>>8&255),f(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('')}
+function pgLoad(u){return PG_IMG[u]||(PG_IMG[u]=new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=u}))}
+function pgDraw(cv){
+  const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
+  const D=Math.min(window.devicePixelRatio||1,2),W=Math.round(w*D),H=Math.round(h*D);
+  if(cv.__W===W&&cv.__H===H)return;cv.__W=W;cv.__H=H;
+  pgLoad(cv.dataset.si).then(im=>{
+    if(!im||!cv.isConnected)return;
+    cv.width=W;cv.height=H;
+    const cx=cv.getContext('2d'),tc=document.createElement('canvas'),tx=tc.getContext('2d');
+    PG_POS.forEach(p=>{
+      const sz=Math.max(6,p[2]*w/125);tc.width=tc.height=Math.max(1,Math.round(sz*D));
+      tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(im,0,0,tc.width,tc.height);
+      tx.globalCompositeOperation='source-in';tx.fillStyle=cv.dataset.c||'#fff';tx.fillRect(0,0,tc.width,tc.height);
+      cx.globalAlpha=.3;cx.drawImage(tc,(p[0]/100*w-sz/2)*D,(p[1]/100*h-sz/2)*D);
+    });
+  });
+}
+function pgPaint(g){g.querySelectorAll('canvas.pu-pat').forEach(cv=>{if(PG_RO)PG_RO.observe(cv);pgDraw(cv)})}
+function pgUpg(x,i){
+  const d=x.upg,c=d.c||{},c1=pgCol(c.c1)||'#7b72ea',c2=pgCol(c.c2)||'#5b3fb8',c3=pgCol(c.c3)||'#ffffff',rb=pgShade(c2,.72)||'rgba(0,0,0,.3)',num='#'+d.n;
+  return '<div class="pg pgu" data-i="'+i+'" style="--pc1:'+c1+';--pc2:'+c2+'"><div class="pu-bg">'+(d.si?'<canvas class="pu-pat" data-si="'+d.si+'" data-c="'+c3+'"></canvas>':'')+'</div>'+
+    '<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="'+rb+'"/></svg><span'+(num.length>6?' style="font-size:8px"':'')+'>'+num+'</span></div>'+
+    (d.mi?'<img class="pi" src="'+d.mi+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
+}
 function renderMyGifts(){
   const g=$('#pGrid'),e=$('#pEmpty'),b=$('#mtabs button.on');if(!g||!e)return;
   const uniq=!!b&&b.dataset.m==='posts',list=uniq?[]:MYGIFTS;
   g.innerHTML=list.map((x,i)=>{
+    if(x.upg&&x.upg.c)return pgUpg(x,i);
     const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
     return '<div class="pg" data-i="'+i+'">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
       (x.image?'<img class="pi" src="'+x.image+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
   }).join('');
-  g.hidden=!list.length;e.hidden=list.length>0;
+  g.hidden=!list.length;e.hidden=list.length>0;try{pgPaint(g)}catch(_){}
   e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
   const ti=document.getElementById('mtIcons');
-  if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>x.image?'<img src="'+x.image+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
+  if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
   try{placeTab(document.getElementById('mtabs'))}catch(_){}
 }
 renderMyGifts();
@@ -2077,7 +2107,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   window.addEventListener('resize',()=>{try{if(gm.classList.contains('on'))shapeBtn($g('gmUp'))}catch(e){}});
   document.getElementById('pGrid').addEventListener('click',e=>{
     const el=e.target.closest('.pg');if(!el)return;
-    const x=MYGIFTS[+el.dataset.i];if(x)open(x);
+    const x=MYGIFTS[+el.dataset.i];if(!x)return;if(x.upg&&window.openUpgraded)openUpgraded(x);else open(x);
   });
   /* свайп вниз закрывает окно: оно едет за пальцем, при отпускании либо улетает вниз, либо возвращается */
   let sy=0,dy=0,t0=0,tr=false,sup=false;
@@ -2600,19 +2630,19 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const items=list.concat([fin]),col=document.createElement('div');col.className='ug-col';
     col.innerHTML=items.map(it=>'<div class="ug-it"><span>'+escH(it.n)+'</span><i class="ug-pc">'+String(it.p.toFixed(1)).replace('.',',')+'%</i></div>').join('');
     cell.classList.add('c');cell.innerHTML='';cell.appendChild(col);
-    col.animate([{transform:'translateY(0)'},{transform:'translateY('+(-(items.length-1)*ROW)+'px)'}],{duration:dur,delay:delay||0,easing:'cubic-bezier(.2,.8,.2,1)',fill:'both'});
+    col.animate([{transform:'translateY(0)'},{transform:'translateY('+(-(items.length-1)*ROW)+'px)'}],{duration:dur,delay:delay||0,easing:'cubic-bezier(.3,.35,.2,1)',fill:'both'});
   }
   function ugConfetti(){
     const cv=$u('ugConf'),D=Math.min(window.devicePixelRatio||1,2),w=innerWidth,h=innerHeight;
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);cv.style.display='block';
     const c=cv.getContext('2d');c.setTransform(D,0,0,D,0,0);
     const cols=['#2f9bff','#ff8a1f','#34c759','#c46cf0','#ff4f8b','#ffd60a'],P=[];
-    const tb=$u('ugTop').getBoundingClientRect(),y0=tb.top+tb.height*.82;
+    const tb=$u('ugTop').getBoundingClientRect(),y0=Math.min(h*.8,tb.top+tb.height+120);
     for(let side=0;side<2;side++)for(let i=0;i<70;i++){
       const dir=side?-1:1,a=rnd(-1.45,-.55),sp=rnd(520,1250);
-      P.push({x:side?w+6:-6,y:y0+rnd(-30,30),vx:dir*Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(2.4,4.6),c:pick1(cols),l:rnd(2.2,3.4),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:rnd(0,.25)});
+      P.push({x:side?w+6:-6,y:y0+rnd(-30,30),vx:dir*Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(4.2,7.4),c:pick1(cols),l:rnd(2.2,3.4),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:rnd(0,.25)});
     }
-    for(let i=0;i<34;i++){const a=rnd(-Math.PI*.9,-Math.PI*.1),sp=rnd(120,420);P.push({x:w/2+rnd(-60,60),y:tb.top+tb.height*.42,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(2.2,4.2),c:pick1(cols),l:rnd(1.8,2.8),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:.12+rnd(0,.2)})}
+    for(let i=0;i<34;i++){const a=rnd(-Math.PI*.9,-Math.PI*.1),sp=rnd(120,420);P.push({x:w/2+rnd(-60,60),y:Math.min(h*.8,tb.top+tb.height+80),vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(4,7),c:pick1(cols),l:rnd(1.8,2.8),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:.12+rnd(0,.2)})}
     const t0=performance.now();let last=t0;
     const step=now=>{
       const dt=Math.min(.04,(now-last)/1000);last=now;const t=(now-t0)/1000;c.clearRect(0,0,w,h);let alive=0;
@@ -2621,7 +2651,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         p.vy+=760*dt;p.vx*=1-1.5*dt;p.vy*=1-1.05*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.an+=p.va*dt;
         const k=1-(t-p.d)/p.l;if(k<=0||p.y>h+20)return;alive++;
         c.globalAlpha=Math.min(1,k*3);c.fillStyle=p.c;
-        if(p.st){c.save();c.translate(p.x,p.y);c.rotate(p.an);c.fillRect(-1.1,-4.2,2.2,8.4);c.restore()}
+        if(p.st){c.save();c.translate(p.x,p.y);c.rotate(p.an);c.fillRect(-2,-7,4,14);c.restore()}
         else{c.beginPath();c.arc(p.x,p.y,p.r,0,6.283);c.fill()}
       });
       if(alive&&UG.classList.contains('on'))ugCf=requestAnimationFrame(step);else{c.clearRect(0,0,w,h);cv.style.display='none';ugCf=0}
@@ -2754,8 +2784,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const c0={c1:cs.getPropertyValue('--um-c1').trim()||'#7b72ea',c2:cs.getPropertyValue('--um-c2').trim()||'#5b3fb8'};
     $u('ugSheet').querySelectorAll('.ug-t3').forEach(n=>n.remove());ugBgSet(c0);finBg=false;finPat=false;
     const num=1+Math.floor(Math.random()*Math.max(1000,(x.total||300000))),tot=Math.max(num+1,x.total||237393),iss=Math.min(tot,num+Math.floor(Math.random()*tot*.3));
-    $u('ugName').textContent=pk.gname;$u('ugNum').textContent='#'+spaced(num);$u('ugSub').textContent=pk.fm.n;
-    const pr=x.price||PRICE;
+    UG.querySelector('.ug-note').style.display='';$u('ugName').textContent=pk.gname;$u('ugNum').textContent='#'+spaced(num);$u('ugSub').textContent=pk.fm.n;
+    const pr=x.price||PRICE;pk.meta={iss:iss,tot:tot,pr:pr};
     $u('ugOwn').classList.remove('c');$u('ugOwn').innerHTML=(u.photo_url?'<span class="ug-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="ug-ava">'+escH((name[0]||'').toUpperCase())+'</span>')+'<span class="ug-own">'+escH(name)+'</span>';
     $u('ugAv').classList.remove('c');$u('ugAv').textContent=spaced(iss)+'/'+spaced(tot)+' выпущено';
     $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+(pr*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
@@ -2776,7 +2806,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     let lap3=shuf(S);
     for(let t=0;t<8&&S.length>2&&(lap3[0]===S[S.length-1]||lap3.every((o,q)=>o===S[q]));t++)lap3=shuf(S);
     if(S.length>1)lap3=lap3.slice(0,S.length-1);
-    const fin=pk.fImg?pk.fImg.src:(pk.fallbackSrc||first);
+    const fin=pk.fImg?pk.fImg.src:(pk.fallbackSrc||first);pk.fin=fin;
     const seq=S.concat(S,lap3,[{s:fin,j:pk.mj}]),N=seq.length,items=seq.slice().reverse();pk.F=0;
     const trk=$u('ugTrack');
     trk.innerHTML=items.map((o,q)=>'<div class="ug-i"'+(q===N-1?' style="transform:scale(1.12)"':'')+'>'+(o.s?'<img src="'+o.s+'" alt="">':pk.emoji)+'</div>').join('');
@@ -2883,7 +2913,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         if(window.giftAnim){const at=performance.now()+(L?T1-120:250);
           items.slice(0,Math.min(3,N)).forEach((o,q)=>{const el=trk.children[q];if(o.j&&el)ugLater(()=>giftAnim(el,o.j,q===0?{at,stop:true}:{once:true,at}),450+q*80)})}
         /* строки таблицы определяются чуть позже, чем выбор в шапке: фон (шапка выбирает его на 0.42·T), затем узор (+0.9 с), последней модель (карусель доезжает на T) */
-        const spB=T*.42+600,spS=Math.max(spB+300,T*.42+1400),spM=Math.max(spS+300,T+200);
+        const spB=T*.42+650+1300,spS=Math.max(spB+600,T*.42+900+1500),spM=Math.max(spS+600,T+1300);
         const dT=160;   /* таблица уже заполнена и к этому моменту проявилась; времена остановки не меняются */
         ugSpin($u('ugM'),pk.spl[0],pk.fm,spM-dT,dT);ugSpin($u('ugS'),pk.spl[1],pk.fs,spS-dT,dT);ugSpin($u('ugB'),pk.spl[2],pk.fb,spB-dT,dT);
         /* фон шапки следит за маской в центре: каждая новая — новый цвет; итоговая — финальный фон */
@@ -2959,18 +2989,49 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       if(pv)pv.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.7)'}],{duration:380,easing:'ease-out',fill:'forwards'}).onfinish=()=>{try{pv.__lot&&pv.__lot.pause()}catch(_){}}}
     ugLater(()=>{ugLock=false},700);ugLater(()=>UG.classList.remove('fxon'),900);
     ugConfetti();
-    const bn=$u('ugBn');bn.classList.add('on');ugLater(()=>bn.classList.remove('on'),4200);
-    x.upg={n:num,g:pk.gname,m:pk.fm.n,s:pk.fs.n,b:pk.fb.n};x.hid=true;
-    try{if(MYGIFTS.indexOf(x)>=0)store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
+    
+    x.upg={n:num,g:pk.gname,m:pk.fm.n,s:pk.fs.n,b:pk.fb.n,mp:pk.fm.p,sp:pk.fs.p,bp:pk.fb.p,iss:pk.meta&&pk.meta.iss,tot:pk.meta&&pk.meta.tot,pr:pk.meta&&pk.meta.pr,mi:pk.fin||null,mj:pk.mj||null,si:pk.sImg?pk.sImg.src:null,c:{c1:c.c1,c2:c.c2,c3:c.c3}};x.hid=true;
+    try{if(MYGIFTS.indexOf(x)>=0){store.set(MYK,JSON.stringify(MYGIFTS));renderMyGifts()}}catch(_){}
     const sk=$u('ugSkip');sk.dataset.done='1';ugSkipSwap(sk,'Добавить в профиль');
   }
+  /* окно уже улучшенного подарка (по нажатию на его карточку в профиле): те же окно и вид, но сразу с итоговыми значениями, без анимации улучшения */
+  window.openUpgraded=function(x){
+    const d=x&&x.upg;
+    if(!d||busy||upBusy||ugLock||ugClosing||UG.classList.contains('on')||um.classList.contains('on'))return;
+    window.__gmCur=x;
+    const top=$u('ugTop'),c=d.c||{c1:'#7b72ea',c2:'#5b3fb8',c3:'#ffffff'};
+    ugT.forEach(clearTimeout);ugT=[];
+    ugS.querySelectorAll('.ug-t3,.ug-ghost').forEach(n=>n.remove());
+    UG.classList.remove('morph','fxon');
+    ['--gk','--gt','--go','--gxo','--gxs','--gxa'].forEach(p=>UG.style.removeProperty(p));
+    ugS.style.clipPath='';ugS.style.webkitClipPath='';
+    ugBgSet(c);
+    $u('ugName').textContent=d.g||'Подарок';$u('ugNum').textContent='#'+spaced(d.n);$u('ugSub').textContent=d.m||'';
+    $u('ugOwn').classList.remove('c');$u('ugOwn').innerHTML=(u.photo_url?'<span class="ug-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="ug-ava">'+escH((name[0]||'').toUpperCase())+'</span>')+'<span class="ug-own">'+escH(name)+'</span>';
+    $u('ugAv').classList.remove('c');$u('ugAv').textContent=spaced(d.iss||0)+'/'+spaced(d.tot||0)+' выпущено';
+    $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+((d.pr||PRICE)*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
+    $u('ugLm').onclick=()=>toast('Подробнее: скоро');
+    const pc=p=>String((+p||0).toFixed(1)).replace('.',',')+'%';
+    [['ugM',d.m,d.mp],['ugS',d.s,d.sp],['ugB',d.b,d.bp]].forEach(r=>{const cc=$u(r[0]);cc.classList.add('c');cc.innerHTML='<div class="ug-it"><span>'+escH(r[1]||'—')+'</span><i class="ug-pc">'+pc(r[2])+'</i></div>'});
+    UG.querySelector('.ug-note').style.display=x.hid?'':'none';
+    const sk=$u('ugSkip');sk.textContent=x.hid?'Добавить в профиль':'Скрыть из профиля';sk.dataset.done=x.hid?'1':'2';
+    UG.classList.add('on');UG.setAttribute('aria-hidden','false');
+    const W=top.offsetWidth,iw=Math.round(W*.56),trk=$u('ugTrack');
+    trk.style.setProperty('--iw',iw+'px');trk.style.transform='translateX('+(W/2-iw/2)+'px)';
+    trk.innerHTML='<div class="ug-i" style="transform:scale(1.14)">'+(d.mi?'<img src="'+d.mi+'" alt="">':'🎁')+'</div>';
+    if(d.mj&&window.giftAnim)giftAnim(trk.children[0],d.mj,{stop:true});
+    ugShape();
+    try{shapeBtn(sk)}catch(_){}
+    const cv=$u('ugPat');try{cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}catch(_){}
+    requestAnimationFrame(()=>{(d.si?img(d.si):Promise.resolve(null)).then(im=>{if(UG.classList.contains('on'))drawPat2(cv,top,im,c.c3)})});
+  };
   /* закрытие как у остальных окон: окно уезжает вниз, затемнение гаснет; пока идёт анимация улучшения — закрыть нельзя */
   function ugClose(force){
     if(!UG.classList.contains('on')||ugClosing)return;
     if(ugLock&&!force)return;
     ugClosing=true;
     ugT.forEach(clearTimeout);ugT=[];clearTimeout(ugBg);cancelAnimationFrame(ugCf);cancelAnimationFrame(ugRaf);cancelAnimationFrame(ugMf);
-    $u('ugConf').style.display='none';$u('ugBn').classList.remove('on');
+    $u('ugConf').style.display='none';
     ugS.style.opacity='1';ugS.style.transition='transform .32s cubic-bezier(.4,0,1,1)';ugS.style.transform='translateY('+window.innerHeight+'px)';
     UG.classList.remove('on');UG.setAttribute('aria-hidden','true');
     setTimeout(()=>{UG.classList.remove('fxon');ugS.querySelectorAll('.ug-t3').forEach(n=>n.remove());ugS.style.clipPath='';ugS.style.webkitClipPath='';ugS.style.transition='';ugS.style.transform='';ugS.style.opacity='';upBusy=false;ugClosing=false;ugLock=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}$u('ugTrack').innerHTML='';ugS.querySelectorAll('.ug-ghost').forEach(n=>n.remove())},450);
@@ -3031,6 +3092,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     if(ugLock||ugClosing)return;
     const done=$u('ugSkip').dataset.done==='1',x=window.__gmCur;
     if(done&&x){x.hid=false;try{if(MYGIFTS.indexOf(x)>=0)store.set(MYK,JSON.stringify(MYGIFTS));renderMyGifts()}catch(_){}toast('Подарок добавлен в профиль')}
+    else if($u('ugSkip').dataset.done==='2'&&x){x.hid=true;try{if(MYGIFTS.indexOf(x)>=0)store.set(MYK,JSON.stringify(MYGIFTS));renderMyGifts()}catch(_){}toast('Подарок скрыт из профиля')}
     ugClose();
   };
   $u('ugMore').onclick=()=>toast('Ещё: скоро');
