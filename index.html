@@ -19,7 +19,7 @@
 --ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:12px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:51px;--set-r-multi:28px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;--ic-pf-qr:32px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:31px;                                            /* цветная плашка в профиле */
---hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:24px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
+--hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:25px;--ic-hdr-plus:28px;--ic-hdr-gift:30px;--ic-hdr-write:29px;--ic-hdr-qr:28px;
 --ic-gram:28px;--ic-profile:29px;--ic-buygift:27px;--ic-stars:26px;--ic-promo:29px;
 --ic-lang:29px;--ic-theme:24px;--ic-anim:27px;              /* профиль */
 --bg:#000;--card:#1c1c1d;--text:#fff;--hint:#9e9e9e;--accent:#4cb4e9;--gold:#ffc83d;--r:22px}
@@ -498,7 +498,7 @@ html,body{overscroll-behavior:none}
 #ug .ug-x{left:16px}#ug .ug-more{right:16px}
 #ug .ug-x:active,#ug .ug-more:active{transform:scale(1.1)}
 #ug .ug-x svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
-#ug .ug-more svg{width:34px;height:34px;fill:#fff;fill-rule:evenodd}
+#ug .ug-more svg{width:35px;height:35px;fill:#fff;fill-rule:evenodd}
 #ug .ug-car{position:relative;z-index:1;width:calc(100% + 32px);margin:0 -16px;height:150px;overflow:hidden}
 #ug .ug-track{position:absolute;left:0;top:0;height:100%;display:flex;will-change:transform}
 #ug .ug-i{flex:none;width:var(--iw,150px);height:150px;display:flex;align-items:center;justify-content:center;font-size:96px}
@@ -575,7 +575,24 @@ html,body{overscroll-behavior:none}
 #ug.fxon .ug-a,#ug.fxon .ug-x,#ug.fxon .ug-more{-webkit-backdrop-filter:none;backdrop-filter:none}
 #um.mf .um-back,#um.mf .um-var{-webkit-backdrop-filter:none;backdrop-filter:none}
 /* обводка только у «Отправить / Носить / Продать» чуть темнее */
-#ug .ug-a{--glass-rgb:168,170,180;--glass2-rgb:182,184,194;--glass2-a:.54;box-shadow:inset 0 0 0 .6px rgba(0,0,0,.22)}
+#ug .ug-a{--glass-rgb:176,178,188;--glass2-rgb:188,190,200;--glass2-a:.57;box-shadow:inset 0 0 0 .6px rgba(0,0,0,.18)}
+
+/* окно улучшенного подарка открывается и закрывается как окно подарка */
+#ug{transition:visibility 0s linear .6s}
+#ug .ug-dim{transition:opacity .45s}
+#ug .ug-sheet{opacity:1;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1)}
+#ug.on .ug-sheet{transform:none}
+/* таблица — те же размеры, цвета и шрифты, что в окне подарка */
+#ug .ug-tbl{margin:20px 16px 0;border:1px solid #343437;border-radius:19px;text-align:left}
+#ug .ug-r{height:40px;font-size:15px;font-weight:400}
+#ug .ug-r+.ug-r{border-top:1px solid #343437}
+#ug .ug-k{width:102px;padding:0 10px 0 12px;background:#2c2c2e;font-weight:500;border-right:0}
+#ug .ug-v{padding:0 12px;gap:7px;border-left:1px solid #343437}
+#ug .ug-v.c{padding:0}
+#ug .ug-it{height:39px;padding:0 12px;gap:7px}
+#ug .ug-pc{flex:0 1 auto;min-width:0;display:block;height:20px;padding:0 8px;border-radius:10px;background:#202b31;color:#4bb6f0;font-size:12px;font-weight:500;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+#ug .ug-ava{width:22px;height:22px;font-size:11px;font-weight:600;color:#fff}
+#ug .ug-own{color:var(--accent);font-weight:500;font-size:16px}
 </style>
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
@@ -783,7 +800,7 @@ html,body{overscroll-behavior:none}
       <div class="um-tint"><canvas class="um-pat" id="umPat"></canvas></div>
       <span class="um-xc glass" id="umXc"></span>
       <span class="um-xg" id="umXg"><svg class="ico hs" style="--s:26px" viewBox="0 0 24 24" stroke-width="2.4"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg></span>
-       <button class="um-back glass" id="umBack" aria-label="Назад"><svg class="ico hs" style="--s:24px" viewBox="0 0 24 24" width="24" height="24" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg></button>
+       <button class="um-back glass" id="umBack" aria-label="Назад"><svg class="ico hs" style="--s:25px" viewBox="0 0 24 24" width="25" height="25" stroke-width="2.2"><path d="M15 4.5L7.5 12 15 19.5"/></svg></button>
       <div class="um-model" id="umModel"></div>
       <div class="um-glow" id="umGl"></div><canvas class="um-fx" id="umFx"></canvas>
       <div class="um-t">Улучшение подарка</div>
@@ -2625,7 +2642,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   }
   if(window.ResizeObserver)new ResizeObserver(ugShape).observe(ugS);
   /* значение с прокруткой: колонка названий едет вверх и замедляется на итоговом */
-  const ROW=37;
+  const ROW=39;
   function ugSpin(cell,list,fin,dur,delay){
     const items=list.concat([fin]),col=document.createElement('div');col.className='ug-col';
     col.innerHTML=items.map(it=>'<div class="ug-it"><span>'+escH(it.n)+'</span><i class="ug-pc">'+String(it.p.toFixed(1)).replace('.',',')+'%</i></div>').join('');
@@ -3032,11 +3049,11 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     ugClosing=true;
     ugT.forEach(clearTimeout);ugT=[];clearTimeout(ugBg);cancelAnimationFrame(ugCf);cancelAnimationFrame(ugRaf);cancelAnimationFrame(ugMf);
     $u('ugConf').style.display='none';
-    ugS.style.opacity='1';ugS.style.transition='transform .32s cubic-bezier(.4,0,1,1)';ugS.style.transform='translateY('+window.innerHeight+'px)';
+    ugS.style.transition='';ugS.style.transform='';ugS.style.opacity='';
     UG.classList.remove('on');UG.setAttribute('aria-hidden','true');
-    setTimeout(()=>{UG.classList.remove('fxon');ugS.querySelectorAll('.ug-t3').forEach(n=>n.remove());ugS.style.clipPath='';ugS.style.webkitClipPath='';ugS.style.transition='';ugS.style.transform='';ugS.style.opacity='';upBusy=false;ugClosing=false;ugLock=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}$u('ugTrack').innerHTML='';ugS.querySelectorAll('.ug-ghost').forEach(n=>n.remove())},450);
+    setTimeout(()=>{UG.classList.remove('fxon');ugS.querySelectorAll('.ug-t3').forEach(n=>n.remove());ugS.style.clipPath='';ugS.style.webkitClipPath='';upBusy=false;ugClosing=false;ugLock=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}$u('ugTrack').innerHTML='';ugS.querySelectorAll('.ug-ghost').forEach(n=>n.remove())},650);
   }
-  $u('ugX').onclick=()=>ugClose();UG.querySelector('.ug-dim').onclick=()=>{};
+  $u('ugX').onclick=()=>ugClose();UG.querySelector('.ug-dim').onclick=()=>ugClose();
   (function(){
     let sy=0,dy=0,t0=0,tr=false,sup=false,base=0;
     /* текущий сдвиг окна (если оно ещё возвращается на место — подхватываем с того места, где оно сейчас) */
