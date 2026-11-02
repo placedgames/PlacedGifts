@@ -2702,7 +2702,6 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       const dt=Math.min(.05,(now-last)/1000);last=now;
       const k=Math.min(1,(now-t0)/CHG);
       c.clearRect(0,0,w,h);
-      aO+=dt*(3+8*k);while(aO>=1){aO--;spawnO()}
       for(let i=os.length-1;i>=0;i--){
         const o=os[i],age=now-o.b;if(age>o.l){os.splice(i,1);continue}
         const u=age/o.l,al=Math.sin(u*Math.PI)*o.pk,r=o.r*(.7+.5*u);
@@ -2770,14 +2769,14 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const trk=$u('ugTrack');
     trk.innerHTML=items.map((o,q)=>'<div class="ug-i"'+(q===N-1?' style="transform:scale(1.12)"':'')+'>'+(o.s?'<img src="'+o.s+'" alt="">':pk.emoji)+'</div>').join('');
     /* скорость как в оригинале: ~15 моделей в секунду ровным ходом, затем торможение на последних пяти */
-    const STEPS=N-1,V=15,W=top.offsetWidth,iw=Math.round(W*.56),tx1=W/2-iw/2,tx0=tx1-STEPS*iw,D=STEPS*iw;
+    const STEPS=N-1,V=14,W=top.offsetWidth,iw=Math.round(W*.56),tx1=W/2-iw/2,tx0=tx1-STEPS*iw,D=STEPS*iw;
     const L=STEPS>=8?Math.round(STEPS*.84):0,T1=L?L/V*1000:0,T2=L?(STEPS-L)*1.95/V*1000:900,T=T1+T2;
     trk.style.setProperty('--iw',iw+'px');trk.style.transform='translateX('+tx0+'px)';
     /* размер каждой модели зависит от расстояния до центра: увеличение к центру и уменьшение после него; задаётся сразу, ещё до старта, и для всех моделей */
     /* размер модели зависит от расстояния до центра: растёт к центру и уменьшается после него.
        Считается заранее по траектории карусели и играется отдельной анимацией transform на композиторе вместе с лентой,
        поэтому не отстаёт, даже когда основной поток занят */
-    const scF=d=>Math.abs(d)>2.6?.68:.68+.32*Math.exp(-d*d/.3);
+    const scF=d=>Math.abs(d)>2.6?.82:.82+.18*Math.exp(-d*d/.3);
     for(let z=0;z<N;z++){const el=trk.children[z];if(el)el.style.transform='scale('+(scF((tx0+z*iw+iw/2-W/2)/iw)*(z===N-1?1.12:1)).toFixed(3)+')'}
     try{items.slice(0,3).forEach(o=>o&&o.j&&window.giftAnimWarm&&giftAnimWarm(o.j))}catch(_){}
     /* окно открывается как окно предпросмотра: контур растёт от высоты окна улучшения, содержимое перетекает, кнопка остаётся на месте */
@@ -2862,7 +2861,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         /* фон один на всю прокрутку: примерно на середине он плавно становится итоговым, чуть позже так же определяется узор */
         const nc=Math.max(1,cl.length-1);let lastK=-1;
         /* до выбора фон и узор меняются каждые две модели (узор без анимации); итоговый фон выбирается на середине, итоговый узор — чуть позже фона и только он с анимацией */
-        const ta=performance.now(),tBg=T*.5,tPat=T*.5+380;
+        const ta=performance.now(),tBg=T*.42,tPat=T*.42+900;
         const tick=()=>{
           if(!ugX||!UG.classList.contains('on'))return;
           let tx=tx0;try{const m=getComputedStyle(trk).transform;if(m&&m!=='none')tx=new DOMMatrix(m).m41}catch(_){}
