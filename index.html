@@ -598,6 +598,7 @@ html,body{overscroll-behavior:none}
 
 #ug .ug-r.ug-c{display:block;height:40px;padding:0 12px;line-height:39px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
 #gm .gm-c{white-space:nowrap;cursor:pointer}
+#gm #gmCm span{white-space:pre-wrap;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
 #gm .gm-c span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* если содержимое не умещается в окно, прокручивается таблица, а шапка и кнопка остаются на месте */
 #ug .ug-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:none}
@@ -789,7 +790,7 @@ html,body{overscroll-behavior:none}
           <button class="bm-view" id="bmView">Посмотреть</button>
         </div>
       </div>
-      <label class="bm-msg glass"><input id="bmMsg" type="text" placeholder="Введите сообщение (необязательно)" maxlength="26" autocomplete="off"></label>
+      <label class="bm-msg glass"><input id="bmMsg" type="text" placeholder="Введите сообщение (необязательно)" maxlength="48" autocomplete="off"></label>
     </div>
     <div class="bm-bot">
       <div class="bm-hide" id="bmHide"><span>Скрыть моё имя</span><i class="bm-sw"></i></div>
@@ -2085,7 +2086,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       (x.msg?'<div class="gm-r gm-c" id="gmCm"><span>'+esc(x.msg)+'</span></div>':'');
     $g('gmTbl').style.marginTop=x.anon?'':'23px';
     const sl=$g('gmTbl').querySelector('.gm-sell');if(sl)sl.onclick=()=>sellGift(x,price);
-    {const cm=$g('gmTbl').querySelector('#gmCm');if(cm)cm.onclick=()=>askDelComment(x,()=>{if(cm.parentNode)cm.remove()})}
+    {const cm=$g('gmTbl').querySelector('#gmCm');if(cm&&x.upg)cm.onclick=()=>askDelComment(x,()=>{if(cm.parentNode)cm.remove()})}
     gm.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     document.body.classList.add('bmopen');try{SP.hold(4,true)}catch(e){}
     sh.style.transform='';sh.classList.remove('drag');
@@ -2366,7 +2367,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     return pr;
   }
   /* расположение как в Telegram: [x в % ширины, y в px от верха окна, размер px, прозрачность] */
-  const POS=[[36.8,17,17,.3],[63,17,18,.3],[50,29,23,.3],[20.8,39,16,.3],[79,39,16,.3],[33.5,68,20,.3],[66.5,68,18,.3],[9,103,19,.2],[23.7,103,17,.3],[76,103,18,.3],[91,103,20,.2],[33.6,139,23,.3],[66.4,139,21,.3],[20.8,168,20,.3],[79,168,20,.3],[50,176,18,.3],[50,229,17,.3]];
+  const POS=[[36.8,17,17,.3],[63,17,18,.3],[50,29,23,.3],[20.8,39,16,.3],[79,39,16,.3],[33.5,68,20,.3],[66.5,68,18,.3],[9,103,19,.2],[23.7,103,17,.3],[76,103,18,.3],[91,103,20,.2],[33.6,139,23,.3],[66.4,139,21,.3],[20.8,168,20,.3],[79,168,20,.3],[50,176,18,.3],[35,205,16,.3],[65.8,205,16,.3]];
   function drawPattern(sym,color){
     const cv=$u('umPat'),top=$u('umTop'),w=top.offsetWidth,h=top.offsetHeight,D=Math.min(window.devicePixelRatio||1,2);
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);
@@ -2377,7 +2378,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       const s=p[2]+1;tc.width=tc.height=Math.round(s*D);
       tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(sym,0,0,tc.width,tc.height);
       tx.globalCompositeOperation='source-in';tx.fillStyle=color||'#ffffff';tx.fillRect(0,0,tc.width,tc.height);
-      cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]+5-s/2)*D);
+      cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]+7-s/2)*D);
     });
     cx.globalAlpha=1;
   }
@@ -2682,7 +2683,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);
     const cx=cv.getContext('2d');cx.clearRect(0,0,cv.width,cv.height);if(!sym)return;
     const tc=document.createElement('canvas'),tx=tc.getContext('2d');
-    POS.forEach(p=>{const s=p[2]+1;tc.width=tc.height=Math.round(s*D);tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(sym,0,0,tc.width,tc.height);tx.globalCompositeOperation='source-in';tx.fillStyle=color||'#fff';tx.fillRect(0,0,tc.width,tc.height);cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]+5-s/2)*D)});
+    POS.forEach(p=>{const s=p[2]+1;tc.width=tc.height=Math.round(s*D);tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(sym,0,0,tc.width,tc.height);tx.globalCompositeOperation='source-in';tx.fillStyle=color||'#fff';tx.fillRect(0,0,tc.width,tc.height);cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]+7-s/2)*D)});
     cx.globalAlpha=1;
   }
   function ugShape(){
