@@ -562,7 +562,6 @@ html,body{overscroll-behavior:none}
 #um.mf .um-feat,#um.mf .um-chk{opacity:var(--uf,1)!important}
 #um.mf .um-upw{opacity:0!important}
 #ug .ug-sp{display:block;width:24px;height:24px;border-radius:50%;border:2.5px solid rgba(255,255,255,.32);border-top-color:#fff;animation:ugspin .75s linear infinite}
-#ug .ug-i>img,#ug .ug-i>.ga{transform:scale(var(--s,1))}
 #ug .ug-x,#ug .ug-more,#ug .ug-a{--glass-rgb:196,198,206;--glass-strong:.3;--glass2-rgb:206,208,216;--glass2-a:.62;background:rgba(255,255,255,.23);box-shadow:inset 0 0 0 .6px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
 
 /* ===== улучшение: «зарядка» маски, плавная смена фона, слайд текста кнопки ===== */
@@ -2775,8 +2774,11 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const L=STEPS>=8?Math.round(STEPS*.84):0,T1=L?L/V*1000:0,T2=L?(STEPS-L)*1.95/V*1000:900,T=T1+T2;
     trk.style.setProperty('--iw',iw+'px');trk.style.transform='translateX('+tx0+'px)';
     /* размер каждой модели зависит от расстояния до центра: увеличение к центру и уменьшение после него; задаётся сразу, ещё до старта, и для всех моделей */
-    const setS=tx=>{for(let z=0;z<N;z++){const el=trk.children[z];if(!el)continue;const d=(tx+z*iw+iw/2-W/2)/iw,v=Math.abs(d)>2.6?.68:.68+.32*Math.exp(-d*d/.3),r=Math.round(v*1000)/1000;if(el.__sv!==r){el.__sv=r;el.style.setProperty('--s',r)}}};
-    setS(tx0);
+    /* размер модели зависит от расстояния до центра: растёт к центру и уменьшается после него.
+       Считается заранее по траектории карусели и играется отдельной анимацией transform на композиторе вместе с лентой,
+       поэтому не отстаёт, даже когда основной поток занят */
+    const scF=d=>Math.abs(d)>2.6?.68:.68+.32*Math.exp(-d*d/.3);
+    for(let z=0;z<N;z++){const el=trk.children[z];if(el)el.style.transform='scale('+(scF((tx0+z*iw+iw/2-W/2)/iw)*(z===N-1?1.12:1)).toFixed(3)+')'}
     try{items.slice(0,3).forEach(o=>o&&o.j&&window.giftAnimWarm&&giftAnimWarm(o.j))}catch(_){}
     /* окно открывается как окно предпросмотра: контур растёт от высоты окна улучшения, содержимое перетекает, кнопка остаётся на месте */
     const uh=sh.getBoundingClientRect().height;
@@ -2828,7 +2830,29 @@ document.getElementById('svGift').onclick=()=>go('gifts');
           {transform:'translateX('+tx0+'px)',easing:'cubic-bezier(.2,.6,.25,1)'},
           {transform:'translateX('+tx1+'px)'}
         ],{duration:T,fill:'forwards'});
-        trk.children[N-1].animate([{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:420,easing:'cubic-bezier(.3,.8,.3,1)',fill:'forwards'});
+        {
+          const bA=bez(.2,.6,.25,1),bB=bez(.2,.39,.25,1),bE=bez(.3,.8,.3,1),base=tx0+L*iw;
+          const posAt=t=>L?(t<=T1?tx0+L*iw*(t/T1):base+(tx1-base)*bB(Math.min(1,(t-T1)/T2))):tx0+(tx1-tx0)*bA(Math.min(1,t/T));
+          const STEP=1000/60;
+          for(let z=0;z<N;z++){
+            const el=trk.children[z];if(!el)continue;
+            const kf=[],first=z===N-1;let prevIn=false,lastT=-1;
+            const val=t=>{const d=(posAt(t)+z*iw+iw/2-W/2)/iw;return scF(d)*(first?(t>=420?1:1.12-.12*bE(t/420)):1)};
+            const add=t=>{kf.push({offset:Math.min(1,t/T),transform:'scale('+val(t).toFixed(3)+')'});lastT=t};
+            for(let t=0;t<=T+STEP;t+=STEP){
+              const tt=Math.min(t,T),d=(posAt(tt)+z*iw+iw/2-W/2)/iw,inn=Math.abs(d)<=2.6||(first&&tt<=440);
+              if(inn){if(!prevIn&&lastT<tt-STEP&&tt>0)add(Math.max(0,tt-STEP));add(tt);prevIn=true}
+              else if(prevIn){add(tt);prevIn=false}
+              if(tt>=T)break;
+            }
+            if(kf.length<2)continue;
+            if(kf[0].offset>0)kf.unshift({offset:0,transform:kf[0].transform});
+            if(kf[kf.length-1].offset<1)kf.push({offset:1,transform:kf[kf.length-1].transform});
+            /* offset'ы должны строго не убывать */
+            for(let q2=1;q2<kf.length;q2++)if(kf[q2].offset<kf[q2-1].offset)kf[q2].offset=kf[q2-1].offset;
+            try{el.animate(kf,{duration:T,fill:'forwards',easing:'linear'})}catch(_){}
+          }
+        }
         /* анимированы только последние 3, старт у всех в один момент; у итоговой — повтор по нажатию */
         if(window.giftAnim){const at=performance.now()+(L?T1-120:250);
           items.slice(0,Math.min(3,N)).forEach((o,q)=>{const el=trk.children[q];if(o.j&&el)giftAnim(el,o.j,q===0?{at,stop:true}:{once:true,at})})}
@@ -2837,15 +2861,14 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         const cl=pk.cols,fc=cl[cl.length-1];
         /* фон один на всю прокрутку: примерно на середине он плавно становится итоговым, чуть позже так же определяется узор */
         const nc=Math.max(1,cl.length-1);let lastK=-1;
-        /* до выбора фон и узор меняются каждые две модели (узор без анимации); итоговый фон выбирается чуть позже середины, итоговый узор — чуть позже фона и только он с анимацией */
-        const ta=performance.now(),tBg=T*.55,tPat=T*.55+450;
+        /* до выбора фон и узор меняются каждые две модели (узор без анимации); итоговый фон выбирается на середине, итоговый узор — чуть позже фона и только он с анимацией */
+        const ta=performance.now(),tBg=T*.5,tPat=T*.5+380;
         const tick=()=>{
           if(!ugX||!UG.classList.contains('on'))return;
           let tx=tx0;try{const m=getComputedStyle(trk).transform;if(m&&m!=='none')tx=new DOMMatrix(m).m41}catch(_){}
           const q=Math.max(0,Math.min(N-1,Math.round((tx1-tx)/iw)));
-          setS(tx);
           /* фон и узор меняются в самом начале и затем каждые две модели; на итоговой — финальные */
-          {const el=performance.now()-ta,kk=(N-1-q)>>1,ch=kk!==lastK;if(ch)lastK=kk;
+          {const el=performance.now()-ta,kk=Math.floor((N-1-q)/3),ch=kk!==lastK;if(ch)lastK=kk;
             const c=cl[kk%nc],sy=(pk.sImgs&&pk.sImgs.length)?pk.sImgs[kk%pk.sImgs.length]:pk.sImg;
             if(!finBg){if(el>=tBg){finBg=true;ugBgSlide(fc,650)}else if(ch)ugBgSlide(c,520)}
             if(!finPat){if(el>=tPat){finPat=true;ugPatSwap(pk.sImg,fc.c3,true)}else if(ch)ugPatSwap(sy,c.c3,false)}}
@@ -2853,7 +2876,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
             const d=(tx+z*iw+iw/2-W/2)/iw,el=trk.children[z];if(!el)continue;
             if(el.__lot&&!el.__stp&&d>1.25){el.__stp=1;try{el.__lot.pause()}catch(_){}}
           }
-          if(ugX.playState!=='finished')ugRaf=requestAnimationFrame(tick);else setS(tx1);
+          if(ugX.playState!=='finished')ugRaf=requestAnimationFrame(tick);
         };
         ugRaf=requestAnimationFrame(tick);
         ugLater(()=>ugDone(x,pk,num,cl[cl.length-1]),Math.max(600,T-200));
