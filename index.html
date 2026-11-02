@@ -2698,9 +2698,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const tb=$u('ugTop').getBoundingClientRect(),y0=Math.min(h*.8,tb.top+tb.height+120);
     for(let side=0;side<2;side++)for(let i=0;i<70;i++){
       const dir=side?-1:1,a=rnd(-1.45,-.55),sp=rnd(520,1250);
-      P.push({x:side?w+6:-6,y:y0+rnd(-30,30),vx:dir*Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(4.2,7.4),c:pick1(cols),l:rnd(2.2,3.4),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:rnd(0,.25)});
+      P.push({x:side?w+6:-6,y:y0+rnd(-30,30),vx:dir*Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(3.8,6.8),c:pick1(cols),l:rnd(2.2,3.4),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:rnd(0,.25)});
     }
-    for(let i=0;i<34;i++){const a=rnd(-Math.PI*.9,-Math.PI*.1),sp=rnd(120,420);P.push({x:w/2+rnd(-60,60),y:Math.min(h*.8,tb.top+tb.height+80),vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(4,7),c:pick1(cols),l:rnd(1.8,2.8),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:.12+rnd(0,.2)})}
+    for(let i=0;i<34;i++){const a=rnd(-Math.PI*.9,-Math.PI*.1),sp=rnd(120,420);P.push({x:w/2+rnd(-60,60),y:Math.min(h*.8,tb.top+tb.height+80),vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(3.6,6.4),c:pick1(cols),l:rnd(1.8,2.8),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:.12+rnd(0,.2)})}
     const t0=performance.now();let last=t0;
     const step=now=>{
       const dt=Math.min(.04,(now-last)/1000);last=now;const t=(now-t0)/1000;c.clearRect(0,0,w,h);let alive=0;
@@ -2709,7 +2709,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         p.vy+=760*dt;p.vx*=1-1.5*dt;p.vy*=1-1.05*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.an+=p.va*dt;
         const k=1-(t-p.d)/p.l;if(k<=0||p.y>h+20)return;alive++;
         c.globalAlpha=Math.min(1,k*3);c.fillStyle=p.c;
-        if(p.st){c.save();c.translate(p.x,p.y);c.rotate(p.an);c.fillRect(-2,-7,4,14);c.restore()}
+        if(p.st){c.save();c.translate(p.x,p.y);c.rotate(p.an);c.fillRect(-1.8,-6.3,3.6,12.6);c.restore()}
         else{c.beginPath();c.arc(p.x,p.y,p.r,0,6.283);c.fill()}
       });
       if(alive&&UG.classList.contains('on'))ugCf=requestAnimationFrame(step);else{c.clearRect(0,0,w,h);cv.style.display='none';ugCf=0}
@@ -3083,7 +3083,16 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     
     x.upg={k:pk.ck||'',nt:pk.note||'',n:num,g:pk.gname,m:pk.fm.n,s:pk.fs.n,b:pk.fb.n,mp:pk.fm.p,sp:pk.fs.p,bp:pk.fb.p,iss:pk.meta&&pk.meta.iss,tot:pk.meta&&pk.meta.tot,pr:pk.meta&&pk.meta.pr,mi:pk.fin||null,mj:pk.mj||null,si:pk.sImg?pk.sImg.src:null,c:{c1:c.c1,c2:c.c2,c3:c.c3}};
     /* сохранение и перерисовка всей сетки профиля тяжёлые (чем больше подарков, тем дольше), поэтому не в момент финала анимации, а чуть позже */
-    setTimeout(()=>{try{if(MYGIFTS.indexOf(x)>=0){store.set(MYK,JSON.stringify(MYGIFTS));renderMyGifts()}}catch(_){}},2200);
+    /* точечное обновление одной карточки (а не всей сетки) и только после того, как конфетти осело */
+    setTimeout(()=>{const run=()=>{try{
+      const i=MYGIFTS.indexOf(x);if(i<0)return;
+      store.set(MYK,JSON.stringify(MYGIFTS));
+      const g=document.getElementById('pGrid'),el=g&&g.querySelector('.pg[data-i="'+i+'"]');
+      if(el&&x.upg&&x.upg.c){const t=document.createElement('div');t.innerHTML=pgUpg(x,i);const nn=t.firstChild;el.replaceWith(nn);pgPaint(nn)}
+      const ti=document.getElementById('mtIcons');
+      if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(q=>(q.upg&&q.upg.mi)||q.image?'<img src="'+((q.upg&&q.upg.mi)||q.image)+'" alt="">':'<em>'+(q.emoji||'🎁')+'</em>').join('');
+    }catch(_){}};
+    if(window.requestIdleCallback)requestIdleCallback(run,{timeout:3000});else run()},3800);
     const sk=$u('ugSkip');sk.dataset.done=x.hid?'1':'0';ugSkipSwap(sk,x.hid?'Добавить в профиль':'ОК');
   }
   /* окно уже улучшенного подарка (по нажатию на его карточку в профиле): те же окно и вид, но сразу с итоговыми значениями, без анимации улучшения */
