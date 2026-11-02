@@ -484,7 +484,7 @@ html,body{overscroll-behavior:none}
 #ug.on{visibility:visible;pointer-events:auto;transition-delay:0s}
 #ug .ug-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .35s}
 #ug.on .ug-dim{opacity:1}
-#ug .ug-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;isolation:isolate;opacity:0;transform:translateY(26px) scale(.97);transition:opacity .3s ease,transform .5s cubic-bezier(.25,.8,.25,1)}
+#ug .ug-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 8px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;isolation:isolate;opacity:0;transform:translateY(26px) scale(.97);transition:opacity .3s ease,transform .5s cubic-bezier(.25,.8,.25,1)}
 #ug.on .ug-sheet{opacity:1;transform:none}
 #ug .ug-top{position:relative;flex:none;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:16px 16px 16px}
 #ug .ug-t1,#ug .ug-t2{position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 50% 36%,var(--c1,#7b72ea) 0%,var(--c2,#5b3fb8) 100%)}
@@ -594,7 +594,9 @@ html,body{overscroll-behavior:none}
 #ug .ug-ava{width:22px;height:22px;font-size:11px;font-weight:600;color:#fff}
 #ug .ug-own{color:var(--accent);font-weight:500;font-size:16px}
 
-#ug .ug-r.ug-c{height:auto;min-height:40px;padding:10px 12px;line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;align-items:center}
+#ug .ug-r.ug-c{display:block;height:40px;padding:0 12px;line-height:39px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+#gm .gm-c{white-space:nowrap;cursor:pointer}
+#gm .gm-c span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* если содержимое не умещается в окно, прокручивается таблица, а шапка и кнопка остаются на месте */
 #ug .ug-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:none}
 #ug .ug-scroll::-webkit-scrollbar{display:none}
@@ -2058,9 +2060,10 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       row('Стоимость',price?'<span class="gm-cost"><span>'+fmt(price)+'</span><img src="'+STAR+'" alt=""></span><button type="button" class="gm-pill gm-sell">'+sellTxt(price)+'</button>':'—')+
       row('Наличие',total?'1 из '+total:'—')+
       row('Статус','Неуникальный')+
-      (x.msg?'<div class="gm-r gm-c">'+esc(x.msg)+'</div>':'');
+      (x.msg?'<div class="gm-r gm-c" id="gmCm"><span>'+esc(x.msg)+'</span></div>':'');
     $g('gmTbl').style.marginTop=x.anon?'':'23px';
     const sl=$g('gmTbl').querySelector('.gm-sell');if(sl)sl.onclick=()=>sellGift(x,price);
+    {const cm=$g('gmTbl').querySelector('#gmCm');if(cm)cm.onclick=()=>askDelComment(x,()=>{if(cm.parentNode)cm.remove()})}
     gm.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     document.body.classList.add('bmopen');try{SP.hold(4,true)}catch(e){}
     sh.style.transform='';sh.classList.remove('drag');
@@ -2079,6 +2082,21 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     gm.classList.remove('on','pre');gm.setAttribute('aria-hidden','true');
     setTimeout(()=>{if(!gm.classList.contains('on'))gm.style.height=''},650);
   }
+  /* попап «Удалить комментарий?»: текст комментария и для кого он отправлен */
+  window.askDelComment=function(x,done){
+    const t=String((x&&x.msg)||'');if(!t)return;
+    const msg='«'+t+'»\n\nДля: '+name;
+    const fin=ok=>{
+      if(!ok)return;x.msg='';
+      try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
+      try{const m=SVMSGS.find(m=>m.key===x.key&&m.t===x.t);if(m){m.msg='';store.set(SVK,JSON.stringify(SVMSGS));renderSaved(0)}}catch(_){}
+      if(done)done();
+    };
+    if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){
+      try{tg.showPopup({title:'Удалить комментарий?',message:msg,buttons:[{id:'cancel',type:'default',text:'Отмена'},{id:'del',type:'destructive',text:'Удалить'}]},id=>fin(id==='del'));return}catch(e){}
+    }
+    fin(confirm('Удалить комментарий?\n\n'+msg));
+  };
   window.openGift=open;window.closeGift=close;
   /* оптимизация: данные для окна улучшения начинают грузиться уже при касании карточки и в простое после запуска */
   document.addEventListener('pointerdown',e=>{try{
@@ -2811,6 +2829,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const d=new Date(x.t||Date.now()),p=n=>String(n).padStart(2,'0'),ds=p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+String(d.getFullYear()).slice(2);
     return (x.anon?'Подарок для '+name:'Подарок от '+name+' для '+name)+', отправлен '+ds+(x.msg?' с комментарием «'+x.msg+'»':'')+'.';
   }
+  $u('ugCm').onclick=()=>{const x=window.__gmCur;if(ugLock||ugClosing||!x||!x.msg)return;askDelComment(x,()=>{const t=(x.upg&&x.upg.nt)?ugNoteTxt(x,true):'';if(x.upg)x.upg.nt=t;ugNoteSet(t);try{renderMyGifts()}catch(_){}})};
   function ugNoteSet(t){const r=$u('ugCm');r.style.display=t?'':'none';r.textContent=t||''}
   function ugShow(x,pk){
     const top=$u('ugTop'),umTop=$u('umTop'),cs=getComputedStyle(umTop);
