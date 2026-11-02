@@ -877,8 +877,8 @@ html,body{overscroll-behavior:none}
 (function(){
   const cache={};
   /* загрузка json с повторами: единичный сбой сети больше не оставляет подарок без анимации */
-  const ld=(url,n)=>fetch(url).then(r=>{if(!r.ok)throw 0;return r.json()}).catch(e=>{if(n>0)return new Promise(r=>setTimeout(r,300)).then(()=>ld(url,n-1));throw e});
-  const getJ=url=>{if(!cache[url]){const ks=Object.keys(cache);if(ks.length>=24)delete cache[ks[0]];cache[url]=ld(url,2)}return cache[url]};
+  const ld=(url,n,k)=>fetch(url).then(r=>{if(!r.ok)throw 0;return r.json()}).catch(e=>{k=k||0;if(n>0)return new Promise(r=>setTimeout(r,450*(k+1))).then(()=>ld(url,n-1,k+1));throw e});
+  const getJ=url=>{if(!cache[url]){const ks=Object.keys(cache);if(ks.length>=24)delete cache[ks[0]];cache[url]=ld(url,3)}return cache[url]};
   function mount(el,img,url,opts,tok,fail){
     getJ(url).then(data=>{
       if(el.__ga!==tok||!el.contains(img))return;
@@ -887,7 +887,7 @@ html,body{overscroll-behavior:none}
       const box=document.createElement('div');box.className='ga';
       box.style.cssText='position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:'+s+'px;height:'+s+'px;opacity:0';
       el.appendChild(box);el.__box=box;
-      const a=lottie.loadAnimation({container:box,renderer:'svg',loop:false,autoplay:!(opts&&(opts.delay||opts.at)),animationData:JSON.parse(JSON.stringify(data))});
+      const a=lottie.loadAnimation({container:box,renderer:'svg',loop:false,autoplay:!(opts&&(opts.delay||opts.at)),animationData:(window.structuredClone?structuredClone(data):JSON.parse(JSON.stringify(data)))});
       el.__lot=a;let busy=true;a.addEventListener('complete',()=>{busy=false;el.__played=1});
       a.addEventListener('enterFrame',function mk(){if(!a.isPaused&&a.currentFrame>0){el.__played=1;a.removeEventListener('enterFrame',mk)}});
       if(opts&&opts.onComplete)a.addEventListener('complete',opts.onComplete);
@@ -3111,6 +3111,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     trk.style.setProperty('--iw',iw+'px');trk.style.transform='translateX('+(W/2-iw/2)+'px)';
     ugTrkClear(trk);trk.innerHTML='<div class="ug-i" style="transform:scale(1.14)">'+(d.mi?'<img src="'+d.mi+'" alt="">':'🎁')+'</div>';
     if(d.mj&&window.giftAnim)giftAnim(trk.children[0],d.mj,{stop:true});
+    /* если анимация не загрузилась (сбой сети), нажатие на подарок пробует загрузить её снова */
+    trk.children[0].addEventListener('click',()=>{const el=trk.children[0];if(el&&d.mj&&window.giftAnim&&!(el.__box&&el.contains(el.__box)))giftAnim(el,d.mj,{stop:true})});
     ugShape();
     try{shapeBtn(sk)}catch(_){}
     const cv=$u('ugPat');try{cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}catch(_){}
