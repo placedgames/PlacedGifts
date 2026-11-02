@@ -545,8 +545,8 @@ html,body{overscroll-behavior:none}
 #ug .ug-skip.press{transform:scale(1.04)}
 .noanim #ug .ug-skip.press{transform:none}
 #ug.morph .ug-sheet{opacity:1;transform:none;transition:none;background:transparent}
-#ug.morph .ug-top,#ug.morph .ug-tbl,#ug.morph .ug-note{transform:translate3d(0,var(--go,0px),0)}
-#ug.morph .ug-tbl,#ug.morph .ug-note,#ug.morph .ug-title,#ug.morph .ug-sub,#ug.morph .ug-acts{opacity:var(--gk,0)}
+#ug.morph .ug-top,#ug.morph .ug-scroll{transform:translate3d(0,var(--go,0px),0)}
+#ug.morph .ug-scroll,#ug.morph .ug-title,#ug.morph .ug-sub,#ug.morph .ug-acts{opacity:var(--gk,0)}
 #ug.morph .ug-t1,#ug.morph .ug-pat,#ug.morph .ug-car,#ug.morph .ug-top::after{opacity:var(--gt,0)}
 #ug.morph .ug-dim{opacity:0;transition:none}
 /* кнопки окна результата вынесены из шапки: при смене окон они не гаснут вместе с ней; едут за верхним краем растущей формы */
@@ -595,6 +595,10 @@ html,body{overscroll-behavior:none}
 #ug .ug-own{color:var(--accent);font-weight:500;font-size:16px}
 
 #ug .ug-r.ug-c{height:auto;min-height:40px;padding:10px 12px;line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;align-items:center}
+/* если содержимое не умещается в окно, прокручивается таблица, а шапка и кнопка остаются на месте */
+#ug .ug-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:none}
+#ug .ug-scroll::-webkit-scrollbar{display:none}
+#ug .ug-scroll .ug-note{padding-bottom:0}
 </style>
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
@@ -834,6 +838,7 @@ html,body{overscroll-behavior:none}
         <button class="ug-a glass" data-a="Продать"><svg viewBox="0 0 512 512"><use href="#i-sellit"/></svg><span>Продать</span></button>
       </div>
     </div>
+    <div class="ug-scroll" id="ugScroll">
     <div class="ug-tbl">
       <div class="ug-r"><div class="ug-k">Владелец</div><div class="ug-v" id="ugOwn"></div></div>
       <div class="ug-r"><div class="ug-k">Модель</div><div class="ug-v" id="ugM"></div></div>
@@ -844,6 +849,7 @@ html,body{overscroll-behavior:none}
       <div class="ug-r ug-c" id="ugCm" style="display:none"></div>
     </div>
     <div class="ug-note"><svg viewBox="0 0 512 512"><use href="#i-eyeoff"/></svg><span>Этот подарок не виден в вашем профиле.</span></div>
+    </div>
     <div class="ug-btnw"><button class="ug-skip" id="ugSkip">Пропустить</button></div>
   </div>
 </div>
@@ -3073,6 +3079,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     ugS.addEventListener('click',e=>{if(sup){e.stopPropagation();e.preventDefault()}},true);
     ugS.addEventListener('touchstart',e=>{
       if(ugLock||ugClosing||!UG.classList.contains('on')||e.touches.length!==1||e.target.closest('#ugSkip'))return;
+      {const sc=e.target.closest('.ug-scroll');if(sc&&sc.scrollTop>0)return}
       /* у шторки в CSS есть transition на transform — пока тянем, он обязан быть выключен, иначе каждый кадр запускает новую анимацию и окно дёргается */
       base=Math.max(0,curY());
       ugS.style.transition='none';ugS.style.transform=base>0?'translate3d(0,'+base+'px,0)':'';
