@@ -2549,7 +2549,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         Promise.all(sb.concat(bs[0]?[bs[0]]:[]).map(b=>backdropCols(g,b))),
         Promise.all(ss.slice(1,6).map(q2=>img(AP+'/symbol/'+e+'/'+encodeURIComponent(nm(q2))+'.png?size=64')))
       ]).then(r=>{
-        const cols=r[3].map((c,i)=>{const f=FB_PAL[i%FB_PAL.length];return {c1:c.c1||f[0],c2:c.c2||f[1],c3:c.c3||f[2]}});
+        /* если у фона нет цвета узора — берём осветлённый цвет самого фона (а не цвет из запасной палитры, которая бывает зелёной) */
+        const lite=h=>{const m=/^#([0-9a-f]{6})$/i.exec(String(h||''));if(!m)return '#ffffff';const n=parseInt(m[1],16),mx=v=>Math.round(v+(255-v)*.55);return '#'+[mx(n>>16&255),mx(n>>8&255),mx(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('')};
+        const cols=r[3].map((c,i)=>{const f=FB_PAL[i%FB_PAL.length];return (c.c1&&c.c2)?{c1:c.c1,c2:c.c2,c3:c.c3||lite(c.c1)}:{c1:f[0],c2:f[1],c3:f[2]}});
         while(cols.length<2)cols.push({c1:FB_PAL[cols.length][0],c2:FB_PAL[cols.length][1],c3:FB_PAL[cols.length][2]});
         let gn=g||'';try{gn=decodeURIComponent(gn)}catch(_){}
         if(/^\d+$/.test(gn))gn=nameOf(idm,gn)||(x&&(x.title||x.name))||'Подарок';
@@ -2590,11 +2592,12 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   if(window.ResizeObserver)new ResizeObserver(ugShape).observe(ugS);
   /* значение с прокруткой: колонка названий едет вверх и замедляется на итоговом */
   const ROW=37;
-  function ugSpin(cell,list,fin,dur){
+  function ugSpin(cell,list,fin,dur,delay){
     const items=list.concat([fin]),col=document.createElement('div');col.className='ug-col';
     col.innerHTML=items.map(it=>'<div class="ug-it"><span>'+escH(it.n)+'</span><i class="ug-pc">'+String(it.p.toFixed(1)).replace('.',',')+'%</i></div>').join('');
     cell.classList.add('c');cell.innerHTML='';cell.appendChild(col);
-    col.animate([{transform:'translateY(0)'},{transform:'translateY('+(-(items.length-1)*ROW)+'px)'}],{duration:dur,easing:'cubic-bezier(.2,.8,.2,1)',fill:'both'});
+    col.animate([{transform:'translateY(0)'},{transform:'translateY('+(-(items.length-1)*ROW)+'px)'}],{duration:dur,delay:delay||0,easing:'cubic-bezier(.2,.8,.2,1)',fill:'both'});
+    if(delay){try{cell.animate([{opacity:0},{opacity:1}],{duration:260,delay:delay,easing:'ease-out',fill:'both'})}catch(_){cell.style.opacity=''}}
   }
   function ugConfetti(){
     const cv=$u('ugConf'),D=Math.min(window.devicePixelRatio||1,2),w=innerWidth,h=innerHeight;
@@ -2754,7 +2757,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     $u('ugAv').classList.remove('c');$u('ugAv').textContent=spaced(iss)+'/'+spaced(tot)+' выпущено';
     $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+(pr*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
     $u('ugLm').onclick=()=>toast('Подробнее: скоро');
-    ['ugM','ugS','ugB'].forEach((id,i)=>{const c=$u(id);c.classList.add('c');const f=[pk.lm,pk.ls,pk.lb][i][0]||{n:'—',p:1};c.innerHTML='<div class="ug-it"><span>'+escH(f.n)+'</span></div>'});
+    ['ugM','ugS','ugB'].forEach((id,i)=>{const c=$u(id);try{c.getAnimations().forEach(a=>a.cancel())}catch(_){}c.style.opacity='0';c.classList.add('c');const f=[pk.lm,pk.ls,pk.lb][i][0]||{n:'—',p:1};c.innerHTML='<div class="ug-it"><span>'+escH(f.n)+'</span></div>'});
     const sk=$u('ugSkip');sk.dataset.done='';ugSkipFromSpin(sk,'Пропустить');
     /* карусель едет вправо, как в оригинале: новые маски выезжают слева, прежняя уходит вправо */
     const first=(umTop.querySelector('#umModel img')||{}).src||pk.fallbackSrc;
@@ -2786,8 +2789,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       gh.innerHTML=first?'<img src="'+first+'" alt="">':pk.emoji;
       trk.parentNode.insertBefore(gh,trk);
       const rmG=()=>{if(gh.parentNode)gh.remove()};
-      gh.animate([{opacity:1,offset:0},{opacity:1,offset:.12},{opacity:0,offset:1}],{duration:900,easing:'cubic-bezier(.4,0,.6,1)',fill:'forwards'}).onfinish=rmG;
-      setTimeout(rmG,1200);
+      gh.animate([{opacity:1},{opacity:0}],{duration:280,easing:'cubic-bezier(.4,0,.6,1)',fill:'forwards'}).onfinish=rmG;
+      setTimeout(rmG,500);
     }catch(_){}
     /* размер каждой модели зависит от расстояния до центра: увеличение к центру и уменьшение после него; задаётся сразу, ещё до старта, и для всех моделей */
     /* размер модели зависит от расстояния до центра: растёт к центру и уменьшается после него.
@@ -2874,7 +2877,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
           items.slice(0,Math.min(3,N)).forEach((o,q)=>{const el=trk.children[q];if(o.j&&el)giftAnim(el,o.j,q===0?{at,stop:true}:{once:true,at})})}
         /* строки таблицы останавливаются по очереди: сначала фон (сразу после выбора фона в шапке), затем узор, последней модель */
         const spB=Math.max(700,Math.min(T*.42+500,T-600)),spS=Math.max(spB+300,Math.min(T*.42+1200,T-300)),spM=Math.max(spS+300,T);
-        ugSpin($u('ugM'),shuf(pk.lm).slice(0,9),pk.fm,spM);ugSpin($u('ugS'),shuf(pk.ls).slice(0,9),pk.fs,spS);ugSpin($u('ugB'),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4)),pk.fb,spB);
+        const dM=120,dS=220,dB=320;   /* появляются по очереди: модель → символ → фон; время остановки не меняется */
+        ugSpin($u('ugM'),shuf(pk.lm).slice(0,9),pk.fm,Math.max(500,spM-dM),dM);ugSpin($u('ugS'),shuf(pk.ls).slice(0,9),pk.fs,Math.max(500,spS-dS),dS);ugSpin($u('ugB'),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4)),pk.fb,Math.max(500,spB-dB),dB);
         /* фон шапки следит за маской в центре: каждая новая — новый цвет; итоговая — финальный фон */
         const cl=pk.cols,fc=cl[cl.length-1];
         /* фон один на всю прокрутку: примерно на середине он плавно становится итоговым, чуть позже так же определяется узор */
@@ -2889,7 +2893,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
           {const el=performance.now()-ta,kk=Math.floor((N-1-q)/3),ch=kk!==lastK;if(ch)lastK=kk;
             const c=cl[kk%nc],sy=(pk.sImgs&&pk.sImgs.length)?pk.sImgs[kk%pk.sImgs.length]:pk.sImg;
             if(!finBg){if(el>=tBg){finBg=true;ugBgSlide(fc,650)}else if(ch)ugBgSlide(c,520)}
-            if(!finPat){if(el>=tPat){finPat=true;ugPatSwap(pk.sImg,fc.c3,true)}else if(ch)ugPatSwap(sy,c.c3,false)}}
+            if(!finPat){if(el>=tPat){finPat=true;ugPatSwap(pk.sImg,fc.c3,true)}else if(ch)ugPatSwap(sy,finBg?fc.c3:c.c3,false)}}
           for(let z=1;z<3&&z<N;z++){
             const d=(tx+z*iw+iw/2-W/2)/iw,el=trk.children[z];if(!el)continue;
             if(el.__lot&&!el.__stp&&d>1.25){el.__stp=1;try{el.__lot.pause()}catch(_){}}
