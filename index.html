@@ -2046,9 +2046,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     };
     selling=true;const fin=ok=>{selling=false;if(ok)done()};
     if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){
-      try{tg.showPopup({title:'Обменять на звёзды?',message:msg,buttons:[{id:'sell',type:'default',text:'Обменять'},{id:'cancel',type:'default',text:'Отмена'}]},id=>fin(id==='sell'));return}catch(e){}
+      try{tg.showPopup({title:'Обмен на звёзды',message:msg,buttons:[{id:'sell',type:'default',text:'Обменять'},{id:'cancel',type:'default',text:'Отмена'}]},id=>fin(id==='sell'));return}catch(e){}
     }
-    fin(confirm('Обменять на звёзды?\n\n'+msg));
+    fin(confirm('Обмен на звёзды\n\n'+msg));
   }
   function open(x){
     clearTimeout(closeT);gm.classList.remove('sub','up');window.__gmCur=x;try{if(!x.sold)window.umPrefetch&&umPrefetch(x)}catch(_){}
@@ -2104,8 +2104,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   }
   /* попап «Удалить комментарий?»: текст комментария и для кого он отправлен */
   window.askDelComment=function(x,done){
-    const t=String((x&&x.msg)||'');if(!t)return;
-    const msg=window.ugNoteTxt?window.ugNoteTxt(x,true):('«'+t+'»');
+    const t=String((x&&x.msg)||'');if(!t&&!(x&&x.upg&&x.upg.nt))return;
+    const msg=window.ugNoteTxt?window.ugNoteTxt(x,true):t;
     const fin=ok=>{
       if(!ok)return;x.msg='';
       try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
@@ -2113,9 +2113,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       if(done)done();
     };
     if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){
-      try{tg.showPopup({title:'Удалить комментарий?',message:msg,buttons:[{id:'del',type:'destructive',text:'Удалить'},{id:'cancel',type:'default',text:'Отмена'}]},id=>fin(id==='del'));return}catch(e){}
+      try{tg.showPopup({title:'Удаление подписи',message:msg,buttons:[{id:'del',type:'destructive',text:'Удалить'},{id:'cancel',type:'default',text:'Отмена'}]},id=>fin(id==='del'));return}catch(e){}
     }
-    fin(confirm('Удалить комментарий?\n\n'+msg));
+    fin(confirm('Удаление подписи\n\n'+msg));
   };
   window.openGift=open;window.closeGift=close;
   /* оптимизация: данные для окна улучшения начинают грузиться уже при касании карточки и в простое после запуска */
@@ -2850,7 +2850,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const d=new Date(x.t||Date.now()),p=n=>String(n).padStart(2,'0'),ds=p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+String(d.getFullYear()).slice(2);
     return (x.anon?'Подарок для '+name:'Подарок от '+name+' для '+name)+', отправлен '+ds+(x.msg?' с комментарием «'+x.msg+'»':'')+'.';
   }
-  $u('ugCm').onclick=()=>{const x=window.__gmCur;if(ugLock||ugClosing||!x||!x.msg)return;askDelComment(x,()=>{const t=(x.upg&&x.upg.nt)?ugNoteTxt(x,true):'';if(x.upg)x.upg.nt=t;ugNoteSet(t);try{renderMyGifts()}catch(_){}})};
+  $u('ugCm').onclick=()=>{const x=window.__gmCur;if(ugLock||ugClosing||!x||!(x.upg&&x.upg.nt))return;askDelComment(x,()=>{x.upg.nt='';ugNoteSet('');try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}})};
   window.ugNoteTxt=ugNoteTxt;
   /* подпись под таблицей: скрытый — «Этот подарок не виден в профиле.», видимый — «Подарок виден в профиле. Скрыть ›» */
   function ugVisSet(x){
