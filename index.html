@@ -2212,8 +2212,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function load(g){
     if(cache[g])return cache[g];
     const e=encodeURIComponent(g);
-    return cache[g]=Promise.all([j('/models/'+e),j('/backdrops/'+e),j('/symbols/'+e)])
-      .then(r=>({models:arr(r[0]),backdrops:arr(r[1]),symbols:arr(r[2])}))
+    return cache[g]=Promise.all([j('/models/'+e).catch(()=>null),j('/backdrops/'+e).catch(()=>null),j('/symbols/'+e).catch(()=>null)])
+      .then(r=>{if(!r[0]&&!r[1]&&!r[2]){delete cache[g];return null}const d={models:arr(r[0]),backdrops:arr(r[1]),symbols:arr(r[2])};if(!d.models.length||!d.backdrops.length||!d.symbols.length)delete cache[g];return d})
       .catch(()=>{delete cache[g];return null});
   }
   function backdropCols(g,b){
@@ -2504,9 +2504,10 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   };
   names();
   function ugPick(g,x){
-    return Promise.all([g?load(g):Promise.resolve(null),names()]).then(rr=>{const d=rr[0],idm=rr[1];
-      const ok=d&&d.models.length&&d.symbols.length&&d.backdrops.length,e=encodeURIComponent(g||'');
-      const ms=ok?shuf(d.models):[],ss=ok?shuf(d.symbols):[],bs=ok?shuf(d.backdrops):[];
+    const get=()=>g?load(g):Promise.resolve(null);
+    return Promise.all([get().then(d=>(d&&d.models.length)?d:new Promise(r=>setTimeout(r,500)).then(get).then(d2=>d2||d)),names()]).then(rr=>{const d=rr[0],idm=rr[1];
+      const okM=!!(d&&d.models.length),okS=!!(d&&d.symbols.length),okB=!!(d&&d.backdrops.length),e=encodeURIComponent(g||'');
+      const ms=okM?shuf(d.models):[],ss=okS?shuf(d.symbols):[],bs=okB?shuf(d.backdrops):[];
       const sm=ms.slice(1,13),sb=bs.slice(1,6),sy=ss.slice(1,10);
       const mu=(m,z)=>AP+'/model/'+e+'/'+encodeURIComponent(nm(m))+'.png?size='+z;
       return Promise.all([
@@ -2521,8 +2522,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         const fb=n=>({n:pick1(FB_M),p:+rnd(.3,3).toFixed(1)});
         return {g:g,gname:gn||'Подарок',
           mImgs:r[0].filter(Boolean),mSet:sm.slice(0,10).map((m,i)=>r[0][i]?{s:r[0][i].src,j:AP+'/model/'+e+'/'+encodeURIComponent(nm(m))+'.json'}:null).filter(Boolean),fImg:r[1],sImg:r[2],cols:cols,
-          fm:ok?ent(ms[0]):{n:pick1(FB_M),p:.5},fs:ok?ent(ss[0]):{n:pick1(FB_S),p:.3},fb:ok?ent(bs[0]):{n:pick1(FB_B),p:1.1},
-          lm:ok?sm.map(ent):FB_M.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),ls:ok?sy.map(ent):FB_S.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),lb:ok?sb.map(ent):FB_B.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),
+          fm:okM?ent(ms[0]):{n:pick1(FB_M),p:.5},fs:okS?ent(ss[0]):{n:pick1(FB_S),p:.3},fb:okB?ent(bs[0]):{n:pick1(FB_B),p:1.1},
+          lm:okM?sm.map(ent):FB_M.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),ls:okS?sy.map(ent):FB_S.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),lb:okB?sb.map(ent):FB_B.map(n=>({n:n,p:+rnd(.3,3).toFixed(1)})),
           mj:ms[0]?AP+'/model/'+e+'/'+encodeURIComponent(nm(ms[0]))+'.json':null,
           fallbackSrc:x&&x.image||null,emoji:x&&x.emoji||'🎁'};
       });
@@ -2726,7 +2727,10 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const jsonOf=u=>u&&/\/model\//.test(u)?u.replace(/\.png.*$/,'.json'):null;
     /* как в оригинале: 11 моделей (первая — та, что была в окне улучшения последней), два одинаковых круга,
        третий круг — 10 из них в другом порядке, и в конце выпадает итоговая модель */
-    const S=[{s:first,j:jsonOf(first)}].concat((pk.mSet||[]).filter(o=>o.s&&o.s!==first));
+    const S=[{s:first,j:jsonOf(first)}];
+    const addS=o=>{if(o&&o.s&&!S.some(z=>z.s===o.s))S.push(o)};
+    (pk.mSet||[]).forEach(addS);
+    if(S.length<11)ring.forEach(q=>{if(q&&q.model&&q.model.src)addS({s:q.model.src,j:q.modelJ||jsonOf(q.model.src)})});
     const rest=S.slice(1);for(let q=0;S.length<11&&rest.length&&q<30;q++)S.push(rest[q%rest.length]);
     let lap3=shuf(S);
     for(let t=0;t<8&&S.length>2&&(lap3[0]===S[S.length-1]||lap3.every((o,q)=>o===S[q]));t++)lap3=shuf(S);
