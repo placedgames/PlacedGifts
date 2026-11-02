@@ -2743,7 +2743,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function ugShow(x,pk){
     const top=$u('ugTop'),umTop=$u('umTop'),cs=getComputedStyle(umTop);
     const c0={c1:cs.getPropertyValue('--um-c1').trim()||'#7b72ea',c2:cs.getPropertyValue('--um-c2').trim()||'#5b3fb8'};
-    $u('ugSheet').querySelectorAll('.ug-t3').forEach(n=>n.remove());ugBgSet(c0);finSet=false;
+    $u('ugSheet').querySelectorAll('.ug-t3').forEach(n=>n.remove());ugBgSet(c0);finBg=false;finPat=false;
     const num=1+Math.floor(Math.random()*Math.max(1000,(x.total||300000))),tot=Math.max(num+1,x.total||237393),iss=Math.min(tot,num+Math.floor(Math.random()*tot*.3));
     $u('ugName').textContent=pk.gname;$u('ugNum').textContent='#'+spaced(num);$u('ugSub').textContent=pk.fm.n;
     const pr=x.price||PRICE;
@@ -2837,14 +2837,18 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         const cl=pk.cols,fc=cl[cl.length-1];
         /* фон один на всю прокрутку: примерно на середине он плавно становится итоговым, чуть позже так же определяется узор */
         const nc=Math.max(1,cl.length-1);let lastK=-1;
+        /* до выбора фон и узор меняются каждые две модели (узор без анимации); итоговый фон выбирается чуть позже середины, итоговый узор — чуть позже фона и только он с анимацией */
+        const ta=performance.now(),tBg=T*.55,tPat=T*.55+450;
         const tick=()=>{
           if(!ugX||!UG.classList.contains('on'))return;
           let tx=tx0;try{const m=getComputedStyle(trk).transform;if(m&&m!=='none')tx=new DOMMatrix(m).m41}catch(_){}
           const q=Math.max(0,Math.min(N-1,Math.round((tx1-tx)/iw)));
           setS(tx);
           /* фон и узор меняются в самом начале и затем каждые две модели; на итоговой — финальные */
-          if(q===0)ugFinalSet(pk,fc,520);
-          else{const kk=(N-1-q)>>1;if(kk!==lastK){lastK=kk;const c=cl[kk%nc],sy=(pk.sImgs&&pk.sImgs.length)?pk.sImgs[kk%pk.sImgs.length]:pk.sImg;ugBgSlide(c,520);ugPatSwap(sy,c.c3)}}
+          {const el=performance.now()-ta,kk=(N-1-q)>>1,ch=kk!==lastK;if(ch)lastK=kk;
+            const c=cl[kk%nc],sy=(pk.sImgs&&pk.sImgs.length)?pk.sImgs[kk%pk.sImgs.length]:pk.sImg;
+            if(!finBg){if(el>=tBg){finBg=true;ugBgSlide(fc,650)}else if(ch)ugBgSlide(c,520)}
+            if(!finPat){if(el>=tPat){finPat=true;ugPatSwap(pk.sImg,fc.c3,true)}else if(ch)ugPatSwap(sy,c.c3,false)}}
           for(let z=1;z<3&&z<N;z++){
             const d=(tx+z*iw+iw/2-W/2)/iw,el=trk.children[z];if(!el)continue;
             if(el.__lot&&!el.__stp&&d>1.25){el.__stp=1;try{el.__lot.pause()}catch(_){}}
@@ -2869,7 +2873,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       setTimeout(()=>gmEl.classList.remove('up','sub'),500);
     },80);
   }
-  let finSet=false;
+  let finBg=false,finPat=false;
   /* новый фон выезжает слева направо слоем с мягким краем; когда слой доехал, он становится основным, лишние слои убираются */
   function ugBgSlide(c,ms){
     const t1=$u('ugT1'),L=document.createElement('div');
@@ -2884,13 +2888,15 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     try{L.animate([{webkitMaskPosition:'100% 0',maskPosition:'100% 0'},{webkitMaskPosition:'0% 0',maskPosition:'0% 0'}],{duration:ms,easing:'cubic-bezier(.3,.1,.2,1)',fill:'forwards'}).onfinish=fin}catch(_){setTimeout(fin,ms)}
   }
   /* узор: старый разъезжается от центра в стороны и гаснет, новый сходится на место — как в окне предпросмотра */
-  function ugPatSwap(sym,c3){
-    const cv=$u('ugPat'),top=$u('ugTop'),old=cv.cloneNode();
+  function ugPatSwap(sym,c3,anim){
+    const cv=$u('ugPat'),top=$u('ugTop');
+    if(!anim){drawPat2(cv,top,sym,c3);return}
+    const old=cv.cloneNode();
     try{old.getContext('2d').drawImage(cv,0,0);cv.after(old);old.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(1.14)'}],{duration:360,easing:'cubic-bezier(.4,0,.3,1)',fill:'forwards'}).onfinish=()=>old.remove()}catch(_){}
     drawPat2(cv,top,sym,c3);
     cv.animate([{opacity:0,transform:'scale(1.14)'},{opacity:1,transform:'scale(1)'}],{duration:560,easing:'cubic-bezier(.3,.1,.2,1)'});
   }
-  function ugFinalSet(pk,c,ms){if(finSet)return;finSet=true;ugBgSlide(c,ms);ugPatSwap(pk.sImg,c.c3)}
+  function ugFinalSet(pk,c,ms){if(!finBg){finBg=true;ugBgSlide(c,ms)}if(!finPat){finPat=true;ugPatSwap(pk.sImg,c.c3,true)}}
   function ugDone(x,pk,num,c){
     ugFinalSet(pk,c,300);
     /* страховка: если анимация итоговой модели не загрузилась или так и не стартовала — запускаем её сейчас */
