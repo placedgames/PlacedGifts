@@ -3387,20 +3387,17 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     if(window.__gmSw&&__gmSw.visible()&&!gm.classList.contains('upv'))return{k:'g',sheet:gS,box:gm,i:i};
     return null;
   }
-  function tween(el,a,b,ms,ease,done){
-    const t0=performance.now();
-    const f=now=>{const p=Math.min(1,(now-t0)/ms);el.style.translate=(a+(b-a)*ease(p)).toFixed(2)+'px 0';if(p<1)requestAnimationFrame(f);else if(done)done()};
+  /* плавное движение с учётом скорости пальца: начальная скорость совпадает со скоростью отпускания, к концу гаснет (кубический Эрмит) */
+  const herm=(q,m)=>{const q2=q*q,q3=q2*q;return (q3-2*q2+q)*m+(-2*q3+3*q2)};
+  function glide(items,delta,v,done){
+    const dist=Math.abs(delta);if(dist<1){items.forEach(it=>{it.el.style.translate=(it.from+delta).toFixed(2)+'px 0'});done();return}
+    const ms=Math.round(260+140*Math.min(1,dist/(Wd()+20))),m=Math.max(0,Math.min(2.5,v*Math.sign(delta)*ms/dist)),t0=performance.now();
+    const f=now=>{const q=Math.min(1,(now-t0)/ms),h=herm(q,m);
+      items.forEach(it=>{it.el.style.translate=(it.from+delta*h).toFixed(2)+'px 0'});
+      if(q<1)requestAnimationFrame(f);else done()};
     requestAnimationFrame(f);
   }
-  /* два окна едут одновременно: уходящее и следующее вплотную друг к другу (зазор 20px), без паузы между ними */
-  function tween2(a,b,a0,a1,b0,b1,ms,ease,done){
-    const t0=performance.now();
-    const f=now=>{const p=ease(Math.min(1,(now-t0)/ms));
-      a.style.translate=(a0+(a1-a0)*p).toFixed(2)+'px 0';b.style.translate=(b0+(b1-b0)*p).toFixed(2)+'px 0';
-      if(now-t0<ms)requestAnimationFrame(f);else done()};
-    requestAnimationFrame(f);
-  }
-  /* «призрак» уходящего окна: копия шторки, которая остаётся на месте, пока в оригинале меняется содержимое */
+  /* «призрак» текущего окна: копия шторки, которая остаётся, пока в оригинале показывается соседний подарок */
   function ghostOf(sh,tx){
     const g=sh.cloneNode(true);
     g.removeAttribute('id');g.setAttribute('aria-hidden','true');
@@ -3408,11 +3405,47 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     try{const a=sh.querySelectorAll('canvas'),b=g.querySelectorAll('canvas');a.forEach((c,i)=>{if(b[i]&&c.width&&c.height)b[i].getContext('2d').drawImage(c,0,0)})}catch(_){}
     sh.after(g);return g;
   }
+  const showG=(x,k,quick)=>{let p=null;if(k==='u')p=__ugSw.show(x,true);else __gmSw.show(x,quick);return p};
+  /* соседнее окно появляется уже во время перетаскивания и едет рядом с текущим (зазор 20px) */
+  function preview(s,n){
+    if(s.pv&&s.pv.n===n)return true;
+    if(s.pv)revert(s);
+    if(s.bad===n)return false;
+    const next=MYGIFTS[s.i+n];if(!next)return false;
+    const k=(next.upg&&next.upg.c)?'u':'g',ns=k==='u'?uS:gS,nb=k==='u'?UG:gm,gh=ghostOf(s.sheet,s.tx);
+    s.box.style.overflow='hidden';nb.style.overflow='hidden';
+    let p;
+    if(k===s.k)p=showG(next,k,false);
+    else if(k==='u'){p=__ugSw.show(next,true);if(p){s.box.style.visibility='visible';__gmSw.hide()}}
+    else{__gmSw.show(next,true);s.box.style.visibility='visible';__ugSw.hide()}
+    if(k==='u'&&!p){gh.remove();s.bad=n;if(nb!==s.box)nb.style.overflow='';return false}
+    if(s.sheet!==ns)s.sheet.style.translate='';
+    s.pv={n,next,k,ns,nb,gh,D:n*(Wd()+20),p};
+    return true;
+  }
+  /* вернуть на место текущий подарок (палец вернулся или перелистывание отменено) */
+  function revert(s){
+    const pv=s.pv;if(!pv)return;s.pv=null;
+    if(pv.k===s.k)showG(s.cur,s.k,false);
+    else if(s.k==='u'){__ugSw.show(s.cur,true);__gmSw.hide()}
+    else{__gmSw.show(s.cur,true);__ugSw.hide()}
+    pv.gh.remove();s.box.style.visibility='';
+    if(pv.nb!==s.box)pv.nb.style.overflow='';
+    pv.ns.style.translate='';s.sheet.style.translate=s.tx?s.tx.toFixed(2)+'px 0':'';
+  }
+  function place(s){
+    if(s.pv){s.pv.gh.style.translate=s.tx.toFixed(1)+'px 0';s.pv.ns.style.translate=(s.tx+s.pv.D).toFixed(1)+'px 0'}
+    else s.sheet.style.translate=s.tx.toFixed(1)+'px 0';
+  }
+  const velo=s=>{const sm=s.sm,l=sm[sm.length-1];if(!l)return 0;let f=sm[0];for(const q of sm)if(l.t-q.t<=100){f=q;break}return l.t>f.t?(l.x-f.x)/(l.t-f.t):0};
   function down(e){
     window.__swX=false;
     if(e.touches.length!==1){st=null;return}
     const m=active();if(!m){st=null;return}
-    const t=e.touches[0];st=Object.assign(m,{x:t.clientX,y:t.clientY,t0:performance.now(),dx:0,tx:0,axis:null,raf:0,done:false});
+    const t=e.touches[0],tg=e.target;
+    st=Object.assign(m,{x:t.clientX,y:t.clientY,t0:performance.now(),dx:0,tx:0,axis:null,raf:0,done:false,cur:window.__gmCur,pv:null,bad:0,sm:[],tg});
+    /* при перерисовке окна элемент, за который взялся палец, может исчезнуть из DOM — события касания тогда идут только ему самому */
+    if(tg&&tg.addEventListener&&tg!==m.sheet){tg.addEventListener('touchmove',move,{passive:true});tg.addEventListener('touchend',up);tg.addEventListener('touchcancel',up)}
   }
   function move(e){
     if(!st||e.touches.length!==1)return;
@@ -3422,37 +3455,38 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       if(Math.abs(dx)>Math.abs(dy)){st.axis='x';window.__swX=true;st.box.style.overflow='hidden'}else{st=null;return}
     }
     st.dx=dx;
-    const has=!!MYGIFTS[st.i+(dx<0?1:-1)];
-    st.tx=has?dx:Math.sign(dx)*44*Math.tanh(Math.abs(dx)/160);
-    /* запись стиля — раз в кадр, а не на каждое событие касания */
-    if(!st.raf){const s=st;s.raf=requestAnimationFrame(()=>{s.raf=0;if(!s.done)s.sheet.style.translate=s.tx.toFixed(1)+'px 0'})}
+    const has=!!MYGIFTS[st.i+(dx<0?1:-1)],lim=Wd()+20;
+    st.tx=has?Math.max(-lim,Math.min(lim,dx)):Math.sign(dx)*44*Math.tanh(Math.abs(dx)/160);
+    const now=performance.now();st.sm.push({t:now,x:st.tx});if(st.sm.length>12)st.sm.shift();
+    /* запись стиля — раз в кадр */
+    if(!st.raf){const s=st;s.raf=requestAnimationFrame(()=>{s.raf=0;if(s.done)return;
+      const n=s.dx<0?1:-1;
+      if(MYGIFTS[s.i+n]&&Math.abs(s.dx)>=8)preview(s,n);else if(s.pv)revert(s);
+      place(s)})}
   }
   function finish(s){s.sheet.style.translate='';s.box.style.overflow='';anim=false;until=performance.now()+250}
   function up(e){
     if(!st)return;const s=st;st=null;
+    if(s.tg&&s.tg!==s.sheet){s.tg.removeEventListener('touchmove',move);s.tg.removeEventListener('touchend',up);s.tg.removeEventListener('touchcancel',up)}
     if(s.axis!=='x')return;
     s.done=true;if(s.raf){cancelAnimationFrame(s.raf);s.raf=0}
-    s.sheet.style.translate=s.tx.toFixed(1)+'px 0';
-    until=performance.now()+350;
-    const n=s.dx<0?1:-1,next=MYGIFTS[s.i+n],v=s.dx/Math.max(1,performance.now()-s.t0);
-    const commit=e.type!=='touchcancel'&&next&&MYGIFTS[s.i]===window.__gmCur&&(Math.abs(s.dx)>Wd()*.25||(Math.abs(v)>.4&&Math.abs(s.dx)>28));
-    anim=true;
-    if(!commit){tween(s.sheet,s.tx,0,300,eOut,()=>finish(s));return}
-    const k=(next.upg&&next.upg.c)?'u':'g',ns=k==='u'?uS:gS,nb=k==='u'?UG:gm,D=n*(Wd()+20),gh=ghostOf(s.sheet,s.tx);
-    nb.style.overflow='hidden';
-    let p=null;
-    if(k===s.k){if(k==='u')p=__ugSw.show(next,true);else __gmSw.show(next,false)}
-    else if(k==='u'){p=__ugSw.show(next,true);if(p)__gmSw.hide()}
-    else{__gmSw.show(next,true);__ugSw.hide()}
-    if(k==='u'&&!p){ /* окно не открылось — возвращаем прежнее */
-      gh.remove();nb.style.overflow='';
-      tween(s.sheet,s.tx,0,260,eOut,()=>finish(s));return;
+    until=performance.now()+350;anim=true;
+    const n=s.dx<0?1:-1,next=MYGIFTS[s.i+n],v=velo(s),vd=v*Math.sign(s.dx);
+    const commit=e.type!=='touchcancel'&&next&&MYGIFTS[s.i]===s.cur&&(Math.abs(s.dx)>Wd()*.25||(vd>.4&&Math.abs(s.dx)>28));
+    if(commit&&!(s.pv&&s.pv.n===n)){preview(s,n)}
+    if(commit&&s.pv&&s.pv.n===n){
+      const pv=s.pv,D=pv.D;
+      glide([{el:pv.gh,from:s.tx},{el:pv.ns,from:s.tx+D}],-D-s.tx,v,()=>{
+        pv.gh.remove();pv.ns.style.translate='';pv.nb.style.overflow='';s.box.style.overflow='';s.box.style.visibility='';anim=false;until=performance.now()+250;
+      });
+      return;
     }
-    ns.style.translate=(s.tx+D).toFixed(2)+'px 0';
-    if(s.sheet!==ns)s.sheet.style.translate='';
-    Promise.race([Promise.resolve(p),new Promise(r=>setTimeout(r,120))]).then(()=>requestAnimationFrame(()=>{
-      tween2(gh,ns,s.tx,-D,s.tx+D,0,300,eOut,()=>{gh.remove();ns.style.translate='';nb.style.overflow='';s.box.style.overflow='';anim=false;until=performance.now()+250});
-    }));
+    if(s.pv){ /* отмена: оба окна возвращаются, затем на место ставится исходный подарок */
+      const pv=s.pv;
+      glide([{el:pv.gh,from:s.tx},{el:pv.ns,from:s.tx+pv.D}],-s.tx,v,()=>{revert(s);s.tx=0;s.sheet.style.translate='';finish(s)});
+      return;
+    }
+    glide([{el:s.sheet,from:s.tx}],-s.tx,v,()=>finish(s));
   }
   [gS,uS].forEach(el=>{
     el.addEventListener('touchstart',down,{capture:true,passive:true});
