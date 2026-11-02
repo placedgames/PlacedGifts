@@ -571,6 +571,10 @@ html,body{overscroll-behavior:none}
 #um .um-model{will-change:transform}
 #ug .ug-skip{position:relative;overflow:hidden}
 #ug .ug-sl{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;will-change:transform,opacity}
+/* пока идёт переход и меняются фон/узор, блюр под кнопками выключен: backdrop-filter снимает фон с запаздыванием (под кнопками мелькал старый цвет) и утяжеляет кадры перехода; потом плавно возвращается */
+#ug .ug-a,#ug .ug-x,#ug .ug-more{transition:transform .3s cubic-bezier(.4,0,.2,1),-webkit-backdrop-filter .45s ease,backdrop-filter .45s ease}
+#ug.fxon .ug-a,#ug.fxon .ug-x,#ug.fxon .ug-more{-webkit-backdrop-filter:none;backdrop-filter:none}
+#um.mf .um-back,#um.mf .um-var{-webkit-backdrop-filter:none;backdrop-filter:none}
 </style>
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
@@ -2805,7 +2809,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     /* окно открывается как окно предпросмотра: контур растёт от высоты окна улучшения, содержимое перетекает, кнопка остаётся на месте */
     const uh=sh.getBoundingClientRect().height;
     ugLock=true;ugClosing=false;
-    UG.classList.add('morph');um.classList.add('mf');
+    UG.classList.add('fxon');UG.classList.add('morph');um.classList.add('mf');
     UG.classList.add('on');UG.setAttribute('aria-hidden','false');
     const gH=ugS.offsetHeight,sw2=ugS.offsetWidth,rise=gH-uh;
     sh.style.maxHeight='none';
@@ -2877,7 +2881,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         }
         /* анимированы только последние 3, старт у всех в один момент; у итоговой — повтор по нажатию */
         if(window.giftAnim){const at=performance.now()+(L?T1-120:250);
-          items.slice(0,Math.min(3,N)).forEach((o,q)=>{const el=trk.children[q];if(o.j&&el)giftAnim(el,o.j,q===0?{at,stop:true}:{once:true,at})})}
+          items.slice(0,Math.min(3,N)).forEach((o,q)=>{const el=trk.children[q];if(o.j&&el)ugLater(()=>giftAnim(el,o.j,q===0?{at,stop:true}:{once:true,at}),450+q*80)})}
         /* строки таблицы определяются чуть позже, чем выбор в шапке: фон (шапка выбирает его на 0.42·T), затем узор (+0.9 с), последней модель (карусель доезжает на T) */
         const spB=T*.42+600,spS=Math.max(spB+300,T*.42+1400),spM=Math.max(spS+300,T+200);
         const dT=160;   /* таблица уже заполнена и к этому моменту проявилась; времена остановки не меняются */
@@ -2953,7 +2957,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     {const trk=$u('ugTrack'),fi=trk.children[0],pv=trk.children[1];
       if(fi){fi.style.setProperty('--s',1);fi.animate([{transform:'scale(1)'},{transform:'scale(1.14)'}],{duration:640,easing:'cubic-bezier(.3,1.5,.5,1)',fill:'forwards'})}
       if(pv)pv.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.7)'}],{duration:380,easing:'ease-out',fill:'forwards'}).onfinish=()=>{try{pv.__lot&&pv.__lot.pause()}catch(_){}}}
-    ugLater(()=>{ugLock=false},700);
+    ugLater(()=>{ugLock=false},700);ugLater(()=>UG.classList.remove('fxon'),900);
     ugConfetti();
     const bn=$u('ugBn');bn.classList.add('on');ugLater(()=>bn.classList.remove('on'),4200);
     x.upg={n:num,g:pk.gname,m:pk.fm.n,s:pk.fs.n,b:pk.fb.n};x.hid=true;
@@ -2969,7 +2973,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     $u('ugConf').style.display='none';$u('ugBn').classList.remove('on');
     ugS.style.opacity='1';ugS.style.transition='transform .32s cubic-bezier(.4,0,1,1)';ugS.style.transform='translateY('+window.innerHeight+'px)';
     UG.classList.remove('on');UG.setAttribute('aria-hidden','true');
-    setTimeout(()=>{ugS.querySelectorAll('.ug-t3').forEach(n=>n.remove());ugS.style.clipPath='';ugS.style.webkitClipPath='';ugS.style.transition='';ugS.style.transform='';ugS.style.opacity='';upBusy=false;ugClosing=false;ugLock=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}$u('ugTrack').innerHTML='';ugS.querySelectorAll('.ug-ghost').forEach(n=>n.remove())},450);
+    setTimeout(()=>{UG.classList.remove('fxon');ugS.querySelectorAll('.ug-t3').forEach(n=>n.remove());ugS.style.clipPath='';ugS.style.webkitClipPath='';ugS.style.transition='';ugS.style.transform='';ugS.style.opacity='';upBusy=false;ugClosing=false;ugLock=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}$u('ugTrack').innerHTML='';ugS.querySelectorAll('.ug-ghost').forEach(n=>n.remove())},450);
   }
   $u('ugX').onclick=()=>ugClose();UG.querySelector('.ug-dim').onclick=()=>{};
   (function(){
