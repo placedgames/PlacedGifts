@@ -2054,7 +2054,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     fin(confirm('Обмен на звёзды\n\n'+msg));
   }
   function open(x){
-    clearTimeout(closeT);gm.classList.remove('sub','up');window.__gmCur=x;try{if(!x.sold)window.umPrefetch&&umPrefetch(x)}catch(_){}
+    clearTimeout(closeT);gm.classList.remove('sub','up');window.__gmCur=x;{const gi=$g('gmImg');gi.style.transition='';gi.style.opacity=''}try{if(!x.sold)window.umPrefetch&&umPrefetch(x)}catch(_){}
     $g('gmImg').innerHTML=x.image?'<img src="'+x.image+'" alt="">':(x.emoji||'🎁');giftAnimOrig($g('gmImg'),x);
     gm.querySelector('.gm-s').style.display=(x.anon&&!x.sold)?'':'none';
     gm.classList.toggle('sold',!!x.sold);
@@ -2367,7 +2367,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     return pr;
   }
   /* расположение как в Telegram: [x в % ширины, y в px от верха окна, размер px, прозрачность] */
-  const POS=[[36.8,17,17,.3],[63,17,18,.3],[50,29,23,.3],[20.8,39,16,.3],[79,39,16,.3],[33.5,68,20,.3],[66.5,68,18,.3],[9,103,19,.2],[23.7,103,17,.3],[76,103,18,.3],[91,103,20,.2],[33.6,139,23,.3],[66.4,139,21,.3],[20.8,168,20,.3],[79,168,20,.3],[50,176,18,.3],[35,205,16,.3],[65.8,205,16,.3]];
+  const POS=[[36.8,17,17,.3],[63,17,18,.3],[50,29,23,.3],[20.8,39,16,.3],[79,39,16,.3],[33.5,68,20,.3],[66.5,68,18,.3],[9,103,19,.2],[23.7,103,17,.3],[76,103,18,.3],[91,103,20,.2],[33.6,139,23,.3],[66.4,139,21,.3],[20.8,168,20,.3],[79,168,20,.3],[50,176,18,.3],[35,205,16,.3],[65.8,205,16,.3],[8.5,204,12,.14],[92.5,204,12,.14]];
   function drawPattern(sym,color){
     const cv=$u('umPat'),top=$u('umTop'),w=top.offsetWidth,h=top.offsetHeight,D=Math.min(window.devicePixelRatio||1,2);
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);
@@ -2439,7 +2439,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function reset(x){
     const top=$u('umTop');top.style.removeProperty('--um-c1');top.style.removeProperty('--um-c2');
     $u('umMini').innerHTML='';
-    $u('umModel').innerHTML=x&&x.image?'<img src="'+x.image+'" alt="">':((x&&x.emoji)||'🎁');
+    $u('umModel').innerHTML='';
     const cv=$u('umPat');cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
   }
   /* анимация целиком по кадрам: контур окна растёт от высоты окна подарка до своей высоты, низ и кнопка стоят на месте */
@@ -2533,6 +2533,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   window.openUpgrade=function(x){
     if(busy||um.classList.contains('on'))return;
     busy=true;const tk=++token,g=gid(x);curG=g;
+    try{const gi=document.getElementById('gmImg');if(gi){if(gi.__lot)gi.__lot.pause();gi.style.transition='opacity .3s ease';gi.style.opacity='0'}}catch(_){}
     /* набор уже готов — открываем сразу, без ожидания */
     const pr=g?prep(g):null,p=(pr&&pr.v)||null;
     if(g&&p)delete ready[g];
@@ -2547,6 +2548,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function close(){
     if(!um.classList.contains('on')||busy)return;
     busy=true;token++;
+    try{const gi=document.getElementById('gmImg');if(gi){gi.style.transition='opacity .3s ease .1s';gi.style.opacity=''}}catch(_){}
     measure();closing=true;
     frame(1);gmEl.classList.remove('sub');
     um.classList.remove('on');um.setAttribute('aria-hidden','true');
@@ -2708,9 +2710,10 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const tb=$u('ugTop').getBoundingClientRect(),y0=Math.min(h*.8,tb.top+tb.height+120);
     for(let side=0;side<2;side++)for(let i=0;i<70;i++){
       const dir=side?-1:1,a=rnd(-1.45,-.55),sp=rnd(520,1250);
-      P.push({x:side?w+6:-6,y:y0+rnd(-30,30),vx:dir*Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(3.8,6.8),c:pick1(cols),l:rnd(2.2,3.4),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:rnd(0,.25)});
+      P.push({x:side?w+6:-6,y:y0+rnd(-30,30),vx:dir*Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(3.2,5.8),c:pick1(cols),l:rnd(2.2,3.4),st:Math.random()<.18,an:rnd(0,6.283),va:rnd(-9,9),d:rnd(0,.25)});
     }
-    for(let i=0;i<34;i++){const a=rnd(-Math.PI*.9,-Math.PI*.1),sp=rnd(120,420);P.push({x:w/2+rnd(-60,60),y:Math.min(h*.8,tb.top+tb.height+80),vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(3.6,6.4),c:pick1(cols),l:rnd(1.8,2.8),st:Math.random()<.42,an:rnd(0,6.283),va:rnd(-9,9),d:.12+rnd(0,.2)})}
+    for(let i=0;i<34;i++){const a=rnd(-Math.PI*.9,-Math.PI*.1),sp=rnd(120,420);P.push({x:w/2+rnd(-60,60),y:Math.min(h*.8,tb.top+tb.height+80),vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:rnd(3.1,5.5),c:pick1(cols),l:rnd(1.8,2.8),st:Math.random()<.18,an:rnd(0,6.283),va:rnd(-9,9),d:.12+rnd(0,.2)})}
+    for(let i=0;i<30;i++)P.push({x:rnd(0,w),y:rnd(-40,-8),vx:rnd(-50,50),vy:rnd(40,140),r:rnd(3.2,5.4),c:pick1(cols),l:rnd(2.4,3.4),st:Math.random()<.18,an:rnd(0,6.283),va:rnd(-9,9),d:rnd(.1,1.5)});
     const t0=performance.now();let last=t0;
     const step=now=>{
       const dt=Math.min(.04,(now-last)/1000);last=now;const t=(now-t0)/1000;c.clearRect(0,0,w,h);let alive=0;
