@@ -1715,7 +1715,7 @@ function pgDraw(cv){
     cv.width=W;cv.height=H;
     const cx=cv.getContext('2d'),tc=document.createElement('canvas'),tx=tc.getContext('2d');
     PG_POS.forEach(p=>{
-      const sz=Math.max(6,p[2]*w/125+1+(p[4]||0));tc.width=tc.height=Math.max(1,Math.round(sz*D));
+      const sz=Math.max(6,p[2]*w/125+2+(p[4]||0));tc.width=tc.height=Math.max(1,Math.round(sz*D));
       tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(im,0,0,tc.width,tc.height);
       tx.globalCompositeOperation='source-in';tx.fillStyle=cv.dataset.c||'#fff';tx.fillRect(0,0,tc.width,tc.height);
       cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-sz/2)*D,(p[1]/100*h-sz/2)*D);
@@ -2365,7 +2365,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     }).then(p=>{if(!p)delete ready[g];else pr.v=p;return p});
     return pr;
   }
-  const POS=[[37,7,16,.9],[63,7,16,.9],[21,16,17,.8],[79,16,17,.8],[34,28,19,.9],[66,28,19,.9],[9,42,17,.5],[24,42,18,.7],[76,42,18,.7],[91,42,17,.5],[34,57,19,.9],[66,57,19,.9],[21,67,17,.7],[79,67,17,.7],[37,78,16,.8],[63,78,16,.8],[50,94,16,.6]];
+  /* расположение как в Telegram: [x в % ширины, y в px от верха окна, размер px, прозрачность] */
+  const POS=[[36.8,17,17,.3],[63,17,18,.3],[50,29,23,.3],[20.8,39,16,.3],[79,39,16,.3],[33.5,68,20,.3],[66.5,68,18,.3],[9,103,19,.2],[23.7,103,17,.3],[76,103,18,.3],[91,103,20,.2],[33.6,139,23,.3],[66.4,139,21,.3],[20.8,168,20,.3],[79,168,20,.3],[50,176,18,.3],[50,229,17,.3]];
   function drawPattern(sym,color){
     const cv=$u('umPat'),top=$u('umTop'),w=top.offsetWidth,h=top.offsetHeight,D=Math.min(window.devicePixelRatio||1,2);
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);
@@ -2376,7 +2377,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       const s=p[2];tc.width=tc.height=Math.round(s*D);
       tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(sym,0,0,tc.width,tc.height);
       tx.globalCompositeOperation='source-in';tx.fillStyle=color||'#ffffff';tx.fillRect(0,0,tc.width,tc.height);
-      cx.globalAlpha=.3;cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]/100*h-s/2)*D);
+      cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]-s/2)*D);
     });
     cx.globalAlpha=1;
   }
@@ -2681,7 +2682,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);
     const cx=cv.getContext('2d');cx.clearRect(0,0,cv.width,cv.height);if(!sym)return;
     const tc=document.createElement('canvas'),tx=tc.getContext('2d');
-    POS.forEach(p=>{const s=p[2];tc.width=tc.height=Math.round(s*D);tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(sym,0,0,tc.width,tc.height);tx.globalCompositeOperation='source-in';tx.fillStyle=color||'#fff';tx.fillRect(0,0,tc.width,tc.height);cx.globalAlpha=.3;cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]/100*h-s/2)*D)});
+    POS.forEach(p=>{const s=p[2];tc.width=tc.height=Math.round(s*D);tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(sym,0,0,tc.width,tc.height);tx.globalCompositeOperation='source-in';tx.fillStyle=color||'#fff';tx.fillRect(0,0,tc.width,tc.height);cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-s/2)*D,(p[1]-s/2)*D)});
     cx.globalAlpha=1;
   }
   function ugShape(){
