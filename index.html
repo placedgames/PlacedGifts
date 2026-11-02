@@ -231,7 +231,7 @@ body.navanim #bar{z-index:1}
 .pg .peye svg{width:25px;height:25px;fill:#fff;fill-rule:evenodd}
 .pgu{background:none}
 .pgu .pu-bg{position:absolute;inset:0;border-radius:inherit;overflow:hidden;background:radial-gradient(circle at 50% 42%,var(--pc1,#7b72ea) 0%,var(--pc2,#5b3fb8) 100%)}
-.pgu .pu-pat{position:absolute;left:0;top:0;width:100%;height:100%;-webkit-mask-image:radial-gradient(ellipse 75% 80% at 50% 45%,#000 35%,rgba(0,0,0,.4) 100%);mask-image:radial-gradient(ellipse 75% 80% at 50% 45%,#000 35%,rgba(0,0,0,.4) 100%)}
+.pgu .pu-pat{position:absolute;left:0;top:0;width:100%;height:100%}   /* маска узора запечена в canvas (см. pgDraw) */
 .pgu .pu-bg::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.4) 100%)}
 .pgu .pi,.pgu .pe{position:relative;z-index:1}
 .pg .rib,.gift .rib{top:-1.5px;right:-1.5px}
@@ -814,7 +814,7 @@ html,body{overscroll-behavior:none}
   function mount(el,img,url,opts,tok,fail){
     getJ(url).then(data=>{
       if(el.__ga!==tok||!el.contains(img))return;
-      const s=Math.min(el.offsetHeight||131,131);
+      const s=(opts&&opts.fit&&img.offsetWidth)||Math.min(el.offsetHeight||131,131);
       if(getComputedStyle(el).position==='static')el.style.position='relative';
       const box=document.createElement('div');box.className='ga';
       box.style.cssText='position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:'+s+'px;height:'+s+'px;opacity:0';
@@ -1653,6 +1653,12 @@ function pgDraw(cv){
       const sz=szOf(p);
       cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-sz/2)*D,(p[1]/100*h-sz/2)*D,sz*D,sz*D);
     });
+    /* маска (бывшая CSS radial-gradient ellipse 75% 80% at 50% 45%, #000 35% → .4 100%) запекается прямо в картинку:
+       браузеру больше не нужно маскировать каждую карточку отдельным слоем при каждой отрисовке и прокрутке */
+    cx.save();cx.globalAlpha=1;cx.globalCompositeOperation='destination-in';
+    cx.translate(W*.5,H*.45);cx.scale(W*.75,H*.8);
+    {const gr=cx.createRadialGradient(0,0,0,0,0,1);gr.addColorStop(.35,'rgba(0,0,0,1)');gr.addColorStop(1,'rgba(0,0,0,.4)');cx.fillStyle=gr;cx.fillRect(-3,-3,6,6)}
+    cx.restore();
     cv.__ok=1;
     try{const oc=document.createElement('canvas');oc.width=W;oc.height=H;oc.getContext('2d').drawImage(cv,0,0);const ks=Object.keys(PG_BMP);if(ks.length>=40)delete PG_BMP[ks[0]];PG_BMP[key]=oc}catch(_){}
   });
@@ -1869,12 +1875,20 @@ renderMyGifts();
     const cmt=$b('bmMsg').value.trim();
     for(let i=0;i<n;i++)MYGIFTS.unshift({image:cur.image||null,emoji:cur.emoji||null,total:total,anon:hidden,t:Date.now(),price:+cur.price,key:cur.key,msg:cmt});
     if(MYGIFTS.length>200)MYGIFTS.length=200;
+    const fresh=MYGIFTS.slice(0,n);
     bm.classList.add('fast');close();   /* окно начинает закрываться сразу, до любой тяжёлой работы */
     /* всё тяжёлое (запись в хранилище, перерисовка профиля, переход) — после первого кадра анимации закрытия, иначе она «съедается» */
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       try{store.set(SOLDK,JSON.stringify(SOLDMAP));store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
       try{renderMyGifts(true)}catch(_){}
       const _o=NAV_MS;NAV_MS=400;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}
+      /* когда профиль уже на месте — купленные подарки один раз проигрывают свою анимацию (по очереди, чтобы не грузить за один кадр) */
+      const cnt=Math.min(fresh.length,9),playNew=t=>{
+        if(navFin&&t<30){setTimeout(()=>playNew(t+1),50);return}
+        const g=document.getElementById('pGrid');if(!g)return;
+        for(let k=0;k<cnt;k++){const el=g.querySelector('.pg[data-i="'+k+'"]');if(el)setTimeout(()=>{try{giftAnimOrig(el,fresh[k],{once:true,fit:true})}catch(_){}},k*70)}
+      };
+      playNew(0);
     }));
   };
   /* кнопка «Купить»: тот же отклик и «слайм», что у кнопок хедера (раздувается, тянется за пальцем, пружинит назад) */
