@@ -2597,7 +2597,6 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     col.innerHTML=items.map(it=>'<div class="ug-it"><span>'+escH(it.n)+'</span><i class="ug-pc">'+String(it.p.toFixed(1)).replace('.',',')+'%</i></div>').join('');
     cell.classList.add('c');cell.innerHTML='';cell.appendChild(col);
     col.animate([{transform:'translateY(0)'},{transform:'translateY('+(-(items.length-1)*ROW)+'px)'}],{duration:dur,delay:delay||0,easing:'cubic-bezier(.2,.8,.2,1)',fill:'both'});
-    if(delay){try{cell.animate([{opacity:0},{opacity:1}],{duration:260,delay:delay,easing:'ease-out',fill:'both'})}catch(_){cell.style.opacity=''}}
   }
   function ugConfetti(){
     const cv=$u('ugConf'),D=Math.min(window.devicePixelRatio||1,2),w=innerWidth,h=innerHeight;
@@ -2757,7 +2756,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     $u('ugAv').classList.remove('c');$u('ugAv').textContent=spaced(iss)+'/'+spaced(tot)+' выпущено';
     $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+(pr*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
     $u('ugLm').onclick=()=>toast('Подробнее: скоро');
-    ['ugM','ugS','ugB'].forEach((id,i)=>{const c=$u(id);c.classList.add('c');const f=[pk.lm,pk.ls,pk.lb][i][0]||{n:'—',p:1};c.innerHTML='<div class="ug-it"><span>'+escH(f.n)+'</span></div>'});
+    pk.spl=[shuf(pk.lm).slice(0,9),shuf(pk.ls).slice(0,9),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4))];
+    ['ugM','ugS','ugB'].forEach((id,i)=>{const c=$u(id);c.classList.add('c');const f=pk.spl[i][0]||{n:'—',p:1};c.innerHTML='<div class="ug-it"><span>'+escH(f.n)+'</span><i class="ug-pc">'+String((+f.p||0).toFixed(1)).replace('.',',')+'%</i></div>'});
     const sk=$u('ugSkip');sk.dataset.done='';ugSkipFromSpin(sk,'Пропустить');
     /* карусель едет вправо, как в оригинале: новые маски выезжают слева, прежняя уходит вправо */
     const first=(umTop.querySelector('#umModel img')||{}).src||pk.fallbackSrc;
@@ -2783,12 +2783,15 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     trk.style.setProperty('--iw',iw+'px');trk.style.transform='translateX('+tx0+'px)';
     /* подарок из предпросмотра остаётся на месте и медленно становится прозрачным, а карусель выезжает слева */
     try{
-      trk.parentNode.querySelectorAll('.ug-ghost').forEach(n=>n.remove());
+      const car=trk.parentNode,tp=car.parentNode;
+      tp.querySelectorAll('.ug-ghost').forEach(n=>n.remove());
       const gh=document.createElement('div');gh.className='ug-i ug-ghost';
-      gh.style.cssText='position:absolute;left:'+tx1+'px;top:0;width:'+iw+'px;transform:scale(1.12);pointer-events:none';
-      gh.innerHTML=first?'<img src="'+first+'" alt="">':pk.emoji;
-      trk.parentNode.insertBefore(gh,trk);
-      const rmG=()=>{if(gh.parentNode)gh.remove()};
+      gh.style.cssText='position:absolute;z-index:1;left:'+(car.offsetLeft+tx1)+'px;top:'+car.offsetTop+'px;width:'+iw+'px;transform:scale(1.12);pointer-events:none';
+      /* сам играющий подарок (Lottie) переезжает из предпросмотра сюда и продолжает играть, пока становится прозрачным; картинка подставляется только если анимации нет */
+      const um_=$u('umModel'),bx=(um_.__box&&um_.contains(um_.__box))?um_.__box:null,lot=bx?um_.__lot:null;
+      if(bx)gh.appendChild(bx);else gh.innerHTML=first?'<img src="'+first+'" alt="">':pk.emoji;
+      tp.insertBefore(gh,car);
+      const rmG=()=>{try{lot&&lot.destroy()}catch(_){}if(gh.parentNode)gh.remove()};
       gh.animate([{opacity:1},{opacity:0}],{duration:280,easing:'cubic-bezier(.4,0,.6,1)',fill:'forwards'}).onfinish=rmG;
       setTimeout(rmG,500);
     }catch(_){}
@@ -2877,7 +2880,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
           items.slice(0,Math.min(3,N)).forEach((o,q)=>{const el=trk.children[q];if(o.j&&el)giftAnim(el,o.j,q===0?{at,stop:true}:{once:true,at})})}
         /* строки таблицы определяются чуть позже, чем выбор в шапке: фон (шапка выбирает его на 0.42·T), затем узор (+0.9 с), последней модель (карусель доезжает на T) */
         const spB=T*.42+600,spS=Math.max(spB+300,T*.42+1400),spM=Math.max(spS+300,T+200);
-        ugSpin($u('ugM'),shuf(pk.lm).slice(0,9),pk.fm,spM);ugSpin($u('ugS'),shuf(pk.ls).slice(0,9),pk.fs,spS);ugSpin($u('ugB'),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4)),pk.fb,spB);
+        const dT=160;   /* таблица уже заполнена и к этому моменту проявилась; времена остановки не меняются */
+        ugSpin($u('ugM'),pk.spl[0],pk.fm,spM-dT,dT);ugSpin($u('ugS'),pk.spl[1],pk.fs,spS-dT,dT);ugSpin($u('ugB'),pk.spl[2],pk.fb,spB-dT,dT);
         /* фон шапки следит за маской в центре: каждая новая — новый цвет; итоговая — финальный фон */
         const cl=pk.cols,fc=cl[cl.length-1];
         /* фон один на всю прокрутку: примерно на середине он плавно становится итоговым, чуть позже так же определяется узор */
@@ -2901,7 +2905,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         };
         ugRaf=requestAnimationFrame(tick);
         ugLater(()=>ugDone(x,pk,num,cl[cl.length-1]),Math.max(600,T-200));
-      },70);
+      },0);
     });
   }
   function quietClose(){
