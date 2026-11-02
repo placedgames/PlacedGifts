@@ -203,7 +203,7 @@ body.navanim #bar{z-index:1}
 
 /* профиль: при прокрутке имя, рейтинг и «в сети» закрепляются сверху (меньшего размера) на затемнении с размытием, слайдер прилипает под ними */
 #p-me{overflow-anchor:none}
-#pEmpty{position:sticky;top:64px;margin-top:16px}   /* отступ от слайдера как у подарков (16px); при прокрутке карточка остаётся под закреплённым слайдером: 8px + 40px слайдер + 16px */
+#pEmpty{margin-top:16px}   /* отступ от слайдера такой же, как у сетки подарков (.pgrid margin-top:16px); карточка — обычный блок, листается вместе со страницей */
 #p-me .mtabs{position:sticky;top:8px;z-index:901} /* отступ считается от внутренней границы страницы (у неё уже есть верхний padding под хедер) */
 .mpin{position:fixed;left:0;right:0;top:0;z-index:900;pointer-events:none;visibility:hidden}
 .mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h));opacity:0;background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,0.989) 25.0%,rgba(0,0,0,0.946) 31.2%,rgba(0,0,0,0.877) 37.5%,rgba(0,0,0,0.788) 43.8%,rgba(0,0,0,0.684) 50.0%,rgba(0,0,0,0.570) 56.2%,rgba(0,0,0,0.453) 62.5%,rgba(0,0,0,0.339) 68.8%,rgba(0,0,0,0.232) 75.0%,rgba(0,0,0,0.139) 81.2%,rgba(0,0,0,0.066) 87.5%,rgba(0,0,0,0.017) 93.8%,rgba(0,0,0,0.000) 100.0%)}
@@ -247,10 +247,10 @@ body.navanim #bar{z-index:1}
 
 /* ===== модальное окно покупки подарка ===== */
 #bm{position:fixed;left:0;right:0;top:0;height:100%;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .6s}
-#bm.slow:not(.on):not(.pre){transition-delay:.9s}
+#bm.slow:not(.on):not(.pre){transition-delay:1.25s}
 #bm.on,#bm.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
-#bm.slow .bm-sheet{transition-duration:.78s}
-#bm.slow .bm-dim{transition-duration:.65s}
+#bm.slow .bm-sheet{transition-duration:1.05s}
+#bm.slow .bm-dim{transition-duration:.85s}
 #bm .bm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .45s}
 #bm.on .bm-dim{opacity:1}
 #bm .bm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:transparent;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform}
@@ -657,6 +657,7 @@ html,body{overscroll-behavior:none}
   <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="gifts"><span>Подарки</span><span class="mt-ic" id="mtIcons"></span></button><button data-m="posts">Публикации</button></div>
   <div class="pgrid" id="pGrid"></div>
   <div class="gempty" id="pEmpty" hidden></div>
+  <div id="pSpace" style="height:0;pointer-events:none" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -1280,24 +1281,28 @@ $$('#gtabs button').forEach(b=>b.onclick=()=>{
   const all=b.dataset.t==='all';
   $('#grid').hidden=!all; $('#gempty').hidden=all;
 });
-/* смена вкладки: страница выглядит так, будто на «Публикациях» много контента — высота блока не уменьшается (снизу просто пустое место),
-   прокрутка не меняется, поэтому слайдер остаётся на месте и в закреплённом, и в обычном положении */
+/* смена вкладки: на «Публикациях» после карточки идёт очень большой пустой блок (#pSpace), поэтому страница не становится короче,
+   прокрутка не меняется и слайдер остаётся на месте — как будто там много публикаций. Блок добавляется ДО перерисовки, в том же кадре. */
 $$('#mtabs button').forEach(b=>b.onclick=()=>{
-  const pg=$('#p-me'),mb=pg.querySelector('.mbody'),st=pg.scrollTop,h0=mb.offsetHeight;
+  const posts=b.dataset.m==='posts';
   pickTab($('#mtabs'),b);
   requestAnimationFrame(()=>setTimeout(()=>{
-    mb.style.minHeight=h0+'px';
+    const pg=$('#p-me'),sp=$('#pSpace'),st=pg.scrollTop;
+    if(posts&&sp)sp.style.height=Math.max(3000,st+pg.clientHeight+600)+'px';
     try{renderMyGifts()}catch(e){}
-    /* вернулись на «Подарки» с прокруткой вниз — дорисовываем карточки до текущей позиции, иначе там была бы пустота */
-    try{
-      const g=$('#pGrid'),c=g.firstElementChild;
-      if(st>0&&c&&!g.hidden){
-        const rowH=c.offsetHeight+10,rows=Math.ceil((st+pg.clientHeight+300-g.offsetTop)/rowH),target=Math.min((g.__list||[]).length,rows*3);
-        let guard=0;while((g.__n||0)<target&&guard++<100)pgMore();
-        pgKick();
-      }
-    }catch(e){}
-    pg.scrollTop=st;
+    if(!posts){
+      /* вернулись на «Подарки» с прокруткой вниз — дорисовываем карточки до текущей позиции, пока пустой блок ещё держит высоту */
+      try{
+        const g=$('#pGrid'),c=g.firstElementChild;
+        if(st>0&&c&&!g.hidden){
+          const rowH=c.offsetHeight+10,rows=Math.ceil((st+pg.clientHeight+300-g.offsetTop)/rowH),target=Math.min((g.__list||[]).length,rows*3);
+          let guard=0;while((g.__n||0)<target&&guard++<100)pgMore();
+          pgKick();
+        }
+      }catch(e){}
+      if(sp)sp.style.height='0';
+    }
+    if(Math.abs(pg.scrollTop-st)>1)pg.scrollTop=st;   /* пишем прокрутку только если она всё же сместилась */
   },0))
 });
 function resetTabs(){
@@ -1307,7 +1312,7 @@ function resetTabs(){
     placeTab(box,true);
   });
   $('#grid').hidden=false; $('#gempty').hidden=true;
-  try{const mb=document.querySelector('#p-me .mbody');if(mb)mb.style.minHeight=''}catch(e){}
+  try{const sp=document.getElementById('pSpace');if(sp)sp.style.height='0'}catch(e){}
   try{renderMyGifts()}catch(e){}
 }
 if(window.ResizeObserver)new ResizeObserver(()=>{placeTab($('#mtabs'),true);placeTab($('#gtabs'),true)}).observe(document.body);
@@ -1715,7 +1720,7 @@ function pgMore(){
 function pgWatch(){
   const g=$('#pGrid');if(!g||!window.IntersectionObserver)return;
   if(!pgSent){
-    pgSent=document.createElement('div');pgSent.style.cssText='height:1px;pointer-events:none';g.after(pgSent);
+    pgSent=document.createElement('div');pgSent.style.cssText='height:1px;pointer-events:none';($('#pEmpty')||g).after(pgSent);
     pgIO=new IntersectionObserver(es=>{
       if(!es.some(e=>e.isIntersecting))return;
       if(navFin){setTimeout(pgKick,150);return}   /* пока идёт анимация перехода — ничего не дорисовываем */
@@ -1879,7 +1884,7 @@ renderMyGifts();
       setTimeout(()=>{if(bm.classList.contains('on'))$b('bmFill').style.width=(left/TOTAL*100)+'%'},250);
     }));
   };
-  function close(){const sl=bm.classList.contains('slow');try{window.__bmMenuHide()}catch(e){}clearTimeout(closeT);closeT=setTimeout(()=>{if(bm.classList.contains('on')||bm.classList.contains('pre'))return;document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}},sl?850:400);bm.classList.remove('on','pre');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on')){bm.style.height='';bm.classList.remove('fast','slow')}},sl?1000:650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+  function close(){const sl=bm.classList.contains('slow');try{window.__bmMenuHide()}catch(e){}clearTimeout(closeT);closeT=setTimeout(()=>{if(bm.classList.contains('on')||bm.classList.contains('pre'))return;document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}},sl?1200:400);bm.classList.remove('on','pre');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on')){bm.style.height='';bm.classList.remove('fast','slow')}},sl?1350:650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
   const keepTop=()=>{if(bm.classList.contains('on'))window.scrollTo(0,0)};
   if(window.visualViewport){visualViewport.addEventListener('resize',keepTop);visualViewport.addEventListener('scroll',keepTop)}
   $b('bmMsg').addEventListener('focus',()=>{keepTop();setTimeout(keepTop,50);setTimeout(keepTop,250)});
@@ -1900,13 +1905,13 @@ renderMyGifts();
     for(let i=0;i<n;i++)MYGIFTS.unshift({image:cur.image||null,emoji:cur.emoji||null,total:total,anon:hidden,t:Date.now(),price:+cur.price,key:cur.key,msg:cmt});
     if(MYGIFTS.length>5000)MYGIFTS.length=5000;   /* раньше тут был лимит 200 — он удалял самые старые подарки снизу списка; теперь лимита по сути нет */
     const fresh=MYGIFTS.slice(0,n);
-    bm.classList.add('slow');close();   /* окно начинает закрываться сразу, до любой тяжёлой работы; скорость замедленная: .78с окно, 760мс переход */
+    bm.classList.add('slow');close();   /* окно начинает закрываться сразу, до любой тяжёлой работы; скорость замедленная: 1.05с окно, 1000мс переход */
     /* всё тяжёлое (запись в хранилище, перерисовка профиля, переход) — после первого кадра анимации закрытия, иначе она «съедается» */
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       try{store.set(SOLDK,JSON.stringify(SOLDMAP))}catch(_){}
       try{localStorage.setItem(MYK,JSON.stringify(MYGIFTS))}catch(_){toast('Память браузера заполнена: подарок не сохранился')}
       try{renderMyGifts(true)}catch(_){}
-      {const _o=NAV_MS;NAV_MS=760;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}}
+      {const _o=NAV_MS;NAV_MS=1000;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}}
       /* когда профиль уже на месте — купленные подарки один раз проигрывают свою анимацию (по очереди, чтобы не грузить за один кадр) */
       const cnt=Math.min(fresh.length,9),playNew=t=>{
         if(navFin&&t<30){setTimeout(()=>playNew(t+1),50);return}
