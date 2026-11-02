@@ -3379,7 +3379,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   let st=null,anim=false,until=0;
   const Wd=()=>window.innerWidth,eIn=p=>p*p,eOut=p=>1-Math.pow(1-p,3);
   function active(){
-    if(anim||performance.now()<until)return null;
+    if(anim)return null;
     if(um.classList.contains('on')||um.classList.contains('pre')||$('bm').classList.contains('on'))return null;
     const x=window.__gmCur;if(!x||x.sold)return null;
     const i=MYGIFTS.indexOf(x);if(i<0||MYGIFTS.length<2)return null;
@@ -3391,12 +3391,16 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   const herm=(q,m)=>{const q2=q*q,q3=q2*q;return (q3-2*q2+q)*m+(-2*q3+3*q2)};
   function glide(items,delta,v,done){
     const dist=Math.abs(delta);if(dist<1){items.forEach(it=>{it.el.style.translate=(it.from+delta).toFixed(2)+'px 0'});done();return}
-    const ms=Math.round(260+140*Math.min(1,dist/(Wd()+20))),m=Math.max(0,Math.min(2.5,v*Math.sign(delta)*ms/dist)),t0=performance.now();
+    const ms=Math.round(170+100*Math.min(1,dist/(Wd()+20))),m=Math.max(0,Math.min(2.5,v*Math.sign(delta)*ms/dist)),t0=performance.now();
+    const g=gl={raf:0,items,delta,done};
     const f=now=>{const q=Math.min(1,(now-t0)/ms),h=herm(q,m);
       items.forEach(it=>{it.el.style.translate=(it.from+delta*h).toFixed(2)+'px 0'});
-      if(q<1)requestAnimationFrame(f);else done()};
-    requestAnimationFrame(f);
+      if(q<1)g.raf=requestAnimationFrame(f);else{gl=null;done()}};
+    g.raf=requestAnimationFrame(f);
   }
+  /* новое касание во время анимации: она мгновенно доезжает до конца, и можно листать дальше без ожидания */
+  let gl=null;
+  function snap(){const g=gl;if(!g)return;gl=null;cancelAnimationFrame(g.raf);g.items.forEach(it=>{it.el.style.translate=(it.from+g.delta).toFixed(2)+'px 0'});g.done()}
   /* «призрак» текущего окна: копия шторки, которая остаётся, пока в оригинале показывается соседний подарок */
   function ghostOf(sh,tx){
     const g=sh.cloneNode(true);
@@ -3416,8 +3420,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     s.box.style.overflow='hidden';nb.style.overflow='hidden';
     let p;
     if(k===s.k)p=showG(next,k,false);
-    else if(k==='u'){p=__ugSw.show(next,true);if(p){s.box.style.visibility='visible';__gmSw.hide()}}
-    else{__gmSw.show(next,true);s.box.style.visibility='visible';__ugSw.hide()}
+    else if(k==='u'){p=__ugSw.show(next,true);if(p){s.box.style.visibility='visible';s.box.style.zIndex='2300';__gmSw.hide()}}
+    else{__gmSw.show(next,true);s.box.style.visibility='visible';s.box.style.zIndex='2300';__ugSw.hide()}
     if(k==='u'&&!p){gh.remove();s.bad=n;if(nb!==s.box)nb.style.overflow='';return false}
     if(s.sheet!==ns)s.sheet.style.translate='';
     s.pv={n,next,k,ns,nb,gh,D:n*(Wd()+20),p};
@@ -3429,7 +3433,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     if(pv.k===s.k)showG(s.cur,s.k,false);
     else if(s.k==='u'){__ugSw.show(s.cur,true);__gmSw.hide()}
     else{__gmSw.show(s.cur,true);__ugSw.hide()}
-    pv.gh.remove();s.box.style.visibility='';
+    pv.gh.remove();s.box.style.visibility='';s.box.style.zIndex='';
     if(pv.nb!==s.box)pv.nb.style.overflow='';
     pv.ns.style.translate='';s.sheet.style.translate=s.tx?s.tx.toFixed(2)+'px 0':'';
   }
@@ -3441,6 +3445,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function down(e){
     window.__swX=false;
     if(e.touches.length!==1){st=null;return}
+    if(anim&&gl)snap();
     const m=active();if(!m){st=null;return}
     const t=e.touches[0],tg=e.target;
     st=Object.assign(m,{x:t.clientX,y:t.clientY,t0:performance.now(),dx:0,tx:0,axis:null,raf:0,done:false,cur:window.__gmCur,pv:null,bad:0,sm:[],tg});
@@ -3464,20 +3469,20 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       if(MYGIFTS[s.i+n]&&Math.abs(s.dx)>=8)preview(s,n);else if(s.pv)revert(s);
       place(s)})}
   }
-  function finish(s){s.sheet.style.translate='';s.box.style.overflow='';anim=false;until=performance.now()+250}
+  function finish(s){s.sheet.style.translate='';s.box.style.overflow='';anim=false;until=performance.now()+120}
   function up(e){
     if(!st)return;const s=st;st=null;
     if(s.tg&&s.tg!==s.sheet){s.tg.removeEventListener('touchmove',move);s.tg.removeEventListener('touchend',up);s.tg.removeEventListener('touchcancel',up)}
     if(s.axis!=='x')return;
     s.done=true;if(s.raf){cancelAnimationFrame(s.raf);s.raf=0}
-    until=performance.now()+350;anim=true;
+    until=performance.now()+200;anim=true;
     const n=s.dx<0?1:-1,next=MYGIFTS[s.i+n],v=velo(s),vd=v*Math.sign(s.dx);
-    const commit=e.type!=='touchcancel'&&next&&MYGIFTS[s.i]===s.cur&&(Math.abs(s.dx)>Wd()*.25||(vd>.4&&Math.abs(s.dx)>28));
+    const commit=e.type!=='touchcancel'&&next&&MYGIFTS[s.i]===s.cur&&(Math.abs(s.dx)>Wd()*.2||(vd>.25&&Math.abs(s.dx)>20));
     if(commit&&!(s.pv&&s.pv.n===n)){preview(s,n)}
     if(commit&&s.pv&&s.pv.n===n){
       const pv=s.pv,D=pv.D;
       glide([{el:pv.gh,from:s.tx},{el:pv.ns,from:s.tx+D}],-D-s.tx,v,()=>{
-        pv.gh.remove();pv.ns.style.translate='';pv.nb.style.overflow='';s.box.style.overflow='';s.box.style.visibility='';anim=false;until=performance.now()+250;
+        pv.gh.remove();pv.ns.style.translate='';pv.nb.style.overflow='';s.box.style.overflow='';s.box.style.visibility='';s.box.style.zIndex='';anim=false;until=performance.now()+120;
       });
       return;
     }
