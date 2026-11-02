@@ -198,6 +198,8 @@ mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,
 /* переходы между страницами как в Telegram */
 .page.tr{position:absolute;left:0;top:0;width:100%;background:var(--bg);will-change:transform,opacity}
 .page.tr.top{z-index:2}
+body.buyover #p-me{z-index:2100;background:var(--bg)}   /* после покупки профиль выезжает ПОВЕРХ закрывающегося модального окна (#bm z-index:2000) */
+body.buyover #hdr{z-index:2200}                      /* кнопки хедера тоже поверх окна */
 body.navanim #bar{z-index:1}
 /* на время анимации перехода размытие под элементами чата не пересчитывается — иначе страница рывками едет */
 
@@ -1281,28 +1283,44 @@ $$('#gtabs button').forEach(b=>b.onclick=()=>{
   const all=b.dataset.t==='all';
   $('#grid').hidden=!all; $('#gempty').hidden=all;
 });
+/* прокрутка вкладок профиля: у «Подарков» и «Публикаций» запоминается своё положение, пока слайдер закреплён под хедером.
+   Как только слайдер «открепился» (страница прокручена выше ступеньки) — сохранённые положения сбрасываются, вкладки открываются «сначала». */
+const TAB_POS={gifts:null,posts:null};
+function meTabsPinned(){const i=window.meStep&&meStep(),pg=$('#p-me');return !!(i&&pg)&&pg.scrollTop+i.off>=i.T-1}
+(function(){
+  const pg=$('#p-me');let q=0;
+  pg.addEventListener('scroll',()=>{
+    if(q||(TAB_POS.gifts==null&&TAB_POS.posts==null))return;
+    q=requestAnimationFrame(()=>{q=0;if((TAB_POS.gifts!=null||TAB_POS.posts!=null)&&!meTabsPinned())TAB_POS.gifts=TAB_POS.posts=null});
+  },{passive:true});
+})();
 /* смена вкладки: на «Публикациях» после карточки идёт очень большой пустой блок (#pSpace), поэтому страница не становится короче,
-   прокрутка не меняется и слайдер остаётся на месте — как будто там много публикаций. Блок добавляется ДО перерисовки, в том же кадре. */
+   прокрутка не меняется и слайдер остаётся на месте. Блок добавляется ДО перерисовки, в том же кадре. */
 $$('#mtabs button').forEach(b=>b.onclick=()=>{
-  const posts=b.dataset.m==='posts';
+  const pb=$('#mtabs button.on'),was=pb&&pb.dataset.m,to=b.dataset.m;
   pickTab($('#mtabs'),b);
+  if(was===to)return;   /* нажали на уже выбранную вкладку */
+  const posts=to==='posts';
   requestAnimationFrame(()=>setTimeout(()=>{
-    const pg=$('#p-me'),sp=$('#pSpace'),st=pg.scrollTop;
-    if(posts&&sp)sp.style.height=Math.max(3000,st+pg.clientHeight+600)+'px';
+    const pg=$('#p-me'),sp=$('#pSpace'),now=pg.scrollTop+(pg._off||0);
+    TAB_POS[was]=meTabsPinned()?now:null;            /* уходим с вкладки: запоминаем её положение, только если слайдер закреплён */
+    const D=TAB_POS[to]!=null?TAB_POS[to]:now;       /* куда встаём: сохранённое положение вкладки или то же место, где были */
+    if(posts&&sp)sp.style.height=Math.max(3000,D+pg.clientHeight+600)+'px';
     try{renderMyGifts()}catch(e){}
     if(!posts){
-      /* вернулись на «Подарки» с прокруткой вниз — дорисовываем карточки до текущей позиции, пока пустой блок ещё держит высоту */
+      /* «Подарки»: дорисовываем карточки до нужной позиции, пока пустой блок ещё держит высоту страницы */
       try{
-        const g=$('#pGrid'),c=g.firstElementChild;
-        if(st>0&&c&&!g.hidden){
-          const rowH=c.offsetHeight+10,rows=Math.ceil((st+pg.clientHeight+300-g.offsetTop)/rowH),target=Math.min((g.__list||[]).length,rows*3);
+        const g=$('#pGrid'),c=g.firstElementChild,dst=D-(pg._off||0);
+        if(dst>0&&c&&!g.hidden){
+          const rowH=c.offsetHeight+10,rows=Math.ceil((dst+pg.clientHeight+300-g.offsetTop)/rowH),target=Math.min((g.__list||[]).length,rows*3);
           let guard=0;while((g.__n||0)<target&&guard++<100)pgMore();
           pgKick();
         }
       }catch(e){}
       if(sp)sp.style.height='0';
     }
-    if(Math.abs(pg.scrollTop-st)>1)pg.scrollTop=st;   /* пишем прокрутку только если она всё же сместилась */
+    const want=D-(pg._off||0);
+    if(Math.abs(pg.scrollTop-want)>1)pg.scrollTop=want;   /* пишем прокрутку только если она отличается */
   },0))
 });
 function resetTabs(){
@@ -1313,6 +1331,7 @@ function resetTabs(){
   });
   $('#grid').hidden=false; $('#gempty').hidden=true;
   try{const sp=document.getElementById('pSpace');if(sp)sp.style.height='0'}catch(e){}
+  TAB_POS.gifts=TAB_POS.posts=null;
   try{renderMyGifts()}catch(e){}
 }
 if(window.ResizeObserver)new ResizeObserver(()=>{placeTab($('#mtabs'),true);placeTab($('#gtabs'),true)}).observe(document.body);
@@ -1466,6 +1485,8 @@ function clearAppCache(){ location.reload(); }
     M={dn:pr.top+sc,hn,hs,gap:sr.top-pr.bottom,y1,ls:y1+TRAVEL,tabsAt:mb.offsetTop+off-(bt+bh+GAP_TABS),ext:Math.max(0,bg2.offsetHeight-bg.offsetHeight)};
     lp=-2;
   }
+  /* для вкладок профиля: на какой прокрутке слайдер закрепляется под хедером (ступенька) и текущий сдвиг */
+  window.meStep=()=>{if(!M)measure();return M?{T:M.tabsAt,off:off}:null};
   function upd(){
     if(!M){measure();if(!M)return}
     const sc=pg.scrollTop+off,top0=M.dn-sc;
@@ -1863,7 +1884,7 @@ renderMyGifts();
     bm.addEventListener('pointerdown',e=>{if(menu.classList.contains('on')&&!e.target.closest('#bmMenu,.bm-cnt'))hide()},true);
   })();
   window.openBuy=function(g){
-    try{window.__bmMenuHide()}catch(e){}bm.classList.remove('fast','slow');clearTimeout(closeT);g.key=g.key||('p'+g.price+(g.image||g.emoji||''));cur=g;hidden=false;$b('bmHide').classList.remove('on');$b('bmMsg').value='';
+    try{window.__bmMenuHide()}catch(e){}bm.classList.remove('fast','slow');document.body.classList.remove('buyover');clearTimeout(closeT);g.key=g.key||('p'+g.price+(g.image||g.emoji||''));cur=g;hidden=false;$b('bmHide').classList.remove('on');$b('bmMsg').value='';
     const p=+g.price,TOTAL=g.total||DEF_TOTAL,sold=SOLDMAP[g.key]||0,left=Math.max(0,TOTAL-sold);
     $b('bmImg').innerHTML=g.image?'<img src="'+g.image+'" alt="">':(g.emoji||'🎁');giftAnimOrig($b('bmImg'),g);
     $b('bmRib').textContent='1 из '+short(TOTAL);
@@ -1911,6 +1932,7 @@ renderMyGifts();
       try{store.set(SOLDK,JSON.stringify(SOLDMAP))}catch(_){}
       try{localStorage.setItem(MYK,JSON.stringify(MYGIFTS))}catch(_){toast('Память браузера заполнена: подарок не сохранился')}
       try{renderMyGifts(true)}catch(_){}
+      document.body.classList.add('buyover');setTimeout(()=>document.body.classList.remove('buyover'),1500);   /* слой снимаем, когда окно уже полностью скрыто */
       {const _o=NAV_MS;NAV_MS=1000;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}}
       /* когда профиль уже на месте — купленные подарки один раз проигрывают свою анимацию (по очереди, чтобы не грузить за один кадр) */
       const cnt=Math.min(fresh.length,9),playNew=t=>{
