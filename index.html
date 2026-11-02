@@ -2692,7 +2692,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   }
   function ugConfetti(){
     const cv=$u('ugConf'),D=Math.min(window.devicePixelRatio||1,2),w=innerWidth,h=innerHeight;
-    cv.width=Math.round(w*D);cv.height=Math.round(h*D);cv.style.display='block';
+    if(cv.width!==Math.round(w*D)||cv.height!==Math.round(h*D)){cv.width=Math.round(w*D);cv.height=Math.round(h*D)}cv.style.display='block';
     const c=cv.getContext('2d');c.setTransform(D,0,0,D,0,0);
     const cols=['#2f9bff','#ff8a1f','#34c759','#c46cf0','#ff4f8b','#ffd60a'],P=[];
     const tb=$u('ugTop').getBoundingClientRect(),y0=Math.min(h*.8,tb.top+tb.height+120);
@@ -2929,6 +2929,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     /* окно открывается как окно предпросмотра: контур растёт от высоты окна улучшения, содержимое перетекает, кнопка остаётся на месте */
     const uh=sh.getBoundingClientRect().height;
     ugLock=true;ugClosing=false;
+    try{const cf=$u('ugConf'),Dp=Math.min(window.devicePixelRatio||1,2);cf.width=Math.round(innerWidth*Dp);cf.height=Math.round(innerHeight*Dp)}catch(_){}
     UG.classList.add('fxon');UG.classList.add('morph');um.classList.add('mf');
     UG.classList.add('on');UG.setAttribute('aria-hidden','false');
     const gH=ugS.offsetHeight,sw2=ugS.offsetWidth,rise=gH-uh;
@@ -3073,7 +3074,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     ugFinalSet(pk,c,300);
     /* страховка: если анимация итоговой модели не загрузилась или так и не стартовала — запускаем её сейчас */
     if(pk.mj&&window.giftAnim&&window.__gA!==false){try{const it=$u('ugTrack').children[pk.F];
-      if(it){if(!it.__lot)giftAnim(it,pk.mj,{stop:true});else if(!it.__played)it.__lot.goToAndPlay(0,true)}}catch(_){}}
+      if(it){if(!it.__lot)giftAnim(it,pk.mj,{stop:true});else if(!it.__played&&it.__lot.isPaused&&!it.__lot.currentFrame)it.__lot.goToAndPlay(0,true)}}catch(_){}}
     {const trk=$u('ugTrack'),fi=trk.children[0],pv=trk.children[1];
       if(fi){fi.style.setProperty('--s',1);fi.animate([{transform:'scale(1)'},{transform:'scale(1.14)'}],{duration:640,easing:'cubic-bezier(.3,1.5,.5,1)',fill:'forwards'})}
       if(pv)pv.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.7)'}],{duration:380,easing:'ease-out',fill:'forwards'}).onfinish=()=>{try{pv.__lot&&pv.__lot.pause()}catch(_){}}}
@@ -3081,7 +3082,8 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     ugConfetti();
     
     x.upg={k:pk.ck||'',nt:pk.note||'',n:num,g:pk.gname,m:pk.fm.n,s:pk.fs.n,b:pk.fb.n,mp:pk.fm.p,sp:pk.fs.p,bp:pk.fb.p,iss:pk.meta&&pk.meta.iss,tot:pk.meta&&pk.meta.tot,pr:pk.meta&&pk.meta.pr,mi:pk.fin||null,mj:pk.mj||null,si:pk.sImg?pk.sImg.src:null,c:{c1:c.c1,c2:c.c2,c3:c.c3}};
-    try{if(MYGIFTS.indexOf(x)>=0){store.set(MYK,JSON.stringify(MYGIFTS));renderMyGifts()}}catch(_){}
+    /* сохранение и перерисовка всей сетки профиля тяжёлые (чем больше подарков, тем дольше), поэтому не в момент финала анимации, а чуть позже */
+    setTimeout(()=>{try{if(MYGIFTS.indexOf(x)>=0){store.set(MYK,JSON.stringify(MYGIFTS));renderMyGifts()}}catch(_){}},2200);
     const sk=$u('ugSkip');sk.dataset.done=x.hid?'1':'0';ugSkipSwap(sk,x.hid?'Добавить в профиль':'ОК');
   }
   /* окно уже улучшенного подарка (по нажатию на его карточку в профиле): те же окно и вид, но сразу с итоговыми значениями, без анимации улучшения */
