@@ -203,6 +203,7 @@ body.navanim #bar{z-index:1}
 
 /* профиль: при прокрутке имя, рейтинг и «в сети» закрепляются сверху (меньшего размера) на затемнении с размытием, слайдер прилипает под ними */
 #p-me{overflow-anchor:none}
+#p-me .pgrid+.gempty,#pEmpty{position:sticky;top:67px}   /* «Публикаций пока нет» остаётся видимой под закреплённым слайдером (8px + 40px слайдер + 19px отступ) */
 #p-me .mtabs{position:sticky;top:8px;z-index:901} /* отступ считается от внутренней границы страницы (у неё уже есть верхний padding под хедер) */
 .mpin{position:fixed;left:0;right:0;top:0;z-index:900;pointer-events:none;visibility:hidden}
 .mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h));opacity:0;background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,0.989) 25.0%,rgba(0,0,0,0.946) 31.2%,rgba(0,0,0,0.877) 37.5%,rgba(0,0,0,0.788) 43.8%,rgba(0,0,0,0.684) 50.0%,rgba(0,0,0,0.570) 56.2%,rgba(0,0,0,0.453) 62.5%,rgba(0,0,0,0.339) 68.8%,rgba(0,0,0,0.232) 75.0%,rgba(0,0,0,0.139) 81.2%,rgba(0,0,0,0.066) 87.5%,rgba(0,0,0,0.017) 93.8%,rgba(0,0,0,0.000) 100.0%)}
@@ -1276,7 +1277,16 @@ $$('#gtabs button').forEach(b=>b.onclick=()=>{
   const all=b.dataset.t==='all';
   $('#grid').hidden=!all; $('#gempty').hidden=all;
 });
-$$('#mtabs button').forEach(b=>b.onclick=()=>{pickTab($('#mtabs'),b);requestAnimationFrame(()=>setTimeout(()=>{try{renderMyGifts()}catch(e){}},0))});
+/* при смене вкладки содержимое может стать короче (пустые «Публикации») — тогда браузер сам прокрутил бы страницу вверх и слайдер «открепился».
+   Запоминаем прокрутку и при необходимости удерживаем высоту блока, чтобы страница и закреплённый слайдер остались на месте */
+$$('#mtabs button').forEach(b=>b.onclick=()=>{
+  const pg=$('#p-me'),mb=pg.querySelector('.mbody'),st=pg.scrollTop;
+  pickTab($('#mtabs'),b);
+  requestAnimationFrame(()=>setTimeout(()=>{
+    try{mb.style.minHeight='';renderMyGifts()}catch(e){}
+    if(st>0){const need=st+pg.clientHeight,have=pg.scrollHeight;if(have<need)mb.style.minHeight=(mb.offsetHeight+need-have)+'px';pg.scrollTop=st}
+  },0))
+});
 function resetTabs(){
   [['#gtabs','all','t'],['#mtabs','gifts','m']].forEach(([sel,v,k])=>{
     const box=$(sel),b=box.querySelector('[data-'+k+'="'+v+'"]');
@@ -1284,6 +1294,7 @@ function resetTabs(){
     placeTab(box,true);
   });
   $('#grid').hidden=false; $('#gempty').hidden=true;
+  try{const mb=document.querySelector('#p-me .mbody');if(mb)mb.style.minHeight=''}catch(e){}
   try{renderMyGifts()}catch(e){}
 }
 if(window.ResizeObserver)new ResizeObserver(()=>{placeTab($('#mtabs'),true);placeTab($('#gtabs'),true)}).observe(document.body);
@@ -1876,12 +1887,12 @@ renderMyGifts();
     for(let i=0;i<n;i++)MYGIFTS.unshift({image:cur.image||null,emoji:cur.emoji||null,total:total,anon:hidden,t:Date.now(),price:+cur.price,key:cur.key,msg:cmt});
     if(MYGIFTS.length>200)MYGIFTS.length=200;
     const fresh=MYGIFTS.slice(0,n);
-    bm.classList.add('fast');close();   /* окно начинает закрываться сразу, до любой тяжёлой работы */
+    close();   /* окно начинает закрываться сразу, до любой тяжёлой работы (скорость обычная: .55с окно, 560мс переход) */
     /* всё тяжёлое (запись в хранилище, перерисовка профиля, переход) — после первого кадра анимации закрытия, иначе она «съедается» */
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       try{store.set(SOLDK,JSON.stringify(SOLDMAP));store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
       try{renderMyGifts(true)}catch(_){}
-      const _o=NAV_MS;NAV_MS=400;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}
+      go('me',false,false,{full:true});
       /* когда профиль уже на месте — купленные подарки один раз проигрывают свою анимацию (по очереди, чтобы не грузить за один кадр) */
       const cnt=Math.min(fresh.length,9),playNew=t=>{
         if(navFin&&t<30){setTimeout(()=>playNew(t+1),50);return}
@@ -1972,12 +1983,15 @@ renderMyGifts();
     const n=sellN(price),who=x.anon?'Аноним':name;
     const msg='Обменять этот подарок от '+who+' на '+fmt(n)+' '+sellWord(n)+'?';
     const done=()=>{
-      const i=MYGIFTS.indexOf(x);if(i<0)return;
-      MYGIFTS.splice(i,1);store.set(MYK,JSON.stringify(MYGIFTS));
-      addStars(n);
-      try{renderMyGifts()}catch(_){}
-      close();
-      try{go('stars')}catch(_){}
+      if(MYGIFTS.indexOf(x)<0)return;
+      close();   /* окно просто закрывается обычной анимацией, на страницу «Звёзды» не переходим */
+      /* обновление данных и профиля — после первого кадра закрытия, чтобы не рвать анимацию */
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        const i=MYGIFTS.indexOf(x);if(i<0)return;
+        MYGIFTS.splice(i,1);store.set(MYK,JSON.stringify(MYGIFTS));
+        addStars(n);
+        try{renderMyGifts()}catch(_){}
+      }));
     };
     selling=true;const fin=ok=>{selling=false;if(ok)done()};
     if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){
