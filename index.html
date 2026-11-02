@@ -1698,7 +1698,7 @@ try{MYGIFTS=JSON.parse(store.get(MYK,'[]'))||[];SOLDMAP=JSON.parse(store.get(SOL
 const shortN=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'K':String(n);
 /* карточка улучшенного подарка: фон, узор, модель и плашка с номером */
 const PG_POS=[[37,7,16],[63,7,16],[21,16,17],[79,16,17],[34,28,19],[66,28,19],[9,42,17],[24,42,18],[76,42,18],[91,42,17],[34,57,19],[66,57,19],[21,67,17],[79,67,17],[37,78,16],[63,78,16],[50,94,16]];
-const PG_IMG={},PG_RO=window.ResizeObserver?new ResizeObserver(es=>es.forEach(e=>pgDraw(e.target))):null;
+const PG_BMP={},PG_IMG={},PG_RO=window.ResizeObserver?new ResizeObserver(es=>es.forEach(e=>pgDraw(e.target))):null;
 const pgCol=v=>/^#[0-9a-f]{3,8}$/i.test(String(v||''))?v:null;
 function pgShade(c,k){const m=/^#([0-9a-f]{6})$/i.exec(String(c||''));if(!m)return null;const n=parseInt(m[1],16),f=v=>Math.round(v*k);return '#'+[f(n>>16&255),f(n>>8&255),f(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('')}
 function pgLoad(u){return PG_IMG[u]||(PG_IMG[u]=new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=u}))}
@@ -1706,6 +1706,8 @@ function pgDraw(cv){
   const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
   const D=Math.min(window.devicePixelRatio||1,2),W=Math.round(w*D),H=Math.round(h*D);
   if(cv.__W===W&&cv.__H===H)return;cv.__W=W;cv.__H=H;
+  const key=cv.dataset.si+'|'+(cv.dataset.c||'')+'|'+W+'x'+H,hit=PG_BMP[key];
+  if(hit){cv.width=W;cv.height=H;cv.getContext('2d').drawImage(hit,0,0);return}
   pgLoad(cv.dataset.si).then(im=>{
     if(!im||!cv.isConnected)return;
     cv.width=W;cv.height=H;
@@ -1716,6 +1718,7 @@ function pgDraw(cv){
       tx.globalCompositeOperation='source-in';tx.fillStyle=cv.dataset.c||'#fff';tx.fillRect(0,0,tc.width,tc.height);
       cx.globalAlpha=.3;cx.drawImage(tc,(p[0]/100*w-sz/2)*D,(p[1]/100*h-sz/2)*D);
     });
+    try{const oc=document.createElement('canvas');oc.width=W;oc.height=H;oc.getContext('2d').drawImage(cv,0,0);const ks=Object.keys(PG_BMP);if(ks.length>=40)delete PG_BMP[ks[0]];PG_BMP[key]=oc}catch(_){}
   });
 }
 function pgPaint(g){g.querySelectorAll('canvas.pu-pat').forEach(cv=>{if(PG_RO)PG_RO.observe(cv);pgDraw(cv)})}
@@ -1728,13 +1731,16 @@ function pgUpg(x,i){
 function renderMyGifts(){
   const g=$('#pGrid'),e=$('#pEmpty'),b=$('#mtabs button.on');if(!g||!e)return;
   const uniq=!!b&&b.dataset.m==='posts',list=uniq?[]:MYGIFTS;
+  const sig=(uniq?'u':'a')+'|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
+  if(g.__sig!==sig){g.__sig=sig;try{PG_RO&&PG_RO.disconnect()}catch(_){}
   g.innerHTML=list.map((x,i)=>{
     if(x.upg&&x.upg.c)return pgUpg(x,i);
     const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
     return '<div class="pg" data-i="'+i+'">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
       (x.image?'<img class="pi" src="'+x.image+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
   }).join('');
-  g.hidden=!list.length;e.hidden=list.length>0;try{pgPaint(g)}catch(_){}
+  try{pgPaint(g)}catch(_){}}
+  g.hidden=!list.length;e.hidden=list.length>0;
   e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
   const ti=document.getElementById('mtIcons');
   if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
@@ -2896,7 +2902,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     let lap3=shuf(S);
     for(let t=0;t<8&&S.length>2&&(lap3[0]===S[S.length-1]||lap3.every((o,q)=>o===S[q]));t++)lap3=shuf(S);
     if(S.length>1)lap3=lap3.slice(0,S.length-1);
-    const fin=pk.fImg?pk.fImg.src:(pk.fallbackSrc||first);pk.fin=fin;
+    const fin=pk.fImg?pk.fImg.src:(pk.fallbackSrc||first);pk.fin=fin;ugApply(x,pk,num,pk.cols[pk.cols.length-1]);
     const seq=S.concat(S,lap3,[{s:fin,j:pk.mj}]),N=seq.length,items=seq.slice().reverse();pk.F=0;
     const trk=$u('ugTrack');
     ugTrkClear(trk);trk.innerHTML=items.map((o,q)=>'<div class="ug-i"'+(q===N-1?' style="transform:scale(1.12)"':'')+'>'+(o.s?'<img src="'+o.s+'" alt="">':pk.emoji)+'</div>').join('');
@@ -3070,6 +3076,19 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     cv.animate([{opacity:0,transform:'scale('+PAT_S+')'},{opacity:1,transform:'scale(1)'}],{duration:PAT_IN,easing:PAT_EASE});
   }
   function ugFinalSet(pk,c,ms){if(!finBg){finBg=true;ugBgSlide(c,ms)}if(!finPat){finPat=true;ugPatSwap(pk.sImg,c.c3,true)}}
+  /* как в самом Telegram: итог улучшения известен сразу, поэтому данные подарка и его карточка в профиле меняются в самом начале (под затемнением), а не после закрытия окна */
+  function ugApply(x,pk,num,c){
+    x.upg={k:pk.ck||'',nt:pk.note||'',n:num,g:pk.gname,m:pk.fm.n,s:pk.fs.n,b:pk.fb.n,mp:pk.fm.p,sp:pk.fs.p,bp:pk.fb.p,iss:pk.meta&&pk.meta.iss,tot:pk.meta&&pk.meta.tot,pr:pk.meta&&pk.meta.pr,mi:pk.fin||null,mj:pk.mj||null,si:pk.sImg?pk.sImg.src:null,c:{c1:c.c1,c2:c.c2,c3:c.c3}};
+    setTimeout(()=>{const run=()=>{try{
+      const i=MYGIFTS.indexOf(x);if(i<0)return;
+      store.set(MYK,JSON.stringify(MYGIFTS));
+      const g=document.getElementById('pGrid'),el=g&&g.querySelector('.pg[data-i="'+i+'"]');
+      if(el&&x.upg&&x.upg.c){const t=document.createElement('div');t.innerHTML=pgUpg(x,i);const nn=t.firstChild;el.replaceWith(nn);pgPaint(nn)}
+      const ti=document.getElementById('mtIcons');
+      if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(q=>(q.upg&&q.upg.mi)||q.image?'<img src="'+((q.upg&&q.upg.mi)||q.image)+'" alt="">':'<em>'+(q.emoji||'🎁')+'</em>').join('');
+    }catch(_){}};
+    if(window.requestIdleCallback)requestIdleCallback(run,{timeout:2500});else run()},900);
+  }
   function ugDone(x,pk,num,c){
     ugFinalSet(pk,c,300);
     /* страховка: если анимация итоговой модели не загрузилась или так и не стартовала — запускаем её сейчас */
@@ -3081,18 +3100,6 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     ugLater(()=>{ugLock=false},700);ugLater(()=>UG.classList.remove('fxon'),900);
     ugConfetti();
     
-    x.upg={k:pk.ck||'',nt:pk.note||'',n:num,g:pk.gname,m:pk.fm.n,s:pk.fs.n,b:pk.fb.n,mp:pk.fm.p,sp:pk.fs.p,bp:pk.fb.p,iss:pk.meta&&pk.meta.iss,tot:pk.meta&&pk.meta.tot,pr:pk.meta&&pk.meta.pr,mi:pk.fin||null,mj:pk.mj||null,si:pk.sImg?pk.sImg.src:null,c:{c1:c.c1,c2:c.c2,c3:c.c3}};
-    /* сохранение и перерисовка всей сетки профиля тяжёлые (чем больше подарков, тем дольше), поэтому не в момент финала анимации, а чуть позже */
-    /* точечное обновление одной карточки (а не всей сетки) и только после того, как конфетти осело */
-    setTimeout(()=>{const run=()=>{try{
-      const i=MYGIFTS.indexOf(x);if(i<0)return;
-      store.set(MYK,JSON.stringify(MYGIFTS));
-      const g=document.getElementById('pGrid'),el=g&&g.querySelector('.pg[data-i="'+i+'"]');
-      if(el&&x.upg&&x.upg.c){const t=document.createElement('div');t.innerHTML=pgUpg(x,i);const nn=t.firstChild;el.replaceWith(nn);pgPaint(nn)}
-      const ti=document.getElementById('mtIcons');
-      if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(q=>(q.upg&&q.upg.mi)||q.image?'<img src="'+((q.upg&&q.upg.mi)||q.image)+'" alt="">':'<em>'+(q.emoji||'🎁')+'</em>').join('');
-    }catch(_){}};
-    if(window.requestIdleCallback)requestIdleCallback(run,{timeout:3000});else run()},3800);
     const sk=$u('ugSkip');sk.dataset.done=x.hid?'1':'0';ugSkipSwap(sk,x.hid?'Добавить в профиль':'ОК');
   }
   /* окно уже улучшенного подарка (по нажатию на его карточку в профиле): те же окно и вид, но сразу с итоговыми значениями, без анимации улучшения */
