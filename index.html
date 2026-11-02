@@ -601,6 +601,16 @@ html,body{overscroll-behavior:none}
 #ug .ug-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:none}
 #ug .ug-scroll::-webkit-scrollbar{display:none}
 #ug .ug-scroll .ug-note{padding-bottom:0}
+/* правки окна улучшения / улучшенного подарка */
+#ug .ug-nm{color:var(--accent)}
+#ug .ug-note{gap:4px;padding-top:15px}
+#ug .ug-note svg{width:21px;height:21px}
+#ug .ug-tbl{margin-top:18px}
+#ug .ug-title i{font-size:20px}
+#ug .ug-acts{margin-top:15px}
+#ug .ug-a{gap:0}
+#ug .ug-a svg{width:30px;height:30px}
+#ug .ug-top::after{background:linear-gradient(to bottom,rgba(0,0,0,0) 55%,rgba(0,0,0,.22) 100%),radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.4) 100%)}
 </style>
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
@@ -835,9 +845,9 @@ html,body{overscroll-behavior:none}
       <div class="ug-title"><span id="ugName"></span><i id="ugNum"></i></div>
       <div class="ug-sub" id="ugSub"></div>
       <div class="ug-acts">
-        <button class="ug-a glass" data-a="Отправить"><svg viewBox="0 0 512 512"><use href="#i-out"/></svg><span>Отправить</span></button>
-        <button class="ug-a glass" data-a="Носить"><svg viewBox="0 0 512 512"><use href="#i-wear"/></svg><span>Носить</span></button>
-        <button class="ug-a glass" data-a="Продать"><svg viewBox="0 0 512 512"><use href="#i-sellit"/></svg><span>Продать</span></button>
+        <button class="ug-a glass" data-a="Отправить"><svg viewBox="0 0 512 512"><use href="#i-out"/></svg><span>отправить</span></button>
+        <button class="ug-a glass" data-a="Носить"><svg viewBox="0 0 512 512"><use href="#i-wear"/></svg><span>носить</span></button>
+        <button class="ug-a glass" data-a="Продать"><svg viewBox="0 0 512 512"><use href="#i-sellit"/></svg><span>продать</span></button>
       </div>
     </div>
     <div class="ug-scroll" id="ugScroll">
@@ -850,7 +860,7 @@ html,body{overscroll-behavior:none}
       <div class="ug-r"><div class="ug-k">Цена</div><div class="ug-v" id="ugVal"></div></div>
       <div class="ug-r ug-c" id="ugCm" style="display:none"></div>
     </div>
-    <div class="ug-note"><svg viewBox="0 0 512 512"><use href="#i-eyeoff"/></svg><span>Этот подарок не виден в вашем профиле.</span></div>
+    <div class="ug-note"><svg viewBox="0 0 512 512"><use href="#i-eyeoff"/></svg><span>Этот подарок не виден в профиле.</span></div>
     </div>
     <div class="ug-btnw"><button class="ug-skip" id="ugSkip">Пропустить</button></div>
   </div>
@@ -2831,7 +2841,13 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   }
   $u('ugCm').onclick=()=>{const x=window.__gmCur;if(ugLock||ugClosing||!x||!x.msg)return;askDelComment(x,()=>{const t=(x.upg&&x.upg.nt)?ugNoteTxt(x,true):'';if(x.upg)x.upg.nt=t;ugNoteSet(t);try{renderMyGifts()}catch(_){}})};
   window.ugNoteTxt=ugNoteTxt;
-  function ugNoteSet(t){const r=$u('ugCm');r.style.display=t?'':'none';r.textContent=t||''}
+  function ugNoteSet(t){
+    const r=$u('ugCm');r.style.display=t?'':'none';
+    if(!t){r.textContent='';return}
+    /* имя в начале строки («Подарок от … для …») выделяется синим, как в поле «Владелец»; комментарий остаётся как есть */
+    const i=t.indexOf(', отправлен'),h=escH(i<0?t:t.slice(0,i)),tl=escH(i<0?'':t.slice(i));
+    r.innerHTML=h.split(escH(name)).join('<span class="ug-nm">'+escH(name)+'</span>')+tl;
+  }
   function ugShow(x,pk){
     const top=$u('ugTop'),umTop=$u('umTop'),cs=getComputedStyle(umTop);
     const c0={c1:cs.getPropertyValue('--um-c1').trim()||'#7b72ea',c2:cs.getPropertyValue('--um-c2').trim()||'#5b3fb8'};
