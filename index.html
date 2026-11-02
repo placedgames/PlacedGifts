@@ -274,7 +274,7 @@ body.navanim #bar{z-index:1}
 .mt-ic em{font-style:normal;font-size:17px;line-height:21px}
 /* подарки в профиле */
 .pgrid{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.pg{position:relative;min-width:0;aspect-ratio:1/1;background:var(--card);border-radius:16px;display:flex;align-items:center;justify-content:center}
+.pg{position:relative;min-width:0;aspect-ratio:1/1;background:var(--card);border-radius:17px;display:flex;align-items:center;justify-content:center}
 .pg .pi{width:calc(72% + 2px);height:calc(72% + 2px);object-fit:contain}
 .pg .pe{font-size:50px;line-height:1}
 .pg{cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -594,12 +594,7 @@ html,body{overscroll-behavior:none}
 #ug .ug-ava{width:22px;height:22px;font-size:11px;font-weight:600;color:#fff}
 #ug .ug-own{color:var(--accent);font-weight:500;font-size:16px}
 
-/* карточки подарков (профиль и «Купить подарок»): сглаженные углы; фон вынесен в ::before, чтобы не обрезать выступающую плашку */
-.gift,.pg{background:none;isolation:isolate}
-.gift::before,.pg::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:var(--sqr,20px);-webkit-clip-path:var(--sq);clip-path:var(--sq);background:var(--card)}
-.pg::before{border-radius:var(--sqr,16px)}
-.pgu::before{display:none}
-.pgu .pu-bg{-webkit-clip-path:var(--sq);clip-path:var(--sq)}
+#ug .ug-r.ug-c{height:auto;min-height:40px;padding:10px 12px;line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;align-items:center}
 </style>
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/placedgames/pg/Background.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
@@ -772,7 +767,7 @@ html,body{overscroll-behavior:none}
           <button class="bm-view" id="bmView">Посмотреть</button>
         </div>
       </div>
-      <label class="bm-msg glass"><input id="bmMsg" type="text" placeholder="Введите сообщение (необязательно)" maxlength="48" autocomplete="off"></label>
+      <label class="bm-msg glass"><input id="bmMsg" type="text" placeholder="Введите сообщение (необязательно)" maxlength="26" autocomplete="off"></label>
     </div>
     <div class="bm-bot">
       <div class="bm-hide" id="bmHide"><span>Скрыть моё имя</span><i class="bm-sw"></i></div>
@@ -845,6 +840,8 @@ html,body{overscroll-behavior:none}
       <div class="ug-r"><div class="ug-k">Символ</div><div class="ug-v" id="ugS"></div></div>
       <div class="ug-r"><div class="ug-k">Фон</div><div class="ug-v" id="ugB"></div></div>
       <div class="ug-r"><div class="ug-k">Выпущено</div><div class="ug-v" id="ugAv"></div></div>
+      <div class="ug-r"><div class="ug-k">Цена</div><div class="ug-v" id="ugVal"></div></div>
+      <div class="ug-r ug-c" id="ugCm" style="display:none"></div>
     </div>
     <div class="ug-note"><svg viewBox="0 0 512 512"><use href="#i-eyeoff"/></svg><span>Этот подарок не виден в вашем профиле.</span></div>
     <div class="ug-btnw"><button class="ug-skip" id="ugSkip">Пропустить</button></div>
@@ -1320,7 +1317,6 @@ function renderGifts(list){
     (g.image?'<img loading="lazy" src="'+g.image+'" alt="" onerror="this.replaceWith(\'🎁\')">':(g.emoji||'🎁'))+
     '</div><div class="price"><canvas class="pc"></canvas><img class="pst" src="'+STAR+'" alt=""><span>'+fmt(price)+'</span></div></div>';
   }).join('');
-  try{window.smoothAll&&smoothAll($('#grid'))}catch(_){}
   $$('.gift').forEach(el=>{ GIO.observe(el); el.onclick=()=>{const im=el.querySelector('.pic img');openBuy({price:el.dataset.p,total:+el.dataset.t,key:el.dataset.k,image:im?im.src:null,emoji:im?null:el.querySelector('.pic').textContent.trim()})}; });
 }
 renderGifts(FALLBACK);
@@ -1716,7 +1712,7 @@ function renderMyGifts(){
     return '<div class="pg" data-i="'+i+'">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
       (x.image?'<img class="pi" src="'+x.image+'" alt="">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
   }).join('');
-  g.hidden=!list.length;e.hidden=list.length>0;try{pgPaint(g)}catch(_){}try{window.smoothAll&&smoothAll(g)}catch(_){}
+  g.hidden=!list.length;e.hidden=list.length>0;try{pgPaint(g)}catch(_){}
   e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
   const ti=document.getElementById('mtIcons');
   if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
@@ -2258,8 +2254,6 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   };
   window.smoothAll=function(root){(root||document).querySelectorAll('.list.pcard').forEach(e=>smoothFit(e,30,true));
     (root||document).querySelectorAll('.sv-card,#bm .bm-card').forEach(e=>smoothFit(e,25,false));
-    (root||document).querySelectorAll('.gift').forEach(e=>smoothFit(e,20,false));
-    (root||document).querySelectorAll('.pg').forEach(e=>smoothFit(e,16,false));
     (root||document).querySelectorAll('.sv-view,#bm .bm-view').forEach(e=>smoothFit(e,'pill',true,1))};
   smoothAll();
 })();
@@ -2805,6 +2799,13 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const pp=(pkP&&pkK===x)?pkP:ugPick(curG||gid(x),x);pkP=null;pkK=null;
     pp.then(pk=>{ugLater(()=>{ugShow(x,pk)},Math.max(0,CHG-(performance.now()-t0)))});
   }
+  /* строка «Подарок от … для …» в таблице: только если при улучшении отмечено «С именем отправителя» */
+  function ugNoteTxt(x,on){
+    if(!on)return '';
+    const d=new Date(x.t||Date.now()),p=n=>String(n).padStart(2,'0'),ds=p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+String(d.getFullYear()).slice(2);
+    return (x.anon?'Подарок для '+name:'Подарок от '+name+' для '+name)+', отправлен '+ds+(x.msg?' с комментарием «'+x.msg+'»':'')+'.';
+  }
+  function ugNoteSet(t){const r=$u('ugCm');r.style.display=t?'':'none';r.textContent=t||''}
   function ugShow(x,pk){
     const top=$u('ugTop'),umTop=$u('umTop'),cs=getComputedStyle(umTop);
     const c0={c1:cs.getPropertyValue('--um-c1').trim()||'#7b72ea',c2:cs.getPropertyValue('--um-c2').trim()||'#5b3fb8'};
@@ -2814,6 +2815,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     const pr=x.price||PRICE;pk.meta={iss:iss,tot:tot,pr:pr};
     $u('ugOwn').classList.remove('c');$u('ugOwn').innerHTML=(u.photo_url?'<span class="ug-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="ug-ava">'+escH((name[0]||'').toUpperCase())+'</span>')+'<span class="ug-own">'+escH(name)+'</span>';
     $u('ugAv').classList.remove('c');$u('ugAv').textContent=spaced(iss)+'/'+spaced(tot)+' выпущено';
+    $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+(pr*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
+    $u('ugLm').onclick=()=>toast('Подробнее: скоро');
+    pk.note=ugNoteTxt(x,$u('umChk').classList.contains('on'));ugNoteSet(pk.note);
     pk.spl=[shuf(pk.lm).slice(0,9),shuf(pk.ls).slice(0,9),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4))];
     ['ugM','ugS','ugB'].forEach((id,i)=>{const c=$u(id);c.classList.add('c');const f=pk.spl[i][0]||{n:'—',p:1};c.innerHTML='<div class="ug-it"><span>'+escH(f.n)+'</span><i class="ug-pc">'+String((+f.p||0).toFixed(1)).replace('.',',')+'%</i></div>'});
     const sk=$u('ugSkip');sk.dataset.done='';ugSkipFromSpin(sk,'Пропустить');
@@ -3014,7 +3018,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     ugLater(()=>{ugLock=false},700);ugLater(()=>UG.classList.remove('fxon'),900);
     ugConfetti();
     
-    x.upg={n:num,g:pk.gname,m:pk.fm.n,s:pk.fs.n,b:pk.fb.n,mp:pk.fm.p,sp:pk.fs.p,bp:pk.fb.p,iss:pk.meta&&pk.meta.iss,tot:pk.meta&&pk.meta.tot,pr:pk.meta&&pk.meta.pr,mi:pk.fin||null,mj:pk.mj||null,si:pk.sImg?pk.sImg.src:null,c:{c1:c.c1,c2:c.c2,c3:c.c3}};x.hid=true;
+    x.upg={nt:pk.note||'',n:num,g:pk.gname,m:pk.fm.n,s:pk.fs.n,b:pk.fb.n,mp:pk.fm.p,sp:pk.fs.p,bp:pk.fb.p,iss:pk.meta&&pk.meta.iss,tot:pk.meta&&pk.meta.tot,pr:pk.meta&&pk.meta.pr,mi:pk.fin||null,mj:pk.mj||null,si:pk.sImg?pk.sImg.src:null,c:{c1:c.c1,c2:c.c2,c3:c.c3}};x.hid=true;
     try{if(MYGIFTS.indexOf(x)>=0){store.set(MYK,JSON.stringify(MYGIFTS));renderMyGifts()}}catch(_){}
     const sk=$u('ugSkip');sk.dataset.done='1';ugSkipSwap(sk,'Добавить в профиль');
   }
@@ -3033,6 +3037,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     $u('ugName').textContent=d.g||'Подарок';$u('ugNum').textContent='#'+spaced(d.n);$u('ugSub').textContent=d.m||'';
     $u('ugOwn').classList.remove('c');$u('ugOwn').innerHTML=(u.photo_url?'<span class="ug-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="ug-ava">'+escH((name[0]||'').toUpperCase())+'</span>')+'<span class="ug-own">'+escH(name)+'</span>';
     $u('ugAv').classList.remove('c');$u('ugAv').textContent=spaced(d.iss||0)+'/'+spaced(d.tot||0)+' выпущено';
+    $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+((d.pr||PRICE)*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
+    $u('ugLm').onclick=()=>toast('Подробнее: скоро');
+    ugNoteSet(d.nt);
     const pc=p=>String((+p||0).toFixed(1)).replace('.',',')+'%';
     [['ugM',d.m,d.mp],['ugS',d.s,d.sp],['ugB',d.b,d.bp]].forEach(r=>{const cc=$u(r[0]);cc.classList.add('c');cc.innerHTML='<div class="ug-it"><span>'+escH(r[1]||'—')+'</span><i class="ug-pc">'+pc(r[2])+'</i></div>'});
     UG.querySelector('.ug-note').style.display=x.hid?'':'none';
