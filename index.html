@@ -543,7 +543,9 @@ html,body{overscroll-behavior:none}
 #ug .ug-skip.press{transform:scale(1.04)}
 .noanim #ug .ug-skip.press{transform:none}
 #ug.morph .ug-sheet{opacity:1;transform:none;transition:none;background:transparent}
-#ug.morph .ug-top,#ug.morph .ug-tbl,#ug.morph .ug-note{opacity:var(--gk,0);transform:translate3d(0,var(--go,0px),0)}
+#ug.morph .ug-top,#ug.morph .ug-tbl,#ug.morph .ug-note{transform:translate3d(0,var(--go,0px),0)}
+#ug.morph .ug-tbl,#ug.morph .ug-note,#ug.morph .ug-title,#ug.morph .ug-sub,#ug.morph .ug-acts{opacity:var(--gk,0)}
+#ug.morph .ug-t1,#ug.morph .ug-pat,#ug.morph .ug-car,#ug.morph .ug-top::after{opacity:var(--gt,0)}
 #ug.morph .ug-dim{opacity:0;transition:none}
 /* кнопки окна результата вынесены из шапки: при смене окон они не гаснут вместе с ней; едут за верхним краем растущей формы */
 #ug.morph .ug-more{opacity:var(--gk,0);transform:translate3d(0,var(--go,0px),0);transition:none}
@@ -552,11 +554,9 @@ html,body{overscroll-behavior:none}
 #ug.morph .ug-x svg{opacity:var(--gxa,0)}
 #ug .ug-sheet{touch-action:none;will-change:transform}
 /* окно предпросмотра растёт одной формой; содержимое гаснет, а стрелка «назад» остаётся и уходит по своей кривой */
-#um.mf .um-top{overflow:visible}
 #um.mf .um-top>*:not(.um-xc):not(.um-xg):not(.um-back):not(.um-tint){opacity:var(--uk,1)!important}
 #um.mf .um-tint{opacity:var(--ut2,1)!important}
-#um.mf .um-feat,#um.mf .um-chk{opacity:var(--uk,1)!important}
-#um.mf .um-back{top:calc(16px + var(--bo,0px))}
+#um.mf .um-feat,#um.mf .um-chk{opacity:var(--uf,1)!important}
 #um.mf .um-upw{opacity:0!important}
 #ug .ug-sp{display:block;width:24px;height:24px;border-radius:50%;border:2.5px solid rgba(255,255,255,.32);border-top-color:#fff;animation:ugspin .75s linear infinite}
 #ug .ug-i>img,#ug .ug-i>.ga{transform:scale(var(--s,1))}
@@ -2744,7 +2744,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
   function ugShow(x,pk){
     const top=$u('ugTop'),umTop=$u('umTop'),cs=getComputedStyle(umTop);
     const c0={c1:cs.getPropertyValue('--um-c1').trim()||'#7b72ea',c2:cs.getPropertyValue('--um-c2').trim()||'#5b3fb8'};
-    ugBgSet(c0);
+    ugBgSet(c0);bgFin=false;patFin=false;
     const num=1+Math.floor(Math.random()*Math.max(1000,(x.total||300000))),tot=Math.max(num+1,x.total||237393),iss=Math.min(tot,num+Math.floor(Math.random()*tot*.3));
     $u('ugName').textContent=pk.gname;$u('ugNum').textContent='#'+spaced(num);$u('ugSub').textContent=pk.fm.n;
     const pr=x.price||PRICE;
@@ -2795,8 +2795,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
       sh.style.height=hh.toFixed(2)+'px';sh.style.webkitClipPath=gp;sh.style.clipPath=gp;
       const pp='path("'+P(sw2,hh,0,gH-hh)+'")';
       ugS.style.webkitClipPath=pp;ugS.style.clipPath=pp;
-      SV(UG,'--gk',cl(k,.05,.5));UG.style.setProperty('--go',((1-k)*rise).toFixed(2)+'px');
-      SV(um,'--uk',1-cl(k,0,.4));SV(um,'--ut2',1-cl(k,.3,.8));um.style.setProperty('--bo',(-rise*k).toFixed(2)+'px');
+      /* шапка старого окна едет вверх вместе с краем формы и совпадает с шапкой нового: модель, фон и кнопки — на одном месте, перекрёстного «наезда» нет */
+      SV(UG,'--gt',cl(k,.05,.35));SV(UG,'--gk',cl(k,.4,.8));UG.style.setProperty('--go',((1-k)*rise).toFixed(2)+'px');
+      SV(um,'--uf',1-cl(k,0,.3));SV(um,'--uk',1-cl(k,.2,.5));SV(um,'--ut2',1-cl(k,.3,.65));sh.style.setProperty('--uo',(-rise*k).toFixed(2)+'px');
       /* стрелка уходит, крестик приходит: те же значения, что у возврата предпросмотр → подарок */
       SV(sh,'--ubo',1-cl(k,0,.3));SV(sh,'--ubs',1-.3*cl(k,0,.5));SV(sh,'--ua',1-cl(k,0,.2));
       SV(UG,'--gxo',cl(k,.18,.35));SV(UG,'--gxs',k);SV(UG,'--gxa',cl(k,.42,.7));
@@ -2810,7 +2811,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
           ugMf=0;
           const dm=UG.querySelector('.ug-dim');dm.style.transition='none';
           UG.classList.remove('morph');
-          ['--gk','--go','--gxo','--gxs','--gxa'].forEach(p=>UG.style.removeProperty(p));
+          ['--gk','--gt','--go','--gxo','--gxs','--gxa'].forEach(p=>UG.style.removeProperty(p));
           ugShape();void dm.offsetWidth;dm.style.transition='';
           quietClose();
         }
@@ -2834,7 +2835,10 @@ document.getElementById('svGift').onclick=()=>go('gifts');
           items.slice(0,Math.min(3,N)).forEach((o,q)=>{const el=trk.children[q];if(o.j&&el)giftAnim(el,o.j,q===0?{at,stop:true}:{once:true,at})})}
         ugSpin($u('ugM'),shuf(pk.lm).slice(0,9),pk.fm,Math.max(900,T-500));ugSpin($u('ugS'),shuf(pk.ls).slice(0,9),pk.fs,Math.max(1000,T-250));ugSpin($u('ugB'),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4)),pk.fb,Math.max(1100,T));
         /* фон шапки следит за маской в центре: каждая новая — новый цвет; итоговая — финальный фон */
-        const cl=pk.cols,nc=Math.max(1,cl.length-1);let cur=N-1,lastCh=performance.now();
+        const cl=pk.cols,fc=cl[cl.length-1];
+        /* фон один на всю прокрутку: примерно на середине он плавно становится итоговым, чуть позже так же определяется узор */
+        ugLater(()=>{ugBgDone(fc,650)},Math.round(T*.45));
+        ugLater(()=>{ugPatDone(pk,fc)},Math.round(T*.45)+520);
         const tick=()=>{
           if(!ugX||!UG.classList.contains('on'))return;
           let tx=tx0;try{const m=getComputedStyle(trk).transform;if(m&&m!=='none')tx=new DOMMatrix(m).m41}catch(_){}
@@ -2843,10 +2847,6 @@ document.getElementById('svGift').onclick=()=>go('gifts');
           for(let z=1;z<3&&z<N;z++){
             const d=(tx+z*iw+iw/2-W/2)/iw,el=trk.children[z];if(!el)continue;
             if(el.__lot&&!el.__stp&&d>1.25){el.__stp=1;try{el.__lot.pause()}catch(_){}}
-          }
-          if(q!==cur){
-            const now=performance.now(),ms=Math.min(420,Math.max(50,(now-lastCh)*.9));lastCh=now;cur=q;
-            ugBgTo(q===0?cl[cl.length-1]:cl[(N-1-q-1)%nc],ms);
           }
           if(ugX.playState!=='finished')ugRaf=requestAnimationFrame(tick);else setS(tx1);
         };
@@ -2862,18 +2862,24 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     if(window.closeGift)closeGift();
     setTimeout(()=>{gd.style.transition=''},700);
     setTimeout(()=>{
-      um.style.visibility='hidden';um.classList.remove('mf');['--uk','--ut2','--bo'].forEach(p=>um.style.removeProperty(p));sh.style.maxHeight='';closing=false;frame(0);um.classList.remove('pre');um.style.height='';
+      um.style.visibility='hidden';um.classList.remove('mf');['--uk','--uf','--ut2'].forEach(p=>um.style.removeProperty(p));sh.style.maxHeight='';closing=false;frame(0);um.classList.remove('pre');um.style.height='';
       sh.style.transition='';sh.style.transform='';sh.style.height='';gmSh.style.height='';gmSh.style.maxHeight='';if(gmBody)gmBody.style.opacity='';
       $u('umGo').classList.remove('busy');busy=false;
       setTimeout(()=>gmEl.classList.remove('up','sub'),500);
     },80);
   }
-  function ugDone(x,pk,num,c){
-    /* узор нового символа проявляется поверх старого */
+  let bgFin=false,patFin=false;
+  function ugBgDone(c,ms){if(bgFin)return;bgFin=true;ugBgTo(c,ms)}
+  /* узор нового символа: старый разъезжается от центра в стороны и гаснет, новый сходится на место — как в окне предпросмотра */
+  function ugPatDone(pk,c){
+    if(patFin)return;patFin=true;
     const cv=$u('ugPat'),top=$u('ugTop'),old=cv.cloneNode();
     try{old.getContext('2d').drawImage(cv,0,0);cv.after(old);old.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(1.14)'}],{duration:360,easing:'cubic-bezier(.4,0,.3,1)',fill:'forwards'}).onfinish=()=>old.remove()}catch(_){}
     drawPat2(cv,top,pk.sImg,c.c3);
     cv.animate([{opacity:0,transform:'scale(1.14)'},{opacity:1,transform:'scale(1)'}],{duration:560,easing:'cubic-bezier(.3,.1,.2,1)'});
+  }
+  function ugDone(x,pk,num,c){
+    ugBgDone(c,300);ugPatDone(pk,c);
     /* страховка: если анимация итоговой модели не загрузилась или так и не стартовала — запускаем её сейчас */
     if(pk.mj&&window.giftAnim&&window.__gA!==false){try{const it=$u('ugTrack').children[pk.F];
       if(it){if(!it.__lot)giftAnim(it,pk.mj,{stop:true});else if(!it.__played)it.__lot.goToAndPlay(0,true)}}catch(_){}}
