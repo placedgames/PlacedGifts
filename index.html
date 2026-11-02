@@ -51,7 +51,7 @@ body.nobar #bar{display:none}
 .gdesc{margin:20px auto 0;text-align:center;font-size:16px;line-height:20px;font-weight:500;white-space:nowrap}
 .gtabs-wrap{display:flex;justify-content:center;margin-top:18px}
 .gtabs{position:relative;display:inline-flex}
-.gtabs i{position:absolute;top:0;left:0;height:100%;width:0;border-radius:20px;background:#1f1f21;transition:left .16s cubic-bezier(.25,.9,.3,1),width .16s cubic-bezier(.25,.9,.3,1)}
+.gtabs i{position:absolute;top:0;left:0;height:100%;width:0;border-radius:20px;background:#1f1f21;transition:left .22s cubic-bezier(.25,.9,.3,1),width .22s cubic-bezier(.25,.9,.3,1)}
 .gtabs button{position:relative;z-index:1;height:28px;padding:0 12px;border:0;background:none;color:#8a8a8e;font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:color .2s}
 .gtabs button.on{color:#a6a6ab}
 .grid{margin-top:21px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
@@ -139,9 +139,9 @@ background:linear-gradient(to bottom,rgba(var(--glass-rgb),calc(var(--glass-stro
 mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0) 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%)}
 #bar{position:fixed;left:18px;right:18px;bottom:18px;z-index:1001;display:flex;gap:10px;align-items:center}
 #menuPill,#meWrap .glass{--menu-glass-blur:11px}
-#menuPill{flex:1;height:66px;border-radius:35px/33px;display:flex;justify-content:space-between;align-items:center;padding:6px 5px 9px}
+#menuPill{flex:1;height:66px;border-radius:34px/33px;display:flex;justify-content:space-between;align-items:center;padding:6px 5px 9px}
 #menuSlider.no-transition{transition:none!important}
-#menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:31px/29px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)}
+#menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:30px/29px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)}
 #meWrap{position:relative;height:66px;width:66px;flex:none}
 #meWrap .glass{position:absolute;inset:0;border-radius:50%}
 .menu-item{transform:translateY(var(--menu-y));display:flex;flex-direction:column;align-items:center;background:none;border:none;cursor:pointer;flex:1;padding:5px 0 2px;position:relative;z-index:3;color:inherit;font:inherit}
@@ -217,7 +217,7 @@ body.navanim #bar{z-index:1}
 .mpin-s svg{width:22px;height:22px;fill:var(--accent);fill-rule:evenodd;flex:none}
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:40px;border-radius:21.2px/20px;display:flex;align-items:stretch;padding:3px}
-.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:18.05px/17px;pointer-events:none;z-index:1;transition:left .16s cubic-bezier(.25,.9,.3,1),width .16s cubic-bezier(.25,.9,.3,1)}
+.mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:18.05px/17px;pointer-events:none;z-index:1;transition:left .22s cubic-bezier(.25,.9,.3,1),width .22s cubic-bezier(.25,.9,.3,1)}
 .mtabs button{position:relative;z-index:2;flex:none;border:0;background:none;color:#fff;font:inherit;font-size:16px;font-weight:550;cursor:pointer;padding:0 15.75px}
 .mtabs button.on{color:#fff}
 .mtabs button{display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
@@ -249,10 +249,10 @@ body.navanim #bar{z-index:1}
 
 /* ===== модальное окно покупки подарка ===== */
 #bm{position:fixed;left:0;right:0;top:0;height:100%;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .6s}
-#bm.slow:not(.on):not(.pre){transition-delay:1.25s}
+#bm.slow:not(.on):not(.pre){transition-delay:.95s}
 #bm.on,#bm.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
-#bm.slow .bm-sheet{transition-duration:1.05s}
-#bm.slow .bm-dim{transition-duration:.85s}
+#bm.slow .bm-sheet{transition-duration:.75s}
+#bm.slow .bm-dim{transition-duration:.6s}
 #bm .bm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .45s}
 #bm.on .bm-dim{opacity:1}
 #bm .bm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:transparent;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform}
@@ -1051,7 +1051,7 @@ function slide(p){
   const s=$('#menuSlider'),w=$('#bar');s.getBoundingClientRect();const _=0,pill=$('#menuPill'),me=$('#meWrap');
   const wr=w.getBoundingClientRect(), i=PAGES.indexOf(p);
   if(p==='settings'){const c=me.getBoundingClientRect();s.style.left=(c.left-wr.left+4)+'px';s.style.width=(c.width-8)+'px';s.style.borderRadius='50%';}
-  else if(i>-1){const pr=pill.getBoundingClientRect(),seg=(pr.width-8)/3;s.style.left=(pr.left-wr.left+4+i*seg)+'px';s.style.width=seg+'px';s.style.borderRadius='31px/29px';}
+  else if(i>-1){const pr=pill.getBoundingClientRect(),seg=(pr.width-8)/3;s.style.left=(pr.left-wr.left+4+i*seg)+'px';s.style.width=seg+'px';s.style.borderRadius='30px/29px';}
   s.style.opacity=(p==='settings'||i>-1)?'1':'0';
 }
 let cur='market',hist=[];
@@ -1905,7 +1905,7 @@ renderMyGifts();
       setTimeout(()=>{if(bm.classList.contains('on'))$b('bmFill').style.width=(left/TOTAL*100)+'%'},250);
     }));
   };
-  function close(){const sl=bm.classList.contains('slow');try{window.__bmMenuHide()}catch(e){}clearTimeout(closeT);closeT=setTimeout(()=>{if(bm.classList.contains('on')||bm.classList.contains('pre'))return;document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}},sl?1200:400);bm.classList.remove('on','pre');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on')){bm.style.height='';bm.classList.remove('fast','slow')}},sl?1350:650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+  function close(){const sl=bm.classList.contains('slow');try{window.__bmMenuHide()}catch(e){}clearTimeout(closeT);closeT=setTimeout(()=>{if(bm.classList.contains('on')||bm.classList.contains('pre'))return;document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}},sl?900:400);bm.classList.remove('on','pre');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on')){bm.style.height='';bm.classList.remove('fast','slow')}},sl?1050:650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
   const keepTop=()=>{if(bm.classList.contains('on'))window.scrollTo(0,0)};
   if(window.visualViewport){visualViewport.addEventListener('resize',keepTop);visualViewport.addEventListener('scroll',keepTop)}
   $b('bmMsg').addEventListener('focus',()=>{keepTop();setTimeout(keepTop,50);setTimeout(keepTop,250)});
@@ -1926,21 +1926,20 @@ renderMyGifts();
     for(let i=0;i<n;i++)MYGIFTS.unshift({image:cur.image||null,emoji:cur.emoji||null,total:total,anon:hidden,t:Date.now(),price:+cur.price,key:cur.key,msg:cmt});
     if(MYGIFTS.length>5000)MYGIFTS.length=5000;   /* раньше тут был лимит 200 — он удалял самые старые подарки снизу списка; теперь лимита по сути нет */
     const fresh=MYGIFTS.slice(0,n);
-    bm.classList.add('slow');close();   /* окно начинает закрываться сразу, до любой тяжёлой работы; скорость замедленная: 1.05с окно, 1000мс переход */
+    bm.classList.add('slow');close();   /* окно начинает закрываться сразу, до любой тяжёлой работы; скорость: .75с окно, 700мс переход */
     /* всё тяжёлое (запись в хранилище, перерисовка профиля, переход) — после первого кадра анимации закрытия, иначе она «съедается» */
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       try{store.set(SOLDK,JSON.stringify(SOLDMAP))}catch(_){}
       try{localStorage.setItem(MYK,JSON.stringify(MYGIFTS))}catch(_){toast('Память браузера заполнена: подарок не сохранился')}
       try{renderMyGifts(true)}catch(_){}
-      document.body.classList.add('buyover');setTimeout(()=>document.body.classList.remove('buyover'),1500);   /* слой снимаем, когда окно уже полностью скрыто */
-      {const _o=NAV_MS;NAV_MS=1000;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}}
+      document.body.classList.add('buyover');setTimeout(()=>document.body.classList.remove('buyover'),1100);   /* слой снимаем, когда окно уже полностью скрыто */
+      {const _o=NAV_MS;NAV_MS=700;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}}
       /* когда профиль уже на месте — купленные подарки один раз проигрывают свою анимацию (по очереди, чтобы не грузить за один кадр) */
       const cnt=Math.min(fresh.length,9),playNew=t=>{
-        if(navFin&&t<30){setTimeout(()=>playNew(t+1),50);return}
         const g=document.getElementById('pGrid');if(!g)return;
         for(let k=0;k<cnt;k++){const el=g.querySelector('.pg[data-i="'+k+'"]');if(el)setTimeout(()=>{try{giftAnimOrig(el,fresh[k],{once:true,fit:true})}catch(_){}},k*70)}
       };
-      playNew(0);
+      setTimeout(()=>playNew(0),300);   /* старт пораньше: профиль ещё довершает выезд (раньше ждали конца перехода) */
     }));
   };
   /* кнопка «Купить»: тот же отклик и «слайм», что у кнопок хедера (раздувается, тянется за пальцем, пружинит назад) */
