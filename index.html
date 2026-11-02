@@ -19,7 +19,7 @@
 --ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:12px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:51px;--set-r-multi:28px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;--ic-pf-qr:32px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:31px;                                            /* цветная плашка в профиле */
---hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:25px;--ic-hdr-gift:30px;--ic-hdr-qr:28px;
+--hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:25px;--ic-hdr-gift:31px;--ic-hdr-qr:28px;
 --ic-gram:28px;--ic-profile:29px;--ic-buygift:27px;--ic-stars:26px;--ic-promo:29px;
 --ic-lang:29px;--ic-theme:24px;--ic-anim:27px;              /* профиль */
 --bg:#000;--card:#1c1c1d;--text:#fff;--hint:#9e9e9e;--accent:#4cb4e9;--gold:#ffc83d;--r:22px}
@@ -72,7 +72,7 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-20deg)}18%{opacity:.95}70%{opacity:.8}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.05) rotate(20deg)}}
 .gempty{margin-top:19px;background:var(--card);border-radius:28px;padding:44px 20px;text-align:center;color:var(--hint)}
 .gbtn{flex:none;width:max-content;min-width:calc(var(--hdr-h) + 24px);flex-direction:column;gap:0;padding:0 18px;line-height:1}
-.hb.gbtn{padding:0 10px}
+.hb.gbtn{padding:0 12px}
 .gin{display:flex;flex-direction:column;align-items:flex-end;line-height:1}
 .gbl{font-size:13px;font-weight:550;color:#fff}
 .gv{display:flex;align-items:center;gap:1px;font-size:14px;font-weight:650;margin-top:1px}
@@ -1084,6 +1084,7 @@ function go(p,instant,back,o){
   if(dir<=0){instant?syncInstant():slide(p)}
   // страницы не помнят позицию: всегда открываются сверху и с первой вкладкой
   if(p!==prev||instant){inc.scrollTop=0;resetTabs()}
+  if(p==='me'){try{pgPaint($('#pGrid'))}catch(_){}}
   const later=[];
   Object.keys(covers).forEach(k=>{if(k===p)covers[k].measure();else if(dir!==0&&k===prev)later.push(()=>covers[k].reset());else covers[k].reset()});
   giftsOn(p==='gifts'); starsOn(p==='stars');
@@ -1618,15 +1619,28 @@ const PG_POS=[[50,11,15,.3],[83,30,15,.3,1],[83,68,15,.3,1],[50,87,15,.3],[17,68
 const PG_BMP={},PG_IMG={},PG_RO=window.ResizeObserver?new ResizeObserver(es=>es.forEach(e=>pgDraw(e.target))):null;
 const pgCol=v=>/^#[0-9a-f]{3,8}$/i.test(String(v||''))?v:null;
 function pgShade(c,k){const m=/^#([0-9a-f]{6})$/i.exec(String(c||''));if(!m)return null;const n=parseInt(m[1],16),f=v=>Math.round(v*k);return '#'+[f(n>>16&255),f(n>>8&255),f(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('')}
-function pgLoad(u){return PG_IMG[u]||(PG_IMG[u]=new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=u}))}
+function pgLoad(u){return PG_IMG[u]||(PG_IMG[u]=new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>{delete PG_IMG[u];r(null)};i.src=u}))}
+/* заранее подгружаем картинки подарков и символы узоров, чтобы профиль открывался без ожидания сети */
+const PG_WARM=new Set();
+function warmMyGifts(){
+  MYGIFTS.slice(0,40).forEach(x=>{
+    [x.image,x.upg&&x.upg.mi].forEach(u=>{if(u&&!PG_WARM.has(u)){PG_WARM.add(u);const i=new Image();i.decoding='async';i.src=u}});
+    const s=x.upg&&x.upg.si;if(s&&!PG_WARM.has(s)){PG_WARM.add(s);pgLoad(s)}
+  });
+}
 function pgDraw(cv){
-  const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
+  /* страница профиля скрыта (размер 0) — рисуем по расчётному размеру ячейки, ResizeObserver перерисует, если он изменится */
+  let w=cv.clientWidth,h=cv.clientHeight;if(!w||!h){w=h=Math.max(60,(innerWidth-52)/3)}
   const D=Math.min(window.devicePixelRatio||1,2),W=Math.round(w*D),H=Math.round(h*D);
-  if(cv.__W===W&&cv.__H===H)return;cv.__W=W;cv.__H=H;
+  if(cv.__W===W&&cv.__H===H&&(cv.__ok||cv.__busy))return;
+  cv.__W=W;cv.__H=H;cv.__ok=0;
   const key=cv.dataset.si+'|'+(cv.dataset.c||'')+'|'+W+'x'+H,hit=PG_BMP[key];
-  if(hit){cv.width=W;cv.height=H;cv.getContext('2d').drawImage(hit,0,0);return}
+  if(hit){cv.width=W;cv.height=H;cv.getContext('2d').drawImage(hit,0,0);cv.__ok=1;return}
+  cv.__busy=1;
   pgLoad(cv.dataset.si).then(im=>{
-    if(!im||!cv.isConnected)return;
+    cv.__busy=0;
+    if(!cv.isConnected||cv.__W!==W)return;
+    if(!im){const n=cv.__r=(cv.__r||0)+1;if(n<4)setTimeout(()=>{cv.__W=0;pgDraw(cv)},1200*n);return}   /* не загрузилось — пробуем ещё раз */
     cv.width=W;cv.height=H;
     const cx=cv.getContext('2d'),tc=document.createElement('canvas'),tx=tc.getContext('2d');
     PG_POS.forEach(p=>{
@@ -1635,6 +1649,7 @@ function pgDraw(cv){
       tx.globalCompositeOperation='source-in';tx.fillStyle=cv.dataset.c||'#fff';tx.fillRect(0,0,tc.width,tc.height);
       cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-sz/2)*D,(p[1]/100*h-sz/2)*D);
     });
+    cv.__ok=1;
     try{const oc=document.createElement('canvas');oc.width=W;oc.height=H;oc.getContext('2d').drawImage(cv,0,0);const ks=Object.keys(PG_BMP);if(ks.length>=40)delete PG_BMP[ks[0]];PG_BMP[key]=oc}catch(_){}
   });
 }
@@ -1662,6 +1677,7 @@ function renderMyGifts(){
   const ti=document.getElementById('mtIcons');
   if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
   try{placeTab(document.getElementById('mtabs'))}catch(_){}
+  try{warmMyGifts()}catch(_){}
 }
 renderMyGifts();
 
@@ -1817,7 +1833,7 @@ renderMyGifts();
     renderMyGifts();
     bm.classList.add('fast');close();
     /* после закрытия окна — на страницу профиля, где появился купленный подарок (немного быстрее обычного) */
-    setTimeout(()=>{const _o=NAV_MS;NAV_MS=430;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}},280);
+    setTimeout(()=>{const _o=NAV_MS;NAV_MS=400;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}},90);
   };
   /* кнопка «Купить»: тот же отклик и «слайм», что у кнопок хедера (раздувается, тянется за пальцем, пружинит назад) */
   (function(){
