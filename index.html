@@ -2757,7 +2757,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
     $u('ugAv').classList.remove('c');$u('ugAv').textContent=spaced(iss)+'/'+spaced(tot)+' выпущено';
     $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+(pr*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
     $u('ugLm').onclick=()=>toast('Подробнее: скоро');
-    ['ugM','ugS','ugB'].forEach((id,i)=>{const c=$u(id);try{c.getAnimations().forEach(a=>a.cancel())}catch(_){}c.style.opacity='0';c.classList.add('c');const f=[pk.lm,pk.ls,pk.lb][i][0]||{n:'—',p:1};c.innerHTML='<div class="ug-it"><span>'+escH(f.n)+'</span></div>'});
+    ['ugM','ugS','ugB'].forEach((id,i)=>{const c=$u(id);c.classList.add('c');const f=[pk.lm,pk.ls,pk.lb][i][0]||{n:'—',p:1};c.innerHTML='<div class="ug-it"><span>'+escH(f.n)+'</span></div>'});
     const sk=$u('ugSkip');sk.dataset.done='';ugSkipFromSpin(sk,'Пропустить');
     /* карусель едет вправо, как в оригинале: новые маски выезжают слева, прежняя уходит вправо */
     const first=(umTop.querySelector('#umModel img')||{}).src||pk.fallbackSrc;
@@ -2875,10 +2875,9 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         /* анимированы только последние 3, старт у всех в один момент; у итоговой — повтор по нажатию */
         if(window.giftAnim){const at=performance.now()+(L?T1-120:250);
           items.slice(0,Math.min(3,N)).forEach((o,q)=>{const el=trk.children[q];if(o.j&&el)giftAnim(el,o.j,q===0?{at,stop:true}:{once:true,at})})}
-        /* строки таблицы останавливаются по очереди: сначала фон (сразу после выбора фона в шапке), затем узор, последней модель */
-        const spB=Math.max(700,Math.min(T*.42+500,T-600)),spS=Math.max(spB+300,Math.min(T*.42+1200,T-300)),spM=Math.max(spS+300,T);
-        const dM=120,dS=220,dB=320;   /* появляются по очереди: модель → символ → фон; время остановки не меняется */
-        ugSpin($u('ugM'),shuf(pk.lm).slice(0,9),pk.fm,Math.max(500,spM-dM),dM);ugSpin($u('ugS'),shuf(pk.ls).slice(0,9),pk.fs,Math.max(500,spS-dS),dS);ugSpin($u('ugB'),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4)),pk.fb,Math.max(500,spB-dB),dB);
+        /* строки таблицы определяются чуть позже, чем выбор в шапке: фон (шапка выбирает его на 0.42·T), затем узор (+0.9 с), последней модель (карусель доезжает на T) */
+        const spB=T*.42+600,spS=Math.max(spB+300,T*.42+1400),spM=Math.max(spS+300,T+200);
+        ugSpin($u('ugM'),shuf(pk.lm).slice(0,9),pk.fm,spM);ugSpin($u('ugS'),shuf(pk.ls).slice(0,9),pk.fs,spS);ugSpin($u('ugB'),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4)),pk.fb,spB);
         /* фон шапки следит за маской в центре: каждая новая — новый цвет; итоговая — финальный фон */
         const cl=pk.cols,fc=cl[cl.length-1];
         /* фон один на всю прокрутку: примерно на середине он плавно становится итоговым, чуть позже так же определяется узор */
@@ -2902,7 +2901,7 @@ document.getElementById('svGift').onclick=()=>go('gifts');
         };
         ugRaf=requestAnimationFrame(tick);
         ugLater(()=>ugDone(x,pk,num,cl[cl.length-1]),Math.max(600,T-200));
-      },200);
+      },70);
     });
   }
   function quietClose(){
