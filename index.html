@@ -1084,7 +1084,8 @@ function go(p,instant,back,o){
   if(dir<=0){instant?syncInstant():slide(p)}
   // страницы не помнят позицию: всегда открываются сверху и с первой вкладкой
   if(p!==prev||instant){inc.scrollTop=0;resetTabs()}
-  if(p==='me'){try{pgPaint($('#pGrid'))}catch(_){}}
+  if(p==='me'){requestAnimationFrame(()=>{try{pgPaint($('#pGrid'))}catch(_){}})}   /* после первого кадра, а не до старта анимации */
+  if(prev==='me'&&p!=='me')setTimeout(()=>{if(cur!=='me'){try{renderMyGifts(true)}catch(_){}}},NAV_MS+150);   /* ушли из профиля — оставляем в нём только первую порцию карточек */
   const later=[];
   Object.keys(covers).forEach(k=>{if(k===p)covers[k].measure();else if(dir!==0&&k===prev)later.push(()=>covers[k].reset());else covers[k].reset()});
   giftsOn(p==='gifts'); starsOn(p==='stars');
@@ -1643,41 +1644,80 @@ function pgDraw(cv){
     if(!im){const n=cv.__r=(cv.__r||0)+1;if(n<4)setTimeout(()=>{cv.__W=0;pgDraw(cv)},1200*n);return}   /* не загрузилось — пробуем ещё раз */
     cv.width=W;cv.height=H;
     const cx=cv.getContext('2d'),tc=document.createElement('canvas'),tx=tc.getContext('2d');
+    /* символ красим один раз в самом большом размере, дальше только масштабируем (раньше красился заново для каждой из 12 позиций) */
+    const szOf=p=>Math.max(6,p[2]*w/125+2+(p[4]||0)),big=Math.max.apply(null,PG_POS.map(szOf));
+    tc.width=tc.height=Math.max(1,Math.round(big*D));
+    tx.drawImage(im,0,0,tc.width,tc.height);
+    tx.globalCompositeOperation='source-in';tx.fillStyle=cv.dataset.c||'#fff';tx.fillRect(0,0,tc.width,tc.height);
     PG_POS.forEach(p=>{
-      const sz=Math.max(6,p[2]*w/125+2+(p[4]||0));tc.width=tc.height=Math.max(1,Math.round(sz*D));
-      tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(im,0,0,tc.width,tc.height);
-      tx.globalCompositeOperation='source-in';tx.fillStyle=cv.dataset.c||'#fff';tx.fillRect(0,0,tc.width,tc.height);
-      cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-sz/2)*D,(p[1]/100*h-sz/2)*D);
+      const sz=szOf(p);
+      cx.globalAlpha=p[3];cx.drawImage(tc,(p[0]/100*w-sz/2)*D,(p[1]/100*h-sz/2)*D,sz*D,sz*D);
     });
     cv.__ok=1;
     try{const oc=document.createElement('canvas');oc.width=W;oc.height=H;oc.getContext('2d').drawImage(cv,0,0);const ks=Object.keys(PG_BMP);if(ks.length>=40)delete PG_BMP[ks[0]];PG_BMP[key]=oc}catch(_){}
   });
 }
-function pgPaint(g){g.querySelectorAll('canvas.pu-pat').forEach(cv=>{if(PG_RO)PG_RO.observe(cv);pgDraw(cv)})}
+function pgPaint(g,from){const els=from?Array.prototype.slice.call(g.children,from):[g];els.forEach(el=>el.querySelectorAll('canvas.pu-pat').forEach(cv=>{if(PG_RO)PG_RO.observe(cv);pgDraw(cv)}))}
 function pgUpg(x,i){
   const d=x.upg,c=d.c||{},c1=pgCol(c.c1)||'#7b72ea',c2=pgCol(c.c2)||'#5b3fb8',c3=pgCol(c.c3)||'#ffffff',rb=pgShade(c2,.72)||'rgba(0,0,0,.3)',num='#'+d.n;
   return '<div class="pg pgu" data-i="'+i+'" style="--pc1:'+c1+';--pc2:'+c2+'"><div class="pu-bg">'+(d.si?'<canvas class="pu-pat" data-si="'+d.si+'" data-c="'+c3+'"></canvas>':'')+'</div>'+
     '<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="'+rb+'"/></svg><span'+(num.length>6?' style="font-size:9px"':'')+'>'+num+'</span></div>'+
     (d.mi?'<img class="pi" src="'+d.mi+'" alt="" decoding="async">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
 }
-function renderMyGifts(){
+/* карточки рисуем порциями: профиль открывается сразу с первыми PG_BATCH, остальные дорисовываются по мере прокрутки */
+const PG_BATCH=12,PG_CHUNK=9;
+function pgCard(x,i){
+  if(x.upg&&x.upg.c)return pgUpg(x,i);
+  const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
+  return '<div class="pg" data-i="'+i+'">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
+    (x.image?'<img class="pi" src="'+x.image+'" alt="" decoding="async">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
+}
+let pgIO=null,pgSent=null;
+function pgKick(){const g=$('#pGrid');if(!pgIO||!pgSent||!g)return;pgIO.unobserve(pgSent);if((g.__n||0)<(g.__list||[]).length)pgIO.observe(pgSent)}
+function pgMore(){
+  const g=$('#pGrid');if(!g||!g.__list)return;
+  const list=g.__list,a=g.__n||0;if(a>=list.length)return;
+  const b=Math.min(list.length,a+PG_CHUNK);let h='';
+  for(let i=a;i<b;i++)h+=pgCard(list[i],i);
+  g.insertAdjacentHTML('beforeend',h);g.__n=b;
+  try{pgPaint(g,a)}catch(_){}
+}
+function pgWatch(){
+  const g=$('#pGrid');if(!g||!window.IntersectionObserver)return;
+  if(!pgSent){
+    pgSent=document.createElement('div');pgSent.style.cssText='height:1px;pointer-events:none';g.after(pgSent);
+    pgIO=new IntersectionObserver(es=>{
+      if(!es.some(e=>e.isIntersecting))return;
+      if(navFin){setTimeout(pgKick,150);return}   /* пока идёт анимация перехода — ничего не дорисовываем */
+      pgMore();pgKick();
+    },{root:$('#p-me'),rootMargin:'0px 0px 500px 0px'});
+  }
+  pgKick();
+}
+let pgWarmT=0;
+function renderMyGifts(reset){
   const g=$('#pGrid'),e=$('#pEmpty'),b=$('#mtabs button.on');if(!g||!e)return;
   const uniq=!!b&&b.dataset.m==='posts',list=uniq?[]:MYGIFTS;
   const sig=(uniq?'u':'a')+'|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
-  if(g.__sig!==sig){g.__sig=sig;try{PG_RO&&PG_RO.disconnect()}catch(_){}
-  g.innerHTML=list.map((x,i)=>{
-    if(x.upg&&x.upg.c)return pgUpg(x,i);
-    const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
-    return '<div class="pg" data-i="'+i+'">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
-      (x.image?'<img class="pi" src="'+x.image+'" alt="" decoding="async">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
-  }).join('');
-  try{pgPaint(g)}catch(_){}}
+  g.__list=list;
+  if(g.__sig!==sig){
+    g.__sig=sig;try{PG_RO&&PG_RO.disconnect()}catch(_){}
+    const n=Math.min(list.length,reset?PG_BATCH:Math.max(PG_BATCH,g.__n||0));let h='';
+    for(let i=0;i<n;i++)h+=pgCard(list[i],i);
+    g.innerHTML=h;g.__n=n;
+    try{pgPaint(g)}catch(_){}
+  }else if(reset&&(g.__n||0)>PG_BATCH){
+    const n=Math.min(list.length,PG_BATCH);
+    while(g.children.length>n){const c=g.lastElementChild,cv=c.querySelector('canvas.pu-pat');if(cv&&PG_RO)try{PG_RO.unobserve(cv)}catch(_){}c.remove()}
+    g.__n=n;
+  }
   g.hidden=!list.length;e.hidden=list.length>0;
   e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
   const ti=document.getElementById('mtIcons');
   if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
   try{placeTab(document.getElementById('mtabs'))}catch(_){}
-  try{warmMyGifts()}catch(_){}
+  try{pgWatch()}catch(_){}
+  clearTimeout(pgWarmT);pgWarmT=setTimeout(()=>{try{warmMyGifts()}catch(_){}},500);   /* предзагрузка картинок — не мешает открытию профиля */
 }
 renderMyGifts();
 
@@ -1825,15 +1865,17 @@ renderMyGifts();
     const cost=(+cur.price)*n;
     if(getStars()<cost){toast('Недостаточно звёзд');return}
     addStars(-cost);
-    SOLDMAP[cur.key]=sold+n;store.set(SOLDK,JSON.stringify(SOLDMAP));
+    SOLDMAP[cur.key]=sold+n;
     const cmt=$b('bmMsg').value.trim();
     for(let i=0;i<n;i++)MYGIFTS.unshift({image:cur.image||null,emoji:cur.emoji||null,total:total,anon:hidden,t:Date.now(),price:+cur.price,key:cur.key,msg:cmt});
     if(MYGIFTS.length>200)MYGIFTS.length=200;
-    store.set(MYK,JSON.stringify(MYGIFTS));
-    renderMyGifts();
-    bm.classList.add('fast');close();
-    /* после закрытия окна — на страницу профиля, где появился купленный подарок (немного быстрее обычного) */
-    setTimeout(()=>{const _o=NAV_MS;NAV_MS=400;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}},90);
+    bm.classList.add('fast');close();   /* окно начинает закрываться сразу, до любой тяжёлой работы */
+    /* всё тяжёлое (запись в хранилище, перерисовка профиля, переход) — после первого кадра анимации закрытия, иначе она «съедается» */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      try{store.set(SOLDK,JSON.stringify(SOLDMAP));store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
+      try{renderMyGifts(true)}catch(_){}
+      const _o=NAV_MS;NAV_MS=400;try{go('me',false,false,{full:true})}finally{NAV_MS=_o}
+    }));
   };
   /* кнопка «Купить»: тот же отклик и «слайм», что у кнопок хедера (раздувается, тянется за пальцем, пружинит назад) */
   (function(){
