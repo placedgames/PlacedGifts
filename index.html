@@ -162,7 +162,13 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 
 /* обложка: фото вырастает из круга аватарки (профиль и настройки) */
 .page{position:relative}
-.phead{display:flow-root;height:auto}
+.phead{display:flow-root;height:auto;position:relative}
+/* закреплённые подарки вокруг аватарки: только модель подарка */
+.pins{position:absolute;left:50%;top:calc(var(--ava-top) + var(--ava-size)/2);width:0;height:0;pointer-events:none}
+.pinm{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;display:flex;align-items:center;justify-content:center;font-size:30px;line-height:1}
+.pinm img{width:100%;height:100%;object-fit:contain;display:block}
+.ppin{position:absolute;left:8px;top:6px;width:16px;height:16px;z-index:3;pointer-events:none}
+.ppin svg{display:block;width:100%;height:100%;fill:#fff}
 .phead>:not(.ava){opacity:var(--hf,1)}
 .phead .ava{visibility:hidden}
 .cover{position:absolute;left:0;right:0;top:0;height:var(--cover-h);overflow:hidden;pointer-events:none}
@@ -721,6 +727,7 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
     <div class="cinfo"><div class="cname"></div><div class="cstat"><svg class="ico" style="--s:var(--ic-rating-badge)"><use data-h="1" href="#i-h1"/></svg><span class="ctext">в сети</span></div></div></div>
   <div class="phead">
     <div class="ava" id="pAva"></div>
+    <div class="pins" id="pPins"></div>
     <div class="pname" id="pName"></div>
     <div class="pstat"><svg class="ico" style="--s:var(--ic-rating-badge)"><use id="pRate" href="#i-n1"/></svg><span>в сети</span></div>
   </div>
@@ -1832,14 +1839,15 @@ function pgUpg(x,i){
   const d=x.upg,c=d.c||{},c1=pgCol(c.c1)||'#7b72ea',c2=pgCol(c.c2)||'#5b3fb8',c3=pgCol(c.c3)||'#ffffff',rb=pgShade(c2,.72)||'rgba(0,0,0,.3)',num='#'+d.n;
   return '<div class="pg pgu" data-i="'+i+'" style="--pc1:'+c1+';--pc2:'+c2+'"><div class="pu-bg">'+(d.si?'<canvas class="pu-pat" data-si="'+d.si+'" data-c="'+c3+'"></canvas>':'')+'</div>'+
     '<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="'+rb+'"/></svg><span'+(num.length>6?' style="font-size:9px"':'')+'>'+num+'</span></div>'+
-    (d.mi?'<img class="pi" src="'+d.mi+'" alt="" decoding="async">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
+    (d.mi?'<img class="pi" src="'+d.mi+'" alt="" decoding="async">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+(x.pin!=null?PIN_ICO:'')+'</div>';
 }
 /* карточки рисуем порциями: профиль открывается сразу с первыми PG_BATCH, остальные дорисовываются по мере прокрутки */
 const PG_BATCH=12,PG_CHUNK=9;
+const PIN_ICO='<div class="ppin"><svg viewBox="0 0 24 24"><path d="M14.5 2.5l7 7-1.6.6-3 3 .3 4-1.7 1.7-4.200-4.200-5.300 5.300-1-1 5.300-5.300L6.100 9.900 7.800 8.200l4 .3 3-3z"/></svg></div>';
 function pgCard(x,i){
   if(x.upg&&x.upg.c)return pgUpg(x,i);
   const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
-  return '<div class="pg" data-i="'+i+'">'+av+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
+  return '<div class="pg" data-i="'+i+'">'+(x.pin!=null?PIN_ICO:av)+'<div class="rib"><svg viewBox="0 0 100 100"><path d="'+RIB_P+'" fill="url(#rbP)"/></svg><span>1 из '+shortN(x.total)+'</span></div>'+
     (x.image?'<img class="pi" src="'+x.image+'" alt="" decoding="async">':'<span class="pe">'+(x.emoji||'🎁')+'</span>')+(x.hid?'<div class="peye"><svg><use href="#i-eyeoff"/></svg></div>':'')+'</div>';
 }
 let pgIO=null,pgSent=null;
@@ -1864,13 +1872,25 @@ function pgWatch(){
   }
   pgKick();
 }
+/* закреплённые подарки вокруг аватарки (до 6): позиции — центры точек относительно центра аватарки */
+const PIN_SLOTS=[[-67,-57],[63,-63],[-108,-8],[90,-4],[-94,46],[80,50]];
+function renderPins(){
+  const el=document.getElementById('pPins');if(!el)return;
+  const items=MYGIFTS.filter(x=>x.pin!=null&&x.pin<6&&!x.hid);
+  const sig=items.map(x=>x.pin+'|'+((x.upg&&x.upg.mi)||x.image||x.emoji||'')).join(',');
+  if(el.__sig===sig)return;el.__sig=sig;
+  el.innerHTML=items.map(x=>{const mi=(x.upg&&x.upg.mi)||x.image,p=PIN_SLOTS[x.pin];
+    return '<div class="pinm" style="left:'+p[0]+'px;top:'+p[1]+'px">'+(mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+'</div>'}).join('');
+}
 let pgWarmT=0;
 function renderMyGifts(reset){
   const g=$('#pGrid'),e=$('#pEmpty'),b=$('#mtabs button.on');if(!g||!e)return;
   const uniq=!!b&&b.dataset.m==='posts';
-  const list=uniq?[]:MYGIFTS;
-  g.__ix=null;
-  const sig=(uniq?'u':'a')+'|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
+  /* закреплённые — в самом верху (новые закрепы выше); data-i остаётся индексом в MYGIFTS */
+  const list=uniq?[]:MYGIFTS.filter(x=>x.pin!=null).sort((a,b)=>(b.pinT||0)-(a.pinT||0)).concat(MYGIFTS.filter(x=>x.pin==null));
+  g.__ix=list.map(x=>MYGIFTS.indexOf(x));
+  try{renderPins()}catch(_){}
+  const sig=(uniq?'u':'a')+'|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.pin!=null?'p'+x.pin:'',x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
   g.__list=list;
   if(g.__sig!==sig){
     g.__sig=sig;try{PG_RO&&PG_RO.disconnect()}catch(_){}
@@ -3626,7 +3646,7 @@ renderMyGifts();
   const it=(k,t)=>'<div class="cx-it" data-k="'+k+'"><svg viewBox="0 0 24 24">'+IC[k]+'</svg><span>'+t+'</span></div>';
   const isU=x=>!!(x&&x.upg&&x.upg.c);
   const hs=x=>it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть');
-  const mainHTML=x=>isU(x)?it('pin','Закрепить')+it('wear','Носить')+it('link','Копировать ссылку')+it('share','Поделиться')+hs(x)+it('send','Передать'):hs(x);
+  const mainHTML=x=>isU(x)?it('pin',x.pin!=null?'Открепить':'Закрепить')+it('wear','Носить')+it('link','Копировать ссылку')+it('share','Поделиться')+hs(x)+it('send','Передать'):hs(x);
   const mainW=x=>Math.min(isU(x)?241:219,innerWidth-24);
   let root=null,cur=null,busy=false,lpFlag=false,closeT=0,openT=0;
   function build(){
@@ -3657,6 +3677,20 @@ renderMyGifts();
     document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
     function pick(k){
       const x=cur&&cur.x;close();
+      if(k==='pin'){
+        if(x){
+          if(x.pin!=null){delete x.pin;delete x.pinT;try{toast('Подарок откреплён')}catch(_){}}
+          else{
+            const used=MYGIFTS.filter(g=>g.pin!=null);
+            if(used.length>=6){try{toast('Можно закрепить не более 6 подарков')}catch(_){}return}
+            const taken=used.map(g=>g.pin);let sl=0;while(taken.indexOf(sl)>=0)sl++;
+            x.pin=sl;x.pinT=Date.now();try{toast('Подарок закреплён')}catch(_){}
+          }
+          try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
+          try{renderMyGifts(true)}catch(_){}
+        }
+        return;
+      }
       if(k==='hide'||k==='show'){
         if(x){x.hid=!x.hid;try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}try{renderMyGifts()}catch(_){}}
         return;
