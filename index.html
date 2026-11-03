@@ -274,7 +274,7 @@ body.navanim #bar{z-index:1}
 #cx.on.out{pointer-events:none}
 #cx.on.out .cx-dim{opacity:0}
 #cx .cx-pv{position:absolute;will-change:transform,opacity}
-#cx .cx-card{width:368px;max-width:calc(100% - 24px);height:243px;border-radius:30px;overflow:hidden;position:absolute;left:0;right:0;margin:0 auto;background:radial-gradient(circle at 50% 42%,var(--cx1,#7b72ea) 0%,var(--cx2,#5b3fb8) 100%);box-shadow:0 18px 50px rgba(0,0,0,.35)}
+#cx .cx-card{width:368px;max-width:calc(100% - 24px);height:243px;border-radius:30px;overflow:hidden;position:absolute;left:0;right:0;margin:0 auto;background:radial-gradient(circle at 50% 42%,var(--cx1,#7b72ea) 0%,var(--cx2,#5b3fb8) 100%);box-shadow:none}
 #cx .cx-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.32) 100%)}
 #cx .cx-card canvas{position:absolute;inset:0;width:100%;height:100%}
 #cx .cx-card .cx-mi{position:absolute;left:50%;top:22px;height:132px;width:132px;transform:translateX(-50%);z-index:1}
@@ -286,7 +286,8 @@ body.navanim #bar{z-index:1}
 #cx .cx-gift img{width:100%;height:100%;object-fit:contain}
 #cx .cx-menu{position:absolute;right:12px;padding:10px 0;border-radius:34px;color:#fff;transform-origin:100% 0;will-change:transform,opacity;
 background:linear-gradient(180deg,rgba(74,76,76,.74),rgba(46,50,50,.74));-webkit-backdrop-filter:blur(40px) saturate(1.7);backdrop-filter:blur(40px) saturate(1.7);
-box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1.5px 1px rgba(255,255,255,.14),0 16px 44px rgba(0,0,0,.4)}
+box-shadow:none}
+#cx .cx-ring{position:absolute;inset:0;pointer-events:none;background-size:100% 100%;background-repeat:no-repeat}
 #cx .cx-it{display:flex;align-items:center;gap:13px;margin:0 8px;padding:11px 11px 11px 19px;border-radius:23px;transition:background-color .16s ease;font-size:17px;line-height:20px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #cx .cx-it span{min-width:0}
 #cx .cx-it.hot{background:rgba(255,255,255,.09)}
@@ -323,6 +324,7 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1.5px 1px rgba(255,255,2
 #bm .bm-items{position:relative;z-index:1;padding:8px 0}
 /* в середине окна обводка и засвет у liquid glass полностью гаснут (маска = 0) — именно там мерцало; оставляем едва заметный минимум и выносим слои отдельно */
 #bm .bm-mbg{--glass-side:rgba(115,117,126,.02)}
+#bm .bm-mbg::before,#bm .bm-mbg::after{display:none}
 #bm .bm-mbg::before,#bm .bm-mbg::after{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 #bm .bm-mbg::after{-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0.03) 42%,rgba(0,0,0,0.02) 50%,rgba(0,0,0,0.03) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%);mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0.03) 42%,rgba(0,0,0,0.02) 50%,rgba(0,0,0,0.03) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%)}
 #bm .bm-mi{position:relative;z-index:1;display:block;width:calc(100% - 16px);margin:0 8px;height:46px;padding:0 22px;border:0;border-radius:23px;background:none;transition:background-color .16s ease;color:#fff;font:inherit;font-size:17px;font-weight:450;text-align:left;white-space:nowrap;cursor:pointer;-webkit-appearance:none;appearance:none}
@@ -629,6 +631,8 @@ html,body{overscroll-behavior:none}
 </head>
 <body>
 <script>
+/* виброотклик: Telegram HapticFeedback, запасной вариант — navigator.vibrate */
+window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.HapticFeedback;if(h){if(t==='sel')h.selectionChanged();else h.impactOccurred(t||'light');return}}catch(_){}try{navigator.vibrate&&navigator.vibrate(t==='sel'?6:12)}catch(_){}};
 /* клавиатура в поле ввода окна: страница меняет размер много раз за анимацию — остальные обработчики resize в это время не нужны
    (из-за них окно перестраивалось и «дёргалось»). Этот слушатель стоит первым и гасит событие; после закрытия клавиатуры один раз пересчитываем всё. */
 (function(){
@@ -1962,13 +1966,25 @@ renderMyGifts();
     const menu=$b('bmMenu'),sel=$b('bmCnt'),btn=sel.closest('.bm-cnt');
     menu.innerHTML='<i class="bm-mbg glass"></i><div class="bm-items">'+[1,2,5,10].map(n=>'<button type="button" class="bm-mi" role="menuitem" data-n="'+n+'">'+n+'\u00a0'+plural(n)+'</button>').join('')+'</div>';
     const items=[...menu.querySelectorAll('.bm-mi')];
+    /* плавные (continuous) углы окна: подложка обрезается по контуру, обводка рисуется по тому же контуру */
+    const mbg=menu.querySelector('.bm-mbg');
+    const fitMenu=()=>{
+      const w=mbg.offsetWidth,h=mbg.offsetHeight;if(!w||!h)return;
+      const d=squircle(w,h,32,.6);
+      const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a9ca6" stop-opacity=".55"/><stop offset=".16" stop-color="#9a9ca6" stop-opacity=".3"/><stop offset=".34" stop-color="#9a9ca6" stop-opacity=".1"/><stop offset=".5" stop-color="#9a9ca6" stop-opacity=".05"/><stop offset=".66" stop-color="#9a9ca6" stop-opacity=".1"/><stop offset=".84" stop-color="#9a9ca6" stop-opacity=".3"/><stop offset="1" stop-color="#9a9ca6" stop-opacity=".55"/></linearGradient></defs><path d="'+d+'" fill="none" stroke="url(#g)" stroke-width="1.6"/></svg>';
+      mbg.style.borderRadius='0';mbg.style.webkitClipPath=mbg.style.clipPath='path("'+d+'")';
+      mbg.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';mbg.style.backgroundSize='100% 100%';mbg.style.backgroundRepeat='no-repeat';
+    };
+    if(window.ResizeObserver)new ResizeObserver(fitMenu).observe(mbg);
+    requestAnimationFrame(fitMenu);
     const idxOf=v=>Math.max(0,items.findIndex(b=>b.dataset.n===String(v)));
-    const hot=k=>items.forEach((b,i)=>b.classList.toggle('hot',i===k));
+    let lastHot=-1;
+    const hot=k=>{if(k!==lastHot&&k>=0)try{__hap('sel')}catch(_){}lastHot=k;items.forEach((b,i)=>b.classList.toggle('hot',i===k))};
     const hide=()=>{menu.classList.remove('on');hot(-1)};
     const mark=()=>{};
     window.__bmMenuHide=hide;
     let drag=null;
-    btn.addEventListener('click',e=>{e.preventDefault();if(menu.classList.contains('on')){hide();return}mark();hot(-1);menu.classList.add('on')});
+    btn.addEventListener('click',e=>{e.preventDefault();if(menu.classList.contains('on')){hide();return}mark();hot(-1);menu.classList.add('on');try{__hap('medium')}catch(_){}});
     /* ближайший пункт к точке касания (в том числе между пунктами и по краям окна) */
     const nearest=cy=>{const r=menu.getBoundingClientRect(),k=r.height/menu.offsetHeight||1,y=(cy-r.top)/k;
       let bi=0,bd=1e9;items.forEach((b,i)=>{const d=Math.abs(b.offsetTop+b.offsetHeight/2-y);if(d<bd){bd=d;bi=i}});return bi};
@@ -2431,7 +2447,8 @@ renderMyGifts();
   };
   window.smoothAll=function(root){(root||document).querySelectorAll('.list.pcard').forEach(e=>smoothFit(e,30,true));
     (root||document).querySelectorAll('#bm .bm-card').forEach(e=>smoothFit(e,25,false));
-    (root||document).querySelectorAll('#bm .bm-view').forEach(e=>smoothFit(e,'pill',true,1))};
+    (root||document).querySelectorAll('#bm .bm-view').forEach(e=>smoothFit(e,'pill',true,1));
+    (root||document).querySelectorAll('#bm .bm-mi').forEach(e=>smoothFit(e,'pill',true,1))};
   smoothAll();
 })();
 </script>
@@ -3585,7 +3602,8 @@ renderMyGifts();
     root.addEventListener('contextmenu',e=>e.preventDefault());
     const mnu=root.querySelector('#cxMenu');
     const its=()=>[...mnu.querySelectorAll('.cx-it')];
-    const hot=k=>its().forEach((b,i)=>b.classList.toggle('hot',i===k));
+    let lastHot=-1;
+    const hot=k=>{if(k!==lastHot&&k>=0)try{__hap('sel')}catch(_){}lastHot=k;its().forEach((b,i)=>b.classList.toggle('hot',i===k))};
     const near=cy=>{const r=mnu.getBoundingClientRect(),q=r.height/mnu.offsetHeight||1,y=(cy-r.top)/q;let bi=0,bd=1e9;its().forEach((b,i)=>{const d=Math.abs(b.offsetTop+b.offsetHeight/2-y);if(d<bd){bd=d;bi=i}});return bi};
     const inMenu=(x,y)=>{const r=mnu.getBoundingClientRect();return x>=r.left-6&&x<=r.right+6&&y>=r.top-6&&y<=r.bottom+6};
     /* палец ведёт подсветку и по долгому нажатию (он ещё на экране), и по самому меню; отпустил над меню — пункт выбран */
@@ -3596,7 +3614,7 @@ renderMyGifts();
       if(e.type==='pointercancel'||!inMenu(e.clientX,e.clientY)){hot(-1);return}
       const b=its()[near(e.clientY)];if(b)pick(b.dataset.k);
     };
-    window.__cxHold=()=>{dr=1};
+    window.__cxHold=()=>{dr=1};window.__cxReset=()=>{lastHot=-1};
     mnu.addEventListener('pointerdown',e=>{dr=1;try{mnu.setPointerCapture(e.pointerId)}catch(_){}hot(near(e.clientY))});
     document.addEventListener('pointermove',mv,true);
     document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
@@ -3647,7 +3665,7 @@ renderMyGifts();
     }
     [pv,mn].forEach(n=>{try{n.getAnimations().forEach(a=>a.cancel())}catch(_){}});
     clearTimeout(closeT);root.classList.remove('out');
-    mn.querySelectorAll('.hot').forEach(n=>n.classList.remove('hot'));
+    mn.querySelectorAll('.hot').forEach(n=>n.classList.remove('hot'));try{window.__cxReset&&window.__cxReset()}catch(_){}
     root.classList.add('on');root.setAttribute('aria-hidden','false');
     pv.style.width=pvW+'px';pv.style.height=pvH+'px';
     const mh=mn.offsetHeight,gap=uniq?10:40,G=pvH+gap+mh;
@@ -3655,6 +3673,18 @@ renderMyGifts();
     pv.style.top=top+'px';pv.style.left=uniq?'0':Math.round((vw-pvW)/2)+'px';
     if(uniq){pv.style.width='100%'}
     mn.style.top=(top+pvH+gap)+'px';
+    /* плавные (continuous) углы: карточка, меню, подсветка пунктов + тонкая обводка меню */
+    try{
+      const clip=(el,r)=>{const w=el.offsetWidth,h=el.offsetHeight;if(!w||!h||!window.squircle)return null;const d=squircle(w,h,r,.6);el.style.borderRadius='0';el.style.webkitClipPath=el.style.clipPath='path("'+d+'")';return{w,h,d}};
+      const cd=pv.querySelector('.cx-card');if(cd)clip(cd,30);
+      const m=clip(mn,34);
+      if(m){
+        let ring=mn.querySelector('.cx-ring');if(!ring){ring=document.createElement('i');ring.className='cx-ring';mn.appendChild(ring)}
+        const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+m.w+'" height="'+m.h+'" viewBox="0 0 '+m.w+' '+m.h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset=".14" stop-color="#fff" stop-opacity=".12"/><stop offset=".5" stop-color="#fff" stop-opacity=".08"/><stop offset=".86" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity=".16"/></linearGradient></defs><path d="'+m.d+'" fill="none" stroke="url(#g)" stroke-width="2"/></svg>';
+        ring.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
+      }
+      if(window.smoothFit)mn.querySelectorAll('.cx-it').forEach(b=>smoothFit(b,'pill',true,1));
+    }catch(_){}
     /* появление: подарок «выпрыгивает» с места карточки, меню разворачивается из правого верхнего угла */
     const cx0=rect.left+rect.width/2,cy0=rect.top+rect.height/2,tx=uniq?vw/2:vw/2,ty=top+pvH/2;
     const sc=Math.max(.2,Math.min(1,(uniq?rect.width/pvW:rect.width/pvW)));
