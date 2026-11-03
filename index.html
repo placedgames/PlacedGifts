@@ -263,11 +263,14 @@ body.navanim #bar{z-index:1}
 .noanim #sendBtn.press{transform:none}
 
 /* ===== долгое нажатие на карточку подарка в профиле: контекстное меню ===== */
-.pg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.pg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;transition:transform .24s cubic-bezier(.3,.7,.3,1)}
+.pg.pressing{transform:scale(.94)}
 #cx{position:fixed;inset:0;z-index:3000;visibility:hidden;pointer-events:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #cx.on{visibility:visible;pointer-events:auto}
 #cx .cx-dim{position:absolute;inset:0;background:rgba(0,0,0,.52);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);opacity:0;transition:opacity .28s ease}
 #cx.on .cx-dim{opacity:1}
+#cx.on.out{pointer-events:none}
+#cx.on.out .cx-dim{opacity:0}
 #cx .cx-pv{position:absolute;will-change:transform,opacity}
 #cx .cx-card{width:368px;max-width:calc(100% - 24px);height:243px;border-radius:30px;overflow:hidden;position:absolute;left:0;right:0;margin:0 auto;background:radial-gradient(circle at 50% 42%,var(--cx1,#7b72ea) 0%,var(--cx2,#5b3fb8) 100%);box-shadow:0 18px 50px rgba(0,0,0,.35)}
 #cx .cx-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.32) 100%)}
@@ -623,6 +626,21 @@ html,body{overscroll-behavior:none}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
 </head>
 <body>
+<script>
+/* клавиатура в поле ввода окна: страница меняет размер много раз за анимацию — остальные обработчики resize в это время не нужны
+   (из-за них окно перестраивалось и «дёргалось»). Этот слушатель стоит первым и гасит событие; после закрытия клавиатуры один раз пересчитываем всё. */
+(function(){
+  let until=0,fire=0;
+  const typing=()=>{const a=document.activeElement;return !!(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName)&&document.body&&document.body.classList.contains('bmopen'))};
+  addEventListener('resize',e=>{if(e.__cx)return;if(typing()||performance.now()<until)e.stopImmediatePropagation()});
+  document.addEventListener('focusout',()=>{
+    if(!(document.body&&document.body.classList.contains('bmopen')))return;
+    until=performance.now()+650;clearTimeout(fire);
+    fire=setTimeout(()=>{const ev=new Event('resize');ev.__cx=1;dispatchEvent(ev)},700);
+  },true);
+})();
+</script>
+
 
 <section class="page on" id="p-market">
   <h1>Маркет</h1><p class="sub">Покупайте и продавайте подарки</p>
@@ -1994,7 +2012,7 @@ renderMyGifts();
   /* клавиатура: окно стоит на месте — отменяем сдвиг страницы (iOS поднимает видимую область к полю ввода) и прокрутку внутри окна */
   const keepTop=()=>{
     if(!bm.classList.contains('on'))return;
-    window.scrollTo(0,0);
+    if(window.scrollX||window.scrollY)window.scrollTo(0,0);
   };
   if(window.visualViewport){visualViewport.addEventListener('resize',keepTop);visualViewport.addEventListener('scroll',keepTop)}
   $b('bmMsg').addEventListener('focus',()=>{keepTop();setTimeout(keepTop,50);setTimeout(keepTop,250)});
@@ -3532,7 +3550,7 @@ renderMyGifts();
     send:'<circle cx="12" cy="12" r="9"/><path d="M7.5 12h8.2M12.6 8.6 16 12l-3.4 3.4"/>'
   };
   const it=(k,t)=>'<div class="cx-it" data-k="'+k+'"><svg viewBox="0 0 24 24">'+IC[k.replace(/^(hide|show)$/,'$1')]+'</svg><span>'+t+'</span></div>';
-  let root=null,cur=null,busy=false,lpFlag=false;
+  let root=null,cur=null,busy=false,lpFlag=false,closeT=0;
   function build(){
     root=document.createElement('div');root.id='cx';root.setAttribute('aria-hidden','true');
     root.innerHTML='<div class="cx-dim"></div><div class="cx-pv" id="cxPv"></div><div class="cx-menu" id="cxMenu"></div>';
@@ -3583,6 +3601,8 @@ renderMyGifts();
       mn.style.width=Math.min(219,vw-24)+'px';
       mn.innerHTML=it('col','Добавить в коллекцию')+'<div class="cx-sep"></div>'+it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть');
     }
+    [pv,mn].forEach(n=>{try{n.getAnimations().forEach(a=>a.cancel())}catch(_){}});
+    clearTimeout(closeT);root.classList.remove('out');
     root.classList.add('on');root.setAttribute('aria-hidden','false');
     pv.style.width=pvW+'px';pv.style.height=pvH+'px';
     const mh=mn.offsetHeight,gap=uniq?10:40,G=pvH+gap+mh;
@@ -3599,22 +3619,29 @@ renderMyGifts();
     setTimeout(()=>{busy=false},200);
   }
   function close(){
-    if(!root||!root.classList.contains('on'))return;
+    if(!root||!root.classList.contains('on')||root.classList.contains('out'))return;
     const pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
     try{pv.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.92)'}],{duration:180,easing:'ease-in',fill:'forwards'})}catch(_){}
     try{mn.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.7)'}],{duration:170,easing:'ease-in',fill:'forwards'})}catch(_){}
-    root.classList.remove('on');root.setAttribute('aria-hidden','true');cur=null;
+    root.classList.add('out');cur=null;busy=true;
+    clearTimeout(closeT);
+    closeT=setTimeout(()=>{
+      [pv,mn].forEach(n=>{try{n.getAnimations().forEach(a=>a.cancel())}catch(_){}});
+      root.classList.remove('on','out');root.setAttribute('aria-hidden','true');busy=false;
+    },230);
   }
   /* долгое нажатие: 420 мс без заметного сдвига пальца */
-  let tm=0,sx=0,sy=0,tel=null;
-  const stop=()=>{clearTimeout(tm);tm=0;tel=null};
+  let tm=0,pt=0,sx=0,sy=0,tel=null,pel=null;
+  const stop=()=>{clearTimeout(tm);clearTimeout(pt);tm=0;tel=null;if(pel){pel.classList.remove('pressing');pel=null}};
   grid.addEventListener('pointerdown',e=>{
     const el=e.target.closest&&e.target.closest('.pg');if(!el||e.button>0)return;
     stop();lpFlag=false;sx=e.clientX;sy=e.clientY;tel=el;
+    pt=setTimeout(()=>{if(tel===el){pel=el;el.classList.add('pressing')}},130);
     tm=setTimeout(()=>{
       const el2=tel;tm=0;if(!el2)return;
       const x=MYGIFTS[+el2.dataset.i];if(!x)return;
       lpFlag=true;open(el2,x);
+      if(pel){pel.classList.remove('pressing');pel=null}
     },420);
   },{passive:true});
   grid.addEventListener('pointermove',e=>{if(tm&&Math.hypot(e.clientX-sx,e.clientY-sy)>10)stop()},{passive:true});
