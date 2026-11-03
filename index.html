@@ -165,11 +165,11 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 .phead{display:flow-root;height:auto;position:relative}
 /* закреплённые подарки вокруг аватарки: только модель подарка */
 .pins{position:absolute;left:50%;top:calc(var(--ava-top) + var(--ava-size)/2);width:0;height:0;pointer-events:none}
-.pinm{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;display:flex;align-items:center;justify-content:center;font-size:30px;line-height:1}
+.pinm{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
 .pinm.new{animation:pinIn .38s cubic-bezier(.2,.9,.25,1.2)}
 @keyframes pinIn{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
 .pinm img{width:100%;height:100%;object-fit:contain;display:block}
-.ppin{position:absolute;left:8px;top:6px;width:16px;height:16px;z-index:3;pointer-events:none}
+.ppin{position:absolute;left:5px;top:3px;width:22px;height:22px;z-index:3;pointer-events:none}
 .ppin svg{display:block;width:100%;height:100%;fill:#fff}
 .phead>:not(.ava){opacity:var(--hf,1)}
 .phead .ava{visibility:hidden}
@@ -304,6 +304,7 @@ background:rgba(66,66,70,.58);-webkit-backdrop-filter:blur(30px) saturate(1.5);b
 #cx .cx-it span{min-width:0}
 #cx .cx-it.hot{background:rgba(255,255,255,.09)}
 #cx .cx-it svg{flex:none;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#cx .cx-it svg.f{width:25px;height:25px;margin:-2px;fill:currentColor;stroke:none;fill-rule:evenodd}
 
 /* ===== модальное окно покупки подарка ===== */
 #bm{position:fixed;left:0;right:0;top:0;height:100%;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .6s}
@@ -700,6 +701,7 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
     <div class="cinfo"><div class="cname"></div><div class="cstat"><svg class="ico" style="--s:var(--ic-rating-badge)"><use data-h="1" href="#i-h1"/></svg><span class="ctext"></span></div></div></div>
   <div class="phead">
     <div class="ava" id="ava"></div>
+    <div class="pins" id="sPins"></div>
     <div class="pname" id="uname"></div>
     <div class="pnum"><svg class="ico" style="--s:var(--ic-rating-badge)"><use id="uRate" href="#i-n1"/></svg><span id="unum"></span></div>
   </div>
@@ -1847,7 +1849,7 @@ function pgUpg(x,i){
 }
 /* карточки рисуем порциями: профиль открывается сразу с первыми PG_BATCH, остальные дорисовываются по мере прокрутки */
 const PG_BATCH=12,PG_CHUNK=9;
-const PIN_ICO='<div class="ppin"><svg viewBox="0 0 24 24"><path d="M14.5 2.5l7 7-1.6.6-3 3 .3 4-1.7 1.7-4.200-4.200-5.300 5.300-1-1 5.300-5.300L6.100 9.900 7.800 8.200l4 .3 3-3z"/></svg></div>';
+const PIN_ICO='<div class="ppin"><svg viewBox="0 0 512 512"><path d="M197.2 180.7C182 181.6 166.5 181 151.2 181C143 181 134.4 180.3 126.2 182.2C113.8 185.1 104.3 192.1 97.6 203C93.8 209.2 92 216.8 92 224C92 247.9 110.7 261.4 126.2 277C140.7 291.5 156.3 305.5 169.5 321C162.4 329.8 153.6 337.9 145.5 346C132.2 359.3 118.8 372.7 105.5 386C99.3 392.2 92.2 398.1 86.7 405C84.7 407.5 83.5 410.7 83.3 414C82.8 425.3 95.6 433.3 105.5 428C112.2 424.4 120.8 413.7 126.5 408C139.5 395 152.5 382.2 165.5 369.2C173.8 361 181.7 352.1 190.4 344.3C201.4 334.3 183.1 350.8 192.2 343.4C209.4 358.9 225.5 376.3 242 392.8C248.2 399 254.2 405.7 261 411.3C263.7 413.5 266.9 415.4 270 416.9C277.7 420.7 286.5 421.9 295 420.6C302.8 419.4 309.9 416.3 316 411.2C332.4 397.5 332 381.3 332 361.8C332 351.4 332 341.1 332 330.8C332 326.8 331.2 319.3 332.5 315.8C333.8 312.1 344.5 303 347.8 299.8C360.4 287.1 373.1 274.4 385.8 261.8C395 252.5 405.2 243.6 412.7 232.8C428.4 209.6 428.7 178.3 413.8 154.8C408.9 147.1 402.5 140.8 396 134.5C379.4 118.1 364.3 98.7 341.2 91.4C318.9 84.3 294.8 89.4 276.2 103.3C266 111 257.3 121.2 248.2 130.2C231.4 147.1 215 164.9 197.2 180.7Z"/></svg></div>';
 function pgCard(x,i){
   if(x.upg&&x.upg.c)return pgUpg(x,i);
   const av=x.anon?'<div class="pbuy an"></div>':(u.photo_url?'<div class="pbuy" style="background-image:url(\''+u.photo_url+'\')"></div>':'<div class="pbuy">'+name[0].toUpperCase()+'</div>');
@@ -1876,22 +1878,61 @@ function pgWatch(){
   }
   pgKick();
 }
-/* закреплённые подарки вокруг аватарки (до 6): позиции — центры точек относительно центра аватарки */
-const PIN_SLOTS=[[-67,-57],[63,-63],[-108,-8],[90,-4],[-94,46],[80,50]];
+/* закреплённые подарки вокруг аватарки (до 6): позиции — центры точек относительно центра аватарки.
+   слоты: 0 лево-верх, 1 право-верх, 2 слева, 3 справа, 4 лево-низ, 5 право-низ */
+const PIN_SLOTS=[[-62,-50],[62,-50],[-82,0],[82,0],[-62,50],[62,50]];
+const PIN_DIAG=[[0,5],[1,4]];   /* «накрест» */
+/* допустимое расположение для n подарков:
+   1 — случайный угол; 2 — только накрест; 3 и 4 — обязательно есть пара накрест, остальные где угодно;
+   5 — все 4 угла + один слева или справа; 6 — все места */
+function pinOk(s){
+  const n=s.length,has=i=>s.indexOf(i)>=0;
+  if(!n)return true;
+  for(let i=0;i<n;i++)if(!(s[i]>=0&&s[i]<6)||s.indexOf(s[i])!==i)return false;
+  const dg=PIN_DIAG.some(p=>has(p[0])&&has(p[1]));
+  if(n===1)return [0,1,4,5].indexOf(s[0])>=0;
+  if(n===2||n===3||n===4)return dg;
+  if(n===5)return has(0)&&has(1)&&has(4)&&has(5);
+  return n===6;
+}
+/* расставляет подарки (у нового x.pin=-1): если текущие места не подходят под правила — выбирает подходящий набор мест,
+   максимально сохраняя уже занятые, остальное случайно. true — что-то изменилось */
+function pinFit(items){
+  const n=items.length;if(!n||n>6)return false;
+  const cur=items.map(x=>x.pin).filter(v=>v!=null&&v>=0&&v<6);
+  if(cur.length===n&&pinOk(cur))return false;
+  let best=[],bs=-1;
+  for(let m=1;m<64;m++){
+    const set=[];for(let i=0;i<6;i++)if(m>>i&1)set.push(i);
+    if(set.length!==n||!pinOk(set))continue;
+    const sc=set.filter(i=>cur.indexOf(i)>=0).length;
+    if(sc>bs){bs=sc;best=[set]}else if(sc===bs)best.push(set);
+  }
+  if(!best.length)return false;
+  const set=best[Math.floor(Math.random()*best.length)],used={};
+  const keep=items.map(x=>{if(set.indexOf(x.pin)>=0&&!used[x.pin]){used[x.pin]=1;return 1}return 0});
+  const free=set.filter(i=>!used[i]);
+  for(let i=free.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)),t=free[i];free[i]=free[j];free[j]=t}
+  items.forEach((x,i)=>{if(!keep[i])x.pin=free.pop()});
+  return true;
+}
 function renderPins(){
-  const el=document.getElementById('pPins');if(!el)return;
+  try{if(pinFit(MYGIFTS.filter(x=>x.pin!=null))){try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}}}catch(_){}
   const items=MYGIFTS.filter(x=>x.pin!=null&&x.pin<6);
   const want={};items.forEach(x=>{want[x.pin]=x});
-  [].slice.call(el.children).forEach(c=>{
-    const x=want[c.dataset.s],src=x&&((x.upg&&x.upg.mi)||x.image||x.emoji||'');
-    if(!x||c.__src!==src)c.remove();
-  });
-  items.forEach(x=>{
-    if(el.querySelector('[data-s="'+x.pin+'"]'))return;
-    const mi=(x.upg&&x.upg.mi)||x.image,p=PIN_SLOTS[x.pin],d=document.createElement('div');
-    d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=p[0]+'px';d.style.top=p[1]+'px';
-    d.innerHTML=mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>';
-    el.appendChild(d);
+  ['pPins','sPins'].forEach(id=>{      /* страница профиля и страница настроек — одни и те же позиции */
+    const el=document.getElementById(id);if(!el)return;
+    [].slice.call(el.children).forEach(c=>{
+      const x=want[c.dataset.s],src=x&&((x.upg&&x.upg.mi)||x.image||x.emoji||'');
+      if(!x||c.__src!==src)c.remove();
+    });
+    items.forEach(x=>{
+      if(el.querySelector('[data-s="'+x.pin+'"]'))return;
+      const mi=(x.upg&&x.upg.mi)||x.image,p=PIN_SLOTS[x.pin],d=document.createElement('div');
+      d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=p[0]+'px';d.style.top=p[1]+'px';
+      d.innerHTML=mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>';
+      el.appendChild(d);
+    });
   });
 }
 let pgWarmT=0;
@@ -3649,16 +3690,18 @@ renderMyGifts();
   const IC={
     hide:'<path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/><path d="M4.2 4.2l15.6 15.6"/>',
     show:'<path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
-    pin:'<path d="M9 3.5h6l-.9 5.6 3 3.2v1.4H6.9v-1.4l3-3.2z"/><path d="M12 13.7v7"/>',
+    pin:'<path d="M197.2 180.7C182 181.6 166.5 181 151.2 181C143 181 134.4 180.3 126.2 182.2C113.8 185.1 104.3 192.1 97.6 203C93.8 209.2 92 216.8 92 224C92 247.9 110.7 261.4 126.2 277C140.7 291.5 156.3 305.5 169.5 321C162.4 329.8 153.6 337.9 145.5 346C132.2 359.3 118.8 372.7 105.5 386C99.3 392.2 92.2 398.1 86.7 405C84.7 407.5 83.5 410.7 83.3 414C82.8 425.3 95.6 433.3 105.5 428C112.2 424.4 120.8 413.7 126.5 408C139.5 395 152.5 382.2 165.5 369.2C173.8 361 181.7 352.1 190.4 344.3C201.4 334.3 183.1 350.8 192.2 343.4C209.4 358.9 225.5 376.3 242 392.8C248.2 399 254.2 405.7 261 411.3C263.7 413.5 266.9 415.4 270 416.9C277.7 420.7 286.5 421.9 295 420.6C302.8 419.4 309.9 416.3 316 411.2C332.4 397.5 332 381.3 332 361.8C332 351.4 332 341.1 332 330.8C332 326.8 331.2 319.3 332.5 315.8C333.8 312.1 344.5 303 347.8 299.8C360.4 287.1 373.1 274.4 385.8 261.8C395 252.5 405.2 243.6 412.7 232.8C428.4 209.6 428.7 178.3 413.8 154.8C408.9 147.1 402.5 140.8 396 134.5C379.4 118.1 364.3 98.7 341.2 91.4C318.9 84.3 294.8 89.4 276.2 103.3C266 111 257.3 121.2 248.2 130.2C231.4 147.1 215 164.9 197.2 180.7ZM314.5 118.9C322.7 118.7 329.9 119 337.5 122.5C340.8 124 343.7 125.9 346.5 128.2C354.2 134.6 385.2 165.4 389.3 173C393.7 181.1 395 189.9 394 199C393.3 205.3 390.4 211.9 386.6 217C380.2 225.8 371 233.3 363.2 241C346.9 257.3 330.6 273.7 314.2 290C308.5 295.8 304.3 302 302.3 310C300.6 317.3 301.5 356.6 301.5 367C301.5 371.8 302.3 377.4 300.9 382C298.7 389.6 288.3 393.4 281.8 388.9C275.5 384.6 259.2 366.7 252.8 360.2C224.2 331.7 195.6 303.1 167 274.5C160.3 267.8 125.3 234.8 123.1 229.5C121.1 224.4 122.5 218.2 126.8 214.7C128.2 213.4 129.9 212.3 131.8 211.9C136.5 210.9 141.9 211.5 146.8 211.5C160.6 211.5 197.7 213.6 208.8 208.9C211.9 207.6 215.1 205.9 217.8 203.7C224.9 197.9 231.2 190.5 237.8 184C251.4 170.3 265.1 156.7 278.8 143C284.8 137 290.6 129.9 297.8 125.2C302.9 121.8 308.6 120.2 314.5 118.9Z"/>',
+    unpin:'<path d="M315.5 87.1C303.9 88.9 293.5 91.9 283.5 98.1C280.3 100.1 277.3 102.4 274.5 104.9C266.6 112 223 154.7 220.4 160C216.1 168.8 221.6 180.6 231.8 181.7C233.1 181.9 234.4 181.9 235.8 181.8C243 181.2 248 174.2 252.8 169.5C262.4 159.8 272.1 150.2 281.8 140.5C286.9 135.3 291.9 129.5 297.8 125.2C311.7 114.9 331.7 114.8 345.8 124.9C352.9 130.1 359.1 137.3 365.3 143.7C371.7 150.3 378.8 156.5 384.9 163.5C392.6 172.5 395.6 184.8 393.9 196.5C393 202.8 390.1 209.5 386.1 214.5C381.5 220.3 376 225.3 370.8 230.5C362.4 238.8 354.1 247.2 345.8 255.5C341.5 259.7 335.6 264.1 332.9 269.5C330.3 274.6 330.8 281 334.3 285.5C337.1 289.1 341.5 291.5 346 291.6C348.8 291.6 351.6 290.9 354 289.5C360.7 285.5 371.9 272.3 378 266.2C393 251.2 412.7 235.8 420.2 215.2C428.9 191.4 424.7 165.4 409.2 145.2C403.4 137.6 395.8 131.1 389 124.2C364.6 99.9 351.7 86.2 315.5 87.1ZM143.5 180.6C133.6 182.2 156.7 179.8 142.2 181.2C137.6 181.7 132.9 181.2 128.2 182.1C113.3 185 100.1 194.8 94.9 209.5C84.6 238.5 103 253.8 121.8 272.5C132.4 283.2 143.1 293.8 153.8 304.5C158.7 309.4 164.3 314.1 168.7 319.5C179.3 332.3 161.3 310.5 169.5 321.5C157.4 335 87.8 401 84.6 408.5C81.9 414.7 83.8 422 89 426.3C93.5 430 99.7 430.7 105 428.2C112.6 424.7 178.4 355.6 191.8 343.4C199.7 349.8 184 335.6 193.6 344.3C210.6 359.7 254.1 409.5 270.5 417C280.7 421.7 291.9 421.8 302.5 418.4C318.6 413.3 328.7 398.8 331.3 382.8C332 378.7 331.3 374.8 331.8 370.8C333.3 355.5 330.8 379.5 332.4 369.4C345.6 380.5 396.2 435.4 404.2 439.2C410.7 442.2 418.7 440.3 422.9 434.5C426.1 430.2 426.7 424.4 424.7 419.5C423.9 417.6 422.7 416 421.2 414.5C409.5 402.2 397.2 390.5 385.2 378.5C361.3 354.5 337.2 330.5 313.2 306.5C241.2 234.5 169.2 162.5 97.2 90.5C90.9 84.2 83.3 78.9 74.5 84.5C68.5 88.3 65.8 96.1 68.4 102.8C71.5 110.9 132.3 167.1 143.5 180.6ZM174.8 211.9C183.2 218.9 190.9 227.2 198.8 235C211.1 247.3 223.4 259.7 235.8 272C249.1 285.3 262.4 298.7 275.8 312C284.3 320.5 293.2 328.9 301 338C301.4 345.2 302.4 376.9 300.6 382C299 386.5 294.7 389.4 290.2 390.4C284.3 391.8 280 387.5 276.2 383.8C240.7 348.2 205.1 312.6 169.5 277C159.2 266.7 148.8 256.3 138.5 246C134 241.5 128.6 237.1 124.7 232C123.1 229.9 122.6 227.5 122.5 225C122.5 224 122.5 223 122.8 222C123.8 217.8 126.7 214.2 130.8 212.5C135.7 210.4 167.4 211.7 174.8 211.9Z"/>',
     wear:'<path d="M3.6 8.6l4.1 3.7L12 5.6l4.3 6.7 4.1-3.7-1.7 9.4H5.3z"/><path d="M5.6 20.6h12.8"/>',
     link:'<path d="M10.2 13.8a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M13.8 10.2a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
     share:'<path d="M20.5 11.5 14 5.6v3.5C8.6 9.4 5 12.5 4 18c2.4-3 5.5-4.3 10-4.4v3.6z"/>',
     send:'<circle cx="12" cy="12" r="9"/><path d="M7.5 12h8.2M12.6 8.6 16 12l-3.4 3.4"/>',
   };
-  const it=(k,t)=>'<div class="cx-it" data-k="'+k+'"><svg viewBox="0 0 24 24">'+IC[k]+'</svg><span>'+t+'</span></div>';
+  const FILLED={pin:1,unpin:1};   /* иконки из набора: 512×512, закрашенные */
+  const it=(k,t,ic)=>{ic=ic||k;return '<div class="cx-it" data-k="'+k+'">'+(FILLED[ic]?'<svg class="f" viewBox="0 0 512 512">':'<svg viewBox="0 0 24 24">')+IC[ic]+'</svg><span>'+t+'</span></div>'};
   const isU=x=>!!(x&&x.upg&&x.upg.c);
   const hs=x=>it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть');
-  const mainHTML=x=>isU(x)?it('pin',x.pin!=null?'Открепить':'Закрепить')+it('wear','Носить')+it('link','Копировать ссылку')+it('share','Поделиться')+hs(x)+it('send','Передать'):hs(x);
+  const mainHTML=x=>isU(x)?(x.pin!=null?it('pin','Открепить','unpin'):it('pin','Закрепить'))+it('wear','Носить')+it('link','Копировать ссылку')+it('share','Поделиться')+hs(x)+it('send','Передать'):hs(x);
   const mainW=x=>Math.min(isU(x)?241:219,innerWidth-24);
   document.addEventListener('click',e=>{if(performance.now()<(window.__cxSw||0)){e.stopPropagation();e.preventDefault()}},true);
   let root=null,cur=null,busy=false,lpFlag=false,closeT=0,openT=0;
@@ -3693,15 +3736,16 @@ renderMyGifts();
       const x=cur&&cur.x;close();
       if(k==='pin'){
         if(x){
-          if(x.pin!=null){delete x.pin;delete x.pinT;try{toast('Подарок откреплён')}catch(_){}}
+          if(x.pin!=null){delete x.pin;delete x.pinT;pinFit(MYGIFTS.filter(g=>g.pin!=null));try{toast('Подарок откреплён')}catch(_){}}
           else{
-            const used=MYGIFTS.filter(g=>g.pin!=null);let sl=0;
+            const used=MYGIFTS.filter(g=>g.pin!=null);
             if(used.length>=6){
               /* шестой уже занят — самый первый закреплённый открепляется, его место занимает новый */
               used.sort((a,b)=>(a.pinT||0)-(b.pinT||0));
-              const o=used[0];sl=o.pin;delete o.pin;delete o.pinT;
-            }else{const taken=used.map(g=>g.pin);while(taken.indexOf(sl)>=0)sl++}
-            x.pin=sl;x.pinT=Date.now();try{toast('Подарок закреплён')}catch(_){}
+              const o=used[0];delete o.pin;delete o.pinT;
+            }
+            x.pin=-1;x.pinT=Date.now();pinFit(MYGIFTS.filter(g=>g.pin!=null));   /* место выбирается по правилам расположения */
+            try{toast('Подарок закреплён')}catch(_){}
           }
           try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
           try{renderMyGifts(true)}catch(_){}
