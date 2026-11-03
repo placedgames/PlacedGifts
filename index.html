@@ -226,6 +226,31 @@ body.navanim #bar{z-index:1}
 .mtabs button{position:relative;z-index:2;flex:none;border:0;background:none;color:#fff;font:inherit;font-size:16px;font-weight:550;cursor:pointer;padding:0 15.75px}
 .mtabs button.on{color:#fff}
 .mtabs button{display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
+/* слайдер коллекций под вкладками профиля: без стекла — только текст и ползунок */
+.cbar{margin:16px -16px 0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none;touch-action:pan-x pan-y;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.cbar::-webkit-scrollbar{display:none}
+.cbar[hidden]{display:none}
+.cb-in{position:relative;display:flex;align-items:center;width:max-content;min-width:100%;box-sizing:border-box;padding:0 16px}
+.cb-in i{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:17px;background:var(--card);pointer-events:none;transition:left .22s cubic-bezier(.25,.9,.3,1),width .22s cubic-bezier(.25,.9,.3,1)}
+.cb-in button{position:relative;z-index:1;flex:none;height:34px;padding:0 14px;border:0;background:none;color:#fff;font:inherit;font-size:17px;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;transition:opacity .15s ease}
+.cb-in button:active{opacity:.55}
+.cb-add svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;flex:none}
+/* окно «Новая коллекция» */
+#ncd{position:fixed;inset:0;z-index:3500;display:none;align-items:flex-start;justify-content:center;padding-top:max(56px,14vh);-webkit-user-select:none;user-select:none}
+#ncd.on{display:flex}
+#ncd .nc-dim{position:absolute;inset:0;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transition:opacity .24s ease}
+#ncd.show .nc-dim{opacity:1}
+#ncd .nc-box{position:relative;width:min(297px,calc(100vw - 56px));box-sizing:border-box;padding:24px 16px 16px;border-radius:32px;background:rgba(46,46,48,.84);-webkit-backdrop-filter:blur(40px) saturate(1.6);backdrop-filter:blur(40px) saturate(1.6);box-shadow:inset 0 0 0 .75px rgba(255,255,255,.13),0 24px 70px rgba(0,0,0,.5);color:#fff;opacity:0;transform:scale(1.1);transition:transform .3s cubic-bezier(.2,.9,.25,1.05),opacity .2s ease}
+#ncd.show .nc-box{opacity:1;transform:none}
+#ncd .nc-t{padding:0 8px;font-size:20px;line-height:25px;font-weight:700}
+#ncd .nc-m{padding:0 8px;margin-top:6px;font-size:16px;line-height:21px;font-weight:500;color:rgba(255,255,255,.92)}
+#ncd .nc-in{display:block;width:100%;box-sizing:border-box;margin:20px 0 0;height:50px;border:0;border-radius:25px;background:rgba(255,255,255,.12);padding:0 20px;color:#fff;font:inherit;font-size:19px;font-weight:500;outline:none;-webkit-appearance:none;appearance:none;caret-color:#5b73ee;-webkit-user-select:text;user-select:text}
+#ncd .nc-in::placeholder{color:rgba(255,255,255,.4)}
+#ncd .nc-bt{display:flex;gap:8px;margin-top:20px}
+#ncd .nc-bt button{flex:1;min-width:0;height:47px;border:0;border-radius:24px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:19px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s ease,transform .15s ease}
+#ncd .nc-bt button:active{transform:scale(.97)}
+#ncd .nc-bt .ok{background:#69B5E9}
+#ncd .nc-bt .ok.dis{opacity:.5}
 .mt-ic{display:flex;align-items:center;gap:0}
 .mt-ic img{width:21px;height:21px;object-fit:contain;display:block}
 .mt-ic em{font-style:normal;font-size:17px;line-height:21px}
@@ -293,6 +318,11 @@ background:linear-gradient(180deg,rgba(74,76,76,.74),rgba(46,50,50,.74));box-sha
 #cx .cx-it.hot{background:rgba(255,255,255,.09)}
 #cx .cx-it svg{flex:none;width:21px;height:21px;fill:none;stroke:#fff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 #cx .cx-sep{height:1px;margin:10px 18px 10px 47px;background:rgba(255,255,255,.14)}
+/* подменю «Добавить в коллекцию» */
+#cx .cx-list{overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+#cx .cx-list::-webkit-scrollbar{display:none}
+#cx .cx-list .cx-it span,#cx .cx-it.nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#cx .cx-it .cx-ck{margin-left:auto;stroke-width:2.2}
 
 /* ===== модальное окно покупки подарка ===== */
 #bm{position:fixed;left:0;right:0;top:0;height:100%;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .6s}
@@ -728,6 +758,7 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
   <div class="mpin" id="mePin"><div class="mpin-bg"></div><div class="mpin-bg2"></div><div class="mpin-band"></div><div class="mpin-n" id="mpN"></div><div class="mpin-s" id="mpS"><svg class="ico" id="mpSv"><use id="mpR" href="#i-n1"/></svg><span></span></div></div>
   <div class="mbody">
   <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="gifts"><span>Подарки</span><span class="mt-ic" id="mtIcons"></span></button><button data-m="posts">Публикации</button></div>
+  <div class="cbar" id="cbar" hidden><div class="cb-in" id="cbIn"></div></div>
   <div class="pgrid" id="pGrid"></div>
   <div class="gempty" id="pEmpty" hidden></div>
   <div id="pSpace" style="height:0;pointer-events:none" aria-hidden="true"></div>
@@ -1408,6 +1439,7 @@ function resetTabs(){
   });
   $('#grid').hidden=false; $('#gempty').hidden=true;
   try{const sp=document.getElementById('pSpace');if(sp)sp.style.height='0'}catch(e){}
+  try{COLCUR='all'}catch(e){}   /* профиль каждый раз открывается на «Все» */
   TAB_POS.gifts=TAB_POS.posts=null;
   try{renderMyGifts()}catch(e){}
 }
@@ -1775,6 +1807,14 @@ requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
 const MYK='myGifts',SOLDK='soldMap';
 let MYGIFTS=[],SOLDMAP={};
 try{MYGIFTS=JSON.parse(store.get(MYK,'[]'))||[];SOLDMAP=JSON.parse(store.get(SOLDK,'{}'))||{}}catch(e){}
+/* коллекции подарков: список [{id,name}] хранится отдельно, а принадлежность подарка — в самом подарке (x.cols = [id коллекций]) */
+const COLK='myCols',COL_MAX=12;
+let COLS=[],COLCUR='all';
+try{COLS=JSON.parse(store.get(COLK,'[]'));if(!Array.isArray(COLS))COLS=[]}catch(e){COLS=[]}
+const colSave=()=>store.set(COLK,JSON.stringify(COLS));
+const colHas=(x,id)=>!!(x&&x.cols&&x.cols.indexOf(id)>=0);
+const colEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const colActive=()=>COLCUR!=='all'&&COLS.some(c=>c.id===COLCUR)?COLCUR:null;
 const shortN=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'K':String(n);
 /* карточка улучшенного подарка: фон, узор, модель и плашка с номером */
 const PG_POS=[[50,11,15,.3],[83,30,15,.3,1],[83,68,15,.3,1],[50,87,15,.3],[17,68,15,.3,1],[17,30,15,.3,1],[24,5,14,.14],[76,5,14,.14],[24,92,14,.14],[76,92,14,.14],[0,49,14,.14],[100,49,14,.14]];
@@ -1845,7 +1885,7 @@ function pgMore(){
   const g=$('#pGrid');if(!g||!g.__list)return;
   const list=g.__list,a=g.__n||0;if(a>=list.length)return;
   const b=Math.min(list.length,a+PG_CHUNK);let h='';
-  for(let i=a;i<b;i++)h+=pgCard(list[i],i);
+  for(let i=a;i<b;i++)h+=pgCard(list[i],g.__ix?g.__ix[i]:i);
   g.insertAdjacentHTML('beforeend',h);g.__n=b;
   try{pgPaint(g,a)}catch(_){}
 }
@@ -1864,13 +1904,16 @@ function pgWatch(){
 let pgWarmT=0;
 function renderMyGifts(reset){
   const g=$('#pGrid'),e=$('#pEmpty'),b=$('#mtabs button.on');if(!g||!e)return;
-  const uniq=!!b&&b.dataset.m==='posts',list=uniq?[]:MYGIFTS;
-  const sig=(uniq?'u':'a')+'|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
+  const uniq=!!b&&b.dataset.m==='posts',cc=uniq?null:colActive();
+  /* в коллекции показываются только её подарки; data-i остаётся индексом в MYGIFTS (по нему открываются окна и меню) */
+  const list=uniq?[]:(cc?MYGIFTS.filter(x=>colHas(x,cc)):MYGIFTS);
+  g.__ix=cc?list.map(x=>MYGIFTS.indexOf(x)):null;
+  const sig=(uniq?'u':'a')+'|'+(cc||'')+'|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
   g.__list=list;
   if(g.__sig!==sig){
     g.__sig=sig;try{PG_RO&&PG_RO.disconnect()}catch(_){}
     const n=Math.min(list.length,reset?PG_BATCH:Math.max(PG_BATCH,g.__n||0));let h='';
-    for(let i=0;i<n;i++)h+=pgCard(list[i],i);
+    for(let i=0;i<n;i++)h+=pgCard(list[i],g.__ix?g.__ix[i]:i);
     g.innerHTML=h;g.__n=n;
     try{pgPaint(g)}catch(_){}
   }else if(reset&&(g.__n||0)>PG_BATCH){
@@ -1879,12 +1922,116 @@ function renderMyGifts(reset){
     g.__n=n;
   }
   g.hidden=!list.length;e.hidden=list.length>0;
-  e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
+  e.textContent=uniq?'Публикаций пока нет':(cc?'В коллекции пока пусто':'Подарков пока нет');
+  try{colSync()}catch(_){}
   const ti=document.getElementById('mtIcons');
   if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
   try{placeTab(document.getElementById('mtabs'))}catch(_){}
   try{pgWatch()}catch(_){}
   clearTimeout(pgWarmT);pgWarmT=setTimeout(()=>{try{warmMyGifts()}catch(_){}},500);   /* предзагрузка картинок — не мешает открытию профиля */
+}
+/* ===== коллекции: слайдер под вкладками, окно «Новая коллекция», подпись кнопки внизу ===== */
+let cbSig=null;
+function placeCol(instant){
+  const inn=document.getElementById('cbIn'),b=inn&&inn.querySelector('button.on'),i=inn&&inn.querySelector('i');
+  if(!b||!i||!b.offsetWidth)return;
+  if(instant)i.style.transition='none';
+  i.style.left=b.offsetLeft+'px';i.style.width=b.offsetWidth+'px';
+  if(instant){void i.offsetWidth;i.style.transition=''}
+}
+function colBarDraw(cur){
+  const inn=document.getElementById('cbIn');if(!inn)return;
+  const sig=COLS.map(c=>c.id+':'+c.name).join('|');let fresh=false;
+  if(sig!==cbSig){
+    cbSig=sig;fresh=true;
+    inn.innerHTML='<i></i><button type="button" data-c="all">Все</button>'+COLS.map(c=>'<button type="button" data-c="'+c.id+'">'+colEsc(c.name)+'</button>').join('')+
+      '<button type="button" class="cb-add" data-c="+"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить</button>';
+  }
+  inn.querySelectorAll('button[data-c]').forEach(b=>b.classList.toggle('on',b.dataset.c===cur));
+  placeCol(fresh);
+}
+/* выбранная коллекция плавно уезжает в центр слайдера */
+function colScrollTo(instant){
+  const bar=document.getElementById('cbar'),b=bar&&bar.querySelector('button.on');if(!b||!bar.clientWidth)return;
+  const l=Math.max(0,b.offsetLeft+b.offsetWidth/2-bar.clientWidth/2);
+  try{bar.scrollTo({left:l,behavior:instant?'auto':'smooth'})}catch(_){bar.scrollLeft=l}
+}
+/* всё, что зависит от выбранной коллекции: слайдер, подпись кнопки внизу, минимальная высота страницы */
+function colSync(){
+  const bar=document.getElementById('cbar'),sb=document.getElementById('sendBtn'),pg=document.getElementById('p-me'),mb=pg&&pg.querySelector('.mbody');
+  const tb=document.querySelector('#mtabs button.on'),uniq=!!tb&&tb.dataset.m==='posts',cc=uniq?null:colActive();
+  if(COLCUR!=='all'&&!cc&&!uniq)COLCUR='all';
+  if(bar)bar.hidden=uniq;
+  if(!uniq)colBarDraw(cc||'all');
+  if(sb){const t=cc?'Добавить подарки':'Отправить подарки друзьям';if(sb.textContent!==t)sb.textContent=t}
+  /* в пустой или короткой коллекции страница всё равно должна прокручиваться до «ступеньки», иначе слайдер не закрепится и кнопка не выедет */
+  if(mb){
+    let mh='';
+    if(cc){
+      const s=window.meStep&&meStep();
+      if(s){const pb=parseFloat(getComputedStyle(pg).paddingBottom)||0;mh=Math.max(0,Math.round(s.T+pg.clientHeight-(mb.offsetTop+s.off)-pb))+'px'}
+    }
+    if(mb.style.minHeight!==mh)mb.style.minHeight=mh;
+  }
+}
+(function(){
+  const pg=document.getElementById('p-me'),inn=document.getElementById('cbIn'),bar=document.getElementById('cbar');
+  if(!pg||!inn)return;
+  inn.addEventListener('click',e=>{
+    const b=e.target.closest&&e.target.closest('button[data-c]');if(!b)return;
+    if(b.dataset.c==='+'){colAsk(null);return}
+    if(COLCUR===b.dataset.c)return;
+    COLCUR=b.dataset.c;
+    try{__hap('sel')}catch(_){}
+    renderMyGifts();colScrollTo();
+  });
+  if(window.ResizeObserver&&bar)new ResizeObserver(()=>placeCol(true)).observe(bar);
+  new MutationObserver(()=>{if(pg.classList.contains('on'))try{colSync()}catch(_){}}).observe(pg,{attributes:true,attributeFilter:['class']});
+  addEventListener('resize',()=>{try{colSync()}catch(_){}});
+})();
+/* окно ввода названия: x — подарок, который сразу попадёт в новую коллекцию (null — коллекция создаётся пустой) */
+let ncd=null,ncT=0,ncX=null,ncBusy=false;
+function colAsk(x){
+  if(ncBusy)return;
+  if(!ncd){
+    ncd=document.createElement('div');ncd.id='ncd';ncd.setAttribute('role','dialog');ncd.setAttribute('aria-modal','true');
+    ncd.innerHTML='<div class="nc-dim"></div><div class="nc-box"><div class="nc-t">Новая коллекция</div><div class="nc-m">Придумайте название для коллекции и добавьте в неё подарки.</div>'+
+      '<input class="nc-in" type="text" maxlength="'+COL_MAX+'" placeholder="Название" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" enterkeyhint="done">'+
+      '<div class="nc-bt"><button type="button" class="no">Отмена</button><button type="button" class="ok dis">Готово</button></div></div>';
+    document.body.appendChild(ncd);
+    const inp=ncd.querySelector('.nc-in'),ok=ncd.querySelector('.ok'),no=ncd.querySelector('.no');
+    const val=()=>inp.value.trim().slice(0,COL_MAX);
+    const fin=()=>{
+      if(performance.now()-ncT<350)return;
+      const name=val();if(!name){try{inp.focus()}catch(_){}return}
+      const c={id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name};
+      COLS.push(c);colSave();
+      const g=ncX;
+      if(g){(g.cols||(g.cols=[])).push(c.id);try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}}
+      COLCUR=c.id;cbSig=null;
+      colHide();
+      try{window.__hap&&__hap('light')}catch(_){}
+      renderMyGifts();colScrollTo();
+    };
+    inp.addEventListener('input',()=>ok.classList.toggle('dis',!val()));
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();fin()}});
+    ok.addEventListener('click',fin);
+    no.addEventListener('click',()=>{if(performance.now()-ncT<350)return;colHide()});
+    /* под окном ничего не прокручивается и не нажимается */
+    ncd.addEventListener('touchmove',e=>{if(!e.target.closest('.nc-in'))e.preventDefault()},{passive:false});
+    ncd.addEventListener('contextmenu',e=>e.preventDefault());
+  }
+  ncX=x||null;ncT=performance.now();
+  const inp=ncd.querySelector('.nc-in');inp.value='';ncd.querySelector('.ok').classList.add('dis');
+  ncd.classList.add('on');void ncd.offsetWidth;ncd.classList.add('show');
+  try{inp.focus({preventScroll:true})}catch(_){}
+  setTimeout(()=>{if(ncd.classList.contains('show')){try{inp.focus({preventScroll:true})}catch(_){}}},120);
+}
+function colHide(){
+  if(!ncd||!ncd.classList.contains('show'))return;
+  try{ncd.querySelector('.nc-in').blur()}catch(_){}
+  ncd.classList.remove('show');ncBusy=true;ncX=null;
+  setTimeout(()=>{if(!ncd.classList.contains('show'))ncd.classList.remove('on');ncBusy=false},260);
 }
 renderMyGifts();
 
@@ -3592,9 +3739,16 @@ renderMyGifts();
     wear:'<path d="M3.6 8.6l4.1 3.7L12 5.6l4.3 6.7 4.1-3.7-1.7 9.4H5.3z"/><path d="M5.6 20.6h12.8"/>',
     link:'<path d="M10.2 13.8a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M13.8 10.2a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
     share:'<path d="M20.5 11.5 14 5.6v3.5C8.6 9.4 5 12.5 4 18c2.4-3 5.5-4.3 10-4.4v3.6z"/>',
-    send:'<circle cx="12" cy="12" r="9"/><path d="M7.5 12h8.2M12.6 8.6 16 12l-3.4 3.4"/>'
+    send:'<circle cx="12" cy="12" r="9"/><path d="M7.5 12h8.2M12.6 8.6 16 12l-3.4 3.4"/>',
+    back:'<path d="M20 12H5M11 5.5 4.5 12 11 18.5"/>',
+    newc:'<path d="M12 19H5.5A2.5 2.5 0 0 1 3 16.5v-9A2.5 2.5 0 0 1 5.5 5h3.4c.5 0 .9.2 1.2.5L11.2 7H18.5A2.5 2.5 0 0 1 21 9.5V12"/><path d="M18 15v6M15 18h6"/>',
+    folder:'<path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h3.4c.5 0 .9.2 1.2.5L11.2 7H18.5A2.5 2.5 0 0 1 21 9.5v7a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5z"/>'
   };
-  const it=(k,t)=>'<div class="cx-it" data-k="'+k+'"><svg viewBox="0 0 24 24">'+IC[k.replace(/^(hide|show)$/,'$1')]+'</svg><span>'+t+'</span></div>';
+  const CK='<svg class="cx-ck" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const it=(k,t,chk)=>{const cm=k.indexOf('c:')===0;return '<div class="cx-it'+(cm||k==='new'?' nm':'')+'" data-k="'+k+'"><svg viewBox="0 0 24 24">'+IC[cm?'folder':k==='new'?'newc':k]+'</svg><span>'+t+'</span>'+(chk?CK:'')+'</div>'};
+  const isU=x=>!!(x&&x.upg&&x.upg.c);
+  const mainHTML=x=>isU(x)?it('col','Добавить в коллекцию')+'<div class="cx-sep"></div>'+it('pin','Закрепить')+it('wear','Носить')+it('link','Копировать ссылку')+it('share','Поделиться')+it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть')+it('send','Передать'):it('col','Добавить в коллекцию')+'<div class="cx-sep"></div>'+it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть');
+  const mainW=x=>Math.min(isU(x)?241:219,innerWidth-24);
   let root=null,cur=null,busy=false,lpFlag=false,closeT=0,openT=0;
   function build(){
     root=document.createElement('div');root.id='cx';root.setAttribute('aria-hidden','true');
@@ -3606,22 +3760,38 @@ renderMyGifts();
     const its=()=>[...mnu.querySelectorAll('.cx-it')];
     let lastHot=-1;
     const hot=k=>{if(k!==lastHot&&k>=0)try{__hap('sel')}catch(_){}lastHot=k;its().forEach((b,i)=>b.classList.toggle('hot',i===k))};
-    const near=cy=>{const r=mnu.getBoundingClientRect(),q=r.height/mnu.offsetHeight||1,y=(cy-r.top)/q;let bi=0,bd=1e9;its().forEach((b,i)=>{const d=Math.abs(b.offsetTop+b.offsetHeight/2-y);if(d<bd){bd=d;bi=i}});return bi};
+    const lst=()=>mnu.querySelector('.cx-list');
+    const near=cy=>{const L=lst(),lr=L&&L.getBoundingClientRect();let bi=0,bd=1e9;its().forEach((b,i)=>{const r=b.getBoundingClientRect();if(lr&&L.contains(b)&&(r.bottom<=lr.top||r.top>=lr.bottom))return;const d=Math.abs(r.top+r.height/2-cy);if(d<bd){bd=d;bi=i}});return bi};
     const inMenu=(x,y)=>{const r=mnu.getBoundingClientRect();return x>=r.left-6&&x<=r.right+6&&y>=r.top-6&&y<=r.bottom+6};
     /* палец ведёт подсветку и по долгому нажатию (он ещё на экране), и по самому меню; отпустил над меню — пункт выбран */
-    let dr=0;
+    let dr=0,ls=0;
     const mv=e=>{if(!dr)return;hot(inMenu(e.clientX,e.clientY)?near(e.clientY):-1)};
     const up=e=>{
       if(!dr)return;dr=0;
       if(e.type==='pointercancel'||!inMenu(e.clientX,e.clientY)){hot(-1);return}
+      const L=lst();if(L&&Math.abs(L.scrollTop-ls)>3){hot(-1);return}   /* список коллекций прокручивали — это не выбор пункта */
       const b=its()[near(e.clientY)];if(b)pick(b.dataset.k);
     };
     window.__cxHold=()=>{dr=1};window.__cxReset=()=>{lastHot=-1};
-    mnu.addEventListener('pointerdown',e=>{if(performance.now()-openT<350)return;dr=1;try{mnu.setPointerCapture(e.pointerId)}catch(_){}hot(near(e.clientY))});
+    mnu.addEventListener('pointerdown',e=>{if(performance.now()-openT<350)return;dr=1;ls=(lst()||{}).scrollTop||0;try{mnu.setPointerCapture(e.pointerId)}catch(_){}hot(near(e.clientY))});
     document.addEventListener('pointermove',mv,true);
     document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
     function pick(k){
+      if(k==='col'){subMenu();return}
+      if(k==='back'){mainMenu();return}
       const x=cur&&cur.x;close();
+      if(k==='new'){colAsk(x||null);return}
+      if(k.indexOf('c:')===0){
+        const c=COLS.find(c=>c.id===k.slice(2));
+        if(x&&c){
+          const a=x.cols||(x.cols=[]),i=a.indexOf(c.id);
+          if(i<0)a.push(c.id);else a.splice(i,1);
+          try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
+          try{renderMyGifts()}catch(_){}
+          try{toast(i<0?'Добавлено в «'+c.name+'»':'Убрано из «'+c.name+'»')}catch(_){}
+        }
+        return;
+      }
       if(k==='hide'||k==='show'){
         if(x){x.hid=!x.hid;try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}try{renderMyGifts()}catch(_){}}
         return;
@@ -3644,6 +3814,36 @@ renderMyGifts();
       cx.globalAlpha=1;
     });
   }
+  const clip=(el,r)=>{const w=el.offsetWidth,h=el.offsetHeight;if(!w||!h||!window.squircle)return null;const d=squircle(w,h,r,.6);el.style.borderRadius='0';el.style.webkitClipPath=el.style.clipPath='path("'+d+'")';return{w,h,d}};
+  function shapeMenu(mn){
+    try{
+      const m=clip(mn,30);
+      if(m){
+        let ring=mn.querySelector('.cx-ring');if(!ring){ring=document.createElement('i');ring.className='cx-ring';mn.appendChild(ring)}
+        const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+m.w+'" height="'+m.h+'" viewBox="0 0 '+m.w+' '+m.h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset=".14" stop-color="#fff" stop-opacity=".12"/><stop offset=".5" stop-color="#fff" stop-opacity=".08"/><stop offset=".86" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity=".16"/></linearGradient></defs><path d="'+m.d+'" fill="none" stroke="url(#g)" stroke-width="2"/></svg>';
+        ring.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
+      }
+      mn.querySelectorAll('.cx-it').forEach(b=>clip(b,21));
+    }catch(_){}
+  }
+  /* «Добавить в коллекцию»: меню заменяется подменю — «Назад», «Новая коллекция» и коллекции пользователя */
+  function swapMenu(html,w){
+    const mn=root&&root.querySelector('#cxMenu');if(!mn)return;
+    mn.style.width=w+'px';mn.innerHTML=html;
+    const L=mn.querySelector('.cx-list');
+    if(L){const room=innerHeight-(parseFloat(mn.style.top)||0)-24-(mn.offsetHeight-L.offsetHeight);L.style.maxHeight=Math.max(110,room)+'px'}
+    shapeMenu(mn);
+    try{window.__cxReset&&window.__cxReset()}catch(_){}
+    try{mn.animate([{opacity:.0},{opacity:1}],{duration:160,easing:'ease-out'})}catch(_){}
+  }
+  function subMenu(){
+    const x=cur&&cur.x;if(!x)return;
+    swapMenu(it('back','Назад')+'<div class="cx-sep"></div>'+it('new','Новая коллекция')+(COLS.length?'<div class="cx-list">'+COLS.map(c=>it('c:'+c.id,colEsc(c.name),colHas(x,c.id))).join('')+'</div>':''),Math.min(241,innerWidth-24));
+  }
+  function mainMenu(){
+    const x=cur&&cur.x;if(!x)return;
+    swapMenu(mainHTML(x),mainW(x));
+  }
   function open(el,x){
     if(busy||!x||x.sold)return;
     if(!root)build();
@@ -3657,13 +3857,13 @@ renderMyGifts();
       pvW=Math.min(368,vw-24);pvH=243;
       pv.innerHTML='<div class="cx-card"><canvas></canvas>'+(d.mi?'<div class="cx-mi"><img src="'+d.mi+'" alt=""></div>':'<div class="cx-em">'+(x.emoji||'🎁')+'</div>')+'<div class="cx-t">'+(d.g||'Подарок')+'</div><div class="cx-s">коллекционный предмет #'+Number(d.n).toLocaleString('ru-RU')+'</div></div>';
       drawPat(pv.querySelector('canvas'),x);
-      mn.style.width=Math.min(241,vw-24)+'px';
-      mn.innerHTML=it('col','Добавить в коллекцию')+'<div class="cx-sep"></div>'+it('pin','Закрепить')+it('wear','Носить')+it('link','Копировать ссылку')+it('share','Поделиться')+it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть')+it('send','Передать');
+      mn.style.width=mainW(x)+'px';
+      mn.innerHTML=mainHTML(x);
     }else{
       pvW=134;pvH=134;
       pv.innerHTML='<div class="cx-gift">'+(x.image?'<img src="'+x.image+'" alt="">':(x.emoji||'🎁'))+'</div>';
-      mn.style.width=Math.min(219,vw-24)+'px';
-      mn.innerHTML=it('col','Добавить в коллекцию')+'<div class="cx-sep"></div>'+it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть');
+      mn.style.width=mainW(x)+'px';
+      mn.innerHTML=mainHTML(x);
     }
     [pv,mn].forEach(n=>{try{n.getAnimations().forEach(a=>a.cancel())}catch(_){}});
     clearTimeout(closeT);root.classList.remove('out');
@@ -3676,17 +3876,8 @@ renderMyGifts();
     if(uniq){pv.style.width='100%'}
     mn.style.top=(top+pvH+gap)+'px';
     /* плавные (continuous) углы: карточка, меню, подсветка пунктов + тонкая обводка меню */
-    try{
-      const clip=(el,r)=>{const w=el.offsetWidth,h=el.offsetHeight;if(!w||!h||!window.squircle)return null;const d=squircle(w,h,r,.6);el.style.borderRadius='0';el.style.webkitClipPath=el.style.clipPath='path("'+d+'")';return{w,h,d}};
-      const cd=pv.querySelector('.cx-card');if(cd)clip(cd,30);
-      const m=clip(mn,30);
-      if(m){
-        let ring=mn.querySelector('.cx-ring');if(!ring){ring=document.createElement('i');ring.className='cx-ring';mn.appendChild(ring)}
-        const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+m.w+'" height="'+m.h+'" viewBox="0 0 '+m.w+' '+m.h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset=".14" stop-color="#fff" stop-opacity=".12"/><stop offset=".5" stop-color="#fff" stop-opacity=".08"/><stop offset=".86" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity=".16"/></linearGradient></defs><path d="'+m.d+'" fill="none" stroke="url(#g)" stroke-width="2"/></svg>';
-        ring.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
-      }
-      mn.querySelectorAll('.cx-it').forEach(b=>clip(b,21));
-    }catch(_){}
+    try{const cd=pv.querySelector('.cx-card');if(cd)clip(cd,30)}catch(_){}
+    shapeMenu(mn);
     /* появление: подарок «выпрыгивает» с места карточки, меню разворачивается из правого верхнего угла */
     const cx0=rect.left+rect.width/2,cy0=rect.top+rect.height/2,tx=uniq?vw/2:vw/2,ty=top+pvH/2;
     const sc=Math.max(.2,Math.min(1,(uniq?rect.width/pvW:rect.width/pvW)));
@@ -3732,6 +3923,13 @@ renderMyGifts();
   /* после долгого нажатия обычное «открыть подарок» не срабатывает */
   grid.addEventListener('click',e=>{if(lpFlag){lpFlag=false;e.stopPropagation();e.preventDefault()}},true);
   grid.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.pg'))e.preventDefault()});
+  /* пока меню открыто, палец (он ещё лежит на подарке) не прокручивает страницу под окном: касание целиком гасится здесь,
+     поэтому обработчики прокрутки профиля (ступенька слайдера) его тоже не получают */
+  grid.addEventListener('touchmove',e=>{
+    if(!root||!root.classList.contains('on')||root.classList.contains('out'))return;
+    if(e.cancelable)e.preventDefault();
+    e.stopPropagation();
+  },{passive:false,capture:true});
 })();
 </script>
 </body>
