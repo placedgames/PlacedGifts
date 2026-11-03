@@ -440,7 +440,9 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 /* оптимизация анимаций: свои GPU-слои для шторок/затемнений, без задержки тапа, изоляция раскладки карточек */
 #gm .gm-dim,#bm .bm-dim{will-change:opacity}
 #bm .bm-sheet{will-change:transform}
-.gift,.pg{contain:layout style}
+.gift{contain:layout style}
+.pg{contain:style}
+.pg .rib{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 button,.gift,.pg,.row{touch-action:manipulation}
 html,body{overscroll-behavior:none}
 #gm.sub .gm-sheet{opacity:0;pointer-events:none}
@@ -1970,11 +1972,12 @@ renderMyGifts();
     const mbg=menu.querySelector('.bm-mbg');
     const fitMenu=()=>{
       const w=mbg.offsetWidth,h=mbg.offsetHeight;if(!w||!h)return;
-      const d=squircle(w,h,32,.6);
+      const d=squircle(w,h,31,.6);
       const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a9ca6" stop-opacity=".55"/><stop offset=".16" stop-color="#9a9ca6" stop-opacity=".3"/><stop offset=".34" stop-color="#9a9ca6" stop-opacity=".1"/><stop offset=".5" stop-color="#9a9ca6" stop-opacity=".05"/><stop offset=".66" stop-color="#9a9ca6" stop-opacity=".1"/><stop offset=".84" stop-color="#9a9ca6" stop-opacity=".3"/><stop offset="1" stop-color="#9a9ca6" stop-opacity=".55"/></linearGradient></defs><path d="'+d+'" fill="none" stroke="url(#g)" stroke-width="1.6"/></svg>';
       mbg.style.borderRadius='0';mbg.style.webkitClipPath=mbg.style.clipPath='path("'+d+'")';
       mbg.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';mbg.style.backgroundSize='100% 100%';mbg.style.backgroundRepeat='no-repeat';
     };
+    items.forEach(b=>{const f=()=>{const w=b.offsetWidth,h=b.offsetHeight;if(!w||!h)return;const d=squircle(w,h,23,.6);b.style.borderRadius='0';b.style.webkitClipPath=b.style.clipPath='path("'+d+'")'};if(window.ResizeObserver)new ResizeObserver(f).observe(b);requestAnimationFrame(f)});
     if(window.ResizeObserver)new ResizeObserver(fitMenu).observe(mbg);
     requestAnimationFrame(fitMenu);
     const idxOf=v=>Math.max(0,items.findIndex(b=>b.dataset.n===String(v)));
@@ -2447,8 +2450,7 @@ renderMyGifts();
   };
   window.smoothAll=function(root){(root||document).querySelectorAll('.list.pcard').forEach(e=>smoothFit(e,30,true));
     (root||document).querySelectorAll('#bm .bm-card').forEach(e=>smoothFit(e,25,false));
-    (root||document).querySelectorAll('#bm .bm-view').forEach(e=>smoothFit(e,'pill',true,1));
-    (root||document).querySelectorAll('#bm .bm-mi').forEach(e=>smoothFit(e,'pill',true,1))};
+    (root||document).querySelectorAll('#bm .bm-view').forEach(e=>smoothFit(e,'pill',true,1))};
   smoothAll();
 })();
 </script>
@@ -3593,7 +3595,7 @@ renderMyGifts();
     send:'<circle cx="12" cy="12" r="9"/><path d="M7.5 12h8.2M12.6 8.6 16 12l-3.4 3.4"/>'
   };
   const it=(k,t)=>'<div class="cx-it" data-k="'+k+'"><svg viewBox="0 0 24 24">'+IC[k.replace(/^(hide|show)$/,'$1')]+'</svg><span>'+t+'</span></div>';
-  let root=null,cur=null,busy=false,lpFlag=false,closeT=0;
+  let root=null,cur=null,busy=false,lpFlag=false,closeT=0,openT=0;
   function build(){
     root=document.createElement('div');root.id='cx';root.setAttribute('aria-hidden','true');
     root.innerHTML='<div class="cx-dim"></div><div class="cx-pv" id="cxPv"></div><div class="cx-menu" id="cxMenu"></div>';
@@ -3615,7 +3617,7 @@ renderMyGifts();
       const b=its()[near(e.clientY)];if(b)pick(b.dataset.k);
     };
     window.__cxHold=()=>{dr=1};window.__cxReset=()=>{lastHot=-1};
-    mnu.addEventListener('pointerdown',e=>{dr=1;try{mnu.setPointerCapture(e.pointerId)}catch(_){}hot(near(e.clientY))});
+    mnu.addEventListener('pointerdown',e=>{if(performance.now()-openT<350)return;dr=1;try{mnu.setPointerCapture(e.pointerId)}catch(_){}hot(near(e.clientY))});
     document.addEventListener('pointermove',mv,true);
     document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
     function pick(k){
@@ -3645,7 +3647,7 @@ renderMyGifts();
   function open(el,x){
     if(busy||!x||x.sold)return;
     if(!root)build();
-    cur={el,x};busy=true;try{window.__cxHold&&window.__cxHold()}catch(_){}
+    cur={el,x};busy=true;openT=performance.now();
     const uniq=!!(x.upg&&x.upg.c),pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
     const rect=el.getBoundingClientRect(),vw=innerWidth,vh=innerHeight;
     let pvH,pvW;
@@ -3677,13 +3679,13 @@ renderMyGifts();
     try{
       const clip=(el,r)=>{const w=el.offsetWidth,h=el.offsetHeight;if(!w||!h||!window.squircle)return null;const d=squircle(w,h,r,.6);el.style.borderRadius='0';el.style.webkitClipPath=el.style.clipPath='path("'+d+'")';return{w,h,d}};
       const cd=pv.querySelector('.cx-card');if(cd)clip(cd,30);
-      const m=clip(mn,34);
+      const m=clip(mn,30);
       if(m){
         let ring=mn.querySelector('.cx-ring');if(!ring){ring=document.createElement('i');ring.className='cx-ring';mn.appendChild(ring)}
         const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+m.w+'" height="'+m.h+'" viewBox="0 0 '+m.w+' '+m.h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset=".14" stop-color="#fff" stop-opacity=".12"/><stop offset=".5" stop-color="#fff" stop-opacity=".08"/><stop offset=".86" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity=".16"/></linearGradient></defs><path d="'+m.d+'" fill="none" stroke="url(#g)" stroke-width="2"/></svg>';
         ring.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
       }
-      if(window.smoothFit)mn.querySelectorAll('.cx-it').forEach(b=>smoothFit(b,'pill',true,1));
+      mn.querySelectorAll('.cx-it').forEach(b=>clip(b,21));
     }catch(_){}
     /* появление: подарок «выпрыгивает» с места карточки, меню разворачивается из правого верхнего угла */
     const cx0=rect.left+rect.width/2,cy0=rect.top+rect.height/2,tx=uniq?vw/2:vw/2,ty=top+pvH/2;
@@ -3720,7 +3722,7 @@ renderMyGifts();
     tm=setTimeout(()=>{
       const el2=tel;tm=0;if(!el2)return;
       const x=MYGIFTS[+el2.dataset.i];if(!x)return;
-      lpFlag=true;open(el2,x);try{window.__cxHold&&window.__cxHold()}catch(_){}
+      lpFlag=true;open(el2,x);
       if(pel){pel.classList.remove('pressing');pel=null}
     },420);
   },{passive:true});
