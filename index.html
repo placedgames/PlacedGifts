@@ -143,6 +143,7 @@ mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,
 -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0,0,.15) 28%,rgba(0,0,0,.38) 48%,rgba(0,0,0,.66) 70%,rgba(0,0,0,.88) 88%,#000 100%);
 mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0,0,.15) 28%,rgba(0,0,0,.38) 48%,rgba(0,0,0,.66) 70%,rgba(0,0,0,.88) 88%,#000 100%)}
 #menuPill,#meWrap .glass{--menu-glass-blur:11px;--glass-w:2px;--glass-strong:.165;--glass2-a:.45}
+#menuPill{--glass-w:1px;--glass2-a:.4}
 #menuPill{flex:1;height:66px;border-radius:33.5px/33px;display:flex;justify-content:space-between;align-items:center;padding:6px 5px 9px}
 #menuSlider.no-transition{transition:none!important}
 #menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:29.5px/29px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)}
@@ -285,10 +286,10 @@ body.navanim #bar{z-index:1}
 #cx .cx-gift img{width:100%;height:100%;object-fit:contain}
 #cx .cx-menu{position:absolute;right:12px;padding:10px 0;border-radius:34px;color:#fff;transform-origin:100% 0;will-change:transform,opacity;
 background:linear-gradient(180deg,rgba(74,76,76,.74),rgba(46,50,50,.74));-webkit-backdrop-filter:blur(40px) saturate(1.7);backdrop-filter:blur(40px) saturate(1.7);
-box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.14),0 16px 44px rgba(0,0,0,.4)}
-#cx .cx-it{display:flex;align-items:center;gap:13px;padding:11px 19px 11px 27px;font-size:17px;line-height:20px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
+box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1.5px 1px rgba(255,255,255,.14),0 16px 44px rgba(0,0,0,.4)}
+#cx .cx-it{display:flex;align-items:center;gap:13px;margin:0 8px;padding:11px 11px 11px 19px;border-radius:23px;transition:background-color .16s ease;font-size:17px;line-height:20px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #cx .cx-it span{min-width:0}
-#cx .cx-it:active{background:rgba(255,255,255,.1)}
+#cx .cx-it.hot{background:rgba(255,255,255,.09)}
 #cx .cx-it svg{flex:none;width:21px;height:21px;fill:none;stroke:#fff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 #cx .cx-sep{height:1px;margin:10px 18px 10px 47px;background:rgba(255,255,255,.14)}
 
@@ -324,9 +325,8 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,
 #bm .bm-mbg{--glass-side:rgba(115,117,126,.02)}
 #bm .bm-mbg::before,#bm .bm-mbg::after{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 #bm .bm-mbg::after{-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0.03) 42%,rgba(0,0,0,0.02) 50%,rgba(0,0,0,0.03) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%);mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0.03) 42%,rgba(0,0,0,0.02) 50%,rgba(0,0,0,0.03) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%)}
-#bm .bm-mi{position:relative;z-index:1;display:block;width:calc(100% - 16px);margin:0 8px;height:46px;padding:0 22px;border:0;border-radius:23px;background:none;transition:background-color .16s ease;color:#fff;font:inherit;font-size:19px;font-weight:450;text-align:left;white-space:nowrap;cursor:pointer;-webkit-appearance:none;appearance:none}
+#bm .bm-mi{position:relative;z-index:1;display:block;width:calc(100% - 16px);margin:0 8px;height:46px;padding:0 22px;border:0;border-radius:23px;background:none;transition:background-color .16s ease;color:#fff;font:inherit;font-size:17px;font-weight:450;text-align:left;white-space:nowrap;cursor:pointer;-webkit-appearance:none;appearance:none}
 #bm .bm-mi.hot{background:rgba(255,255,255,.09)}
-#bm .bm-mi.sel{color:#b4b4b9}
 #bm .bm-btn svg{fill:#fff;fill-rule:evenodd}
 #bm .bm-btn svg.hs{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
 #bm .bm-pill{position:absolute;z-index:1;left:50%;top:var(--pt,calc(50% + 9.5px));transform:translateX(-50%);height:22px;padding:0 9px;border-radius:11px;display:flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:500;pointer-events:none;background:var(--gc-bg);-webkit-backdrop-filter:var(--gc-blur);backdrop-filter:var(--gc-blur)}
@@ -1965,7 +1965,7 @@ renderMyGifts();
     const idxOf=v=>Math.max(0,items.findIndex(b=>b.dataset.n===String(v)));
     const hot=k=>items.forEach((b,i)=>b.classList.toggle('hot',i===k));
     const hide=()=>{menu.classList.remove('on');hot(-1)};
-    const mark=()=>items.forEach(b=>b.classList.toggle('sel',b.dataset.n===String(sel.value)));
+    const mark=()=>{};
     window.__bmMenuHide=hide;
     let drag=null;
     btn.addEventListener('click',e=>{e.preventDefault();if(menu.classList.contains('on')){hide();return}mark();hot(-1);menu.classList.add('on')});
@@ -2029,9 +2029,19 @@ renderMyGifts();
   addEventListener('scroll',pin,{passive:true});
   /* фокус без прокрутки: браузер не пытается «довезти» поле до клавиатуры сам */
   const msg=$b('bmMsg');
-  msg.addEventListener('touchstart',e=>{if(document.activeElement!==msg){e.preventDefault();msg.focus({preventScroll:true})}},{passive:false});
-  msg.addEventListener('focus',()=>{pin();setTimeout(pin,50);setTimeout(pin,250);setTimeout(pin,500)});
-  msg.addEventListener('blur',()=>{pin();setTimeout(pin,100);setTimeout(()=>{if(!window.visualViewport||!visualViewport.offsetTop)bm.style.transform=''},400)});
+  /* на время анимации клавиатуры подстраиваемся каждый кадр, а не только по событиям */
+  let loopT=0;
+  const loop=ms=>{loopT=performance.now()+ms;if(loop.on)return;loop.on=1;const f=()=>{pin();if(performance.now()<loopT)requestAnimationFrame(f);else loop.on=0};requestAnimationFrame(f)};
+  msg.addEventListener('touchstart',e=>{
+    if(document.activeElement===msg)return;
+    e.preventDefault();
+    /* поле на миг «уезжает» вверх: iOS считает, что оно уже видно, и не двигает страницу */
+    msg.style.transform='translateY(-9999px)';msg.focus({preventScroll:true});
+    requestAnimationFrame(()=>{msg.style.transform=''});
+    loop(900);
+  },{passive:false});
+  msg.addEventListener('focus',()=>{pin();loop(900);setTimeout(pin,500)});
+  msg.addEventListener('blur',()=>{pin();loop(900);setTimeout(()=>{if(!window.visualViewport||!visualViewport.offsetTop)bm.style.transform=''},1000)});
   $b('bmMsg').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur()});
   $b('bmClose').onclick=close;
   bm.querySelector('.bm-dim').onclick=close;
@@ -3573,16 +3583,32 @@ renderMyGifts();
     document.body.appendChild(root);
     root.querySelector('.cx-dim').addEventListener('pointerdown',e=>{e.preventDefault();close()});
     root.addEventListener('contextmenu',e=>e.preventDefault());
-    root.querySelector('#cxMenu').addEventListener('click',e=>{
-      const b=e.target.closest('.cx-it');if(!b)return;
-      const k=b.dataset.k,x=cur&&cur.x;close();
+    const mnu=root.querySelector('#cxMenu');
+    const its=()=>[...mnu.querySelectorAll('.cx-it')];
+    const hot=k=>its().forEach((b,i)=>b.classList.toggle('hot',i===k));
+    const near=cy=>{const r=mnu.getBoundingClientRect(),q=r.height/mnu.offsetHeight||1,y=(cy-r.top)/q;let bi=0,bd=1e9;its().forEach((b,i)=>{const d=Math.abs(b.offsetTop+b.offsetHeight/2-y);if(d<bd){bd=d;bi=i}});return bi};
+    const inMenu=(x,y)=>{const r=mnu.getBoundingClientRect();return x>=r.left-6&&x<=r.right+6&&y>=r.top-6&&y<=r.bottom+6};
+    /* палец ведёт подсветку и по долгому нажатию (он ещё на экране), и по самому меню; отпустил над меню — пункт выбран */
+    let dr=0;
+    const mv=e=>{if(!dr)return;hot(inMenu(e.clientX,e.clientY)?near(e.clientY):-1)};
+    const up=e=>{
+      if(!dr)return;dr=0;
+      if(e.type==='pointercancel'||!inMenu(e.clientX,e.clientY)){hot(-1);return}
+      const b=its()[near(e.clientY)];if(b)pick(b.dataset.k);
+    };
+    window.__cxHold=()=>{dr=1};
+    mnu.addEventListener('pointerdown',e=>{dr=1;try{mnu.setPointerCapture(e.pointerId)}catch(_){}hot(near(e.clientY))});
+    document.addEventListener('pointermove',mv,true);
+    document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
+    function pick(k){
+      const x=cur&&cur.x;close();
       if(k==='hide'||k==='show'){
         if(x){x.hid=!x.hid;try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}try{renderMyGifts()}catch(_){}}
         return;
       }
       const N={col:'Добавить в коллекцию',pin:'Закрепить',wear:'Носить',link:'Копировать ссылку',share:'Поделиться',send:'Передать'};
       try{toast((N[k]||'')+': скоро')}catch(_){}
-    });
+    }
   }
   function drawPat(cv,x){
     const d=x.upg,c=d.c||{};if(!d.si||!window.pgLoad)return;
@@ -3601,7 +3627,7 @@ renderMyGifts();
   function open(el,x){
     if(busy||!x||x.sold)return;
     if(!root)build();
-    cur={el,x};busy=true;
+    cur={el,x};busy=true;try{window.__cxHold&&window.__cxHold()}catch(_){}
     const uniq=!!(x.upg&&x.upg.c),pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
     const rect=el.getBoundingClientRect(),vw=innerWidth,vh=innerHeight;
     let pvH,pvW;
@@ -3621,6 +3647,7 @@ renderMyGifts();
     }
     [pv,mn].forEach(n=>{try{n.getAnimations().forEach(a=>a.cancel())}catch(_){}});
     clearTimeout(closeT);root.classList.remove('out');
+    mn.querySelectorAll('.hot').forEach(n=>n.classList.remove('hot'));
     root.classList.add('on');root.setAttribute('aria-hidden','false');
     pv.style.width=pvW+'px';pv.style.height=pvH+'px';
     const mh=mn.offsetHeight,gap=uniq?10:40,G=pvH+gap+mh;
@@ -3663,7 +3690,7 @@ renderMyGifts();
     tm=setTimeout(()=>{
       const el2=tel;tm=0;if(!el2)return;
       const x=MYGIFTS[+el2.dataset.i];if(!x)return;
-      lpFlag=true;open(el2,x);
+      lpFlag=true;open(el2,x);try{window.__cxHold&&window.__cxHold()}catch(_){}
       if(pel){pel.classList.remove('pressing');pel=null}
     },420);
   },{passive:true});
