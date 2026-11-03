@@ -232,25 +232,33 @@ body.navanim #bar{z-index:1}
 .cbar[hidden]{display:none}
 .cb-in{position:relative;display:flex;align-items:center;width:max-content;min-width:100%;box-sizing:border-box;padding:0 16px}
 .cb-in i{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:17px;background:var(--card);pointer-events:none;transition:left .22s cubic-bezier(.25,.9,.3,1),width .22s cubic-bezier(.25,.9,.3,1)}
-.cb-in button{position:relative;z-index:1;flex:none;height:34px;padding:0 14px;border:0;background:none;color:#fff;font:inherit;font-size:17px;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;transition:opacity .15s ease}
+.cb-in button{position:relative;z-index:1;flex:none;height:34px;padding:0 14px;border:0;background:none;color:#fff;font:inherit;font-size:17px;font-weight:500;white-space:nowrap;display:flex;align-items:center;gap:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;transition:opacity .15s ease}
+.cb-in>button:first-of-type{margin-left:auto}
+.cb-in>button:last-child{margin-right:auto}
 .cb-in button:active{opacity:.55}
 .cb-add svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;flex:none}
 /* окно «Новая коллекция» */
-#ncd{position:fixed;inset:0;z-index:3500;display:none;align-items:flex-start;justify-content:center;padding-top:max(56px,14vh);-webkit-user-select:none;user-select:none}
+#ncd{position:fixed;inset:0;z-index:3500;display:none;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none}
 #ncd.on{display:flex}
 #ncd .nc-dim{position:absolute;inset:0;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transition:opacity .24s ease}
 #ncd.show .nc-dim{opacity:1}
-#ncd .nc-box{position:relative;width:min(297px,calc(100vw - 56px));box-sizing:border-box;padding:24px 16px 16px;border-radius:32px;background:rgba(46,46,48,.84);-webkit-backdrop-filter:blur(40px) saturate(1.6);backdrop-filter:blur(40px) saturate(1.6);box-shadow:inset 0 0 0 .75px rgba(255,255,255,.13),0 24px 70px rgba(0,0,0,.5);color:#fff;opacity:0;transform:scale(1.1);transition:transform .3s cubic-bezier(.2,.9,.25,1.05),opacity .2s ease}
+#ncd .nc-wrap{position:relative;transition:transform .3s cubic-bezier(.25,.9,.3,1)}
+#ncd .nc-box{position:relative;width:min(297px,calc(100vw - 56px));box-sizing:border-box;padding:24px 16px 16px;border-radius:32px;background:linear-gradient(180deg,rgba(52,54,54,.86),rgba(30,33,33,.88));-webkit-backdrop-filter:blur(40px) saturate(1.6);backdrop-filter:blur(40px) saturate(1.6);color:#fff;opacity:0;transform:scale(1.1);transition:transform .3s cubic-bezier(.2,.9,.25,1.05),opacity .2s ease}
 #ncd.show .nc-box{opacity:1;transform:none}
-#ncd .nc-t{padding:0 8px;font-size:20px;line-height:25px;font-weight:700}
+#ncd .nc-ring{position:absolute;inset:0;pointer-events:none;background-size:100% 100%;background-repeat:no-repeat}
+#ncd .nc-t{padding:0 8px;font-size:20px;line-height:25px;font-weight:600}
 #ncd .nc-m{padding:0 8px;margin-top:6px;font-size:16px;line-height:21px;font-weight:500;color:rgba(255,255,255,.92)}
-#ncd .nc-in{display:block;width:100%;box-sizing:border-box;margin:20px 0 0;height:50px;border:0;border-radius:25px;background:rgba(255,255,255,.12);padding:0 20px;color:#fff;font:inherit;font-size:19px;font-weight:500;outline:none;-webkit-appearance:none;appearance:none;caret-color:#5b73ee;-webkit-user-select:text;user-select:text}
+#ncd .nc-in{display:block;width:100%;box-sizing:border-box;margin:20px 0 0;height:50px;border:0;border-radius:25px;background:rgba(255,255,255,.1);padding:0 20px;color:#fff;font:inherit;font-size:19px;font-weight:500;outline:none;-webkit-appearance:none;appearance:none;caret-color:#5b73ee;-webkit-user-select:text;user-select:text}
 #ncd .nc-in::placeholder{color:rgba(255,255,255,.4)}
 #ncd .nc-bt{display:flex;gap:8px;margin-top:20px}
-#ncd .nc-bt button{flex:1;min-width:0;height:47px;border:0;border-radius:24px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:19px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s ease,transform .15s ease}
+#ncd .nc-bt button{flex:1;min-width:0;height:47px;border:0;border-radius:24px;background:rgba(255,255,255,.1);color:#fff;font:inherit;font-size:19px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s ease,transform .15s ease}
 #ncd .nc-bt button:active{transform:scale(.97)}
 #ncd .nc-bt .ok{background:#69B5E9}
 #ncd .nc-bt .ok.dis{opacity:.5}
+/* смена подписи кнопки внизу: старый текст уходит вниз, новый приходит сверху (как в окне улучшения) */
+#sendBtn{position:relative}
+#sendBtn .sb-l{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;pointer-events:none;white-space:nowrap;will-change:transform,opacity}
+#cx .cx-lay{position:absolute;top:0;right:0;padding:10px 0;box-sizing:border-box}
 .mt-ic{display:flex;align-items:center;gap:0}
 .mt-ic img{width:21px;height:21px;object-fit:contain;display:block}
 .mt-ic em{font-style:normal;font-size:17px;line-height:21px}
@@ -311,7 +319,7 @@ body.navanim #bar{z-index:1}
 #cx .cx-gift{width:134px;height:134px;display:flex;align-items:center;justify-content:center;font-size:96px;line-height:1;filter:drop-shadow(0 10px 28px rgba(0,0,0,.35))}
 #cx .cx-gift img{width:100%;height:100%;object-fit:contain}
 #cx .cx-menu{position:absolute;right:12px;padding:10px 0;border-radius:34px;color:#fff;transform-origin:100% 0;will-change:transform,opacity;
-background:linear-gradient(180deg,rgba(74,76,76,.74),rgba(46,50,50,.74));box-shadow:none}
+background:linear-gradient(180deg,rgba(56,58,58,.78),rgba(31,34,34,.8));box-shadow:none}
 #cx .cx-ring{position:absolute;inset:0;pointer-events:none;background-size:100% 100%;background-repeat:no-repeat}
 #cx .cx-it{display:flex;align-items:center;gap:13px;margin:0 8px;padding:11px 11px 11px 19px;border-radius:23px;transition:background-color .16s ease;font-size:17px;line-height:20px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #cx .cx-it span{min-width:0}
@@ -1277,7 +1285,7 @@ function goBack(){
 /* ===== Закрытие страницы быстрым свайпом слева направо (как кнопка назад) ===== */
 (function(){
   let s=null;
-  const eligible=()=>DETAIL.includes(cur)&&(cur!=='me'||meFull)&&!navFin&&!document.body.classList.contains('bmopen')&&!document.getElementById('ug').classList.contains('on');
+  const eligible=()=>DETAIL.includes(cur)&&(cur!=='me'||(meFull&&!(window.__colBack&&__colBack())))&&!navFin&&!document.body.classList.contains('bmopen')&&!document.getElementById('ug').classList.contains('on');
   document.addEventListener('touchstart',e=>{
     s=(e.touches.length===1&&eligible()&&!e.target.closest('#hdr'))?{x:e.touches[0].clientX,y:e.touches[0].clientY,t:e.timeStamp}:null;
   },{passive:true});
@@ -1812,6 +1820,11 @@ const COLK='myCols',COL_MAX=12;
 let COLS=[],COLCUR='all';
 try{COLS=JSON.parse(store.get(COLK,'[]'));if(!Array.isArray(COLS))COLS=[]}catch(e){COLS=[]}
 const colSave=()=>store.set(COLK,JSON.stringify(COLS));
+/* тонкая обводка окон: светлая сверху и снизу и растворяется к бокам, где остаётся цвет самого окна */
+window.ringBg=(w,h,d)=>{
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".12" stop-color="#fff" stop-opacity=".1"/><stop offset=".3" stop-color="#fff" stop-opacity=".02"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#fff" stop-opacity=".02"/><stop offset=".88" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity=".16"/></linearGradient></defs><path d="'+d+'" fill="none" stroke="url(#g)" stroke-width="2"/></svg>';
+  return 'url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
+};
 const colHas=(x,id)=>!!(x&&x.cols&&x.cols.indexOf(id)>=0);
 const colEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const colActive=()=>COLCUR!=='all'&&COLS.some(c=>c.id===COLCUR)?COLCUR:null;
@@ -1907,6 +1920,7 @@ function renderMyGifts(reset){
   const uniq=!!b&&b.dataset.m==='posts',cc=uniq?null:colActive();
   /* в коллекции показываются только её подарки; data-i остаётся индексом в MYGIFTS (по нему открываются окна и меню) */
   const list=uniq?[]:(cc?MYGIFTS.filter(x=>colHas(x,cc)):MYGIFTS);
+  try{colMin(!uniq&&COLS.length>0)}catch(_){}   /* до перерисовки: страница не станет короче, и закреплённый слайдер не «упадёт» вниз */
   g.__ix=cc?list.map(x=>MYGIFTS.indexOf(x)):null;
   const sig=(uniq?'u':'a')+'|'+(cc||'')+'|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
   g.__list=list;
@@ -1956,48 +1970,121 @@ function colScrollTo(instant){
   const l=Math.max(0,b.offsetLeft+b.offsetWidth/2-bar.clientWidth/2);
   try{bar.scrollTo({left:l,behavior:instant?'auto':'smooth'})}catch(_){bar.scrollLeft=l}
 }
+/* страница с коллекциями всегда прокручивается минимум до «ступеньки» слайдера: при переключении на короткую коллекцию она не опускается,
+   слайдер остаётся закреплённым (как при переключении «Подарки» / «Публикации») */
+function colMin(on){
+  const pg=document.getElementById('p-me'),mb=pg&&pg.querySelector('.mbody');if(!mb)return;
+  let mh='';
+  if(on){
+    const s=window.meStep&&meStep();
+    if(s){const pb=parseFloat(getComputedStyle(pg).paddingBottom)||0;mh=Math.max(0,Math.round(s.T+pg.clientHeight-(mb.offsetTop+s.off)-pb))+'px'}
+    else mh=mb.style.minHeight;
+  }
+  if(mb.style.minHeight!==mh)mb.style.minHeight=mh;
+}
+/* подпись кнопки внизу: старый текст уходит вниз, новый приходит сверху */
+function sendLabel(t){
+  const sb=document.getElementById('sendBtn');if(!sb)return;
+  const cur=sb.__t||sb.textContent.trim();if(cur===t&&sb.__t)return;
+  if(cur===t&&!sb.querySelector('.sb-l'))return;
+  const mk=x=>{const e=document.createElement('span');e.className='sb-l';e.textContent=x;return e};
+  const vis=sb.offsetWidth>0&&document.getElementById('sendWrap').classList.contains('show');
+  const olds=[].slice.call(sb.querySelectorAll('.sb-l'));
+  if(!olds.length)olds.push(sb.appendChild(mk(cur)));
+  sb.childNodes.forEach(n=>{if(n.nodeType===3)n.remove()});
+  sb.__t=t;
+  const nu=sb.appendChild(mk(t));
+  olds.forEach((o,i)=>{
+    if(!vis||!o.animate||i<olds.length-1){o.remove();return}
+    const an=o.animate([{transform:'translateY(0) scale(1)',opacity:1},{transform:'translateY(9px) scale(.78)',opacity:0}],{duration:240,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+    an.onfinish=()=>o.remove();setTimeout(()=>o.remove(),400);
+  });
+  if(vis&&nu.animate)nu.animate([{transform:'translateY(-9px) scale(.78)',opacity:0},{transform:'none',opacity:1}],{duration:280,easing:'cubic-bezier(.3,.8,.3,1)'});
+}
 /* всё, что зависит от выбранной коллекции: слайдер, подпись кнопки внизу, минимальная высота страницы */
 function colSync(){
-  const bar=document.getElementById('cbar'),sb=document.getElementById('sendBtn'),pg=document.getElementById('p-me'),mb=pg&&pg.querySelector('.mbody');
+  const bar=document.getElementById('cbar');
   const tb=document.querySelector('#mtabs button.on'),uniq=!!tb&&tb.dataset.m==='posts',cc=uniq?null:colActive();
   if(COLCUR!=='all'&&!cc&&!uniq)COLCUR='all';
-  if(bar)bar.hidden=uniq;
-  if(!uniq)colBarDraw(cc||'all');
-  if(sb){const t=cc?'Добавить подарки':'Отправить подарки друзьям';if(sb.textContent!==t)sb.textContent=t}
-  /* в пустой или короткой коллекции страница всё равно должна прокручиваться до «ступеньки», иначе слайдер не закрепится и кнопка не выедет */
-  if(mb){
-    let mh='';
-    if(cc){
-      const s=window.meStep&&meStep();
-      if(s){const pb=parseFloat(getComputedStyle(pg).paddingBottom)||0;mh=Math.max(0,Math.round(s.T+pg.clientHeight-(mb.offsetTop+s.off)-pb))+'px'}
-    }
-    if(mb.style.minHeight!==mh)mb.style.minHeight=mh;
-  }
+  const show=!uniq&&COLS.length>0;   /* пока нет ни одной коллекции кроме «Все», слайдера нет */
+  if(bar)bar.hidden=!show;
+  if(show)colBarDraw(cc||'all');
+  sendLabel(cc?'Добавить подарки':'Отправить подарки друзьям');
+  colMin(show);
 }
+/* переход к коллекции (кнопкой или свайпом): содержимое въезжает с той стороны, куда «листаем» */
+function colGo(id){
+  if(id===COLCUR)return;
+  const ids=['all'].concat(COLS.map(c=>c.id)),dir=ids.indexOf(id)>ids.indexOf(COLCUR)?1:-1;
+  window.__colSwTs=performance.now();
+  COLCUR=id;renderMyGifts();colScrollTo();
+  ['pGrid','pEmpty'].forEach(i=>{const e=document.getElementById(i);if(e&&!e.hidden&&e.animate)e.animate([{transform:'translateX('+(dir*44)+'px)',opacity:0},{transform:'none',opacity:1}],{duration:280,easing:'cubic-bezier(.25,.9,.3,1)'})});
+}
+/* закрыть профиль свайпом можно только со страницы «Все» */
+window.__colBack=()=>{const b=document.getElementById('cbar');return !!b&&!b.hidden&&(COLCUR!=='all'||performance.now()-(window.__colSwTs||0)<700)};
 (function(){
   const pg=document.getElementById('p-me'),inn=document.getElementById('cbIn'),bar=document.getElementById('cbar');
   if(!pg||!inn)return;
   inn.addEventListener('click',e=>{
     const b=e.target.closest&&e.target.closest('button[data-c]');if(!b)return;
     if(b.dataset.c==='+'){colAsk(null);return}
-    if(COLCUR===b.dataset.c)return;
-    COLCUR=b.dataset.c;
-    try{__hap('sel')}catch(_){}
-    renderMyGifts();colScrollTo();
+    colGo(b.dataset.c);
   });
+  /* свайп влево/вправо по содержимому листает коллекции */
+  (function(){
+    let t0=null;
+    const q=id=>document.getElementById(id);
+    const blocked=()=>!pg.classList.contains('on')||q('cbar').hidden||document.querySelector('#cx.on')||['gm','um','ug','bm','ncd'].some(id=>{const e=q(id);return e&&(e.classList.contains('on')||e.classList.contains('pre'))})||document.body.classList.contains('bmopen');
+    document.addEventListener('touchstart',e=>{
+      t0=null;if(e.touches.length!==1)return;
+      const t=e.target;if(!t.closest||!t.closest('#p-me .mbody')||t.closest('#cbar')||t.closest('#mtabs')||blocked())return;
+      t0={x:e.touches[0].clientX,y:e.touches[0].clientY,t:e.timeStamp};
+    },{passive:true});
+    document.addEventListener('touchmove',e=>{if(t0&&e.touches.length>1)t0=null},{passive:true});
+    document.addEventListener('touchend',e=>{
+      if(!t0)return;const s=t0;t0=null;
+      const t=e.changedTouches[0],dx=t.clientX-s.x,dy=t.clientY-s.y;
+      if(Math.abs(dx)<55||Math.abs(dy)>Math.abs(dx)*.55||e.timeStamp-s.t>900||blocked())return;
+      const ids=['all'].concat(COLS.map(c=>c.id)),i=ids.indexOf(colActive()||'all'),n=i+(dx<0?1:-1);
+      if(n<0||n>=ids.length)return;   /* дальше «Все» влево/вправо листать некуда */
+      colGo(ids[n]);
+    });
+  })();
   if(window.ResizeObserver&&bar)new ResizeObserver(()=>placeCol(true)).observe(bar);
   new MutationObserver(()=>{if(pg.classList.contains('on'))try{colSync()}catch(_){}}).observe(pg,{attributes:true,attributeFilter:['class']});
   addEventListener('resize',()=>{try{colSync()}catch(_){}});
 })();
 /* окно ввода названия: x — подарок, который сразу попадёт в новую коллекцию (null — коллекция создаётся пустой) */
 let ncd=null,ncT=0,ncX=null,ncBusy=false;
+/* плавные (continuous) углы, как у меню: форма вырезается squircle-контуром */
+function ncClip(el,r,ring){
+  const w=el.offsetWidth,h=el.offsetHeight;if(!w||!h||!window.squircle)return;
+  const d=squircle(w,h,r,.6);el.style.borderRadius='0';el.style.webkitClipPath=el.style.clipPath='path("'+d+'")';
+  if(ring){let i=el.querySelector('.nc-ring');if(!i){i=document.createElement('i');i.className='nc-ring';el.appendChild(i)}i.style.backgroundImage=ringBg(w,h,d)}
+}
+function ncShape(){
+  if(!ncd)return;
+  try{
+    ncClip(ncd.querySelector('.nc-box'),32,true);
+    const i=ncd.querySelector('.nc-in');ncClip(i,i.offsetHeight/2);
+    ncd.querySelectorAll('.nc-bt button').forEach(b=>ncClip(b,b.offsetHeight/2));
+  }catch(_){}
+}
+/* окно по центру; когда поднимается клавиатура — сдвигается ровно настолько, чтобы были видны кнопки */
+function ncFit(){
+  if(!ncd||!ncd.classList.contains('on'))return;
+  const w=ncd.querySelector('.nc-wrap'),vv=window.visualViewport,H=ncd.clientHeight,bh=w.offsetHeight;
+  const kb=vv?(vv.offsetTop+vv.height):H;
+  const shift=Math.max(0,Math.min((H+bh)/2+16-kb,(H-bh)/2-12));
+  w.style.transform=shift>1?'translateY('+(-Math.round(shift))+'px)':'';
+}
 function colAsk(x){
   if(ncBusy)return;
   if(!ncd){
     ncd=document.createElement('div');ncd.id='ncd';ncd.setAttribute('role','dialog');ncd.setAttribute('aria-modal','true');
-    ncd.innerHTML='<div class="nc-dim"></div><div class="nc-box"><div class="nc-t">Новая коллекция</div><div class="nc-m">Придумайте название для коллекции и добавьте в неё подарки.</div>'+
+    ncd.innerHTML='<div class="nc-dim"></div><div class="nc-wrap"><div class="nc-box"><div class="nc-t">Новая коллекция</div><div class="nc-m">Придумайте название для коллекции и добавьте в неё подарки.</div>'+
       '<input class="nc-in" type="text" maxlength="'+COL_MAX+'" placeholder="Название" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" enterkeyhint="done">'+
-      '<div class="nc-bt"><button type="button" class="no">Отмена</button><button type="button" class="ok dis">Готово</button></div></div>';
+      '<div class="nc-bt"><button type="button" class="no">Отмена</button><button type="button" class="ok dis">Готово</button></div></div></div>';
     document.body.appendChild(ncd);
     const inp=ncd.querySelector('.nc-in'),ok=ncd.querySelector('.ok'),no=ncd.querySelector('.no');
     const val=()=>inp.value.trim().slice(0,COL_MAX);
@@ -2011,26 +2098,32 @@ function colAsk(x){
       COLCUR=c.id;cbSig=null;
       colHide();
       try{window.__hap&&__hap('light')}catch(_){}
-      renderMyGifts();colScrollTo();
+      renderMyGifts();colScrollTo(true);
     };
     inp.addEventListener('input',()=>ok.classList.toggle('dis',!val()));
+    inp.addEventListener('focus',()=>{setTimeout(ncFit,50);setTimeout(ncFit,350)});
     inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();fin()}});
     ok.addEventListener('click',fin);
     no.addEventListener('click',()=>{if(performance.now()-ncT<350)return;colHide()});
     /* под окном ничего не прокручивается и не нажимается */
     ncd.addEventListener('touchmove',e=>{if(!e.target.closest('.nc-in'))e.preventDefault()},{passive:false});
     ncd.addEventListener('contextmenu',e=>e.preventDefault());
+    if(window.visualViewport){visualViewport.addEventListener('resize',ncFit);visualViewport.addEventListener('scroll',ncFit)}
+    addEventListener('resize',()=>{ncFit()});
   }
   ncX=x||null;ncT=performance.now();
   const inp=ncd.querySelector('.nc-in');inp.value='';ncd.querySelector('.ok').classList.add('dis');
-  ncd.classList.add('on');void ncd.offsetWidth;ncd.classList.add('show');
+  ncd.querySelector('.nc-wrap').style.transform='';
+  ncd.classList.add('on');void ncd.offsetWidth;
+  ncShape();ncd.classList.add('show');
   try{inp.focus({preventScroll:true})}catch(_){}
-  setTimeout(()=>{if(ncd.classList.contains('show')){try{inp.focus({preventScroll:true})}catch(_){}}},120);
+  setTimeout(()=>{if(ncd.classList.contains('show')){try{inp.focus({preventScroll:true})}catch(_){}ncFit()}},150);
 }
 function colHide(){
   if(!ncd||!ncd.classList.contains('show'))return;
   try{ncd.querySelector('.nc-in').blur()}catch(_){}
   ncd.classList.remove('show');ncBusy=true;ncX=null;
+  ncd.querySelector('.nc-wrap').style.transform='';
   setTimeout(()=>{if(!ncd.classList.contains('show'))ncd.classList.remove('on');ncBusy=false},260);
 }
 renderMyGifts();
@@ -3820,8 +3913,7 @@ renderMyGifts();
       const m=clip(mn,30);
       if(m){
         let ring=mn.querySelector('.cx-ring');if(!ring){ring=document.createElement('i');ring.className='cx-ring';mn.appendChild(ring)}
-        const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+m.w+'" height="'+m.h+'" viewBox="0 0 '+m.w+' '+m.h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset=".14" stop-color="#fff" stop-opacity=".12"/><stop offset=".5" stop-color="#fff" stop-opacity=".08"/><stop offset=".86" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity=".16"/></linearGradient></defs><path d="'+m.d+'" fill="none" stroke="url(#g)" stroke-width="2"/></svg>';
-        ring.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
+        ring.style.backgroundImage=ringBg(m.w,m.h,m.d);
       }
       mn.querySelectorAll('.cx-it').forEach(b=>clip(b,21));
     }catch(_){}
@@ -3829,12 +3921,38 @@ renderMyGifts();
   /* «Добавить в коллекцию»: меню заменяется подменю — «Назад», «Новая коллекция» и коллекции пользователя */
   function swapMenu(html,w){
     const mn=root&&root.querySelector('#cxMenu');if(!mn)return;
+    if(mn.__fin)mn.__fin();                      /* предыдущая анимация доезжает мгновенно */
+    const ow=mn.offsetWidth,oh=mn.offsetHeight;
+    const old=document.createElement('div');old.className='cx-lay';old.style.width=ow+'px';old.style.pointerEvents='none';
+    [].forEach.call(mn.children,c=>{if(!c.classList.contains('cx-ring'))old.appendChild(c.cloneNode(true))});
     mn.style.width=w+'px';mn.innerHTML=html;
     const L=mn.querySelector('.cx-list');
     if(L){const room=innerHeight-(parseFloat(mn.style.top)||0)-24-(mn.offsetHeight-L.offsetHeight);L.style.maxHeight=Math.max(110,room)+'px'}
-    shapeMenu(mn);
+    const nw=mn.offsetWidth,nh=mn.offsetHeight;
     try{window.__cxReset&&window.__cxReset()}catch(_){}
-    try{mn.animate([{opacity:.0},{opacity:1}],{duration:160,easing:'ease-out'})}catch(_){}
+    if(!ow||!oh||(ow===nw&&oh===nh)||!mn.animate){shapeMenu(mn);return}
+    /* окно плавно растягивается (или стягивается) до нового размера, старый текст растворяется, новый проявляется */
+    const nu=document.createElement('div');nu.className='cx-lay';nu.style.width=nw+'px';
+    while(mn.firstChild)nu.appendChild(mn.firstChild);
+    mn.appendChild(old);mn.appendChild(nu);
+    mn.style.clipPath=mn.style.webkitClipPath='none';mn.style.borderRadius='30px';mn.style.overflow='hidden';mn.style.padding='0';
+    mn.style.width=nw+'px';mn.style.height=nh+'px';
+    const D=340,anims=[];
+    try{
+      anims.push(mn.animate([{width:ow+'px',height:oh+'px'},{width:nw+'px',height:nh+'px'}],{duration:D,easing:'cubic-bezier(.25,.9,.3,1)'}));
+      anims.push(old.animate([{opacity:1},{opacity:0}],{duration:150,easing:'ease-out',fill:'forwards'}));
+      anims.push(nu.animate([{opacity:0},{opacity:1}],{duration:200,delay:90,easing:'ease-out',fill:'backwards'}));
+    }catch(_){}
+    let done=false,tm=0;
+    const end=()=>{
+      if(done)return;done=true;clearTimeout(tm);mn.__fin=null;
+      anims.forEach(a=>{try{a.cancel()}catch(_){}});
+      while(nu.firstChild)mn.insertBefore(nu.firstChild,nu);
+      old.remove();nu.remove();
+      mn.style.height='';mn.style.overflow='';mn.style.padding='';mn.style.borderRadius='';
+      shapeMenu(mn);
+    };
+    mn.__fin=end;tm=setTimeout(end,D+40);
   }
   function subMenu(){
     const x=cur&&cur.x;if(!x)return;
