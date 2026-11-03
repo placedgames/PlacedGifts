@@ -35,15 +35,15 @@ h1{font-size:26px;font-weight:700;text-align:center;margin:8px 0 6px}
 
 /* gifts */
 body.nobar #bar{display:none}
-#p-gifts [hidden]{display:none!important}
+#p-gifts [hidden],#p-stars [hidden]{display:none!important}
 .ghead{position:relative;display:flow-root}
 #gsp,#ssp{position:absolute;left:-16px;width:calc(100% + 32px);top:calc(-1*(var(--hdr-top) + var(--hdr-h) + 8px));height:calc(100% + var(--hdr-top) + var(--hdr-h) + 28px);z-index:0;pointer-events:none}
 .gava{position:relative;z-index:1;width:var(--ava-size);height:var(--ava-size);margin:var(--ava-top) auto var(--ava-gap);border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:700}
 #p-gifts h1,#p-stars h1{position:relative;z-index:1;font-size:28px;line-height:1.3;font-weight:700;margin:0}
-.sava{position:relative;z-index:1;width:130px;height:130px;margin:-6px auto 6px;display:flex;align-items:center;justify-content:center}
+.sava{position:relative;z-index:1;width:var(--ava-size);height:var(--ava-size);margin:var(--ava-top) auto var(--ava-gap);display:flex;align-items:center;justify-content:center}
 .sava img{width:100%;height:100%;object-fit:contain;display:block}
 .sdesc{margin:20px auto 0;max-width:320px;text-align:center;font-size:16px;line-height:20px;font-weight:500}
-.scard{margin:34px 0 0;background:var(--card);border-radius:30px;padding:26px 16px 24px;text-align:center}
+.scard{margin:21px 0 0;background:var(--card);border-radius:30px;padding:26px 16px 24px;text-align:center}
 .sbal{display:flex;align-items:center;justify-content:center;gap:10px;font-size:56px;line-height:1.05;font-weight:700}
 .sbal img{width:44px;height:44px;object-fit:contain}
 .sbal small{font-size:.62em;font-weight:600}
@@ -125,8 +125,8 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .sw.on i{background:#34c759}.sw.on i:after{left:22px}
 
 /* меню: оригинальный liquid glass */
-:root{--glass-rgb:104,106,114;--glass-strong:.135;--glass-side:rgba(115,117,126,0);--glass-w:.75px;--glass-h:100%;--glass-v:min(28px,55%);
---glass2-rgb:120,122,130;--glass2-a:.385;--glass2-blur:1px;--glass2-spread:1px;
+:root{--glass-rgb:104,106,114;--glass-strong:.15;--glass-side:rgba(115,117,126,0);--glass-w:.75px;--glass-h:100%;--glass-v:min(28px,55%);
+--glass2-rgb:120,122,130;--glass2-a:.42;--glass2-blur:1px;--glass2-spread:1px;
 --menu-glass-bg:rgba(53,53,54,.7);--menu-glass-blur:6px;--menu-inactive:#b2b2b6;--menu-slider-bg:rgba(200,200,204,.13)}
 .glass{position:relative;border:0;background:var(--menu-glass-bg);
 -webkit-backdrop-filter:blur(var(--menu-glass-blur));backdrop-filter:blur(var(--menu-glass-blur))}
@@ -423,7 +423,7 @@ html,body{overscroll-behavior:none}
 #um .um-pat{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0;-webkit-mask-image:radial-gradient(ellipse 75% 80% at 50% 45%,#000 35%,rgba(0,0,0,.4) 100%);mask-image:radial-gradient(ellipse 75% 80% at 50% 45%,#000 35%,rgba(0,0,0,.4) 100%)}
 #um .um-tint::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.4) 100%)}
 #um .um-back{position:absolute;top:16px;left:16px;z-index:3;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;color:#fff;cursor:pointer}
-#um .um-back,#um .um-var{--glass-rgb:196,198,206;--glass-strong:.285;--glass2-rgb:206,208,216;--glass2-a:.585}
+#um .um-back,#um .um-var{--glass-rgb:196,198,206;--glass-strong:.3;--glass2-rgb:206,208,216;--glass2-a:.62}
 #um .um-var{border:0;background:rgba(200,202,210,.34);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
 #um .um-back{box-shadow:inset 0 0 0 .6px rgba(0,0,0,.14);background:rgba(255,255,255,.23);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);opacity:var(--ubo,0);transform:scale(var(--ubs,0));will-change:transform,opacity}
 #um .um-back svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;opacity:var(--ua,0)}
@@ -534,7 +534,7 @@ html,body{overscroll-behavior:none}
 #um.mf .um-feat,#um.mf .um-chk{opacity:var(--uf,1)!important}
 #um.mf .um-upw{opacity:0!important}
 #ug .ug-sp{display:block;width:24px;height:24px;border-radius:50%;border:2.5px solid rgba(255,255,255,.32);border-top-color:#fff;animation:ugspin .75s linear infinite}
-#ug .ug-x,#ug .ug-more,#ug .ug-a{--glass-rgb:196,198,206;--glass-strong:.285;--glass2-rgb:206,208,216;--glass2-a:.585;background:rgba(255,255,255,.23);box-shadow:inset 0 0 0 .6px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+#ug .ug-x,#ug .ug-more,#ug .ug-a{--glass-rgb:196,198,206;--glass-strong:.3;--glass2-rgb:206,208,216;--glass2-a:.62;background:rgba(255,255,255,.23);box-shadow:inset 0 0 0 .6px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
 
 /* ===== улучшение: «зарядка» маски, плавная смена фона, слайд текста кнопки ===== */
 #um .um-glow{position:absolute;left:50%;top:88px;width:320px;height:320px;margin:-160px 0 0 -160px;border-radius:50%;z-index:0;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(220,226,255,.9) 0%,rgba(170,162,255,.45) 34%,rgba(140,110,255,0) 68%);mix-blend-mode:screen;will-change:transform,opacity}
@@ -550,7 +550,7 @@ html,body{overscroll-behavior:none}
    Светлый фон → обводка светлее прежней, тёмный → темнее. Значение ставит JS (ugRim), меняется плавно */
 @property --ug-l{syntax:"<number>";inherits:true;initial-value:.4}
 #ug{--ug-d:calc(90*(var(--ug-l) - .4))}
-#ug .ug-a{--glass-rgb:calc(176 + var(--ug-d)),calc(178 + var(--ug-d)),calc(188 + var(--ug-d));--glass2-rgb:calc(188 + var(--ug-d)),calc(190 + var(--ug-d)),calc(200 + var(--ug-d));--glass2-a:.54;box-shadow:inset 0 0 0 .6px rgba(0,0,0,calc(.18 - .12*(var(--ug-l) - .4)))}
+#ug .ug-a{--glass-rgb:calc(176 + var(--ug-d)),calc(178 + var(--ug-d)),calc(188 + var(--ug-d));--glass2-rgb:calc(188 + var(--ug-d)),calc(190 + var(--ug-d)),calc(200 + var(--ug-d));--glass2-a:.57;box-shadow:inset 0 0 0 .6px rgba(0,0,0,calc(.18 - .12*(var(--ug-l) - .4)))}
 
 /* окно улучшенного подарка открывается и закрывается как окно подарка */
 #ug{transition:visibility 0s linear .6s,--ug-l var(--ug-rim-ms,0ms) linear}
@@ -621,14 +621,16 @@ html,body{overscroll-behavior:none}
   <div class="ghead">
     <canvas id="ssp"></canvas>
     <div class="sava" id="sAva"><img id="sStar" alt=""></div>
-    <h1>Звёзды Telegram</h1>
+    <h1>Звёзды GiftCrafts</h1>
   </div>
-  <p class="sdesc">Звёзды Telegram нужны для оплаты контента и услуг в мини-приложениях.</p>
-  <div class="scard">
+  <p class="sdesc">Звёзды GiftCrafts нужны для покупки разных услуг, уникальных и коллекционных подарков, а также для прочих операций.</p>
+  <div class="gtabs-wrap"><div class="gtabs" id="stabs"><i></i><button class="on" data-s="stars">Звёзды</button><button data-s="tasks">Задания</button></div></div>
+  <div class="scard" id="sCard">
     <div class="sbal"><img id="sStar2" alt=""><span id="balShow"></span></div>
     <div class="sbl">Ваш баланс</div>
     <span id="bal" hidden>10000</span>
   </div>
+  <div class="gempty" id="sTasks" hidden>Задания скоро появятся</div>
 </section>
 
 <section class="page" id="p-settings">
@@ -1302,6 +1304,11 @@ $$('#gtabs button').forEach(b=>b.onclick=()=>{
   /* «Коллекционные» пока показывают те же подарки, что и «Все» */
   $('#grid').hidden=false; $('#gempty').hidden=true;
 });
+$$('#stabs button').forEach(b=>b.onclick=()=>{
+  pickTab($('#stabs'),b);
+  const st=b.dataset.s==='stars';
+  $('#sCard').hidden=!st; $('#sTasks').hidden=st;
+});
 /* прокрутка вкладок профиля: у «Подарков» и «Публикаций» запоминается своё положение, пока слайдер закреплён под хедером.
    Как только слайдер «открепился» (страница прокручена выше ступеньки) — сохранённые положения сбрасываются, вкладки открываются «сначала». */
 const TAB_POS={gifts:null,posts:null};
@@ -1353,7 +1360,7 @@ function resetTabs(){
   TAB_POS.gifts=TAB_POS.posts=null;
   try{renderMyGifts()}catch(e){}
 }
-if(window.ResizeObserver)new ResizeObserver(()=>{placeTab($('#mtabs'),true);placeTab($('#gtabs'),true)}).observe(document.body);
+if(window.ResizeObserver)new ResizeObserver(()=>{placeTab($('#mtabs'),true);placeTab($('#gtabs'),true);placeTab($('#stabs'),true)}).observe(document.body);
 
 /* летающие звёздочки за аватаркой */
 function makeSP(cvSel,avaSel){
@@ -1456,7 +1463,7 @@ function renderBal(){ $('#balShow').innerHTML=balHtml(); }
 const getStars=()=>parseFloat($('#bal').textContent)||0;
 function addStars(d){const nb=getStars()+d;$('#bal').textContent=nb;store.set('starBal',String(nb));renderBal();$$('.gbtn .gv span').forEach(el=>el.innerHTML=balHtml())}
 function starsOn(on){
-  if(on){ renderBal(); SPs.start(); } else SPs.stop();
+  if(on){ renderBal(); SPs.start(); requestAnimationFrame(()=>placeTab($('#stabs'),true)); } else SPs.stop();
 }
 function giftsOn(on){
   if(on){ SPg.start(); PS.kick(); requestAnimationFrame(()=>placeTab($('#gtabs'),true)); }
@@ -1958,8 +1965,16 @@ renderMyGifts();
       setTimeout(()=>{if(bm.classList.contains('on'))$b('bmFill').style.width=(left/TOTAL*100)+'%'},250);
     }));
   };
-  function close(){const sl=bm.classList.contains('slow');try{window.__bmMenuHide()}catch(e){}clearTimeout(closeT);closeT=setTimeout(()=>{if(bm.classList.contains('on')||bm.classList.contains('pre'))return;document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}},sl?900:400);bm.classList.remove('on','pre');bm.setAttribute('aria-hidden','true');setTimeout(()=>{if(!bm.classList.contains('on')){bm.style.height='';bm.classList.remove('fast','slow')}},sl?1050:650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
-  const keepTop=()=>{if(bm.classList.contains('on'))window.scrollTo(0,0)};
+  function close(){const sl=bm.classList.contains('slow');try{window.__bmMenuHide()}catch(e){}clearTimeout(closeT);closeT=setTimeout(()=>{if(bm.classList.contains('on')||bm.classList.contains('pre'))return;document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}},sl?900:400);bm.classList.remove('on','pre');bm.setAttribute('aria-hidden','true');bm.style.transform='';setTimeout(()=>{if(!bm.classList.contains('on')){bm.style.height='';bm.classList.remove('fast','slow')}},sl?1050:650);document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+  /* клавиатура: окно стоит на месте — отменяем сдвиг страницы (iOS поднимает видимую область к полю ввода) и прокрутку внутри окна */
+  const keepTop=()=>{
+    if(!bm.classList.contains('on'))return;
+    window.scrollTo(0,0);
+    const vv=window.visualViewport,dy=vv?Math.max(0,Math.round(vv.offsetTop)):0;
+    bm.style.transform=dy?'translateY('+dy+'px)':'';
+    bm.scrollTop=0;sheet.scrollTop=0;
+  };
+  sheet.addEventListener('scroll',()=>{sheet.scrollTop=0});
   if(window.visualViewport){visualViewport.addEventListener('resize',keepTop);visualViewport.addEventListener('scroll',keepTop)}
   $b('bmMsg').addEventListener('focus',()=>{keepTop();setTimeout(keepTop,50);setTimeout(keepTop,250)});
   $b('bmMsg').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur()});
