@@ -166,6 +166,8 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 /* закреплённые подарки вокруг аватарки: только модель подарка */
 .pins{position:absolute;left:50%;top:calc(var(--ava-top) + var(--ava-size)/2);width:0;height:0;pointer-events:none}
 .pinm{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;display:flex;align-items:center;justify-content:center;font-size:30px;line-height:1}
+.pinm.new{animation:pinIn .38s cubic-bezier(.2,.9,.25,1.2)}
+@keyframes pinIn{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
 .pinm img{width:100%;height:100%;object-fit:contain;display:block}
 .ppin{position:absolute;left:8px;top:6px;width:16px;height:16px;z-index:3;pointer-events:none}
 .ppin svg{display:block;width:100%;height:100%;fill:#fff}
@@ -1677,6 +1679,8 @@ function clearAppCache(){ location.reload(); }
      Сдвигаем/снимаем только в покое: менять scrollTop посреди касания iOS не даёт. Обложка (absolute) сдвигается обратно. */
   const shiftOn=T=>{if(off||T<=2)return;const sc=pg.scrollTop;off=T;pg._off=T;phd.style.marginTop=(-T)+'px';cvr.style.transform='translateY('+(-T)+'px)';pg.scrollTop=sc-T};
   const shiftOff=()=>{if(!off)return;const o=off;off=0;pg._off=0;phd.style.marginTop='';cvr.style.transform='';pg.scrollTop+=o};
+  /* прокрутка профиля в самое начало (с учётом сдвига «ступеньки») */
+  window.meTop=()=>{try{stopAnim();shiftOff();pg.scrollTo({top:0,behavior:'smooth'})}catch(_){pg.scrollTop=0}};
   let sett=0;
   const settle=()=>{clearTimeout(sett);sett=setTimeout(()=>{
     if(touching||raf2||!pg.classList.contains('on'))return;if(!M)measure();if(!M)return;
@@ -1876,11 +1880,19 @@ function pgWatch(){
 const PIN_SLOTS=[[-67,-57],[63,-63],[-108,-8],[90,-4],[-94,46],[80,50]];
 function renderPins(){
   const el=document.getElementById('pPins');if(!el)return;
-  const items=MYGIFTS.filter(x=>x.pin!=null&&x.pin<6&&!x.hid);
-  const sig=items.map(x=>x.pin+'|'+((x.upg&&x.upg.mi)||x.image||x.emoji||'')).join(',');
-  if(el.__sig===sig)return;el.__sig=sig;
-  el.innerHTML=items.map(x=>{const mi=(x.upg&&x.upg.mi)||x.image,p=PIN_SLOTS[x.pin];
-    return '<div class="pinm" style="left:'+p[0]+'px;top:'+p[1]+'px">'+(mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+'</div>'}).join('');
+  const items=MYGIFTS.filter(x=>x.pin!=null&&x.pin<6);
+  const want={};items.forEach(x=>{want[x.pin]=x});
+  [].slice.call(el.children).forEach(c=>{
+    const x=want[c.dataset.s],src=x&&((x.upg&&x.upg.mi)||x.image||x.emoji||'');
+    if(!x||c.__src!==src)c.remove();
+  });
+  items.forEach(x=>{
+    if(el.querySelector('[data-s="'+x.pin+'"]'))return;
+    const mi=(x.upg&&x.upg.mi)||x.image,p=PIN_SLOTS[x.pin],d=document.createElement('div');
+    d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=p[0]+'px';d.style.top=p[1]+'px';
+    d.innerHTML=mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>';
+    el.appendChild(d);
+  });
 }
 let pgWarmT=0;
 function renderMyGifts(reset){
@@ -3648,6 +3660,7 @@ renderMyGifts();
   const hs=x=>it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть');
   const mainHTML=x=>isU(x)?it('pin',x.pin!=null?'Открепить':'Закрепить')+it('wear','Носить')+it('link','Копировать ссылку')+it('share','Поделиться')+hs(x)+it('send','Передать'):hs(x);
   const mainW=x=>Math.min(isU(x)?241:219,innerWidth-24);
+  document.addEventListener('click',e=>{if(performance.now()<(window.__cxSw||0)){e.stopPropagation();e.preventDefault()}},true);
   let root=null,cur=null,busy=false,lpFlag=false,closeT=0,openT=0;
   function build(){
     root=document.createElement('div');root.id='cx';root.setAttribute('aria-hidden','true');
@@ -3676,18 +3689,24 @@ renderMyGifts();
     document.addEventListener('pointermove',mv,true);
     document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
     function pick(k){
+      window.__cxSw=performance.now()+500;   /* клик, который придёт после отпускания пальца, не должен попасть в элемент под меню (например, во вкладку) */
       const x=cur&&cur.x;close();
       if(k==='pin'){
         if(x){
           if(x.pin!=null){delete x.pin;delete x.pinT;try{toast('Подарок откреплён')}catch(_){}}
           else{
-            const used=MYGIFTS.filter(g=>g.pin!=null);
-            if(used.length>=6){try{toast('Можно закрепить не более 6 подарков')}catch(_){}return}
-            const taken=used.map(g=>g.pin);let sl=0;while(taken.indexOf(sl)>=0)sl++;
+            const used=MYGIFTS.filter(g=>g.pin!=null);let sl=0;
+            if(used.length>=6){
+              /* шестой уже занят — самый первый закреплённый открепляется, его место занимает новый */
+              used.sort((a,b)=>(a.pinT||0)-(b.pinT||0));
+              const o=used[0];sl=o.pin;delete o.pin;delete o.pinT;
+            }else{const taken=used.map(g=>g.pin);while(taken.indexOf(sl)>=0)sl++}
             x.pin=sl;x.pinT=Date.now();try{toast('Подарок закреплён')}catch(_){}
           }
           try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
           try{renderMyGifts(true)}catch(_){}
+          /* страница уезжает в начало — видно, что подарок закреплён рядом с аватаркой */
+          setTimeout(()=>{try{window.meTop&&meTop()}catch(_){}},40);
         }
         return;
       }
