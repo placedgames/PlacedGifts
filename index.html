@@ -169,7 +169,7 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 .pinm.new{animation:pinIn .38s cubic-bezier(.2,.9,.25,1.2)}
 @keyframes pinIn{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
 .pinm img{width:100%;height:100%;object-fit:contain;display:block}
-.ppin{position:absolute;left:5px;top:3px;width:22px;height:22px;z-index:3;pointer-events:none}
+.ppin{position:absolute;left:6px;top:5px;width:17px;height:17px;z-index:3;pointer-events:none}
 .ppin svg{display:block;width:100%;height:100%;fill:#fff}
 .phead>:not(.ava){opacity:var(--hf,1)}
 .phead .ava{visibility:hidden}
@@ -1880,7 +1880,7 @@ function pgWatch(){
 }
 /* закреплённые подарки вокруг аватарки (до 6): позиции — центры точек относительно центра аватарки.
    слоты: 0 лево-верх, 1 право-верх, 2 слева, 3 справа, 4 лево-низ, 5 право-низ */
-const PIN_SLOTS=[[-62,-50],[62,-50],[-82,0],[82,0],[-62,50],[62,50]];
+const PIN_SLOTS=[[-68,-55],[68,-55],[-90,0],[90,0],[-68,55],[68,55]];
 const PIN_DIAG=[[0,5],[1,4]];   /* «накрест» */
 /* допустимое расположение для n подарков:
    1 — случайный угол; 2 — только накрест; 3 и 4 — обязательно есть пара накрест, остальные где угодно;
@@ -1932,6 +1932,7 @@ function renderPins(){
       d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=p[0]+'px';d.style.top=p[1]+'px';
       d.innerHTML=mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>';
       el.appendChild(d);
+      d.addEventListener('animationend',()=>d.classList.remove('new'),{once:true});
     });
   });
 }
@@ -1960,7 +1961,7 @@ function renderMyGifts(reset){
   e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
   try{syncSendLabel()}catch(_){}
   const ti=document.getElementById('mtIcons');
-  if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');
+  if(ti){const th=MYGIFTS.slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');if(ti.__h!==th){ti.__h=th;ti.innerHTML=th}}
   try{placeTab(document.getElementById('mtabs'))}catch(_){}
   try{pgWatch()}catch(_){}
   clearTimeout(pgWarmT);pgWarmT=setTimeout(()=>{try{warmMyGifts()}catch(_){}},500);   /* предзагрузка картинок — не мешает открытию профиля */
