@@ -546,11 +546,14 @@ html,body{overscroll-behavior:none}
 #ug .ug-a,#ug .ug-x,#ug .ug-more{transition:transform .3s cubic-bezier(.4,0,.2,1),-webkit-backdrop-filter .45s ease,backdrop-filter .45s ease}
 #ug.fxon .ug-a,#ug.fxon .ug-x,#ug.fxon .ug-more{-webkit-backdrop-filter:none;backdrop-filter:none}
 #um.mf .um-back,#um.mf .um-var{-webkit-backdrop-filter:none;backdrop-filter:none}
-/* обводка только у «Отправить / Носить / Продать» чуть темнее */
-#ug .ug-a{--glass-rgb:176,178,188;--glass2-rgb:188,190,200;--glass2-a:.54;box-shadow:inset 0 0 0 .6px rgba(0,0,0,.18)}
+/* обводка «Отправить / Носить / Продать» адаптивная: яркость фона --ug-l (0 тёмный … 1 светлый; .4 = прежний вид).
+   Светлый фон → обводка светлее прежней, тёмный → темнее. Значение ставит JS (ugRim), меняется плавно */
+@property --ug-l{syntax:"<number>";inherits:true;initial-value:.4}
+#ug{--ug-d:calc(90*(var(--ug-l) - .4))}
+#ug .ug-a{--glass-rgb:calc(176 + var(--ug-d)),calc(178 + var(--ug-d)),calc(188 + var(--ug-d));--glass2-rgb:calc(188 + var(--ug-d)),calc(190 + var(--ug-d)),calc(200 + var(--ug-d));--glass2-a:.54;box-shadow:inset 0 0 0 .6px rgba(0,0,0,calc(.18 - .12*(var(--ug-l) - .4)))}
 
 /* окно улучшенного подарка открывается и закрывается как окно подарка */
-#ug{transition:visibility 0s linear .6s}
+#ug{transition:visibility 0s linear .6s,--ug-l var(--ug-rim-ms,0ms) linear}
 #ug .ug-dim{transition:opacity .45s}
 #ug .ug-sheet{opacity:1;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1)}
 #ug.on .ug-sheet{transform:none}
@@ -2721,10 +2724,17 @@ renderMyGifts();
     });
   }
   /* фон шапки: цвета плавно перетекают (registered custom properties), без мигания слоёв */
+  /* яркость фона (кнопки внизу лежат ближе к краю градиента, поэтому c2 весит больше) → --ug-l для адаптивной обводки */
+  function ugLumOf(c){
+    const px=h=>{h=String(h||'').trim();let m=h.match(/^#([0-9a-f]{3})$/i);if(m)h='#'+m[1].replace(/./g,x=>x+x);m=h.match(/^#([0-9a-f]{6})$/i);if(m){const n=parseInt(m[1],16);return[(n>>16)&255,(n>>8)&255,n&255]}m=h.match(/(\d+)[ ,]+(\d+)[ ,]+(\d+)/);return m?[+m[1],+m[2],+m[3]]:[90,70,180]};
+    const f=v=>(.299*v[0]+.587*v[1]+.114*v[2])/255;
+    return .25*f(px(c.c1))+.75*f(px(c.c2));
+  }
+  function ugRim(c,ms){try{UG.style.setProperty('--ug-rim-ms',Math.round(ms||0)+'ms');UG.style.setProperty('--ug-l',ugLumOf(c).toFixed(3))}catch(_){}}
   let bgTo=null;
-  function ugBgSet(c){const a=$u('ugT1'),b=$u('ugT2');clearTimeout(ugBg);b.style.transition='none';b.style.opacity=0;a.style.setProperty('--c1',c.c1);a.style.setProperty('--c2',c.c2);bgTo=null}
+  function ugBgSet(c){ugRim(c,0);const a=$u('ugT1'),b=$u('ugT2');clearTimeout(ugBg);b.style.transition='none';b.style.opacity=0;a.style.setProperty('--c1',c.c1);a.style.setProperty('--c2',c.c2);bgTo=null}
   function ugBgTo(c,ms){
-    const a=$u('ugT1'),b=$u('ugT2');
+    ugRim(c,ms);const a=$u('ugT1'),b=$u('ugT2');
     if(bgTo){a.style.setProperty('--c1',bgTo.c1);a.style.setProperty('--c2',bgTo.c2)}
     clearTimeout(ugBg);
     b.style.transition='none';b.style.opacity=0;b.style.setProperty('--c1',c.c1);b.style.setProperty('--c2',c.c2);void b.offsetWidth;
@@ -3114,7 +3124,7 @@ renderMyGifts();
   let finBg=false,finPat=false;
   /* новый фон выезжает слева направо слоем с мягким краем; когда слой доехал, он становится основным, лишние слои убираются */
   function ugBgSlide(c,ms){
-    const t1=$u('ugT1'),L=document.createElement('div');
+    ugRim(c,ms);const t1=$u('ugT1'),L=document.createElement('div');
     L.className='ug-t3';L.style.setProperty('--c1',c.c1);L.style.setProperty('--c2',c.c2);
     $u('ugPat').before(L);
     const fin=()=>{
