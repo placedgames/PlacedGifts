@@ -165,10 +165,14 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 .page{position:relative}
 .phead{display:flow-root;height:auto;position:relative}
 /* закреплённые подарки вокруг аватарки: только модель подарка */
-.pins{position:absolute;left:50%;top:calc(var(--ava-top) + var(--ava-size)/2);width:0;height:0;pointer-events:none}
-.pinm{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
+.pins{position:absolute;left:50%;top:calc(var(--ava-top) + var(--ava-size)/2);width:300px;height:300px;margin:-150px 0 0 -150px;pointer-events:none;--pq:0;
+-webkit-mask-image:radial-gradient(circle at 50% 50%,transparent calc(var(--ava-size)/2 - .5px),#000 calc(var(--ava-size)/2 + .5px));mask-image:radial-gradient(circle at 50% 50%,transparent calc(var(--ava-size)/2 - .5px),#000 calc(var(--ava-size)/2 + .5px));-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+/* при прокрутке вниз подарки (--pq 0→1) сдвигаются к центру аватарки и уходят под неё; при прокрутке вверх выезжают обратно */
+.pinm{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;
+transform:translate3d(calc(var(--dx,0px)*var(--pq)),calc(var(--dy,0px)*var(--pq)),0) scale(calc(1 - .45*var(--pq)));opacity:calc(1 - var(--pq)*var(--pq));will-change:transform,opacity;transition:transform .16s cubic-bezier(.3,.8,.3,1),opacity .16s ease}
+.pins.pq1 .pinm{pointer-events:none}
 .pinm.new{animation:pinIn .38s cubic-bezier(.2,.9,.25,1.2)}
-@keyframes pinIn{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+@keyframes pinIn{from{opacity:0;scale:.3}to{opacity:1;scale:1}}
 .pinm img{width:100%;height:100%;object-fit:contain;display:block}
 .ppin{position:absolute;left:6px;top:5px;width:17px;height:17px;z-index:3;pointer-events:none}
 .ppin svg{display:block;width:100%;height:100%;fill:#fff}
@@ -288,7 +292,7 @@ body.navanim #bar{z-index:1}
 #cx .cx-dim{position:absolute;inset:0;background:rgba(0,0,0,.52);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);opacity:0;transition:opacity .28s ease}
 #cx.on .cx-dim{opacity:1}
 #cx.on.out{pointer-events:none}
-#cx.on.out .cx-dim{opacity:0;transition-duration:.2s;transition-timing-function:cubic-bezier(.4,0,.2,1)}
+#cx.on.out .cx-dim{opacity:0;transition-duration:.3s;transition-timing-function:cubic-bezier(.4,0,.2,1)}
 #cx .cx-pv{position:absolute;will-change:transform,opacity}
 #cx .cx-card{width:368px;max-width:calc(100% - 24px);height:243px;border-radius:30px;overflow:hidden;position:absolute;left:0;right:0;margin:0 auto;background:radial-gradient(circle at 50% 42%,var(--cx1,#7b72ea) 0%,var(--cx2,#5b3fb8) 100%);box-shadow:none}
 #cx .cx-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.32) 100%)}
@@ -351,10 +355,11 @@ background:rgba(66,66,70,.58);-webkit-backdrop-filter:blur(30px) saturate(1.5);b
 #bm .bm-btn{position:relative;z-index:2}
 #bm .bm-mid{flex:0 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:9px 0 0}
 #bm .bm-card{position:relative;width:min(100%,224px);max-height:100%;min-height:0;border-radius:25px;padding:16px 14px 21px;display:flex;flex-direction:column;align-items:center;text-align:center;isolation:isolate}
-#gm{position:fixed;left:0;right:0;top:0;height:100%;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .6s}
+#gm{position:fixed;left:0;right:0;top:0;height:100%;z-index:2000;visibility:hidden;pointer-events:none;transition:visibility 0s linear .85s}
 #gm.on,#gm.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
 #gm .gm-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .45s}
 #gm.on .gm-dim{opacity:1}
+#gm:not(.on) .gm-dim{transition-duration:.62s}   /* при закрытии затемнение гаснет медленнее */
 #gm .gm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform;touch-action:none;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black)}
 #gm.on .gm-sheet{transform:translateY(0)}
 #gm .gm-sheet.drag{transition:none}
@@ -451,7 +456,8 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #um .um-new{opacity:var(--ut,0);transform:translate3d(0,calc((1 - var(--ut,0))*-9px),0) scale(calc(.78 + .22*var(--ut,0)))}
 #um .um-old{opacity:calc(1 - 1.6*var(--ut,0));transform:translate3d(0,calc(var(--ut,0)*9px),0) scale(calc(1 - .22*var(--ut,0)))}
 #um .um-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:transparent;overflow:hidden;border-radius:0;isolation:isolate;touch-action:none}
-#gm .gm-sheet{transition:transform .55s cubic-bezier(.25,.8,.25,1),opacity 0s}
+#gm .gm-sheet{transition:transform .74s cubic-bezier(.25,.8,.25,1),opacity 0s}   /* закрытие — чуть дольше открытия */
+#gm.on .gm-sheet:not(.drag){transition:transform .55s cubic-bezier(.25,.8,.25,1),opacity 0s}
 /* оптимизация анимаций: свои GPU-слои для шторок/затемнений, без задержки тапа, изоляция раскладки карточек */
 #gm .gm-dim,#bm .bm-dim{will-change:opacity}
 #bm .bm-sheet{will-change:transform}
@@ -583,7 +589,7 @@ html,body{overscroll-behavior:none}
 #um.mf .um-feat,#um.mf .um-chk{opacity:var(--uf,1)!important}
 #um.mf .um-upw{opacity:0!important}
 #ug .ug-sp{display:block;width:24px;height:24px;border-radius:50%;border:2.5px solid rgba(255,255,255,.32);border-top-color:#fff;animation:ugspin .75s linear infinite}
-#ug .ug-x,#ug .ug-more,#ug .ug-a{--glass-rgb:196,198,206;--glass-strong:.285;--glass2-rgb:206,208,216;--glass2-a:.585;background:rgba(255,255,255,.23);box-shadow:inset 0 0 0 .6px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+#ug .ug-x,#ug .ug-more,#ug .ug-a,#ug .mk-sale{--glass-rgb:196,198,206;--glass-strong:.285;--glass2-rgb:206,208,216;--glass2-a:.585;background:rgba(255,255,255,.23);box-shadow:inset 0 0 0 .6px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
 
 /* ===== улучшение: «зарядка» маски, плавная смена фона, слайд текста кнопки ===== */
 #um .um-glow{position:absolute;left:50%;top:88px;width:320px;height:320px;margin:-160px 0 0 -160px;border-radius:50%;z-index:0;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(220,226,255,.9) 0%,rgba(170,162,255,.45) 34%,rgba(140,110,255,0) 68%);mix-blend-mode:screen;will-change:transform,opacity}
@@ -592,20 +598,21 @@ html,body{overscroll-behavior:none}
 #ug .ug-skip{position:relative;overflow:hidden}
 #ug .ug-sl{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;will-change:transform,opacity}
 /* пока идёт переход и меняются фон/узор, блюр под кнопками выключен: backdrop-filter снимает фон с запаздыванием (под кнопками мелькал старый цвет) и утяжеляет кадры перехода; потом плавно возвращается */
-#ug .ug-a,#ug .ug-x,#ug .ug-more{transition:transform .3s cubic-bezier(.4,0,.2,1),-webkit-backdrop-filter .45s ease,backdrop-filter .45s ease}
-#ug.fxon .ug-a,#ug.fxon .ug-x,#ug.fxon .ug-more{-webkit-backdrop-filter:none;backdrop-filter:none}
+#ug .ug-a,#ug .ug-x,#ug .ug-more,#ug .mk-sale{transition:transform .3s cubic-bezier(.4,0,.2,1),-webkit-backdrop-filter .45s ease,backdrop-filter .45s ease}
+#ug.fxon .ug-a,#ug.fxon .ug-x,#ug.fxon .ug-more,#ug.fxon .mk-sale{-webkit-backdrop-filter:none;backdrop-filter:none}
 #um.mf .um-back,#um.mf .um-var{-webkit-backdrop-filter:none;backdrop-filter:none}
 /* обводка «Отправить / Носить / Продать» адаптивная: яркость фона --ug-l (0 тёмный … 1 светлый; .4 = прежний вид).
    Светлый фон → обводка светлее прежней, тёмный → темнее. Значение ставит JS (ugRim), меняется плавно */
 @property --ug-l{syntax:"<number>";inherits:true;initial-value:.4}
 #ug{--ug-d:calc(90*(var(--ug-l) - .4))}
-#ug .ug-a{--glass-rgb:calc(176 + var(--ug-d)),calc(178 + var(--ug-d)),calc(188 + var(--ug-d));--glass2-rgb:calc(188 + var(--ug-d)),calc(190 + var(--ug-d)),calc(200 + var(--ug-d));--glass2-a:.54;box-shadow:inset 0 0 0 .6px rgba(0,0,0,calc(.18 - .12*(var(--ug-l) - .4)))}
+#ug .ug-a,#ug .mk-sale{--glass-rgb:calc(176 + var(--ug-d)),calc(178 + var(--ug-d)),calc(188 + var(--ug-d));--glass2-rgb:calc(188 + var(--ug-d)),calc(190 + var(--ug-d)),calc(200 + var(--ug-d));--glass2-a:.54;box-shadow:inset 0 0 0 .6px rgba(0,0,0,calc(.18 - .12*(var(--ug-l) - .4)))}
 
 /* окно улучшенного подарка открывается и закрывается как окно подарка */
-#ug{transition:visibility 0s linear .6s,--ug-l var(--ug-rim-ms,0ms) linear}
+#ug{transition:visibility 0s linear .85s,--ug-l var(--ug-rim-ms,0ms) linear}
 #ug .ug-dim{transition:opacity .45s}
-#ug .ug-sheet{opacity:1;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1)}
-#ug.on .ug-sheet{transform:none}
+#ug:not(.on) .ug-dim{transition-duration:.62s}
+#ug .ug-sheet{opacity:1;transform:translateY(calc(100% + 6px));transition:transform .74s cubic-bezier(.25,.8,.25,1)}
+#ug.on .ug-sheet{transform:none;transition:transform .55s cubic-bezier(.25,.8,.25,1)}
 /* таблица — те же размеры, цвета и шрифты, что в окне подарка */
 #ug .ug-tbl{margin:20px 16px 0;border:1px solid #343437;border-radius:19px;text-align:left}
 #ug .ug-r{height:40px;font-size:15px;font-weight:400}
@@ -635,7 +642,7 @@ html,body{overscroll-behavior:none}
 #ug .ug-acts{margin-top:15px}
 #ug .ug-a{gap:0}
 #ug .ug-a svg{width:30px;height:30px}
-#ug .ug-a{-webkit-backdrop-filter:blur(8px) brightness(.86);backdrop-filter:blur(8px) brightness(.86)}
+#ug .ug-a,#ug .mk-sale{-webkit-backdrop-filter:blur(8px) brightness(.86);backdrop-filter:blur(8px) brightness(.86)}
 #ug .ug-a svg{transform:translateY(2px)}
 #ug .ug-a:not(:first-child) svg{width:31px;height:31px;margin-bottom:-1px}
 #ug .ug-note a{color:var(--accent);font-weight:500;cursor:pointer}
@@ -709,7 +716,7 @@ html,body{overscroll-behavior:none}
 /* окно «в продаже» / покупка */
 #ug .ug-sub.mk{margin-top:4px;min-height:23px}
 #ug .ug-sub.mk+.ug-acts{margin-top:11px}
-#ug .mk-sale{position:relative;display:inline-flex;align-items:center;vertical-align:top;gap:3px;height:23px;padding:0 9px 0 8px;border:0;border-radius:11.5px;background:rgba(200,202,210,.34);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);color:#fff;font-size:13px;font-weight:600;line-height:1;white-space:nowrap}
+#ug .mk-sale{position:relative;display:inline-flex;align-items:center;vertical-align:top;gap:3px;height:22px;padding:0 9px 0 8px;border:0;border-radius:11px;color:#fff;font-size:13px;font-weight:600;line-height:1;white-space:nowrap}
 #ug .mk-sale svg{width:16px;height:16px;fill:#fff;fill-rule:evenodd;flex:none}
 #ug.mkbuy .ug-acts{display:none}
 #ug.mkbuy .ug-note{display:none!important}
@@ -2111,7 +2118,7 @@ function renderPins(){
     items.forEach(x=>{
       if(el.querySelector('[data-s="'+x.pin+'"]'))return;
       const mi=(x.upg&&x.upg.mi)||x.image,p=PIN_SLOTS[x.pin],d=document.createElement('div');
-      d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=p[0]+'px';d.style.top=p[1]+'px';
+      d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=(150+p[0])+'px';d.style.top=(150+p[1])+'px';d.style.setProperty('--dx',(-p[0])+'px');d.style.setProperty('--dy',(-p[1])+'px');
       d.innerHTML=mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>';
       el.appendChild(d);
       d.addEventListener('animationend',()=>d.classList.remove('new'),{once:true});
@@ -2531,7 +2538,7 @@ renderMyGifts();
     closeT=setTimeout(()=>{if(gm.classList.contains('on')||gm.classList.contains('pre'))return;if(!document.getElementById('bm').classList.contains('on'))document.body.classList.remove('bmopen');try{SP.hold(4,false)}catch(e){}try{PS.kick()}catch(e){}},400);
     sh.classList.remove('drag');sh.style.transform='';
     gm.classList.remove('on','pre');gm.setAttribute('aria-hidden','true');
-    setTimeout(()=>{if(!gm.classList.contains('on'))gm.style.height=''},650);
+    setTimeout(()=>{if(!gm.classList.contains('on'))gm.style.height=''},880);
   }
   /* попап «Удалить комментарий?»: текст комментария и для кого он отправлен */
   window.askDelComment=function(x,done){
@@ -3639,7 +3646,7 @@ renderMyGifts();
     $u('ugConf').style.display='none';
     ugS.style.transition='';ugS.style.transform='';ugS.style.opacity='';
     UG.classList.remove('on');UG.setAttribute('aria-hidden','true');
-    setTimeout(()=>{UG.classList.remove('fxon');ugS.querySelectorAll('.ug-t3').forEach(n=>n.remove());ugS.style.clipPath='';ugS.style.webkitClipPath='';upBusy=false;ugClosing=false;ugLock=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}ugTrkClear($u('ugTrack'));ugS.querySelectorAll('.ug-ghost').forEach(n=>n.remove())},650);
+    setTimeout(()=>{UG.classList.remove('fxon');ugS.querySelectorAll('.ug-t3').forEach(n=>n.remove());ugS.style.clipPath='';ugS.style.webkitClipPath='';upBusy=false;ugClosing=false;ugLock=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}ugTrkClear($u('ugTrack'));ugS.querySelectorAll('.ug-ghost').forEach(n=>n.remove())},880);
   }
   $u('ugX').onclick=()=>ugClose();UG.querySelector('.ug-dim').onclick=()=>ugClose();
   (function(){
@@ -3921,7 +3928,7 @@ renderMyGifts();
     function pick(k){
       window.__cxSw=performance.now()+500;   /* клик, который придёт после отпускания пальца, не должен попасть в элемент под меню (например, во вкладку) */
       const x=cur&&cur.x;close();
-      setTimeout(()=>act(k,x),200);   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
+      setTimeout(()=>act(k,x),300);   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
     }
     function act(k,x){
       if(k==='pin'){
@@ -3939,8 +3946,6 @@ renderMyGifts();
           }
           try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
           try{renderMyGifts(true)}catch(_){}
-          /* страница уезжает в начало — видно, что подарок закреплён рядом с аватаркой */
-          setTimeout(()=>{try{window.meTop&&meTop()}catch(_){}},40);
         }
         return;
       }
@@ -4036,14 +4041,14 @@ renderMyGifts();
     if(!root||!root.classList.contains('on')||root.classList.contains('out'))return;
     const pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
     /* карточка и меню одновременно уменьшаются и гаснут: быстро (190 мс), без «ступеньки» в конце — прозрачность доходит до нуля раньше, чем размер */
-    try{pv.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.78)',offset:.85},{opacity:0,transform:'scale(.72)'}],{duration:190,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'})}catch(_){}
-    try{mn.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.55)',offset:.85},{opacity:0,transform:'scale(.5)'}],{duration:190,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'})}catch(_){}
+    try{pv.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.78)',offset:.85},{opacity:0,transform:'scale(.72)'}],{duration:290,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'})}catch(_){}
+    try{mn.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.55)',offset:.85},{opacity:0,transform:'scale(.5)'}],{duration:290,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'})}catch(_){}
     root.classList.add('out');cur=null;busy=true;
     clearTimeout(closeT);
     closeT=setTimeout(()=>{
       [pv,mn].forEach(n=>{try{n.getAnimations().forEach(a=>a.cancel())}catch(_){}});
       root.classList.remove('on','out');root.setAttribute('aria-hidden','true');busy=false;
-    },240);
+    },340);
   }
   /* долгое нажатие: 420 мс без заметного сдвига пальца */
   let tm=0,pt=0,sx=0,sy=0,tel=null,pel=null;
@@ -4341,7 +4346,7 @@ renderMyGifts();
     }
     const on=!!(x&&x.sale);
     sub.classList.toggle('mk',on);
-    if(on){sub.innerHTML='<span class="mk-sale">В продаже за '+STARSVG+'<b style="font-weight:inherit">'+fmt(x.sale.p)+'</b></span>';shapeSale(sub.querySelector('.mk-sale'))}
+    if(on){sub.innerHTML='<span class="mk-sale glass">В продаже за '+STARSVG+'<b style="font-weight:inherit">'+fmt(x.sale.p)+'</b></span>'}
     else if(sub.querySelector('.mk-sale'))sub.textContent=(x&&x.upg&&x.upg.m)||'';
     if(btn){
       const u=btn.querySelector('use');if(u)u.setAttribute('href',on?'#i-unsell':'#i-sellit');
@@ -4506,6 +4511,35 @@ renderMyGifts();
   };
   one(document.body);
   new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(one))).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+<script>
+/* закреплённые подарки у аватарки: при прокрутке страницы вниз плавно уходят под аватарку, при прокрутке вверх так же плавно появляются;
+   нажатие на модель подарка рядом с аватаркой открывает окно этого подарка */
+(function(){
+  const RANGE=70;   /* на скольких px прокрутки подарки полностью уходят под аватарку */
+  [['p-me','pPins'],['p-settings','sPins']].forEach(a=>{
+    const pg=document.getElementById(a[0]),el=document.getElementById(a[1]);
+    if(!pg||!el)return;
+    let raf=0,last=-1;
+    const upd=()=>{
+      raf=0;
+      const sc=Math.max(0,pg.scrollTop+(pg._off||0)),q=Math.min(1,sc/RANGE);
+      if(Math.abs(q-last)<.002)return;
+      last=q;el.style.setProperty('--pq',q.toFixed(3));el.classList.toggle('pq1',q>=.6);
+    };
+    const soon=()=>{if(!raf)raf=requestAnimationFrame(upd)};
+    pg.addEventListener('scroll',soon,{passive:true});
+    /* новые подарки (перерисовка) и возврат на страницу — берём текущую прокрутку */
+    new MutationObserver(soon).observe(el,{childList:true});
+    new MutationObserver(()=>{last=-1;soon()}).observe(pg,{attributes:true,attributeFilter:['class']});
+    el.addEventListener('click',e=>{
+      const m=e.target.closest&&e.target.closest('.pinm');if(!m||el.classList.contains('pq1')||parseFloat(getComputedStyle(el).opacity)<.5)return;
+      const x=MYGIFTS.filter(g=>g.pin!=null&&String(g.pin)===m.dataset.s)[0];if(!x)return;
+      if(x.upg&&window.openUpgraded)openUpgraded(x);else if(window.openGift)openGift(x);
+    });
+    soon();
+  });
 })();
 </script>
 </body>
