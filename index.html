@@ -1939,11 +1939,11 @@ function meFillSpace(){
     const pg=$('#p-me'),sp=$('#pSpace');if(!pg||!sp||!pg.classList.contains('on'))return;
     const tb=document.querySelector('#mtabs button.on');if(tb&&tb.dataset.m==='posts')return;
     const i=window.meStep&&meStep();if(!i)return;
-    sp.style.height='0px';
+    /* (раньше тут высота запаса обнулялась — внизу страницы браузер из-за этого сжимал scrollTop и страница «отскакивала») */
     /* высота содержимого считаем по месту, где начинается запас (scrollHeight не бывает меньше высоты экрана) */
     const cb=sp.getBoundingClientRect().top-pg.getBoundingClientRect().top+pg.scrollTop+(parseFloat(getComputedStyle(pg).paddingBottom)||0);
     const extra=Math.max(0,i.T+pg.clientHeight-(cb+(i.off||0)));
-    sp.style.height=Math.ceil(extra)+'px';
+    const hv=Math.ceil(extra)+'px';if(sp.style.height!==hv)sp.style.height=hv;
   }catch(_){}
 }
 (function(){
@@ -2016,10 +2016,10 @@ function pinFit(items){
 /* 8 белых четырёхконечных звёздочки, неспешно плывущие под каждым закреплённым подарком */
 function pinStars(seed){
   let h='';const f=v=>v-Math.floor(v);
-  for(let i=0;i<8;i++){
-    const r=k=>f(Math.sin((seed+1)*12.9898+i*78.233+k*37.719)*43758.5453),a=r(1)*6.283+i*.785,
-      x0=Math.cos(a)*5,y0=Math.sin(a)*5+3,x1=Math.cos(a+.6)*(17+r(2)*8),y1=Math.sin(a+.6)*(17+r(2)*8)+4;
-    h+='<i class="ps" style="--z:'+(7+r(3)*4).toFixed(1)+'px;--d:'+(5.5+r(4)*2.5).toFixed(1)+'s;--dl:'+(-(i*.9+r(5))).toFixed(1)+'s;--x0:'+x0.toFixed(1)+'px;--y0:'+y0.toFixed(1)+'px;--x1:'+x1.toFixed(1)+'px;--y1:'+y1.toFixed(1)+'px"></i>';
+  for(let i=0;i<16;i++){
+    const r=k=>f(Math.sin((seed+1)*12.9898+i*78.233+k*37.719)*43758.5453),a=r(1)*6.283+i*.393,
+      x0=Math.cos(a)*4,y0=Math.sin(a)*4+2,x1=Math.cos(a+.5)*(9+r(2)*6),y1=Math.sin(a+.5)*(9+r(2)*6)+2;
+    h+='<i class="ps" style="--z:'+(6+r(3)*4).toFixed(1)+'px;--d:'+(4.5+r(4)*2.5).toFixed(1)+'s;--dl:'+(-(i*.45+r(5)*.4)).toFixed(1)+'s;--x0:'+x0.toFixed(1)+'px;--y0:'+y0.toFixed(1)+'px;--x1:'+x1.toFixed(1)+'px;--y1:'+y1.toFixed(1)+'px"></i>';
   }
   return h;
 }
