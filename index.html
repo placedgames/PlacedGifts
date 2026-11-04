@@ -2013,13 +2013,13 @@ function pinFit(items){
   items.forEach((x,i)=>{if(!keep[i])x.pin=free.pop()});
   return true;
 }
-/* 4 белые четырёхконечные звёздочки, неспешно плывущие под каждым закреплённым подарком */
+/* 8 белых четырёхконечных звёздочки, неспешно плывущие под каждым закреплённым подарком */
 function pinStars(seed){
   let h='';const f=v=>v-Math.floor(v);
-  for(let i=0;i<4;i++){
-    const r=k=>f(Math.sin((seed+1)*12.9898+i*78.233+k*37.719)*43758.5453),a=r(1)*6.283+i*1.57,
+  for(let i=0;i<8;i++){
+    const r=k=>f(Math.sin((seed+1)*12.9898+i*78.233+k*37.719)*43758.5453),a=r(1)*6.283+i*.785,
       x0=Math.cos(a)*5,y0=Math.sin(a)*5+3,x1=Math.cos(a+.6)*(17+r(2)*8),y1=Math.sin(a+.6)*(17+r(2)*8)+4;
-    h+='<i class="ps" style="--z:'+(7+r(3)*4).toFixed(1)+'px;--d:'+(5.5+r(4)*2.5).toFixed(1)+'s;--dl:'+(-(i*1.7+r(5))).toFixed(1)+'s;--x0:'+x0.toFixed(1)+'px;--y0:'+y0.toFixed(1)+'px;--x1:'+x1.toFixed(1)+'px;--y1:'+y1.toFixed(1)+'px"></i>';
+    h+='<i class="ps" style="--z:'+(7+r(3)*4).toFixed(1)+'px;--d:'+(5.5+r(4)*2.5).toFixed(1)+'s;--dl:'+(-(i*.9+r(5))).toFixed(1)+'s;--x0:'+x0.toFixed(1)+'px;--y0:'+y0.toFixed(1)+'px;--x1:'+x1.toFixed(1)+'px;--y1:'+y1.toFixed(1)+'px"></i>';
   }
   return h;
 }
