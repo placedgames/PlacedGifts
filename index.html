@@ -1461,8 +1461,8 @@ function shapeSale(b){
   if(window.ResizeObserver)new ResizeObserver(run).observe(b);run();
 }
 function noStars(){
-  const m='На вашем балансе недостаточно звезд, пожалуйста пополните баланс.',go2=()=>{try{const b=document.getElementById('bmClose');if(document.getElementById('bm').classList.contains('on')&&b)b.click()}catch(_){}try{go('stars')}catch(_){}};
-  if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){try{tg.showPopup({title:'Недостаточно звезд',message:m,buttons:[{id:'cancel',type:'default',text:'Отмена'},{id:'top',type:'default',text:'Пополнить'}]},id=>{if(id==='top')go2()});return}catch(e){}}
+  const m='На балансе недостаточно звезд, пожалуйста пополните баланс.',go2=()=>{try{const b=document.getElementById('bmClose');if(document.getElementById('bm').classList.contains('on')&&b)b.click()}catch(_){}try{go('stars')}catch(_){}};
+  if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){try{tg.showPopup({title:'Недостаточно звезд',message:m,buttons:[{id:'top',type:'default',text:'Пополнить'},{id:'cancel',type:'default',text:'Отмена'}]},id=>{if(id==='top')go2()});return}catch(e){}}
   if(confirm('Недостаточно звезд\n\n'+m))go2();
 }
 function toast(t){return;const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1600)}
@@ -1998,7 +1998,7 @@ const PG_WARM=new Set();
 function warmMyGifts(){
   MYGIFTS.slice(0,40).forEach(x=>{
     [x.image,x.upg&&x.upg.mi].forEach(u=>{if(u&&!PG_WARM.has(u)){PG_WARM.add(u);const i=new Image();i.decoding='async';i.src=u}});
-    const s=x.upg&&x.upg.si;if(s&&!PG_WARM.has(s)){PG_WARM.add(s);pgLoad(s)}
+    const s=x.upg&&x.upg.si;if(s&&!PG_WARM.has(s)){PG_WARM.add(s);pgLoad(s).then(i=>{if(i)(window.__symC||(window.__symC={}))[s]=i})}
   });
 }
 function pgDraw(cv){
@@ -3661,8 +3661,11 @@ renderMyGifts();
     trk.children[0].addEventListener('click',()=>{const el=trk.children[0];if(el&&d.mj&&window.giftAnim&&!(el.__box&&el.contains(el.__box)))giftAnim(el,d.mj,{stop:true})});
     ugShape();
     try{shapeBtn(sk)}catch(_){}
-    const cv=$u('ugPat');try{cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}catch(_){}
-    return new Promise(res=>requestAnimationFrame(()=>{(d.si?img(d.si):Promise.resolve(null)).then(im=>{if(UG.classList.contains('on'))drawPat2(cv,top,im,c.c3);res()},res)}));
+    const cv=$u('ugPat'),SC=window.__symC||(window.__symC={});
+    /* символ уже загружен — узор рисуется сразу, без очистки и ожидания (при перелистывании не мигает) */
+    if(d.si&&SC[d.si]){drawPat2(cv,top,SC[d.si],c.c3);return Promise.resolve()}
+    try{cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}catch(_){}
+    return new Promise(res=>requestAnimationFrame(()=>{(d.si?img(d.si):Promise.resolve(null)).then(im=>{if(im&&d.si)SC[d.si]=im;if(UG.classList.contains('on'))drawPat2(cv,top,im,c.c3);res()},res)}));
   };
   /* закрытие как у остальных окон: окно уезжает вниз, затемнение гаснет; пока идёт анимация улучшения — закрыть нельзя */
   function ugClose(force){
@@ -4555,7 +4558,7 @@ renderMyGifts();
       const sc=Math.max(0,pg.scrollTop+(pg._off||0));
       let q;
       if(last<0||ls==null)q=(sc-6)/RANGE;
-      else{const d=sc-ls;q=cq+(d>0?Math.max(0,sc-Math.max(ls,6))/RANGE:d*1.6/RANGE)}   /* вниз — старт после 35px; вверх — сразу и в 1.6 раза быстрее */
+      else{const d=sc-ls;q=d>0?cq+Math.max(0,sc-Math.max(ls,6))/RANGE:Math.min(cq,sc/90)}   /* вниз — старт после 35px; вверх — сразу и в 1.6 раза быстрее */
       q=sc<=0?0:Math.max(0,Math.min(1,q));ls=sc;cq=q;
       if(last>=0&&Math.abs(q-last)<.002)return;
       last=q;el.style.setProperty('--pq',q.toFixed(3));el.classList.toggle('pq1',q>=.6);
