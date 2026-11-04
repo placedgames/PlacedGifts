@@ -57,7 +57,7 @@ body.nobar #bar{display:none}
 .gtabs button.on{color:#a6a6ab}
 .grid{margin-top:21px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .gift{position:relative;min-width:0;height:153px;background:var(--card);border-radius:20px;padding:18px 0 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .55s cubic-bezier(.22,1,.36,1);backface-visibility:hidden}
-.gift:active{transform:scale(.96);transition:transform .34s cubic-bezier(.3,.7,.4,1)}
+.gift:active{transform:none;transition:none}
 .rib{position:absolute;top:-2.5px;right:-2.5px;width:115px;height:115px;pointer-events:none;z-index:2}
 .rib svg{display:block;width:100%;height:100%;overflow:visible;opacity:.98}
 .rib span{position:absolute;left:78.2%;top:21.8%;transform:translate(-50%,-50%) rotate(45deg);color:#fff;font-size:10px;font-weight:550;line-height:1;white-space:nowrap}
@@ -676,7 +676,7 @@ html,body{overscroll-behavior:none}
 .mk-chip.open .mk-ud path{transform:scaleY(-1)}
 .mk-grid{margin-top:0}
 .mkc{position:relative;min-width:0;height:153px;border-radius:20px;cursor:pointer;transition:transform .55s cubic-bezier(.22,1,.36,1);-webkit-tap-highlight-color:transparent}
-.mkc:active{transform:scale(.96);transition:transform .34s cubic-bezier(.3,.7,.4,1)}
+.mkc:active{transform:none;transition:none}
 .mkc .pu-bg{position:absolute;inset:0;border-radius:inherit;overflow:hidden;background:radial-gradient(circle at 50% 42%,var(--pc1,#7b72ea) 0%,var(--pc2,#5b3fb8) 100%)}
 .mkc .pu-pat{position:absolute;left:0;top:0;width:100%;height:100%}
 .mkc .pu-bg::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.4) 100%)}
@@ -3816,6 +3816,7 @@ renderMyGifts();
     price:'<path d="M20.4 11A8.5 8.5 0 1 0 12 20.5"/><path d="M14.7 9.5c-.4-1-1.4-1.6-2.7-1.6-1.5 0-2.6.8-2.6 2s1 1.7 2.6 2.1 2.6.8 2.6 2-1.1 2-2.6 2c-1.3 0-2.3-.6-2.7-1.6M12 6.6v1.3M12 16.1v1.3"/><path d="M18.2 21v-5.6M16 17.4l2.2-2.2 2.2 2.2"/>',
     date:'<rect x="3.5" y="5" width="17" height="15.5" rx="3.2"/><path d="M3.5 10.2h17M8 3.2v3.6M16 3.2v3.6"/>',
     ck:'<path d="M5 12.8l4.6 4.6L19 7.6"/>',
+    tag:'<path d="M3.6 12.2V6a2.4 2.4 0 0 1 2.4-2.4h6.2c.6 0 1.2.2 1.7.7l6.1 6.1a2.4 2.4 0 0 1 0 3.4l-5.9 5.9a2.4 2.4 0 0 1-3.4 0l-6.1-6.1a2.4 2.4 0 0 1-.6-1.6z"/><circle cx="8.4" cy="8.4" r="1.15"/>',
     search:'<circle cx="11" cy="11" r="6.6"/><path d="M16 16l4.6 4.6"/>',
     send:'<circle cx="12" cy="12" r="9"/><path d="M7.5 12h8.2M12.6 8.6 16 12l-3.4 3.4"/>',
   };
@@ -3823,7 +3824,7 @@ renderMyGifts();
   const it=(k,t,ic)=>{ic=ic||k;return '<div class="cx-it" data-k="'+k+'">'+(FILLED[ic]?'<svg class="f" viewBox="0 0 512 512">':'<svg viewBox="0 0 24 24">')+IC[ic]+'</svg><span>'+t+'</span></div>'};
   const isU=x=>!!(x&&x.upg&&x.upg.c);
   const hs=x=>it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть');
-  const mainHTML=x=>isU(x)?(x.pin!=null?it('pin','Открепить','unpin'):it('pin','Закрепить'))+it('wear','Носить')+it('link','Копировать ссылку')+it('similar','Похожие подарки','search')+it('share','Поделиться')+hs(x)+it('send','Передать'):hs(x);
+  const mainHTML=x=>isU(x)?(x.pin!=null?it('pin','Открепить','unpin'):it('pin','Закрепить'))+(x.sale?it('reprice','Изменить цену','tag'):'')+it('wear','Носить')+it('link','Копировать ссылку')+it('similar','Похожие подарки','search')+it('share','Поделиться')+hs(x)+it('send','Передать'):hs(x);
   const mainW=x=>Math.min(isU(x)?276:219,innerWidth-24);
   document.addEventListener('click',e=>{if(performance.now()<(window.__cxSw||0)){e.stopPropagation();e.preventDefault()}},true);
   /* ссылка подарка: https://t.me/GiftCraftsBot?startapp=ИмяПодарка-Номер (имя без пробелов), например ScaredCat-1 */
@@ -3846,7 +3847,7 @@ renderMyGifts();
   function copyGiftLink(x){
     if(!x||!x.upg)return;
     copyText(gLink(x)).then(()=>{
-      const T='Ссылка скопирована',M='Отправьте ссылку подарка другим пользователям в Telegram.',w=tgw();
+      const T='Ссылка скопирована',M='Вы можете отправить ссылку на подарок своим друзьям.',w=tgw();
       const cb=id=>{if(id==='send')shareGift(x)};
       if(w&&w.showPopup&&(!w.isVersionAtLeast||w.isVersionAtLeast('6.2'))){
         try{w.showPopup({title:T,message:M,buttons:[{id:'send',type:'default',text:'Отправить'},{id:'cancel',type:'cancel'}]},cb);return}catch(_){}
@@ -3886,11 +3887,11 @@ renderMyGifts();
       if(cur&&cur.flt){
         const f=cur.flt;window.__cxSw=performance.now()+500;
         if(f(k)){hot(-1);return}               /* категории: окно остаётся открытым */
-        close();setTimeout(f.render,300);return;   /* сортировка: окно сразу закрывается */
+        close();setTimeout(f.render,f.fast?0:300);return;   /* сортировка: окно сразу закрывается */
       }
       window.__cxSw=performance.now()+500;   /* клик, который придёт после отпускания пальца, не должен попасть в элемент под меню (например, во вкладку) */
       const x=cur&&cur.x,fq=(k==='hide'||k==='show');close();
-      setTimeout(()=>act(k,x),300);   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
+      setTimeout(()=>act(k,x),(k==='similar'||k==='reprice')?0:300);   /* «Похожие» и «Изменить цену» сразу: окно подарка закрывается, а поле цены получает фокус в момент нажатия */   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
     }
     function act(k,x){
       if(k==='pin'){
@@ -3919,6 +3920,7 @@ renderMyGifts();
         }
         return;
       }
+      if(k==='reprice'){try{window.openSellEdit&&openSellEdit(x)}catch(_){}return}
       if(k==='link'){copyGiftLink(x);return}
       if(k==='share'){shareGift(x);return}
       if(k==='similar'){try{window.openMkSimilar&&openMkSimilar(x)}catch(_){}return}
@@ -4024,9 +4026,9 @@ renderMyGifts();
   /* окно действий подарка из кнопки «три точки» в окне уникального подарка: то же окно, что при долгом нажатии, но без пунктов «Изготовить» и «Передать» */
   window.openGiftMenu=function(anchor,x){
     if(busy||!x)return;if(!root)build();
-    const mine=MYGIFTS.indexOf(x)>=0&&!!(x.upg&&x.upg.c);
-    const html=(mine?(x.pin!=null?it('pin','Открепить','unpin'):it('pin','Закрепить')):'')+it('link','Копировать ссылку')+it('similar','Похожие подарки','search')+it('share','Поделиться');
-    const apply=k=>{apply.render=()=>window.__cxAct(k,x);return false};
+    const own=MYGIFTS.indexOf(x)>=0&&!!(x.upg&&x.upg.c),mkb=document.getElementById('ug').classList.contains('mkbuy');
+    const html=((own&&!mkb)?(x.pin!=null?it('pin','Открепить','unpin'):it('pin','Закрепить')):'')+((own&&x.sale)?it('reprice','Изменить цену','tag'):'')+it('link','Копировать ссылку')+it('similar','Похожие подарки','search')+it('share','Поделиться');
+    const apply=k=>{apply.fast=(k==='similar'||k==='reprice');apply.render=()=>window.__cxAct(k,x);return false};
     cur={flt:apply};busy=true;openT=performance.now();
     const pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
     pv.innerHTML='';pv.style.width='0px';pv.style.height='0px';pv.style.top='0px';pv.style.left='0px';
@@ -4390,7 +4392,7 @@ renderMyGifts();
   function sync(x){
     const sub=$i('ugSub'),btn=UG.querySelectorAll('.ug-a')[2],sk=$i('ugSkip');
     if(UG.classList.contains('mkbuy')){
-      if(x.sale){sk.dataset.done='0';sk.innerHTML='<span>Купить за</span>'+STARSVG+'<span>'+fmt(x.sale.p)+'</span>'}
+      if(x.sale){sk.dataset.done='0';sk.innerHTML=MYGIFTS.indexOf(x)>=0?'<span>Снять с продажи</span>':'<span>Купить за</span>'+STARSVG+'<span>'+fmt(x.sale.p)+'</span>'}
       return;
     }
     const on=!!(x&&x.sale);
@@ -4410,7 +4412,7 @@ renderMyGifts();
     if(UG.classList.contains('mkbuy')){
       if(window.__ugDrag){window.__ugDrag=false;return}
       const x=window.__gmCur;if(!x||!x.sale)return;
-      if(MYGIFTS.indexOf(x)>=0){toast('Это ваш подарок: снять его с продажи можно в профиле');return}
+      if(MYGIFTS.indexOf(x)>=0){askUnsell(x,()=>{const b=$i('ugX');if(b)b.click();setTimeout(()=>{try{renderMk()}catch(_){}},380)});return}
       toast('Покупка: скоро');
       return;
     }
@@ -4423,10 +4425,10 @@ renderMyGifts();
     const x=window.__gmCur;if(!x||!x.upg)return;
     if(x.sale)askUnsell(x);else openSell(x);
   };
-  function askUnsell(x){
+  function askUnsell(x,done){
     popup('Снятие с продажи','Вы действительно хотите снять с продажи '+giftTitle(x)+'?',
       [{id:'unsell',type:'destructive',text:'Снять'},{id:'cancel',type:'default',text:'Отмена'}],
-      id=>{if(id!=='unsell')return;delete x.sale;save();sync(x);toast('Подарок снят с продажи')});
+      id=>{if(id!=='unsell')return;delete x.sale;save();sync(x);toast('Подарок снят с продажи');if(done)done()});
   }
 
   /* ---------- окно «Продать подарок» с адаптивной клавиатурой ---------- */
@@ -4492,9 +4494,11 @@ renderMyGifts();
     sh.style.borderRadius='0';sh.style.webkitClipPath=v;sh.style.clipPath=v;
   }
   if(window.ResizeObserver)new ResizeObserver(shapeSheet).observe(sh,{box:'border-box'});
-  function openSell(x){
-    SX=x;clearTimeout(closeT);H0=baseH();
-    inp.value=String(MIN_PRICE);notify=false;notRow.classList.remove('on');upd();
+  let EDIT=false;
+  function openSell(x,edit){
+    SX=x;EDIT=!!(edit&&x.sale);clearTimeout(closeT);H0=baseH();
+    const _t=sl.querySelector('.sl-t');if(_t)_t.textContent=EDIT?'Изменить цену':'Продать подарок';
+    inp.value=String(EDIT?x.sale.p:MIN_PRICE);notify=EDIT?!!x.sale.notify:false;notRow.classList.toggle('on',notify);upd();
     sl.classList.remove('kb');sl.classList.add('pre');
     /* клавиатура открывается вместе с окном: фокус ставится прямо в обработчике нажатия */
     inp.style.transform='translateY(-9999px)';
@@ -4508,6 +4512,7 @@ renderMyGifts();
     try{shapeBtn(goB)}catch(_){}shapeSheet();
     clearTimeout(sl.__kbt);sl.__kbt=setTimeout(()=>{if(sl.classList.contains('on'))sl.classList.add('kbt')},90);   /* при первом открытии высота клавиатуры ещё неизвестна: поправка к настоящей высоте должна идти плавно, а не скачком */
   }
+  window.openSellEdit=function(x){if(x&&x.sale)openSell(x,true)};
   function closeSell(){
     clearTimeout(sl.__kbt);clearTimeout(sl.__foldT);sl.__fold=false;sl.classList.remove('on','pre','kb');sl.setAttribute('aria-hidden','true');
     try{inp.blur()}catch(_){}
@@ -4537,6 +4542,16 @@ renderMyGifts();
   goB.onclick=()=>{
     const p=val(),x=SX;if(!x)return;
     if(p<MIN_PRICE){toast('Минимальная цена — '+MIN_PRICE+' звёзд');return}
+    if(EDIT&&x.sale){
+      popup('Изменение цены','Изменить цену '+giftTitle(x)+' на '+p+' '+(p%10===1&&p%100!==11?'звезду':(p%10>=2&&p%10<=4&&(p%100<10||p%100>=20)?'звезды':'звёзд'))+'?',
+        [{id:'ok',type:'default',text:'Изменить'},{id:'cancel',type:'default',text:'Отмена'}],
+        id=>{
+          if(id!=='ok')return;
+          x.sale={p:p,notify:notify,t:x.sale.t||Date.now()};save();
+          closeSell();sync(x);try{renderMk()}catch(_){}toast('Цена изменена');
+        });
+      return;
+    }
     popup('Подтверждение продажи','Вы точно хотите выставить '+giftTitle(x)+' на продажу за '+p+' '+(p%10===1&&p%100!==11?'звезду':(p%10>=2&&p%10<=4&&(p%100<10||p%100>=20)?'звезды':'звёзд'))+' ?',
       [{id:'sell',type:'default',text:'Выставить'},{id:'cancel',type:'default',text:'Отмена'}],
       id=>{
