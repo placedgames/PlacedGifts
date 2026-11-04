@@ -288,7 +288,7 @@ body.navanim #bar{z-index:1}
 #cx .cx-dim{position:absolute;inset:0;background:rgba(0,0,0,.52);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);opacity:0;transition:opacity .28s ease}
 #cx.on .cx-dim{opacity:1}
 #cx.on.out{pointer-events:none}
-#cx.on.out .cx-dim{opacity:0}
+#cx.on.out .cx-dim{opacity:0;transition-duration:.2s;transition-timing-function:cubic-bezier(.4,0,.2,1)}
 #cx .cx-pv{position:absolute;will-change:transform,opacity}
 #cx .cx-card{width:368px;max-width:calc(100% - 24px);height:243px;border-radius:30px;overflow:hidden;position:absolute;left:0;right:0;margin:0 auto;background:radial-gradient(circle at 50% 42%,var(--cx1,#7b72ea) 0%,var(--cx2,#5b3fb8) 100%);box-shadow:none}
 #cx .cx-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 75% 80% at 50% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.32) 100%)}
@@ -3914,6 +3914,9 @@ renderMyGifts();
     function pick(k){
       window.__cxSw=performance.now()+500;   /* клик, который придёт после отпускания пальца, не должен попасть в элемент под меню (например, во вкладку) */
       const x=cur&&cur.x;close();
+      setTimeout(()=>act(k,x),200);   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
+    }
+    function act(k,x){
       if(k==='pin'){
         if(x){
           if(x.pin!=null){delete x.pin;delete x.pinT;pinFit(MYGIFTS.filter(g=>g.pin!=null));try{toast('Подарок откреплён')}catch(_){}}
@@ -4025,14 +4028,15 @@ renderMyGifts();
   function close(){
     if(!root||!root.classList.contains('on')||root.classList.contains('out'))return;
     const pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
-    try{pv.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.92)'}],{duration:180,easing:'ease-in',fill:'forwards'})}catch(_){}
-    try{mn.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.7)'}],{duration:170,easing:'ease-in',fill:'forwards'})}catch(_){}
+    /* карточка и меню одновременно уменьшаются и гаснут: быстро (190 мс), без «ступеньки» в конце — прозрачность доходит до нуля раньше, чем размер */
+    try{pv.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.78)',offset:.85},{opacity:0,transform:'scale(.72)'}],{duration:190,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'})}catch(_){}
+    try{mn.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.55)',offset:.85},{opacity:0,transform:'scale(.5)'}],{duration:190,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'})}catch(_){}
     root.classList.add('out');cur=null;busy=true;
     clearTimeout(closeT);
     closeT=setTimeout(()=>{
       [pv,mn].forEach(n=>{try{n.getAnimations().forEach(a=>a.cancel())}catch(_){}});
       root.classList.remove('on','out');root.setAttribute('aria-hidden','true');busy=false;
-    },230);
+    },240);
   }
   /* долгое нажатие: 420 мс без заметного сдвига пальца */
   let tm=0,pt=0,sx=0,sy=0,tel=null,pel=null;
@@ -4379,16 +4383,19 @@ renderMyGifts();
     const vb=vv?Math.round(vv.offsetTop+vv.height):window.innerHeight;
     let shrink=Math.max(0,H0-vb);if(shrink<80)shrink=0;
     const nt=(vv&&(foc||shrink>0))?Math.round(vv.offsetTop)+'px':'',nh=(vv&&(foc||shrink>0))?Math.round(vv.height)+'px':'';
-    if(sl.style.top!==nt)sl.style.top=nt;if(sl.style.height!==nh)sl.style.height=nh;
+    /* клавиатура уезжает после нажатия мимо поля / на «Выставить»: система шлёт промежуточные размеры экрана, и если за ними следовать, окно дёргается.
+       Пока клавиатура не ушла совсем, положение и размеры окна не трогаем — окно только плавно складывается; когда она ушла — всё возвращается в одном кадре */
+    const hold=!!(sl.__fold&&!foc&&shrink>0);
+    if(!hold){if(sl.style.top!==nt)sl.style.top=nt;if(sl.style.height!==nh)sl.style.height=nh}
     /* окно уникального подарка под «Продать» не должно двигаться вместе с клавиатурой: пока окно открыто, держим его размер и положение как до клавиатуры */
-    const uh=H0+'px';if(ugEl.style.height!==uh)ugEl.style.height=uh;if(ugEl.style.top!==nt)ugEl.style.top=nt;
+    const uh=H0+'px';if(ugEl.style.height!==uh)ugEl.style.height=uh;if(!hold&&ugEl.style.top!==nt)ugEl.style.top=nt;
     let kb=0;
     if(shrink>0){kb=shrink;if(foc&&shrink>120&&shrink!==KBH){KBH=shrink;try{localStorage.setItem('slKbh',String(shrink))}catch(_){}}}
     else if(foc)kb=KBH||Math.round(H0*.35);   /* область не сжалась (клавиатура поверх): поднимаем контент на запомненную высоту */
     /* нажали мимо поля: окно складывается сразу, не дожидаясь, пока система сообщит о размере экрана без клавиатуры */
     if(sl.__fold){if(foc||shrink===0)sl.__fold=false;if(sl.__fold)kb=0}
     if(sl.__kb!==kb){sl.__kb=kb;sl.style.setProperty('--kb',kb+'px')}
-    if(sl.__ext!==shrink){sl.__ext=shrink;sl.style.setProperty('--ext',shrink+'px')}
+    if(!hold&&sl.__ext!==shrink){sl.__ext=shrink;sl.style.setProperty('--ext',shrink+'px')}
     if(sl.classList.contains('kb')!==foc)sl.classList.toggle('kb',foc);
     if(foc||kb>0)setTgBg('#1c1c1e');
     shapeSheet();   /* высота окна меняется за счёт отступа, а не содержимого — контур пересчитываем сами */
@@ -4413,11 +4420,12 @@ renderMyGifts();
   if(window.ResizeObserver)new ResizeObserver(shapeSheet).observe(sh,{box:'border-box'});
   function openSell(x){
     SX=x;clearTimeout(closeT);H0=baseH();
-    inp.value='';notify=false;notRow.classList.remove('on');upd();
+    inp.value=String(MIN_PRICE);notify=false;notRow.classList.remove('on');upd();
     sl.classList.remove('kb');sl.classList.add('pre');
     /* клавиатура открывается вместе с окном: фокус ставится прямо в обработчике нажатия */
     inp.style.transform='translateY(-9999px)';
     try{inp.focus({preventScroll:true})}catch(e){inp.focus()}
+    try{inp.select()}catch(_){}   /* 100 выделено: первая же цифра заменяет её */
     requestAnimationFrame(()=>{inp.style.transform=''});
     fit();loop(1100);
     /* окно начинает ехать в том же кадре, что и клавиатура (раньше ждали два кадра) */
