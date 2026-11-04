@@ -647,7 +647,7 @@ html,body{overscroll-behavior:none}
 .mk-ava svg{fill:#fff;fill-rule:evenodd}
 #p-mkg{padding-bottom:40px}
 .mk-fwrap{--fb:24px;position:sticky;top:8px;z-index:50;margin:0 -16px;padding:0 16px var(--fb)}
-.mk-fwrap::before{content:"";position:absolute;left:0;right:0;top:calc(-1*(var(--hdr-top) + var(--hdr-h) + 8px));bottom:var(--fb);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,#000 0,#000 calc(100% - 26px),rgba(0,0,0,0) 100%)}
+.mk-fwrap::before{content:"";position:absolute;left:0;right:0;top:calc(-1*(var(--hdr-top) + var(--hdr-h) + 60px));bottom:var(--fb);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,#000 0,#000 calc(100% - 26px),rgba(0,0,0,0) 100%)}
 .mk-filters{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;margin:0 -16px;padding:0 16px;scrollbar-width:none}
 .mk-filters>:first-child{margin-left:auto}
 .mk-filters>:last-child{margin-right:auto}
@@ -688,7 +688,7 @@ html,body{overscroll-behavior:none}
 .mk-list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:6px 0 4px;scrollbar-width:none}
 .mk-none{padding:14px 22px;font-size:16px;color:rgba(235,235,245,.5)}
 .mk-mi{display:flex;align-items:center;gap:13px;margin:0 8px;padding:9px 12px 9px 14px;border-radius:23px;font-size:17px;line-height:24px;font-weight:500;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .16s ease}
-.mk-mi[data-all]{margin-top:3px;margin-bottom:3px;padding-top:12px;padding-bottom:12px}
+.mk-mi[data-all]{margin-top:6px;margin-bottom:6px;padding-top:12px;padding-bottom:12px}
 .mk-mi:active,.mk-mi.hot{background:rgba(255,255,255,.09)}
 .mk-mi .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .mk-mi .t b{font-weight:650;margin-left:2px}
@@ -4357,6 +4357,9 @@ renderMyGifts();
      Окно всегда уходит под клавиатуру: нижний край остаётся в 6px от низа экрана, а контент поднимается на высоту клавиатуры (--kb). */
   let H0=0,KBH=0;try{KBH=parseInt(localStorage.getItem('slKbh'),10)||0}catch(_){}
   const baseH=()=>{const T=window.Telegram&&Telegram.WebApp;return Math.max(window.innerHeight,(T&&T.viewportStableHeight)||0)};
+  /* Telegram: за скруглёнными углами клавиатуры виден нативный фон мини-приложения — на время клавиатуры красим его в цвет окна */
+  let tgBg='';
+  function setTgBg(c){if(tgBg===c)return;tgBg=c;try{const T=window.Telegram&&Telegram.WebApp;if(!T)return;T.setBackgroundColor&&T.setBackgroundColor(c);T.setBottomBarColor&&T.setBottomBarColor(c)}catch(_){}}
   function fit(){
     const vv=window.visualViewport,foc=document.activeElement===inp,open=sl.classList.contains('on')||sl.classList.contains('pre');
     if((foc||open)&&(window.scrollX||window.scrollY))window.scrollTo(0,0);
@@ -4371,6 +4374,7 @@ renderMyGifts();
     sl.style.setProperty('--kb',kb+'px');
     sl.style.setProperty('--ext',shrink+'px');
     sl.classList.toggle('kb',foc);
+    if(foc||kb>0)setTgBg('#1c1c1e');else setTimeout(()=>{if(!sl.classList.contains('kb')&&document.activeElement!==inp)setTgBg('#000000')},450);
     shapeSheet();   /* высота окна меняется за счёт отступа, а не содержимого — контур пересчитываем сами */
   }
   function loop(ms){
@@ -4407,6 +4411,7 @@ renderMyGifts();
   function closeSell(){
     try{inp.blur()}catch(_){}
     sl.classList.remove('on','pre','kb');sl.setAttribute('aria-hidden','true');
+    setTimeout(()=>{if(!sl.classList.contains('on')&&!sl.classList.contains('pre'))setTgBg('#000000')},450);
     clearTimeout(closeT);closeT=setTimeout(()=>{if(!sl.classList.contains('on')&&!sl.classList.contains('pre')){sl.style.top='';sl.style.height='';sl.style.removeProperty('--kb');sl.style.removeProperty('--ext');H0=0}},700);
   }
   $i('slX').onclick=closeSell;
