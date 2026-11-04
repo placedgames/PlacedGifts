@@ -139,8 +139,8 @@ background:linear-gradient(to bottom,rgba(var(--glass-rgb),calc(var(--glass-stro
 .glass::after{box-shadow:inset 0 0 var(--glass2-blur) var(--glass2-spread) rgba(var(--glass2-rgb),var(--glass2-a));
 -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0) 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%);
 mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0) 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%)}
-#bar{position:fixed;left:19px;right:19px;bottom:18px;z-index:1001;display:flex;gap:10px;align-items:center}
-#bar::before{content:"";position:absolute;left:-19px;right:-19px;bottom:-18px;height:calc(66px + 18px + 22px);z-index:-1;pointer-events:none;background:var(--bg);opacity:.9;
+#bar{position:fixed;left:21px;right:21px;bottom:18px;z-index:1001;display:flex;gap:10px;align-items:center}
+#bar::before{content:"";position:absolute;left:-21px;right:-21px;bottom:-18px;height:calc(66px + 18px + 22px);z-index:-1;pointer-events:none;background:var(--bg);opacity:.9;
 -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0,0,.15) 28%,rgba(0,0,0,.38) 48%,rgba(0,0,0,.66) 70%,rgba(0,0,0,.88) 88%,#000 100%);
 mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0,0,.15) 28%,rgba(0,0,0,.38) 48%,rgba(0,0,0,.66) 70%,rgba(0,0,0,.88) 88%,#000 100%)}
 #menuPill{--menu-glass-blur:11px;--glass-w:2px;--glass-strong:.125;--glass2-a:.34}
@@ -199,7 +199,7 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 .hb{transition:transform .45s cubic-bezier(.25,.8,.25,1)}
 .hb.press{transform:scale(1.12)}
 .hb{touch-action:none}
-#hdr .hb{--menu-glass-bg:rgba(53,53,54,.58)}
+#hdr .hb,.mtabs{--menu-glass-bg:rgba(53,53,54,.58);--glass-strong:.11;--glass2-a:.32}
 #menuSlider.press,#mtI.press{transform:scale(1.1)}
 .noanim .hb.press,.noanim #menuSlider.press,.noanim #mtI.press{transform:none}
 .hb:not(.hb-dbl).press,.hb:not(.hb-dbl).press .gbl{color:#a9a9ad}
@@ -648,8 +648,8 @@ html,body{overscroll-behavior:none}
 #p-mkg{padding-bottom:40px}
 .mk-fwrap{--fb:24px;position:sticky;top:8px;z-index:50;margin:0 -16px;padding:0 16px var(--fb)}
 .mk-fwrap::before{content:"";position:absolute;left:0;right:0;top:calc(-1*(var(--hdr-top) + var(--hdr-h) + 8px));bottom:var(--fb);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,#000 0,#000 calc(100% - 26px),rgba(0,0,0,0) 100%)}
-.mk-filters{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;margin:0 -16px;padding:0 16px;scrollbar-width:none}
-.mk-chip{flex:none;height:37px;padding:0 13px;border-radius:18.5px;display:flex;align-items:center;gap:3px;color:#fff;font:inherit;font-size:15px;font-weight:550;cursor:pointer;white-space:nowrap;--menu-glass-blur:11px;--glass-w:1px}
+.mk-filters{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;margin:0 -16px;padding:0 16px;scrollbar-width:none}
+.mk-chip{flex:none;height:37px;padding:0 11px;border-radius:18.5px;display:flex;align-items:center;gap:3px;color:#fff;font:inherit;font-size:15px;font-weight:550;cursor:pointer;white-space:nowrap;--menu-glass-blur:11px;--glass-w:1px}
 .mk-chip.on{color:var(--accent)}
 .mk-chip svg{flex:none;position:relative;z-index:1}
 .mk-chip span{position:relative;z-index:1}
@@ -686,6 +686,7 @@ html,body{overscroll-behavior:none}
 .mk-list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:6px 0 4px;scrollbar-width:none}
 .mk-none{padding:14px 22px;font-size:16px;color:rgba(235,235,245,.5)}
 .mk-mi{display:flex;align-items:center;gap:13px;margin:0 8px;padding:9px 12px 9px 14px;border-radius:23px;font-size:17px;line-height:24px;font-weight:500;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .16s ease}
+.mk-mi[data-all]{padding-top:11px;padding-bottom:11px}
 .mk-mi:active,.mk-mi.hot{background:rgba(255,255,255,.09)}
 .mk-mi .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .mk-mi .t b{font-weight:650;margin-left:2px}
@@ -1310,7 +1311,7 @@ function go(p,instant,back,o){
   if(dir<=0){instant?syncInstant():slide(p)}
   // страницы не помнят позицию: всегда открываются сверху и с первой вкладкой
   if(p!==prev||instant){inc.scrollTop=0;resetTabs()}
-  if(p==='me'){requestAnimationFrame(()=>{try{pgPaint($('#pGrid'))}catch(_){}})}   /* после первого кадра, а не до старта анимации */
+  if(p==='me'){requestAnimationFrame(()=>{try{pgPaint($('#pGrid'))}catch(_){}meFillSpace()})}   /* после первого кадра, а не до старта анимации */
   if(prev==='me'&&p!=='me')setTimeout(()=>{if(cur!=='me'){try{renderMyGifts(true)}catch(_){}}},NAV_MS+150);   /* ушли из профиля — оставляем в нём только первую порцию карточек */
   const later=[];
   Object.keys(covers).forEach(k=>{if(k===p)covers[k].measure();else if(dir!==0&&k===prev)later.push(()=>covers[k].reset());else covers[k].reset()});
@@ -1542,6 +1543,7 @@ $$('#mtabs button').forEach(b=>b.onclick=()=>{
         }
       }catch(e){}
       if(sp)sp.style.height='0';
+      meFillSpace();
     }
     const want=D-(pg._off||0);
     if(Math.abs(pg.scrollTop-want)>1)pg.scrollTop=want;   /* пишем прокрутку только если она отличается */
@@ -1995,6 +1997,26 @@ function pgCard(x,i){
 }
 let pgIO=null,pgSent=null;
 function pgKick(){const g=$('#pGrid');if(!pgIO||!pgSent||!g)return;pgIO.unobserve(pgSent);if((g.__n||0)<(g.__list||[]).length)pgIO.observe(pgSent)}
+/* запас прокрутки: страница «Подарки» всегда длиннее ступеньки (слайдер встаёт под хедер и выезжает кнопка), даже если подарок один */
+function meFillSpace(){
+  try{
+    const pg=$('#p-me'),sp=$('#pSpace');if(!pg||!sp||!pg.classList.contains('on'))return;
+    const tb=document.querySelector('#mtabs button.on');if(tb&&tb.dataset.m==='posts')return;
+    const i=window.meStep&&meStep();if(!i)return;
+    sp.style.height='0px';
+    /* высота содержимого считаем по месту, где начинается запас (scrollHeight не бывает меньше высоты экрана) */
+    const cb=sp.getBoundingClientRect().top-pg.getBoundingClientRect().top+pg.scrollTop+(parseFloat(getComputedStyle(pg).paddingBottom)||0);
+    const extra=Math.max(0,i.T+pg.clientHeight-(cb+(i.off||0)));
+    sp.style.height=Math.ceil(extra)+'px';
+  }catch(_){}
+}
+(function(){
+  /* раскладка профиля меняется (шрифты, поворот, анимация открытия) — запас пересчитывается */
+  const run=()=>{clearTimeout(run.t);run.t=setTimeout(()=>{requestAnimationFrame(meFillSpace)},60)};
+  window.addEventListener('resize',run);
+  if(window.ResizeObserver){const pg=document.getElementById('p-me');if(pg){const ro=new ResizeObserver(run);ro.observe(pg);const ph=pg.querySelector('.phead');if(ph)ro.observe(ph)}}
+  new MutationObserver(()=>{if(document.getElementById('p-me').classList.contains('on')){run();setTimeout(meFillSpace,500);setTimeout(meFillSpace,1100)}}).observe(document.getElementById('p-me'),{attributes:true,attributeFilter:['class']});
+})();
 function pgMore(){
   const g=$('#pGrid');if(!g||!g.__list)return;
   const list=g.__list,a=g.__n||0;if(a>=list.length)return;
@@ -2002,6 +2024,7 @@ function pgMore(){
   for(let i=a;i<b;i++)h+=pgCard(list[i],g.__ix?g.__ix[i]:i);
   g.insertAdjacentHTML('beforeend',h);g.__n=b;
   try{pgPaint(g,a)}catch(_){}
+  meFillSpace();
 }
 function pgWatch(){
   const g=$('#pGrid');if(!g||!window.IntersectionObserver)return;
@@ -2074,6 +2097,8 @@ function renderPins(){
   });
 }
 let pgWarmT=0;
+/* порядок подарков как в сетке: сначала закреплённые, затем остальные */
+function myOrder(){return MYGIFTS.filter(x=>x.pin!=null).sort((a,b)=>(b.pinT||0)-(a.pinT||0)).concat(MYGIFTS.filter(x=>x.pin==null))}
 function renderMyGifts(reset){
   const g=$('#pGrid'),e=$('#pEmpty'),b=$('#mtabs button.on');if(!g||!e)return;
   const uniq=!!b&&b.dataset.m==='posts';
@@ -2097,8 +2122,9 @@ function renderMyGifts(reset){
   g.hidden=!list.length;e.hidden=list.length>0;
   e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
   try{syncSendLabel()}catch(_){}
+  requestAnimationFrame(meFillSpace);
   const ti=document.getElementById('mtIcons');
-  if(ti){const th=MYGIFTS.slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');if(ti.__h!==th){ti.__h=th;ti.innerHTML=th}}
+  if(ti){const th=myOrder().slice(0,3).map(x=>(x.upg&&x.upg.mi)||x.image?'<img src="'+((x.upg&&x.upg.mi)||x.image)+'" alt="">':'<em>'+(x.emoji||'🎁')+'</em>').join('');if(ti.__h!==th){ti.__h=th;ti.innerHTML=th}}
   try{placeTab(document.getElementById('mtabs'))}catch(_){}
   try{pgWatch()}catch(_){}
   clearTimeout(pgWarmT);pgWarmT=setTimeout(()=>{try{warmMyGifts()}catch(_){}},500);   /* предзагрузка картинок — не мешает открытию профиля */
@@ -3494,7 +3520,7 @@ renderMyGifts();
       const g=document.getElementById('pGrid'),el=g&&g.querySelector('.pg[data-i="'+i+'"]');
       if(el&&x.upg&&x.upg.c){const t=document.createElement('div');t.innerHTML=pgUpg(x,i);const nn=t.firstChild;el.replaceWith(nn);pgPaint(nn)}
       const ti=document.getElementById('mtIcons');
-      if(ti)ti.innerHTML=MYGIFTS.slice(0,3).map(q=>(q.upg&&q.upg.mi)||q.image?'<img src="'+((q.upg&&q.upg.mi)||q.image)+'" alt="">':'<em>'+(q.emoji||'🎁')+'</em>').join('');
+      if(ti)ti.innerHTML=myOrder().slice(0,3).map(q=>(q.upg&&q.upg.mi)||q.image?'<img src="'+((q.upg&&q.upg.mi)||q.image)+'" alt="">':'<em>'+(q.emoji||'🎁')+'</em>').join('');
     }catch(_){}};
     if(window.requestIdleCallback)requestIdleCallback(run,{timeout:2500});else run()},900);
   }
@@ -4234,9 +4260,14 @@ renderMyGifts();
     const k=menuK;if(!FLD[k])return;
     if(it.dataset.all)MK.f[k]=null;
     else{
-      const all=valsFor(k).map(e=>e.n),cur=new Set(MK.f[k]||all),v=it.dataset.v;
-      if(cur.has(v))cur.delete(v);else cur.add(v);
-      MK.f[k]=cur.size===all.length?null:all.filter(n=>cur.has(n));
+      /* пока выбрано всё — нажатие выбирает только этот пункт; дальше пункты включаются и выключаются по одному */
+      const all=valsFor(k).map(e=>e.n),v=it.dataset.v;
+      if(!MK.f[k])MK.f[k]=[v];
+      else{
+        const cur=new Set(MK.f[k]);
+        if(cur.has(v))cur.delete(v);else cur.add(v);
+        MK.f[k]=(cur.size===0||cur.size===all.length)?null:all.filter(n=>cur.has(n));
+      }
     }
     try{__hap('light')}catch(_){}
     menu.querySelectorAll('.mk-list .mk-mi').forEach(r=>r.classList.toggle('on',isSel(k,r.dataset.v)));
@@ -4335,6 +4366,7 @@ renderMyGifts();
     sl.style.setProperty('--kb',kb+'px');
     sl.style.setProperty('--ext',shrink+'px');
     sl.classList.toggle('kb',foc);
+    shapeSheet();   /* высота окна меняется за счёт отступа, а не содержимого — контур пересчитываем сами */
   }
   function loop(ms){
     loopT=performance.now()+ms;if(looping)return;looping=true;
@@ -4347,10 +4379,11 @@ renderMyGifts();
   function shapeSheet(){
     if(!window.__sheetPath)return;
     const w=sh.offsetWidth,h=sh.offsetHeight;if(!w||!h)return;
+    if(sh.__w===w&&sh.__h===h)return;sh.__w=w;sh.__h=h;
     const v='path("'+window.__sheetPath(w,h,0,0)+'")';
     sh.style.borderRadius='0';sh.style.webkitClipPath=v;sh.style.clipPath=v;
   }
-  if(window.ResizeObserver)new ResizeObserver(shapeSheet).observe(sh);
+  if(window.ResizeObserver)new ResizeObserver(shapeSheet).observe(sh,{box:'border-box'});
   function openSell(x){
     SX=x;clearTimeout(closeT);H0=baseH();
     inp.value='';notify=false;notRow.classList.remove('on');upd();
