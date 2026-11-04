@@ -140,7 +140,7 @@ background:linear-gradient(to bottom,rgba(var(--glass-rgb),calc(var(--glass-stro
 -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0) 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%);
 mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,0,0,0.5) 16%,rgba(0,0,0,0.28) 24%,rgba(0,0,0,0.12) 32%,rgba(0,0,0,0) 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,0.12) 68%,rgba(0,0,0,0.28) 76%,rgba(0,0,0,0.5) 84%,rgba(0,0,0,0.8) 92%,rgba(0,0,0,1) 100%)}
 #bar{position:fixed;left:22px;right:22px;bottom:16px;z-index:1001;display:flex;gap:10px;align-items:center}
-#bar::before{content:"";position:absolute;left:-22px;right:-22px;bottom:-16px;height:calc(66px + 16px + 22px);z-index:-1;pointer-events:none;background:var(--bg);opacity:.9;
+#bar::before{content:"";position:absolute;left:-22px;right:-22px;bottom:-16px;height:calc(66px + 16px + 8px);z-index:-1;pointer-events:none;background:var(--bg);opacity:.9;
 -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0,0,.15) 28%,rgba(0,0,0,.38) 48%,rgba(0,0,0,.66) 70%,rgba(0,0,0,.88) 88%,#000 100%);
 mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0,0,.15) 28%,rgba(0,0,0,.38) 48%,rgba(0,0,0,.66) 70%,rgba(0,0,0,.88) 88%,#000 100%)}
 #menuPill{--menu-glass-blur:11px;--glass-w:2px;--glass-strong:.125;--glass2-a:.34}
@@ -721,8 +721,10 @@ html,body{overscroll-behavior:none}
 .mk-sg{flex:none;width:31px;height:25px;margin:0 -3px;fill:none;stroke:#fff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 /* окно «в продаже» / покупка */
 #ug .ug-sub.mk{margin-top:4px;min-height:23px}
-#ug .ug-sub.mk+.ug-acts{margin-top:10px}
+#ug .ug-sub.mk+.ug-acts{margin-top:9px}
 #ug .mk-sale{position:relative;display:inline-flex;align-items:center;vertical-align:top;gap:3px;height:22px;padding:0 9px 0 8px;border:0;border-radius:11px;color:#fff;font-size:13px;font-weight:600;line-height:1;white-space:nowrap}
+#ug .mk-sale::before,#ug .mk-sale::after{display:none}
+#ug .mk-sale{height:21px;box-shadow:none}
 #ug .mk-sale svg{width:16px;height:16px;fill:#fff;fill-rule:evenodd;flex:none}
 #ug.mkbuy .ug-acts{display:none}
 #ug.mkbuy .ug-note{display:none!important}
@@ -1445,7 +1447,25 @@ $$('[data-p]').forEach(e=>e.onclick=()=>{ const st=e.dataset.p==='settings'; if(
 $$('[data-go]').forEach(e=>e.onclick=()=>go(e.dataset.go,false,false,{full:true}));
 
 let tt;
-function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1600)}
+function shapeSale(b){
+  if(!b)return;
+  const f=n=>+n.toFixed(2),run=()=>{
+    const w=b.offsetWidth,h=b.offsetHeight;if(!w||!h)return;
+    const r=h/2,px=Math.min(1.09*r,w/2),hx=px*.57,vy=r*.57;
+    const d='M'+f(px)+' 0L'+f(w-px)+' 0C'+f(w-px+hx)+' 0 '+f(w)+' '+f(r-vy)+' '+f(w)+' '+f(r)+'C'+f(w)+' '+f(r+vy)+' '+f(w-px+hx)+' '+f(h)+' '+f(w-px)+' '+f(h)+'L'+f(px)+' '+f(h)+'C'+f(px-hx)+' '+f(h)+' 0 '+f(r+vy)+' 0 '+f(r)+'C0 '+f(r-vy)+' '+f(px-hx)+' 0 '+f(px)+' 0Z';
+    const st=(o,a)=>'<stop offset="'+o+'" stop-color="#c4c6ce" stop-opacity="'+a+'"/>';
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">'+st(0,.55)+st(.14,.3)+st(.32,.07)+st(.5,0)+st(.68,.07)+st(.86,.3)+st(1,.55)+'</linearGradient></defs><path d="'+d+'" fill="none" stroke="url(#g)" stroke-width="2"/></svg>';
+    b.style.borderRadius='0';b.style.webkitClipPath=b.style.clipPath='path("'+d+'")';
+    b.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';b.style.backgroundSize='100% 100%';b.style.backgroundRepeat='no-repeat';
+  };
+  if(window.ResizeObserver)new ResizeObserver(run).observe(b);run();
+}
+function noStars(){
+  const m='На вашем балансе недостаточно звезд, пожалуйста пополните баланс.',go2=()=>{try{const b=document.getElementById('bmClose');if(document.getElementById('bm').classList.contains('on')&&b)b.click()}catch(_){}try{go('stars')}catch(_){}};
+  if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){try{tg.showPopup({title:'Недостаточно звезд',message:m,buttons:[{id:'cancel',type:'default',text:'Отмена'},{id:'top',type:'default',text:'Пополнить'}]},id=>{if(id==='top')go2()});return}catch(e){}}
+  if(confirm('Недостаточно звезд\n\n'+m))go2();
+}
+function toast(t){return;const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1600)}
 $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
 
 /* ===== Анимации ===== */
@@ -2375,7 +2395,7 @@ renderMyGifts();
     const total=cur.total||DEF_TOTAL,sold=SOLDMAP[cur.key]||0,n=qty;
     if(total-sold<n){toast(total-sold>0?'Осталось только '+fmt(total-sold):'Подарки закончились');return}
     const cost=(+cur.price)*n;
-    if(getStars()<cost){toast('Недостаточно звёзд');return}
+    if(getStars()<cost){noStars();return}
     addStars(-cost);
     SOLDMAP[cur.key]=sold+n;
     const cmt=$b('bmMsg').value.trim();
@@ -3306,7 +3326,7 @@ renderMyGifts();
     if(upBusy||busy)return;
     const x=window.__gmCur;if(!x)return;
     if(x.upg){toast('Подарок уже улучшен');return}
-    if(getStars()<PRICE){toast('Недостаточно звёзд');return}
+    if(getStars()<PRICE){noStars();return}
     upBusy=true;addStars(-PRICE);
     const go=$u('umGo');cyc++;
     ugLater(()=>go.classList.add('busy'),240);
@@ -4354,7 +4374,7 @@ renderMyGifts();
     }
     const on=!!(x&&x.sale);
     sub.classList.toggle('mk',on);
-    if(on){sub.innerHTML='<span class="mk-sale glass">В продаже за '+STARSVG+'<b style="font-weight:inherit">'+fmt(x.sale.p)+'</b></span>';try{smoothFit(sub.querySelector('.mk-sale'),'pill',true,1)}catch(_){}}
+    if(on){sub.innerHTML='<span class="mk-sale glass">В продаже за '+STARSVG+'<b style="font-weight:inherit">'+fmt(x.sale.p)+'</b></span>';try{shapeSale(sub.querySelector('.mk-sale'))}catch(_){}}
     else if(sub.querySelector('.mk-sale'))sub.textContent=(x&&x.upg&&x.upg.m)||'';
     if(btn){
       const u=btn.querySelector('use');if(u)u.setAttribute('href',on?'#i-unsell':'#i-sellit');
@@ -4525,7 +4545,7 @@ renderMyGifts();
 /* закреплённые подарки у аватарки: при прокрутке страницы вниз плавно уходят под аватарку, при прокрутке вверх так же плавно появляются;
    нажатие на модель подарка рядом с аватаркой открывает окно этого подарка */
 (function(){
-  const RANGE=70;   /* на скольких px прокрутки подарки полностью уходят под аватарку */
+  const RANGE=160;   /* на скольких px прокрутки подарки полностью уходят под аватарку */
   [['p-me','pPins'],['p-settings','sPins']].forEach(a=>{
     const pg=document.getElementById(a[0]),el=document.getElementById(a[1]);
     if(!pg||!el)return;
@@ -4534,8 +4554,8 @@ renderMyGifts();
       raf=0;
       const sc=Math.max(0,pg.scrollTop+(pg._off||0));
       let q;
-      if(last<0||ls==null)q=(sc-35)/RANGE;
-      else{const d=sc-ls;q=cq+(d>0?Math.max(0,sc-Math.max(ls,35))/RANGE:d*1.6/RANGE)}   /* вниз — старт после 35px; вверх — сразу и в 1.6 раза быстрее */
+      if(last<0||ls==null)q=(sc-6)/RANGE;
+      else{const d=sc-ls;q=cq+(d>0?Math.max(0,sc-Math.max(ls,6))/RANGE:d*1.6/RANGE)}   /* вниз — старт после 35px; вверх — сразу и в 1.6 раза быстрее */
       q=sc<=0?0:Math.max(0,Math.min(1,q));ls=sc;cq=q;
       if(last>=0&&Math.abs(q-last)<.002)return;
       last=q;el.style.setProperty('--pq',q.toFixed(3));el.classList.toggle('pq1',q>=.6);
