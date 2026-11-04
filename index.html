@@ -16,7 +16,7 @@
 --ic-gift-y:0px;                                          /* доп. сдвиг иконки подарка вниз */
 --ic-star-y:0px;                                          /* доп. сдвиг иконки звезды вниз */
 --menu-y:-1px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:12px;--stat-gap:3px;--stat-shift:3px;--cover-h:115vw;--shade-h:26%;--shade-blur:8px;--pcard-r:30px;--list-r:22px;--set-r:51px;--set-r-multi:28px;               /* аватар и скругление карточки профиля */
+--ava-size:100px;--ava-top:-38.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:36px;--ava-gap:12px;--stat-gap:3px;--stat-shift:3px;--pcard-r:30px;--list-r:22px;--set-r:51px;--set-r-multi:28px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;--ic-pf-qr:32px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:31px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--ic-hdr:25px;--ic-hdr-gift:31px;--ic-hdr-qr:28px;
@@ -170,9 +170,6 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 /* при прокрутке вниз подарки (--pq 0→1) сдвигаются к центру аватарки и уходят под неё; при прокрутке вверх выезжают обратно */
 .pinm{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;
 transform:translate3d(calc(var(--dx,0px)*var(--pq)),calc(var(--dy,0px)*var(--pq)),0) scale(calc(1 - .45*var(--pq)));opacity:calc(1 - var(--pq)*var(--pq));will-change:transform,opacity;transition:none}
-.page.cvx .pins{--pq:1!important}
-.page.cvt .pinm{transition:transform .3s cubic-bezier(.3,.8,.3,1) .1s,opacity .24s ease .16s}
-.page.cvx.cvt .pinm{transition:transform .3s cubic-bezier(.4,0,.6,1) .12s,opacity .2s ease .22s}
 .pname,.pstat,.pnum{will-change:transform}
 .pins.pq1 .pinm{pointer-events:none}
 .pinm.new{animation:pinIn .38s cubic-bezier(.2,.9,.25,1.2)}
@@ -181,22 +178,6 @@ transform:translate3d(calc(var(--dx,0px)*var(--pq)),calc(var(--dy,0px)*var(--pq)
 .ppin{position:absolute;left:6px;top:5px;width:17px;height:17px;z-index:3;pointer-events:none}
 .ppin svg{display:block;width:100%;height:100%;fill:#fff}
 .phead>:not(.ava):not(.pins){opacity:var(--hf,1)}
-.phead .ava{visibility:hidden}
-.cover{position:absolute;left:0;right:0;top:0;height:var(--cover-h);overflow:hidden;pointer-events:none}
-.cimg{position:absolute;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;overflow:hidden}
-.cshade{position:absolute;left:0;right:0;bottom:0;height:var(--shade-h);background:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,.42));
--webkit-backdrop-filter:blur(var(--shade-blur));backdrop-filter:blur(var(--shade-blur));
--webkit-mask-image:linear-gradient(to bottom,transparent,#000 75%);mask-image:linear-gradient(to bottom,transparent,#000 75%);opacity:var(--ci,0)}
-.cinfo{position:absolute;left:0;top:0;opacity:var(--cn,0)}
-.cname{font-size:24px;font-weight:550;line-height:1.1;width:max-content;white-space:nowrap}
-.cstat{width:max-content;white-space:nowrap;display:flex;align-items:center;gap:6px;margin-top:0;color:rgba(255,255,255,.78);font-size:17px;font-weight:500;line-height:1.2}
-.cstat svg{fill:#fff;fill-rule:evenodd;margin-left:-2px;margin-right:-3px}
-.page.anim .cimg{transition:left .22s,top .22s,width .22s,height .22s,border-radius .22s,font-size .22s,padding .22s;transition-timing-function:cubic-bezier(.3,.8,.3,1)}
-.page.anim .phead{transition:height .22s cubic-bezier(.3,.8,.3,1)}
-.page.anim .phead>:not(.ava){transition:none}
-.page.anim .cshade{transition:opacity .22s cubic-bezier(.3,.8,.3,1),clip-path .22s cubic-bezier(.3,.8,.3,1)}
-.page.anim .cinfo{transition:top .22s cubic-bezier(.3,.8,.3,1)}
-.page.anim .cname,.page.anim .cstat,.page.anim .cstat svg{transition:transform .22s cubic-bezier(.3,.8,.3,1),font-size .22s cubic-bezier(.3,.8,.3,1),margin .22s cubic-bezier(.3,.8,.3,1),color .22s,fill .22s}
 
 /* хедер: закреплённые кнопки поверх контента, стекло как у меню */
 #hdr{position:fixed;left:16px;right:16px;top:var(--hdr-top);z-index:1000;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
@@ -274,7 +255,7 @@ body.navanim #bar{z-index:1}
 .pbuy.an{background:linear-gradient(to bottom,#4fb0f2,#2b78cf)}
 #toast{position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 8px);left:50%;transform:translateX(-50%) translateY(-20px);background:#2c2c2e;padding:10px 18px;border-radius:16px;opacity:0;transition:.25s;pointer-events:none;z-index:2500;font-size:14px}
 #toast.on{opacity:1;transform:translateX(-50%)}
-.noanim *:not(#menuSlider):not(.cover):not(.cover *):not(.phead){transition:none!important;animation:none!important}
+.noanim *:not(#menuSlider):not(.phead){transition:none!important;animation:none!important}
 
 /* ===== профиль: когда слайдер закрепился под хедером, снизу выезжает синяя кнопка (стиль как «Купить» в модальном окне) ===== */
 #sendWrap{position:fixed;left:0;right:0;bottom:0;z-index:950;padding:0 32px 30px;pointer-events:none;isolation:isolate;visibility:hidden;transform:translateY(calc(100% + 24px));transition:transform .45s cubic-bezier(.25,.8,.25,1),visibility 0s linear .45s}
@@ -654,7 +635,6 @@ html,body{overscroll-behavior:none}
 #gm .gm-sheet{touch-action:pan-y}
 #gm.upv .gm-upw{padding-top:22px}
 #ug.morph.on .ug-sheet{transition:none}
-.page .cover{z-index:2}
 
 /* ===== МАРКЕТ ===== */
 .gava.mk-ava{background:linear-gradient(to bottom,#56caff,#3bb1e9)}
@@ -846,8 +826,6 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
 </section>
 
 <section class="page" id="p-settings">
-  <div class="cover"><div class="cimg"></div><div class="cshade"></div>
-    <div class="cinfo"><div class="cname"></div><div class="cstat"><svg class="ico" style="--s:var(--ic-rating-badge)"><use data-h="1" href="#i-h1"/></svg><span class="ctext"></span></div></div></div>
   <div class="phead">
     <div class="ava" id="ava"></div>
     <div class="pins" id="sPins"></div>
@@ -876,8 +854,6 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
 </section>
 
 <section class="page" id="p-me">
-  <div class="cover"><div class="cimg"></div><div class="cshade"></div>
-    <div class="cinfo"><div class="cname"></div><div class="cstat"><svg class="ico" style="--s:var(--ic-rating-badge)"><use data-h="1" href="#i-h1"/></svg><span class="ctext">в сети</span></div></div></div>
   <div class="phead">
     <div class="ava" id="pAva"></div>
     <div class="pins" id="pPins"></div>
@@ -1167,16 +1143,10 @@ $('#uname').textContent = name;
 $('#unum').textContent = num;
 const rating = 1; // пока у всех 1
 $('#pName').textContent = name;
-$$('.cname').forEach(e=>e.textContent=name);
 $('#pNum').textContent = num;
 $('#pUser').textContent = u.username ? '@'+u.username : '@username';
 $('#pRate').setAttribute('href','#i-n'+rating);
 $('#uRate').setAttribute('href','#i-n'+rating);
-// белая плашка рейтинга с пустой цифрой для обложки: копии символов без белых путей
-$$('symbol[id^="i-n"]').forEach(sy=>{const c=sy.cloneNode(true);c.id='i-h'+sy.id.slice(3);c.querySelectorAll('path[fill]').forEach(x=>x.remove());sy.parentNode.appendChild(c)});
-$$('use[data-h]').forEach(e=>e.setAttribute('href','#i-h'+rating));
-$$('.cimg').forEach(el=>{if(u.photo_url)el.style.backgroundImage='url("'+u.photo_url+'")';else el.textContent=name[0].toUpperCase()});
-$$('.page:not(#p-me) .ctext').forEach(e=>e.textContent=num);
 ['#ava','#pAva','#gAva'].forEach(s=>{
   const el=$(s);if(!el)return;
   if (u.photo_url) el.style.backgroundImage = 'url("'+u.photo_url+'")';
@@ -1208,96 +1178,6 @@ $('#hdr').addEventListener('click',e=>{
 });
 
 
-/* ===== Обложка: фото вырастает из круга аватарки при свайпе вниз ===== */
-const covers={};
-function makeCover(id){
-  const pg=$('#p-'+id),hd=pg.querySelector('.phead'),cv=pg.querySelector('.cover'),av=pg.querySelector('.ava'),im=pg.querySelector('.cimg');
-  const cn=pg.querySelector('.cname'),cs=pg.querySelector('.cstat'),csv=cs.querySelector('svg'),ctx=cs.querySelector('span'),pn=pg.querySelector('.pname'),pst=pg.querySelector('.pnum,.pstat'),ci=pg.querySelector('.cinfo');
-  let exp=false,h0=0,h1=0,g=null,N=null,tm=0,ct=0,collapsing=0;
-  const NFS=26,NGAP=-1;   // размер имени и отступ до строки «в сети» в раскрытой обложке (было 24 и 0)
-  const SHv=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stat-shift')),SH=isNaN(SHv)?0:SHv;
-  const SGv=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stat-gap')),SG=isNaN(SGv)?3:SGv,MR0=SG-6;
-  const lerp=(a,b,p)=>a+(b-a)*p;
-  function render(p){
-    if(!g)return;
-    hd.style.height=lerp(h0,h1,p)+'px';
-    if((p>0)!==pg.classList.contains('cvx')){pg.classList.add('cvt');pg.classList.toggle('cvx',p>0);clearTimeout(pg.__cvt);pg.__cvt=setTimeout(()=>pg.classList.remove('cvt'),750)}
-    clearTimeout(tm);
-    if(p>0){hd.style.setProperty('--hf',0);pg.style.setProperty('--cn',1)}
-    else if(collapsing){tm=setTimeout(()=>{if(!exp){hd.style.setProperty('--hf',1);pg.style.setProperty('--cn',0)}},240)}
-    else{hd.style.setProperty('--hf',1);pg.style.setProperty('--cn',0)}
-    if(N){
-      ci.style.top=lerp(N.y0,N.y1,p)+'px';
-      cn.style.transform='translateX('+lerp((g.W-N.wn0)/2,16,p)+'px)';cn.style.fontSize=lerp(28,NFS,p)+'px';
-      cs.style.transform='translateX('+lerp(N.xs0,16,p)+'px)';cs.style.marginTop=lerp(N.gap0,NGAP,p)+'px';cs.style.fontSize=lerp(N.fs0,17,p)+'px';
-      cs.style.color=p>0?'rgba(255,255,255,.78)':'rgb(158,158,158)';
-      const pu=pst.querySelector('use'),cu=cs.querySelector('use'),rt=pu&&(pu.getAttribute('href')||'').replace('#i-n','');
-      if(cu&&rt)cu.setAttribute('href',(p>0?'#i-h':'#i-n')+rt);
-      csv.style.fill=p>0?'#fff':'#4cb4e9';csv.style.marginLeft=lerp(0,-2,p)+'px';csv.style.marginRight=lerp(MR0,-3,p)+'px';
-    }
-    pg.style.setProperty('--ci',p>0?1:0);
-    im.style.left=lerp(g.L,0,p)+'px';im.style.top=lerp(g.T,0,p)+'px';
-    im.style.width=lerp(g.S,g.W,p)+'px';im.style.height=lerp(g.S,g.CH,p)+'px';
-    im.style.borderRadius=lerp(g.S/2,0,p)+'px';
-    {const L=lerp(g.L,0,p),T=lerp(g.T,0,p),Wd=lerp(g.S,g.W,p),Hd=lerp(g.S,g.CH,p);
-     pg.querySelector('.cshade').style.clipPath='inset('+(T-(g.CH-g.SH))+'px '+(g.W-(L+Wd))+'px '+(g.CH-(T+Hd))+'px '+L+'px round '+lerp(g.S/2,0,p)+'px)';}
-    im.style.fontSize=lerp(g.S*.44,g.W*.38,p)+'px';
-    im.style.paddingBottom=lerp(0,g.CH*.18,p)+'px';
-  }
-  function measure(){
-    pg.classList.remove('anim');hd.style.height='auto';
-    h0=hd.offsetHeight;
-    const ar=av.getBoundingClientRect(),cr0=cv.getBoundingClientRect();
-    g={L:ar.left-cr0.left,T:ar.top-cr0.top,S:av.offsetWidth,W:pg.clientWidth,CH:cv.offsetHeight,SH:pg.querySelector('.cshade').offsetHeight};
-    h1=Math.max(h0,g.CH-(hd.offsetTop+(pg._off||0))+16);
-    try{
-      const cr=cv.getBoundingClientRect(),rn=pn.getBoundingClientRect(),rp=pst.getBoundingClientRect();
-      const fs0=parseFloat(getComputedStyle(pst).fontSize)||17;
-      cn.style.transition=cs.style.transition=csv.style.transition='none';
-      cn.style.fontSize='28px';const wn0=cn.offsetWidth;
-      cs.style.fontSize=fs0+'px';csv.style.marginLeft='0px';csv.style.marginRight=MR0+'px';cs.style.marginTop='0px';
-      const wt=ctx.offsetWidth,ws=csv.getBoundingClientRect().width;
-      cs.style.fontSize='17px';const hs=cs.offsetHeight;
-      const y0=rn.top-cr.top+(rn.height-28*1.1)/2;
-      N={y0,y1:g.CH-14-(NFS*1.1+hs+NGAP),wn0,fs0,xs0:g.W/2-(ws+SG+wt)/2-SH,gap0:(rp.top-cr.top+(rp.height-hs)/2)-(y0+28*1.1)};
-      cn.style.transition=cs.style.transition=csv.style.transition='';
-    }catch(e){N=null}
-    render(exp?1:0);
-  }
-  function set(v,anim){
-    exp=v;pg.classList.toggle('anim',!!anim);render(v?1:0);
-  }
-  let ts=null,pull=0;
-  pg.addEventListener('touchstart',e=>{ts={x:e.touches[0].clientX,y:e.touches[0].clientY,drag:false,ok:pg.scrollTop+(pg._off||0)<=0}},{passive:true});
-  pg.addEventListener('touchmove',e=>{
-    if(!ts||swipeOn)return;const dy=e.touches[0].clientY-ts.y;
-    if(ts.closed){if(e.cancelable)e.preventDefault();return}      // обложка закрылась — остаток жеста страницу не двигает
-    if(!ts.drag&&Math.abs(e.touches[0].clientX-ts.x)>Math.abs(dy))return;
-    if(!exp){
-      if(ts.ok&&dy>0){ if(e.cancelable)e.preventDefault();
-        if(!ts.drag&&dy>6){ts.drag=true;set(true,true)}}
-    }else{
-      /* только два состояния: круг или обложка. Раскрытая обложка не листается — любое движение вверх сразу сворачивает её в круг */
-      if(e.cancelable)e.preventDefault();
-      if(dy<-2){collapse();ts.closed=true}
-    }
-  },{passive:false});
-  /* листаем страницу вниз при раскрытой обложке — сначала обложка сворачивается в аватар, и только потом работает закрепление имени */
-  function collapse(){
-    if(!exp)return;
-    exp=false;collapsing=1;pg.classList.add('anim');render(0);pg.scrollTop=0;
-    clearTimeout(ct);ct=setTimeout(()=>{collapsing=0;pg.dispatchEvent(new Event('scroll'))},260);
-  }
-  pg.addEventListener('scroll',()=>{if(exp&&pg.scrollTop>2)collapse()},{passive:true});   // запасной путь: колесо мыши, инерция
-  const end=()=>{ts=null;pull=0};
-  pg.addEventListener('touchend',end);pg.addEventListener('touchcancel',end);
-  const remeasure=()=>{if(pg.classList.contains('on'))measure()};
-  if(window.ResizeObserver)new ResizeObserver(remeasure).observe(pg);
-  covers[id]={measure,remeasure,reset:()=>{clearTimeout(ct);collapsing=0;if(exp){exp=false;pg.classList.remove('anim');render(0)}},isExp:()=>exp||!!collapsing};
-}
-makeCover('me');makeCover('settings');
-addEventListener('resize',()=>{const c=covers[cur];if(c)c.measure()});
-if(tg&&tg.onEvent)['safeAreaChanged','contentSafeAreaChanged','viewportChanged','fullscreenChanged'].forEach(ev=>tg.onEvent(ev,()=>setTimeout(()=>{const c=covers[cur];if(c)c.measure()},60)));
 
 /* ===== Навигация ===== */
 const PAGES=['market','gifts','stars','settings'];
@@ -1347,7 +1227,6 @@ function go(p,instant,back,o){
   if(p==='me'){requestAnimationFrame(()=>{try{pgPaint($('#pGrid'))}catch(_){}meFillSpace()})}   /* после первого кадра, а не до старта анимации */
   if(prev==='me'&&p!=='me')setTimeout(()=>{if(cur!=='me'){try{renderMyGifts(true)}catch(_){}}},NAV_MS+150);   /* ушли из профиля — оставляем в нём только первую порцию карточек */
   const later=[];
-  Object.keys(covers).forEach(k=>{if(k===p)covers[k].measure();else if(dir!==0&&k===prev)later.push(()=>covers[k].reset());else covers[k].reset()});
   giftsOn(p==='gifts'); starsOn(p==='stars'); marketOn(p==='market');
   if(dir!==0){
     const top=dir>0?inc:out,bot=dir>0?out:inc,bar=$('#bar');
@@ -1750,7 +1629,7 @@ function clearAppCache(){ location.reload(); }
   /* имя, рейтинг и «в сети» не появляются новым блоком, а уменьшаются и «приезжают» в хедер вместе с прокруткой.
      Только transform и opacity (без перерасчёта раскладки на каждый кадр); размеры замеряются один раз и при изменении раскладки. */
   const pg=$('#p-me'),pin=$('#mePin'),bg=pin.querySelector('.mpin-bg'),bg2=pin.querySelector('.mpin-bg2'),bl=pin.querySelector('.mpin-bl'),band=pin.querySelector('.mpin-band'),nm=$('#mpN'),st=$('#mpS'),sv=$('#mpSv'),rt=$('#mpR'),stTxt=st.querySelector('span');
-  const pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),pst=ps.querySelector('span'),mb=pg.querySelector('.mbody'),phd=pg.querySelector('.phead'),cvr=pg.querySelector('.cover');
+  const pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),pst=ps.querySelector('span'),mb=pg.querySelector('.mbody'),phd=pg.querySelector('.phead');
   let off=0;   // пока страница «покоится» ниже ступеньки, всё что выше неё сдвинуто за верх страницы на off px (см. shiftOn)
   const KN=17/28,KS=14/17,KI=(17/22)/KS,TRAVEL=60,GAP_TABS=16;
   const SOFT_RAMP=80,SOFT_MIN=.14,SOFT_BLUR=2;let lsb='';   // как затемнение смягчается после «ступеньки»: на скольких px прокрутки, насколько, какой блюр
@@ -1807,7 +1686,6 @@ function clearAppCache(){ location.reload(); }
     syncSend();
     const sc=pg.scrollTop+off,top0=M.dn-sc;
     let p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
-    if(covers.me&&covers.me.isExp())p=0;
     if(p<=0){
       if(lp!==0){lp=0;pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0;bg2.style.opacity=0;bl.style.opacity=0;lsb='';pin.style.removeProperty('--sb')}
       return;
@@ -1874,8 +1752,8 @@ function clearAppCache(){ location.reload(); }
      Теперь «верх» прокрутки (scrollTop=0) — это и есть ступенька, и жест вверх упирается в неё силами самого браузера:
      ни JS, ни отмена touchmove во время жеста не нужны. Когда страница встала на ступеньке — сдвиг снимается, и новый свайп едет выше.
      Сдвигаем/снимаем только в покое: менять scrollTop посреди касания iOS не даёт. Обложка (absolute) сдвигается обратно. */
-  const shiftOn=T=>{if(off||T<=2)return;const sc=pg.scrollTop;off=T;pg._off=T;phd.style.marginTop=(-T)+'px';cvr.style.transform='translateY('+(-T)+'px)';pg.scrollTop=sc-T};
-  const shiftOff=()=>{if(!off)return;const o=off;off=0;pg._off=0;phd.style.marginTop='';cvr.style.transform='';pg.scrollTop+=o};
+  const shiftOn=T=>{if(off||T<=2)return;const sc=pg.scrollTop;off=T;pg._off=T;phd.style.marginTop=(-T)+'px';pg.scrollTop=sc-T};
+  const shiftOff=()=>{if(!off)return;const o=off;off=0;pg._off=0;phd.style.marginTop='';pg.scrollTop+=o};
   /* прокрутка профиля в самое начало (с учётом сдвига «ступеньки») */
   window.meTop=()=>{try{stopAnim();shiftOff();pg.scrollTo({top:0,behavior:'smooth'})}catch(_){pg.scrollTop=0}};
   let sett=0;
@@ -1956,7 +1834,6 @@ function clearAppCache(){ location.reload(); }
     if(!M){measure();if(!M)return}
     const top0=M.dn-pg.scrollTop;
     let p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
-    if(covers.settings&&covers.settings.isExp())p=0;
     if(p<=0){
       if(lp!==0){lp=0;pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0}
       return;
