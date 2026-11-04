@@ -227,6 +227,19 @@ body.navanim #bar{z-index:1}
 .mpin-n{position:absolute;top:0;left:16px;right:16px;text-align:center;font-size:28px;font-weight:550;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform-origin:50% 0;will-change:transform}
 .mpin-s{position:absolute;top:0;left:16px;right:16px;display:flex;align-items:center;justify-content:center;gap:3px;font-size:17px;font-weight:500;color:var(--hint);white-space:nowrap;transform-origin:50% 0;will-change:transform}
 .mpin-s svg{width:22px;height:22px;fill:var(--accent);fill-rule:evenodd;flex:none}
+/* имя/статус «приезжают» в хедер: движение привязано к прокрутке страницы на уровне браузера (без JS-округления до пикселей) */
+html{timeline-scope:--meSc,--stSc}
+#p-me{scroll-timeline:--meSc block}
+#p-settings{scroll-timeline:--stSc block}
+@keyframes sdN{from{transform:translate3d(0,var(--ls),0) scale(1)}to{transform:translate3d(0,var(--y1),0) scale(var(--kn))}}
+@keyframes sdS{from{transform:translate3d(-3px,var(--sy0),0) scale(1)}to{transform:translate3d(0,var(--sy1),0) scale(var(--ks))}}
+@keyframes sdV{from{transform:scale(1)}to{transform:scale(var(--ki))}}
+#mePin.sd .mpin-n,#setPin.sd .mpin-n{animation:sdN linear both}
+#mePin.sd .mpin-s,#setPin.sd .mpin-s{animation:sdS linear both}
+#mePin.sd .mpin-s svg,#setPin.sd .mpin-s svg{animation:sdV linear both}
+#mePin.sd .mpin-n,#mePin.sd .mpin-s,#mePin.sd .mpin-s svg{animation-timeline:--meSc;animation-range:var(--r0) var(--r1)}
+#setPin.sd .mpin-n,#setPin.sd .mpin-s,#setPin.sd .mpin-s svg{animation-timeline:--stSc;animation-range:var(--r0) var(--r1)}
+
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:40px;border-radius:21.2px/20px;display:flex;align-items:stretch;padding:3px}
 .mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:18.05px/17px;pointer-events:none;z-index:1;transition:left .22s cubic-bezier(.25,.9,.3,1),width .22s cubic-bezier(.25,.9,.3,1)}
@@ -1638,6 +1651,7 @@ function clearAppCache(){ location.reload(); }
      Только transform и opacity (без перерасчёта раскладки на каждый кадр); размеры замеряются один раз и при изменении раскладки. */
   const pg=$('#p-me'),pin=$('#mePin'),bg=pin.querySelector('.mpin-bg'),bg2=pin.querySelector('.mpin-bg2'),bl=pin.querySelector('.mpin-bl'),band=pin.querySelector('.mpin-band'),nm=$('#mpN'),st=$('#mpS'),sv=$('#mpSv'),rt=$('#mpR'),stTxt=st.querySelector('span');
   const pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),pst=ps.querySelector('span'),mb=pg.querySelector('.mbody'),phd=pg.querySelector('.phead');
+  const SD=!!(window.CSS&&CSS.supports&&CSS.supports('animation-timeline','--x')&&CSS.supports('timeline-scope','--x'));if(SD)pin.classList.add('sd');   // браузер умеет привязывать анимацию к прокрутке — имя/статус едут без участия JS
   let off=0;   // пока страница «покоится» ниже ступеньки, всё что выше неё сдвинуто за верх страницы на off px (см. shiftOn)
   const KN=17/28,KS=14/17,KI=(17/22)/KS,TRAVEL=60,GAP_TABS=16;
   const SOFT_RAMP=80,SOFT_MIN=.14,SOFT_BLUR=2;let lsb='';   // как затемнение смягчается после «ступеньки»: на скольких px прокрутки, насколько, какой блюр
@@ -1652,7 +1666,13 @@ function clearAppCache(){ location.reload(); }
     nm.style.lineHeight=hn+'px';nm.style.height=hn+'px';st.style.height=hs+'px';
     const y1=bt+(bh-(hn*KN+hs*KS))/2;
     M={dn:pr.top+sc,hn,hs,gap:sr.top-pr.bottom,y1,ls:y1+TRAVEL,tabsAt:mb.offsetTop+off-(bt+bh+GAP_TABS),ext:Math.max(0,bg2.offsetHeight-bg.offsetHeight)};
-    lp=-2;
+    lp=-2;sdVars();
+  }
+  function sdVars(){
+    if(!SD||!M)return;const q=pin.style;
+    q.setProperty('--ls',M.ls+'px');q.setProperty('--y1',M.y1+'px');q.setProperty('--kn',KN);
+    q.setProperty('--sy0',(M.ls+M.hn+M.gap)+'px');q.setProperty('--sy1',(M.y1+M.hn*KN)+'px');q.setProperty('--ks',KS);q.setProperty('--ki',KI);
+    q.setProperty('--r0',(M.dn-M.ls-off)+'px');q.setProperty('--r1',(M.dn-M.y1-off)+'px');
   }
   /* для вкладок профиля: на какой прокрутке слайдер закрепляется под хедером (ступенька) и текущий сдвиг */
   window.meStep=()=>{if(!M)measure();return M?{T:M.tabsAt,off:off}:null};
@@ -1725,7 +1745,7 @@ function clearAppCache(){ location.reload(); }
       const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}}
     lp=p;
     const top=Math.max(top0,M.y1);
-    smTo(top,p);
+    if(!SD)smTo(top,p);
     /* после того как слайдер встал под кнопки, при дальнейшей прокрутке затемнение становится мягче: сквозь него видны размытые карточки */
     const rr=Math.max(0,Math.min(1,(sc-M.tabsAt)/SOFT_RAMP)),mm=1-SOFT_MIN*rr,sbv=(rr*SOFT_BLUR).toFixed(1)+'px';
     if(sbv!==lsb){lsb=sbv;pin.style.setProperty('--sb',sbv)}
@@ -1784,9 +1804,9 @@ function clearAppCache(){ location.reload(); }
     if(sc-T>pg.clientHeight*1.2)return;   /* далеко от ступеньки (глубоко в списке) сдвиг не нужен: именно там карточки «улетали» вверх с чёрной дырой */
     off=T;pg._off=T;phd.style.marginTop=(-T)+'px';pg.scrollTop=sc-T;
     if(Math.abs(pg.scrollTop-(sc-T))>1.5){off=0;pg._off=0;phd.style.marginTop='';pg.scrollTop=sc}   /* браузер не дал выставить прокрутку — откатываем, чтобы список не прыгал */
-    M=null;requestAnimationFrame(upd);
+    sdVars();M=null;requestAnimationFrame(upd);
   };
-  const shiftOff=()=>{if(!off)return;const o=off;off=0;pg._off=0;phd.style.marginTop='';pg.scrollTop+=o;M=null;requestAnimationFrame(upd)};
+  const shiftOff=()=>{if(!off)return;const o=off;off=0;pg._off=0;phd.style.marginTop='';pg.scrollTop+=o;sdVars();M=null;requestAnimationFrame(upd)};
   /* прокрутка профиля в самое начало (с учётом сдвига «ступеньки») */
   window.meTop=()=>{try{stopAnim();shiftOff();pg.scrollTo({top:0,behavior:'smooth'})}catch(_){pg.scrollTop=0}};
   let sett=0;
@@ -1850,7 +1870,14 @@ function clearAppCache(){ location.reload(); }
   const KN=17/28,TRAVEL=60;
   let KS=14/17,KI=(17/22)/KS;
   const lerp=(a,b,t)=>a+(b-a)*t;
+  const SD=!!(window.CSS&&CSS.supports&&CSS.supports('animation-timeline','--x')&&CSS.supports('timeline-scope','--x'));if(SD)pin.classList.add('sd');
   let M=null,lp=-1,lh='',ln='';
+  function sdVars(){
+    if(!SD||!M)return;const q=pin.style;
+    q.setProperty('--ls',M.ls+'px');q.setProperty('--y1',M.y1+'px');q.setProperty('--kn',KN);
+    q.setProperty('--sy0',(M.ls+M.hn+M.gap)+'px');q.setProperty('--sy1',(M.y1+M.hn*KN)+'px');q.setProperty('--ks',KS);q.setProperty('--ki',KI);
+    q.setProperty('--r0',(M.dn-M.ls)+'px');q.setProperty('--r1',(M.dn-M.y1)+'px');
+  }
   function measure(){
     if(!pg.classList.contains('on')){M=null;return}
     const sc=pg.scrollTop,pr=pn.getBoundingClientRect(),sr=ps.getBoundingClientRect();
@@ -1861,7 +1888,7 @@ function clearAppCache(){ location.reload(); }
     nm.style.lineHeight=hn+'px';nm.style.height=hn+'px';st.style.height=hs+'px';
     const y1=bt+(bh-(hn*KN+hs*KS))/2;
     M={dn:pr.top+sc,hn,hs,gap:sr.top-pr.bottom,y1,ls:y1+TRAVEL};
-    lp=-2;
+    lp=-2;sdVars();
   }
   /* сглаживание: scrollTop отдаёт целые пиксели, имя и номер догоняют цель плавно */
   const SM=38;let cur=null,tgt=null,sraf=0,stl=0;
@@ -1897,7 +1924,7 @@ function clearAppCache(){ location.reload(); }
       if(pst.textContent!==stTxt.textContent)stTxt.textContent=pst.textContent;
       const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}}
     lp=p;
-    smTo(Math.max(top0,M.y1),p);
+    if(!SD)smTo(Math.max(top0,M.y1),p);
     bg.style.opacity=p;   // полоса затемнения фиксированной высоты (высота хедера), дальше вниз не растёт
   }
   pg.addEventListener('scroll',upd,{passive:true});
