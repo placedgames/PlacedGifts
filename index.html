@@ -390,7 +390,7 @@ background:rgba(66,66,70,.58);-webkit-backdrop-filter:blur(30px) saturate(1.5);b
 #gm .gm-v .gm-cost img{width:19px;height:19px;transform:translateY(-1px)}
 #gm .gm-ava{flex:none;width:22px;height:22px;border-radius:50%;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600}
 #gm .gm-ava.an{background:linear-gradient(to bottom,#ff7b7b,#e5405e)}
-#gm .gm-pill{flex:0 1 auto;min-width:0;height:22px;padding:0 10px;border-radius:11px;background:rgba(76,180,233,.16);color:var(--accent);font-size:12px;font-weight:500;display:block;line-height:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#gm .gm-pill{flex:0 1 auto;min-width:0;height:20px;padding:0 8px;border-radius:10px;background:rgba(76,180,233,.16);color:var(--accent);font-size:12px;font-weight:500;display:block;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #gm .gm-sell{background:#202b31;color:#4bb6f0;border:0;margin:0;font-family:inherit;cursor:pointer;-webkit-appearance:none;appearance:none}
 #gm .gm-h{margin-top:15px;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;font-size:14px;font-weight:400;color:#8e8e93}
 #gm .gm-h svg{flex:none;width:22px;height:22px}
@@ -653,6 +653,8 @@ html,body{overscroll-behavior:none}
 #ug .ug-note a svg{display:inline-block;width:7px;height:13px;margin-left:3px;vertical-align:-2px;fill:none;stroke:currentColor}
 #gm .gm-sheet{touch-action:pan-y}
 #gm.upv .gm-upw{padding-top:22px}
+#ug.morph.on .ug-sheet{transition:none}
+.page .cover{z-index:2}
 
 /* ===== МАРКЕТ ===== */
 .gava.mk-ava{background:linear-gradient(to bottom,#56caff,#3bb1e9)}
@@ -719,7 +721,7 @@ html,body{overscroll-behavior:none}
 .mk-sg{flex:none;width:31px;height:25px;margin:0 -3px;fill:none;stroke:#fff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 /* окно «в продаже» / покупка */
 #ug .ug-sub.mk{margin-top:4px;min-height:23px}
-#ug .ug-sub.mk+.ug-acts{margin-top:11px}
+#ug .ug-sub.mk+.ug-acts{margin-top:10px}
 #ug .mk-sale{position:relative;display:inline-flex;align-items:center;vertical-align:top;gap:3px;height:22px;padding:0 9px 0 8px;border:0;border-radius:11px;color:#fff;font-size:13px;font-weight:600;line-height:1;white-space:nowrap}
 #ug .mk-sale svg{width:16px;height:16px;fill:#fff;fill-rule:evenodd;flex:none}
 #ug.mkbuy .ug-acts{display:none}
@@ -2132,12 +2134,12 @@ function renderPins(){
 }
 let pgWarmT=0;
 /* порядок подарков как в сетке: сначала закреплённые, затем остальные */
-function myOrder(){return MYGIFTS.slice()}
+function myOrder(){return MYGIFTS.filter(x=>x.pin!=null).sort((a,b)=>(b.pinT||0)-(a.pinT||0)).concat(MYGIFTS.filter(x=>x.pin==null))}
 function renderMyGifts(reset){
   const g=$('#pGrid'),e=$('#pEmpty'),b=$('#mtabs button.on');if(!g||!e)return;
   const uniq=!!b&&b.dataset.m==='posts';
   /* закреплённые — в самом верху (новые закрепы выше); data-i остаётся индексом в MYGIFTS */
-  const list=uniq?[]:MYGIFTS.slice();
+  const list=uniq?[]:myOrder();
   g.__ix=list.map(x=>MYGIFTS.indexOf(x));
   try{renderPins()}catch(_){}
   const sig=(uniq?'u':'a')+'|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.pin!=null?'p'+x.pin:'',x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
@@ -2525,7 +2527,7 @@ renderMyGifts();
       row('Статус','Неуникальный')+
       (x.msg?'<div class="gm-r gm-c" id="gmCm"><span>'+esc(x.msg)+'</span></div>':'');
     $g('gmTbl').style.marginTop=x.anon?'':'23px';
-    const sl=$g('gmTbl').querySelector('.gm-sell');if(sl){sl.onclick=()=>sellGift(x,price);try{smoothFit(sl,'pill',true,1)}catch(_){}}
+    const sl=$g('gmTbl').querySelector('.gm-sell');if(sl)sl.onclick=()=>sellGift(x,price);
     {const cm=$g('gmTbl').querySelector('#gmCm');if(cm&&x.upg)cm.onclick=()=>askDelComment(x,()=>{if(cm.parentNode)cm.remove()})}
     gm.style.height=Math.max(window.innerHeight,(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.viewportStableHeight)||0)+'px';
     document.body.classList.add('bmopen');try{SP.hold(4,true)}catch(e){}
@@ -3932,7 +3934,7 @@ renderMyGifts();
     document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
     function pick(k){
       window.__cxSw=performance.now()+500;   /* клик, который придёт после отпускания пальца, не должен попасть в элемент под меню (например, во вкладку) */
-      const x=cur&&cur.x,fq=(k==='hide'||k==='show');close(fq);
+      const x=cur&&cur.x,fq=(k==='hide'||k==='show');close();
       setTimeout(()=>act(k,x),fq?0:300);   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
     }
     function act(k,x){
@@ -4352,7 +4354,7 @@ renderMyGifts();
     }
     const on=!!(x&&x.sale);
     sub.classList.toggle('mk',on);
-    if(on){sub.innerHTML='<span class="mk-sale glass">В продаже за '+STARSVG+'<b style="font-weight:inherit">'+fmt(x.sale.p)+'</b></span>'}
+    if(on){sub.innerHTML='<span class="mk-sale glass">В продаже за '+STARSVG+'<b style="font-weight:inherit">'+fmt(x.sale.p)+'</b></span>';try{smoothFit(sub.querySelector('.mk-sale'),'pill',true,1)}catch(_){}}
     else if(sub.querySelector('.mk-sale'))sub.textContent=(x&&x.upg&&x.upg.m)||'';
     if(btn){
       const u=btn.querySelector('use');if(u)u.setAttribute('href',on?'#i-unsell':'#i-sellit');
@@ -4527,18 +4529,22 @@ renderMyGifts();
   [['p-me','pPins'],['p-settings','sPins']].forEach(a=>{
     const pg=document.getElementById(a[0]),el=document.getElementById(a[1]);
     if(!pg||!el)return;
-    let raf=0,last=-1;
+    let raf=0,last=-1,ls=null,cq=0;
     const upd=()=>{
       raf=0;
-      const sc=Math.max(0,pg.scrollTop+(pg._off||0)),q=Math.min(1,sc/RANGE);
-      if(Math.abs(q-last)<.002)return;
+      const sc=Math.max(0,pg.scrollTop+(pg._off||0));
+      let q;
+      if(last<0||ls==null)q=(sc-35)/RANGE;
+      else{const d=sc-ls;q=cq+(d>0?Math.max(0,sc-Math.max(ls,35))/RANGE:d*1.6/RANGE)}   /* вниз — старт после 35px; вверх — сразу и в 1.6 раза быстрее */
+      q=sc<=0?0:Math.max(0,Math.min(1,q));ls=sc;cq=q;
+      if(last>=0&&Math.abs(q-last)<.002)return;
       last=q;el.style.setProperty('--pq',q.toFixed(3));el.classList.toggle('pq1',q>=.6);
     };
     const soon=()=>{if(!raf)raf=requestAnimationFrame(upd)};
     pg.addEventListener('scroll',soon,{passive:true});
     /* новые подарки (перерисовка) и возврат на страницу — берём текущую прокрутку */
     new MutationObserver(soon).observe(el,{childList:true});
-    new MutationObserver(()=>{last=-1;soon()}).observe(pg,{attributes:true,attributeFilter:['class']});
+    new MutationObserver(()=>{last=-1;ls=null;soon()}).observe(pg,{attributes:true,attributeFilter:['class']});
     el.addEventListener('click',e=>{
       const m=e.target.closest&&e.target.closest('.pinm');if(!m||el.classList.contains('pq1')||parseFloat(getComputedStyle(el).opacity)<.5)return;
       const x=MYGIFTS.filter(g=>g.pin!=null&&String(g.pin)===m.dataset.s)[0];if(!x)return;
