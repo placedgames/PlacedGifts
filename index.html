@@ -3673,11 +3673,13 @@ renderMyGifts();
   const gm=$('gm'),UG=$('ug'),um=$('um'),gS=$('gmSheet'),uS=$('ugSheet');
   let st=null,anim=false,until=0;
   const Wd=()=>window.innerWidth,eIn=p=>p*p,eOut=p=>1-Math.pow(1-p,3);
+  /* соседние подарки — в том же порядке, что в сетке профиля (закреплённые сверху, фильтр и сортировка учитываются) */
+  const ord=()=>{try{const o=myOrder();return o&&o.length?o:MYGIFTS}catch(_){return MYGIFTS}};
   function active(){
     if(anim)return null;
     if(um.classList.contains('on')||um.classList.contains('pre')||$('bm').classList.contains('on'))return null;
     const x=window.__gmCur;if(!x||x.sold)return null;
-    const i=MYGIFTS.indexOf(x);if(i<0||MYGIFTS.length<2)return null;
+    const O=ord(),i=O.indexOf(x);if(i<0||O.length<2)return null;
     if(UG.classList.contains('on'))return(window.__ugSw&&__ugSw.ready())?{k:'u',sheet:uS,box:UG,i:i}:null;
     if(window.__gmSw&&__gmSw.visible()&&!gm.classList.contains('upv'))return{k:'g',sheet:gS,box:gm,i:i};
     return null;
@@ -3710,7 +3712,7 @@ renderMyGifts();
     if(s.pv&&s.pv.n===n)return true;
     if(s.pv)revert(s);
     if(s.bad===n)return false;
-    const next=MYGIFTS[s.i+n];if(!next)return false;
+    const next=ord()[s.i+n];if(!next)return false;
     const k=(next.upg&&next.upg.c)?'u':'g',ns=k==='u'?uS:gS,nb=k==='u'?UG:gm,gh=ghostOf(s.sheet,s.tx);
     s.box.style.overflow='hidden';nb.style.overflow='hidden';
     let p;
@@ -3755,13 +3757,13 @@ renderMyGifts();
       if(Math.abs(dx)>Math.abs(dy)){st.axis='x';window.__swX=true;st.box.style.overflow='hidden'}else{st=null;return}
     }
     st.dx=dx;
-    const has=!!MYGIFTS[st.i+(dx<0?1:-1)],lim=Wd()+20;
+    const has=!!ord()[st.i+(dx<0?1:-1)],lim=Wd()+20;
     st.tx=has?Math.max(-lim,Math.min(lim,dx)):Math.sign(dx)*44*Math.tanh(Math.abs(dx)/160);
     const now=performance.now();st.sm.push({t:now,x:st.tx});if(st.sm.length>12)st.sm.shift();
     /* запись стиля — раз в кадр */
     if(!st.raf){const s=st;s.raf=requestAnimationFrame(()=>{s.raf=0;if(s.done)return;
       const n=s.dx<0?1:-1;
-      if(MYGIFTS[s.i+n]&&Math.abs(s.dx)>=8)preview(s,n);else if(s.pv)revert(s);
+      if(ord()[s.i+n]&&Math.abs(s.dx)>=8)preview(s,n);else if(s.pv)revert(s);
       place(s)})}
   }
   function finish(s){s.sheet.style.translate='';s.box.style.overflow='';anim=false;until=performance.now()+120}
@@ -3771,8 +3773,8 @@ renderMyGifts();
     if(s.axis!=='x')return;
     s.done=true;if(s.raf){cancelAnimationFrame(s.raf);s.raf=0}
     until=performance.now()+200;anim=true;
-    const n=s.dx<0?1:-1,next=MYGIFTS[s.i+n],v=velo(s),vd=v*Math.sign(s.dx);
-    const commit=e.type!=='touchcancel'&&next&&MYGIFTS[s.i]===s.cur&&(Math.abs(s.dx)>Wd()*.2||(vd>.25&&Math.abs(s.dx)>20));
+    const n=s.dx<0?1:-1,next=ord()[s.i+n],v=velo(s),vd=v*Math.sign(s.dx);
+    const commit=e.type!=='touchcancel'&&next&&ord()[s.i]===s.cur&&(Math.abs(s.dx)>Wd()*.2||(vd>.25&&Math.abs(s.dx)>20));
     if(commit&&!(s.pv&&s.pv.n===n)){preview(s,n)}
     if(commit&&s.pv&&s.pv.n===n){
       const pv=s.pv,D=pv.D;
