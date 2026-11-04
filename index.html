@@ -85,7 +85,7 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .empty{background:var(--card);border-radius:var(--r);padding:40px 20px;text-align:center;color:var(--hint)}
 
 /* profile */
-.ava{width:var(--ava-size);height:var(--ava-size);border-radius:50%;margin:var(--ava-top) auto var(--ava-gap);background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:700}
+.ava{width:var(--ava-size);height:var(--ava-size);border-radius:50%;margin:var(--ava-top) auto 10px;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:700}
 .pname{font-size:28px;font-weight:550;text-align:center}
 .pnum{color:var(--hint);display:flex;justify-content:center;align-items:center;gap:var(--stat-gap);margin:var(--name-gap) 0 var(--pgap-bottom)}
 .pnum svg{fill:var(--accent);fill-rule:evenodd}
@@ -165,7 +165,7 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 .page{position:relative}
 .phead{display:flow-root;height:auto;position:relative}
 /* закреплённые подарки вокруг аватарки: только модель подарка */
-.pins{position:absolute;left:50%;top:calc(var(--ava-top) + var(--ava-size)/2);width:300px;height:300px;margin:-150px 0 0 -150px;pointer-events:none;--pq:0;
+.pins{position:absolute;left:50%;top:calc(var(--ava-top) + var(--ava-size)/2);width:400px;height:300px;margin:-150px 0 0 -200px;pointer-events:none;--pq:0;
 -webkit-mask-image:radial-gradient(circle at 50% 50%,transparent calc(var(--ava-size)/2 - .5px),#000 calc(var(--ava-size)/2 + .5px));mask-image:radial-gradient(circle at 50% 50%,transparent calc(var(--ava-size)/2 - .5px),#000 calc(var(--ava-size)/2 + .5px));-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
 /* при прокрутке вниз подарки (--pq 0→1) сдвигаются к центру аватарки и уходят под неё; при прокрутке вверх выезжают обратно */
 .pinm{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;
@@ -1973,7 +1973,8 @@ function pgWatch(){
 }
 /* закреплённые подарки вокруг аватарки (до 6): позиции — центры точек относительно центра аватарки.
    слоты: 0 лево-верх, 1 право-верх, 2 слева, 3 справа, 4 лево-низ, 5 право-низ */
-const PIN_SLOTS=[[-68,-55],[68,-55],[-90,0],[90,0],[-68,55],[68,55]];
+/* места по рисунку: 0 — верх-лево, 1 — верх-право, 2 — далеко слева, 3 — далеко справа, 4 — низ-лево, 5 — низ-право (px от центра аватарки) */
+const PIN_SLOTS=[[-62,-44],[77,-35],[-142,21],[128,9],[-86,12],[83,19]];
 const PIN_DIAG=[[0,5],[1,4]];   /* «накрест» */
 /* допустимое расположение для n подарков:
    1 — случайный угол; 2 — только накрест; 3 и 4 — обязательно есть пара накрест, остальные где угодно;
@@ -2022,7 +2023,7 @@ function renderPins(){
     items.forEach(x=>{
       if(el.querySelector('[data-s="'+x.pin+'"]'))return;
       const mi=(x.upg&&x.upg.mi)||x.image,p=PIN_SLOTS[x.pin],d=document.createElement('div');
-      d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=(150+p[0])+'px';d.style.top=(150+p[1])+'px';d.style.setProperty('--dx',(-p[0])+'px');d.style.setProperty('--dy',(-p[1])+'px');
+      d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=(200+p[0])+'px';d.style.top=(150+p[1])+'px';d.style.setProperty('--dx',(-p[0])+'px');d.style.setProperty('--dy',(-p[1])+'px');
       d.innerHTML=mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>';
       el.appendChild(d);
       d.addEventListener('animationend',()=>d.classList.remove('new'),{once:true});
