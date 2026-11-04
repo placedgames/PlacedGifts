@@ -175,6 +175,10 @@ transform:translate3d(calc(var(--dx,0px)*var(--pq)),calc(var(--dy,0px)*var(--pq)
 .pinm .ps{position:absolute;left:50%;top:50%;width:var(--z,9px);height:var(--z,9px);margin:calc(var(--z,9px)/-2) 0 0 calc(var(--z,9px)/-2);z-index:-1;pointer-events:none;opacity:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='white' d='M255.2 40.4C247.8 42 245.3 44.1 242.3 51.5C239.6 58.2 239.1 74.6 238.3 82.5C236 104 226.8 200.5 218.7 213.5C216.5 216.9 213.2 219.3 209.5 220.7C196 225.9 177.9 227.4 163.5 229.8C141.2 233.4 118.9 237.4 96.5 240.4C86.8 241.7 75.8 241.9 66.5 245.3C59.9 247.7 55.2 255.5 57.8 262.5C58.9 265.5 61.7 268.6 64.5 270.1C71.6 273.7 94.4 274.5 103.5 275.8C126.7 279.2 150.2 281.7 173.5 284.1C184.4 285.3 200.5 286.1 210.5 290.1C214.7 291.8 218 294.7 220 298.8C229 317.6 236.5 408.6 239.3 434.8C240.1 443 240 451.6 241.7 459.8C244.4 472.5 259.8 476.2 266.7 464.5C269.4 459.8 269.3 453.7 269.9 448.5C272.7 423.7 282.3 307.8 294.5 294.5C301.4 287.1 314.9 286.8 324.2 285.4C326.9 285.1 329.6 284.7 332.2 284.3C345.5 282.8 443 271.6 447.2 269.4C451.6 267.2 454.6 262.3 454.5 257.5C454 241.5 439.5 243 427.5 241.2C406.5 238.2 309.3 226.6 297.5 218.3C294.1 216 292.2 212.6 290.9 208.8C287.5 199 286.4 188 285.1 177.8C281.1 146.1 277.2 114.5 274.5 82.8C273.7 73.7 274.1 57.7 271.2 49.8C270 46.5 265.5 42 262.2 40.8C260.9 40.3 259.6 40.5 258.2 40.5C257.2 40.4 256.3 40.4 255.2 40.4Z'/%3E%3C/svg%3E") center/contain no-repeat;animation:pinStar var(--d,5s) linear var(--dl,0s) infinite}
 @keyframes pinStar{0%{opacity:0;transform:translate(var(--x0),var(--y0)) scale(.3) rotate(0)}25%{opacity:.9}70%{opacity:.7}100%{opacity:0;transform:translate(var(--x1),var(--y1)) scale(1) rotate(80deg)}}
 body.scrolling .pinm .ps,body.bmopen .pinm .ps,.pins.pq1 .pinm .ps{animation-play-state:paused}
+/* подарки слегка покачиваются «на волнах»: чуть вверх-вниз, немного вбок и с небольшим наклоном (у каждого свой ритм) */
+.pinm .pw{position:absolute;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;animation:pinWave var(--wd,5.2s) ease-in-out var(--wl,0s) infinite;will-change:transform}
+@keyframes pinWave{0%{transform:translate(0,0) rotate(-2.5deg)}22%{transform:translate(1.2px,-2.2px) rotate(0deg)}48%{transform:translate(.4px,.8px) rotate(2.8deg)}71%{transform:translate(-1.2px,-1.6px) rotate(.5deg)}100%{transform:translate(0,0) rotate(-2.5deg)}}
+body.scrolling .pinm .pw,body.bmopen .pinm .pw,.pins.pq1 .pinm .pw{animation-play-state:paused}
 .pinm.new{animation:pinIn .38s cubic-bezier(.2,.9,.25,1.2)}
 @keyframes pinIn{from{opacity:0;scale:.3}to{opacity:1;scale:1}}
 .pinm img{width:100%;height:100%;object-fit:contain;display:block}
@@ -1216,6 +1220,7 @@ function go(p,instant,back,o){
     else dir=(DETAIL.includes(p)&&!(p==='me'&&!o.full))?1:0;
   }
   if(p==='me')meFull=!!o.full;
+  if(p!==prev&&(p==='me'||p==='settings')){try{window.pinFlip&&pinFlip()}catch(_){}}   /* раскладка подарков вокруг аватарки меняется при каждом заходе */
   cur=p;
   const wantNo=noBar(p,meFull);
   setHdr(p,dir!==0||!!o.bounce);
@@ -1755,8 +1760,14 @@ function clearAppCache(){ location.reload(); }
      Теперь «верх» прокрутки (scrollTop=0) — это и есть ступенька, и жест вверх упирается в неё силами самого браузера:
      ни JS, ни отмена touchmove во время жеста не нужны. Когда страница встала на ступеньке — сдвиг снимается, и новый свайп едет выше.
      Сдвигаем/снимаем только в покое: менять scrollTop посреди касания iOS не даёт. Обложка (absolute) сдвигается обратно. */
-  const shiftOn=T=>{if(off||T<=2)return;const sc=pg.scrollTop;off=T;pg._off=T;phd.style.marginTop=(-T)+'px';pg.scrollTop=sc-T};
-  const shiftOff=()=>{if(!off)return;const o=off;off=0;pg._off=0;phd.style.marginTop='';pg.scrollTop+=o};
+  const shiftOn=T=>{
+    if(off||T<=2)return;const sc=pg.scrollTop;
+    if(sc-T>pg.clientHeight*1.2)return;   /* далеко от ступеньки (глубоко в списке) сдвиг не нужен: именно там карточки «улетали» вверх с чёрной дырой */
+    off=T;pg._off=T;phd.style.marginTop=(-T)+'px';pg.scrollTop=sc-T;
+    if(Math.abs(pg.scrollTop-(sc-T))>1.5){off=0;pg._off=0;phd.style.marginTop='';pg.scrollTop=sc}   /* браузер не дал выставить прокрутку — откатываем, чтобы список не прыгал */
+    M=null;requestAnimationFrame(upd);
+  };
+  const shiftOff=()=>{if(!off)return;const o=off;off=0;pg._off=0;phd.style.marginTop='';pg.scrollTop+=o;M=null;requestAnimationFrame(upd)};
   /* прокрутка профиля в самое начало (с учётом сдвига «ступеньки») */
   window.meTop=()=>{try{stopAnim();shiftOff();pg.scrollTo({top:0,behavior:'smooth'})}catch(_){pg.scrollTop=0}};
   let sett=0;
@@ -1978,6 +1989,16 @@ function pgWatch(){
    слоты: 0 лево-верх, 1 право-верх, 2 слева, 3 справа, 4 лево-низ, 5 право-низ */
 /* места по рисунку: 0 — верх-лево, 1 — верх-право, 2 — далеко слева, 3 — далеко справа, 4 — низ-лево, 5 — низ-право (px от центра аватарки) */
 const PIN_SLOTS=[[-62,-44],[77,-35],[-142,21],[128,9],[-86,12],[83,19]];
+/* вариант B (рисунок с синей аватаркой); при каждом заходе на профиль/настройки раскладка чередуется A ↔ B */
+const PIN_SLOTS_B=[[-95,-33],[69,-32],[-140,8],[146,11],[-70,22],[92,13]];
+let PIN_V=0;
+const pinPos=i=>(PIN_V?PIN_SLOTS_B:PIN_SLOTS)[i];
+function pinApply(){
+  ['pPins','sPins'].forEach(id=>{const el=document.getElementById(id);if(!el)return;
+    [].slice.call(el.children).forEach(c=>{const p=pinPos(+c.dataset.s);if(!p)return;
+      c.style.left=(200+p[0])+'px';c.style.top=(150+p[1])+'px';c.style.setProperty('--dx',(-p[0])+'px');c.style.setProperty('--dy',(-p[1])+'px')})});
+}
+window.pinFlip=function(){PIN_V^=1;pinApply()};
 const PIN_DIAG=[[0,5],[1,4]];   /* «накрест» */
 /* допустимое расположение для n подарков:
    1 — случайный угол; 2 — только накрест; 3 и 4 — обязательно есть пара накрест, остальные где угодно;
@@ -2018,7 +2039,7 @@ function pinStars(seed){
   let h='';const f=v=>v-Math.floor(v);
   for(let i=0;i<16;i++){
     const r=k=>f(Math.sin((seed+1)*12.9898+i*78.233+k*37.719)*43758.5453),a=r(1)*6.283+i*.393,
-      x0=Math.cos(a)*4,y0=Math.sin(a)*4+2,x1=Math.cos(a+.5)*(9+r(2)*6),y1=Math.sin(a+.5)*(9+r(2)*6)+2;
+      x0=Math.cos(a)*6,y0=Math.sin(a)*6+2,x1=Math.cos(a+.5)*(17+r(2)*10),y1=Math.sin(a+.5)*(17+r(2)*10)+2;
     h+='<i class="ps" style="--z:'+(6+r(3)*4).toFixed(1)+'px;--d:'+(4.5+r(4)*2.5).toFixed(1)+'s;--dl:'+(-(i*.45+r(5)*.4)).toFixed(1)+'s;--x0:'+x0.toFixed(1)+'px;--y0:'+y0.toFixed(1)+'px;--x1:'+x1.toFixed(1)+'px;--y1:'+y1.toFixed(1)+'px"></i>';
   }
   return h;
@@ -2035,9 +2056,10 @@ function renderPins(){
     });
     items.forEach(x=>{
       if(el.querySelector('[data-s="'+x.pin+'"]'))return;
-      const mi=(x.upg&&x.upg.mi)||x.image,p=PIN_SLOTS[x.pin],d=document.createElement('div');
+      const mi=(x.upg&&x.upg.mi)||x.image,p=pinPos(x.pin),d=document.createElement('div');
       d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=(200+p[0])+'px';d.style.top=(150+p[1])+'px';d.style.setProperty('--dx',(-p[0])+'px');d.style.setProperty('--dy',(-p[1])+'px');
-      d.innerHTML=(mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+pinStars(x.pin);
+      const wr=k=>{const v=Math.sin((x.pin+1)*91.7+k*47.3)*43758.5453;return v-Math.floor(v)};
+      d.innerHTML='<div class="pw" style="--wd:'+(4.4+wr(1)*2.6).toFixed(1)+'s;--wl:'+(-wr(2)*6).toFixed(1)+'s;animation-direction:'+(wr(3)>.5?'normal':'reverse')+'">'+(mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+pinStars(x.pin)+'</div>';
       el.appendChild(d);
       d.addEventListener('animationend',()=>d.classList.remove('new'),{once:true});
     });
