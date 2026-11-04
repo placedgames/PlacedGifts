@@ -648,7 +648,11 @@ html,body{overscroll-behavior:none}
 .mk-ava svg{fill:#fff;fill-rule:evenodd}
 #p-mkg{padding-bottom:40px}
 .mk-fwrap{--fb:24px;position:sticky;top:8px;z-index:50;margin:0 -16px;padding:0 16px var(--fb)}
-.mk-fwrap::before{content:"";position:absolute;left:0;right:0;top:calc(-1*(var(--hdr-top) + var(--hdr-h) + 60px));bottom:var(--fb);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,#000 0,#000 calc(100% - 26px),rgba(0,0,0,0) 100%)}
+/* затемнение и размытие под кнопками хедера и фильтрами — та же кривая и то же поведение, что под хедером и слайдером профиля:
+   выезжает по мере прокрутки (--mq), потом становится мягче и появляется блюр (--mm, --mb). Значения ставит JS */
+.mk-fwrap::before,.mk-fwrap::after{content:"";position:absolute;left:0;right:0;top:calc(-1*(var(--hdr-top) + var(--hdr-h) + 60px));height:calc(var(--hdr-top) + var(--hdr-h) + 60px + 96px);z-index:-1;pointer-events:none;will-change:transform,opacity;transform:translate3d(0,calc(-35px*(1 - var(--mq,0))),0)}
+.mk-fwrap::before{opacity:var(--mq,0);-webkit-backdrop-filter:blur(var(--mb,0px));backdrop-filter:blur(var(--mb,0px));-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0,rgba(0,0,0,1.000) calc(var(--hdr-top) + var(--hdr-h) + 60px + 0.0px),rgba(0,0,0,0.999) calc(var(--hdr-top) + var(--hdr-h) + 60px + 4.8px),rgba(0,0,0,0.991) calc(var(--hdr-top) + var(--hdr-h) + 60px + 9.6px),rgba(0,0,0,0.973) calc(var(--hdr-top) + var(--hdr-h) + 60px + 14.4px),rgba(0,0,0,0.942) calc(var(--hdr-top) + var(--hdr-h) + 60px + 19.2px),rgba(0,0,0,0.896) calc(var(--hdr-top) + var(--hdr-h) + 60px + 24.0px),rgba(0,0,0,0.837) calc(var(--hdr-top) + var(--hdr-h) + 60px + 28.8px),rgba(0,0,0,0.765) calc(var(--hdr-top) + var(--hdr-h) + 60px + 33.6px),rgba(0,0,0,0.683) calc(var(--hdr-top) + var(--hdr-h) + 60px + 38.4px),rgba(0,0,0,0.593) calc(var(--hdr-top) + var(--hdr-h) + 60px + 43.2px),rgba(0,0,0,0.500) calc(var(--hdr-top) + var(--hdr-h) + 60px + 48.0px),rgba(0,0,0,0.407) calc(var(--hdr-top) + var(--hdr-h) + 60px + 52.8px),rgba(0,0,0,0.317) calc(var(--hdr-top) + var(--hdr-h) + 60px + 57.6px),rgba(0,0,0,0.235) calc(var(--hdr-top) + var(--hdr-h) + 60px + 62.4px),rgba(0,0,0,0.163) calc(var(--hdr-top) + var(--hdr-h) + 60px + 67.2px),rgba(0,0,0,0.104) calc(var(--hdr-top) + var(--hdr-h) + 60px + 72.0px),rgba(0,0,0,0.058) calc(var(--hdr-top) + var(--hdr-h) + 60px + 76.8px),rgba(0,0,0,0.027) calc(var(--hdr-top) + var(--hdr-h) + 60px + 81.6px),rgba(0,0,0,0.009) calc(var(--hdr-top) + var(--hdr-h) + 60px + 86.4px),rgba(0,0,0,0.001) calc(var(--hdr-top) + var(--hdr-h) + 60px + 91.2px),rgba(0,0,0,0.000) calc(var(--hdr-top) + var(--hdr-h) + 60px + 96.0px));mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0,rgba(0,0,0,1.000) calc(var(--hdr-top) + var(--hdr-h) + 60px + 0.0px),rgba(0,0,0,0.999) calc(var(--hdr-top) + var(--hdr-h) + 60px + 4.8px),rgba(0,0,0,0.991) calc(var(--hdr-top) + var(--hdr-h) + 60px + 9.6px),rgba(0,0,0,0.973) calc(var(--hdr-top) + var(--hdr-h) + 60px + 14.4px),rgba(0,0,0,0.942) calc(var(--hdr-top) + var(--hdr-h) + 60px + 19.2px),rgba(0,0,0,0.896) calc(var(--hdr-top) + var(--hdr-h) + 60px + 24.0px),rgba(0,0,0,0.837) calc(var(--hdr-top) + var(--hdr-h) + 60px + 28.8px),rgba(0,0,0,0.765) calc(var(--hdr-top) + var(--hdr-h) + 60px + 33.6px),rgba(0,0,0,0.683) calc(var(--hdr-top) + var(--hdr-h) + 60px + 38.4px),rgba(0,0,0,0.593) calc(var(--hdr-top) + var(--hdr-h) + 60px + 43.2px),rgba(0,0,0,0.500) calc(var(--hdr-top) + var(--hdr-h) + 60px + 48.0px),rgba(0,0,0,0.407) calc(var(--hdr-top) + var(--hdr-h) + 60px + 52.8px),rgba(0,0,0,0.317) calc(var(--hdr-top) + var(--hdr-h) + 60px + 57.6px),rgba(0,0,0,0.235) calc(var(--hdr-top) + var(--hdr-h) + 60px + 62.4px),rgba(0,0,0,0.163) calc(var(--hdr-top) + var(--hdr-h) + 60px + 67.2px),rgba(0,0,0,0.104) calc(var(--hdr-top) + var(--hdr-h) + 60px + 72.0px),rgba(0,0,0,0.058) calc(var(--hdr-top) + var(--hdr-h) + 60px + 76.8px),rgba(0,0,0,0.027) calc(var(--hdr-top) + var(--hdr-h) + 60px + 81.6px),rgba(0,0,0,0.009) calc(var(--hdr-top) + var(--hdr-h) + 60px + 86.4px),rgba(0,0,0,0.001) calc(var(--hdr-top) + var(--hdr-h) + 60px + 91.2px),rgba(0,0,0,0.000) calc(var(--hdr-top) + var(--hdr-h) + 60px + 96.0px))}
+.mk-fwrap::after{opacity:calc(var(--mq,0)*var(--mm,1));background:linear-gradient(to bottom,rgba(0,0,0,1) 0,rgba(0,0,0,1.000) calc(var(--hdr-top) + var(--hdr-h) + 60px + 0.0px),rgba(0,0,0,0.999) calc(var(--hdr-top) + var(--hdr-h) + 60px + 4.8px),rgba(0,0,0,0.991) calc(var(--hdr-top) + var(--hdr-h) + 60px + 9.6px),rgba(0,0,0,0.973) calc(var(--hdr-top) + var(--hdr-h) + 60px + 14.4px),rgba(0,0,0,0.942) calc(var(--hdr-top) + var(--hdr-h) + 60px + 19.2px),rgba(0,0,0,0.896) calc(var(--hdr-top) + var(--hdr-h) + 60px + 24.0px),rgba(0,0,0,0.837) calc(var(--hdr-top) + var(--hdr-h) + 60px + 28.8px),rgba(0,0,0,0.765) calc(var(--hdr-top) + var(--hdr-h) + 60px + 33.6px),rgba(0,0,0,0.683) calc(var(--hdr-top) + var(--hdr-h) + 60px + 38.4px),rgba(0,0,0,0.593) calc(var(--hdr-top) + var(--hdr-h) + 60px + 43.2px),rgba(0,0,0,0.500) calc(var(--hdr-top) + var(--hdr-h) + 60px + 48.0px),rgba(0,0,0,0.407) calc(var(--hdr-top) + var(--hdr-h) + 60px + 52.8px),rgba(0,0,0,0.317) calc(var(--hdr-top) + var(--hdr-h) + 60px + 57.6px),rgba(0,0,0,0.235) calc(var(--hdr-top) + var(--hdr-h) + 60px + 62.4px),rgba(0,0,0,0.163) calc(var(--hdr-top) + var(--hdr-h) + 60px + 67.2px),rgba(0,0,0,0.104) calc(var(--hdr-top) + var(--hdr-h) + 60px + 72.0px),rgba(0,0,0,0.058) calc(var(--hdr-top) + var(--hdr-h) + 60px + 76.8px),rgba(0,0,0,0.027) calc(var(--hdr-top) + var(--hdr-h) + 60px + 81.6px),rgba(0,0,0,0.009) calc(var(--hdr-top) + var(--hdr-h) + 60px + 86.4px),rgba(0,0,0,0.001) calc(var(--hdr-top) + var(--hdr-h) + 60px + 91.2px),rgba(0,0,0,0.000) calc(var(--hdr-top) + var(--hdr-h) + 60px + 96.0px))}
 .mk-filters{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;margin:0 -16px;padding:0 16px;scrollbar-width:none}
 .mk-filters>:first-child{margin-left:auto}
 .mk-filters>:last-child{margin-right:auto}
@@ -703,8 +707,9 @@ html,body{overscroll-behavior:none}
 .mk-ie{font-size:19px;line-height:24px;text-align:center}
 .mk-sg{flex:none;width:31px;height:25px;margin:0 -3px;fill:none;stroke:#fff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 /* окно «в продаже» / покупка */
-#ug .ug-sub.mk{margin-top:8px;min-height:24px}
-#ug .mk-sale{position:relative;display:inline-flex;align-items:center;vertical-align:top;gap:3px;height:24px;padding:0 9px 0 8px;border:0;border-radius:12px;background:rgba(200,202,210,.34);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);color:#fff;font-size:13px;font-weight:600;line-height:1;white-space:nowrap}
+#ug .ug-sub.mk{margin-top:4px;min-height:23px}
+#ug .ug-sub.mk+.ug-acts{margin-top:11px}
+#ug .mk-sale{position:relative;display:inline-flex;align-items:center;vertical-align:top;gap:3px;height:23px;padding:0 9px 0 8px;border:0;border-radius:11.5px;background:rgba(200,202,210,.34);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);color:#fff;font-size:13px;font-weight:600;line-height:1;white-space:nowrap}
 #ug .mk-sale svg{width:16px;height:16px;fill:#fff;fill-rule:evenodd;flex:none}
 #ug.mkbuy .ug-acts{display:none}
 #ug.mkbuy .ug-note{display:none!important}
@@ -726,25 +731,26 @@ html,body{overscroll-behavior:none}
 /* закрытие: дольше (.62с) и мягче — без резкого старта */
 #sl:not(.on) .sl-sheet,#sl.kbt:not(.on) .sl-sheet{transition:transform .62s cubic-bezier(.33,0,.15,1),left .45s cubic-bezier(.33,0,.15,1),right .45s cubic-bezier(.33,0,.15,1),margin-bottom .45s cubic-bezier(.33,0,.15,1),padding-bottom .45s cubic-bezier(.33,0,.15,1)}
 #sl .sl-head{position:relative;flex:none;height:76px;display:flex;align-items:center;justify-content:center}
-#sl .sl-t{font-size:19px;font-weight:650}
+#sl .sl-t{font-size:18px;font-weight:650}
 #sl .sl-x{position:absolute;top:16px;left:16px;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;color:#fff;cursor:pointer;transition:transform .45s cubic-bezier(.25,.8,.25,1)}
 #sl .sl-x:active{transform:scale(1.1)}
 #sl .sl-x svg{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
-#sl .sl-body{flex:0 1 auto;min-height:0;padding:22px 22px 0}
-#sl .sl-lab{margin:0 0 10px 16px;font-size:15px;font-weight:500;color:#8e8e93;letter-spacing:.02em}
-#sl .sl-inp{display:flex;align-items:center;gap:12px;height:52px;padding:0 18px;border-radius:26px;background:#2c2c2e}
-#sl .sl-inp .sl-st{width:26px;height:26px;flex:none;object-fit:contain;display:block}
-#sl .sl-inp input{flex:1;min-width:0;height:100%;padding:0;margin:0;border:0;outline:0;background:none;color:#fff;font:inherit;font-size:19px;font-weight:500;caret-color:#4BB6EE}
+#sl .sl-body{flex:0 1 auto;min-height:0;padding:22px 20px 0}
+#sl .sl-lab{margin:0 0 8px 16px;font-size:13px;font-weight:500;color:#8e8e93;letter-spacing:.02em}
+#sl .sl-inp{display:flex;align-items:center;gap:12px;height:51px;padding:0 18px;border-radius:25.5px;background:#2c2c2e}
+#sl .sl-inp .sl-st{width:24px;height:24px;flex:none;object-fit:contain;display:block}
+#sl .sl-inp input{flex:1;min-width:0;height:100%;padding:0;margin:0;border:0;outline:0;background:none;color:#fff;font:inherit;font-size:18px;font-weight:500;caret-color:#4BB6EE}
 #sl .sl-inp input::placeholder{color:#6d6d72}
-#sl .sl-hint{margin:10px 16px 0;font-size:16px;line-height:1.25;color:#8e8e93}
+#sl .sl-hint{margin:8px 16px 0;font-size:14px;line-height:1.25;color:#8e8e93}
 #sl .sl-hint b{font-weight:650}
-#sl .sl-row{margin-top:28px;height:52px;border-radius:26px;background:#2c2c2e;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 18px;font-size:19px;font-weight:500;cursor:pointer;user-select:none;-webkit-user-select:none}
+#sl .sl-row{margin-top:25px;height:51px;border-radius:25.5px;background:#2c2c2e;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 18px;font-size:18px;font-weight:500;cursor:pointer;user-select:none;-webkit-user-select:none}
 #sl .sl-sw{width:60px;height:30px;border-radius:15px;background:#3a3a3c;position:relative;transition:.2s}
 #sl .sl-sw:after{content:"";position:absolute;top:2px;left:2px;width:38px;height:26px;border-radius:13px;background:#fff;transition:.2s}
 #sl .sl-row.on .sl-sw{background:#34c759}#sl .sl-row.on .sl-sw:after{left:20px}
-#sl .sl-note{margin:12px 16px 0;font-size:15px;line-height:1.25;color:#8e8e93}
-#sl .sl-btnw{flex:none;padding:30px 29px 31px;transition:padding .25s}
-#sl.kb .sl-btnw{padding-bottom:14px}
+#sl .sl-note{margin:10px 16px 0;font-size:14px;line-height:1.25;color:#8e8e93}
+#sl .sl-btnw{flex:none;padding:30px 29px 31px;transition:padding-left .36s cubic-bezier(.32,.72,0,1),padding-right .36s cubic-bezier(.32,.72,0,1),padding-bottom .25s}
+#sl.kb .sl-btnw{padding:30px 35px 17px}   /* окно шире на 6+6px — отступы кнопки больше на столько же: кнопка стоит на месте и не перерисовывается */
+#sl:not(.on) .sl-btnw{transition:padding-left .45s cubic-bezier(.33,0,.15,1),padding-right .45s cubic-bezier(.33,0,.15,1),padding-bottom .25s}
 #sl .sl-go{touch-action:manipulation;transition:transform .3s cubic-bezier(.4,0,.2,1),color .2s;margin:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.12));width:100%;height:52px;border:0;border-radius:26px;background:#4BB6EE center/100% 100% no-repeat;color:#fff;font:inherit;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;-webkit-appearance:none;appearance:none}
 #sl .sl-go:active{transform:scale(1.04)}
 #sl .sl-go.dis{color:rgba(255,255,255,.55)}
@@ -2201,6 +2207,7 @@ renderMyGifts();
     /* кнопка сама следит за своими размерами: поворот экрана, смена ширины окна и т.п. перерисовывают её форму */
     if(!b.__ro&&window.ResizeObserver){b.__ro=new ResizeObserver(()=>shapeBtn(b));b.__ro.observe(b)}
     const w=b.offsetWidth,h=b.offsetHeight;if(!w||!h)return;
+    if(b.__sw===w&&b.__sh===h&&b.style.backgroundImage)return;b.__sw=w;b.__sh=h;   /* тот же размер — форма уже нарисована (перерисовка SVG-фона даёт мигание) */
     const KB=1.05,ry=h/2,rx=Math.min(ry*KB,w/2),q=v=>+v.toFixed(2),A=' A'+q(rx)+' '+q(ry)+' 0 0 1 ';
     const d='M'+q(rx)+' 0H'+q(w-rx)+A+q(w)+' '+q(ry)+'V'+q(h-ry)+A+q(w-rx)+' '+q(h)+'H'+q(rx)+A+'0 '+q(h-ry)+'V'+q(ry)+A+q(rx)+' 0Z'; /* KB: чем больше, тем круглее торцы кнопки */
     const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">'+
@@ -4294,6 +4301,19 @@ renderMyGifts();
     renderMk();
   });
   document.addEventListener('pointerdown',e=>{if(menu.classList.contains('on')&&!e.target.closest('#mkMenu,.mk-chip'))hideMenu()},true);
+  /* затемнение под хедером/фильтрами: как в профиле, выезжает за первые px прокрутки, затем смягчается и появляется блюр */
+  (function(){
+    const pg=$i('p-mkg'),w=pg.querySelector('.mk-fwrap');if(!w)return;
+    const RAMP=60,SOFT_RAMP=80,SOFT_MIN=.14,SOFT_BLUR=2;let lq='',lm='',lb='';
+    const cl=v=>Math.max(0,Math.min(1,v));
+    function shade(){
+      const sc=pg.scrollTop,q=cl(sc/RAMP).toFixed(3),rr=cl((sc-RAMP)/SOFT_RAMP),m=(1-SOFT_MIN*rr).toFixed(3),b=(rr*SOFT_BLUR).toFixed(1)+'px';
+      if(q!==lq){lq=q;w.style.setProperty('--mq',q)}if(m!==lm){lm=m;w.style.setProperty('--mm',m)}if(b!==lb){lb=b;w.style.setProperty('--mb',b)}
+    }
+    pg.addEventListener('scroll',shade,{passive:true});
+    new MutationObserver(shade).observe(pg,{attributes:true,attributeFilter:['class']});
+    shade();
+  })();
   $i('p-mkg').addEventListener('scroll',()=>{const si=menu.querySelector('.mk-si');if(si&&document.activeElement===si)return;hideMenu()},{passive:true});
 
   /* ---------- окно покупки: то же окно уникального подарка без трёх кнопок, на кнопке «Купить за ⭐N» ---------- */
@@ -4432,7 +4452,7 @@ renderMyGifts();
     void sh.offsetWidth;
     sl.classList.add('on');sl.setAttribute('aria-hidden','false');
     try{shapeBtn(goB)}catch(_){}shapeSheet();
-    clearTimeout(sl.__kbt);sl.__kbt=setTimeout(()=>{if(sl.classList.contains('on'))sl.classList.add('kbt')},560);
+    clearTimeout(sl.__kbt);sl.__kbt=setTimeout(()=>{if(sl.classList.contains('on'))sl.classList.add('kbt')},90);   /* при первом открытии высота клавиатуры ещё неизвестна: поправка к настоящей высоте должна идти плавно, а не скачком */
   }
   function closeSell(){
     clearTimeout(sl.__kbt);clearTimeout(sl.__foldT);sl.__fold=false;sl.classList.remove('on','pre','kb');sl.setAttribute('aria-hidden','true');
@@ -4441,9 +4461,10 @@ renderMyGifts();
     clearTimeout(closeT);closeT=setTimeout(()=>{if(!sl.classList.contains('on')&&!sl.classList.contains('pre')){ugEl.style.height='';ugEl.style.top='';sl.style.top='';sl.style.height='';sl.style.removeProperty('--kb');sl.style.removeProperty('--ext');sl.__kb=sl.__ext=undefined;sl.classList.remove('kbt');H0=0}},900);
   }
   $i('slX').onclick=closeSell;
-  sl.querySelector('.sl-dim').addEventListener('click',()=>{if(document.activeElement===inp)inp.blur();else closeSell()});
-  /* нажатие по пустому месту окна убирает клавиатуру — окно становится обычным модальным */
-  sh.addEventListener('pointerdown',e=>{if(document.activeElement===inp&&!e.target.closest('.sl-inp,.sl-row,.sl-go,.sl-x'))inp.blur()});
+  sl.querySelector('.sl-dim').addEventListener('click',closeSell);   /* нажатие на фон — закрывает окно вместе с клавиатурой */
+  /* нажатие в любом месте окна не убирает клавиатуру: она уходит вместе с окном (крестик, фон) или когда нажали голубую кнопку */
+  const keepKb=e=>{if(document.activeElement!==inp)return;if(e.target.closest&&e.target.closest('.sl-inp,.sl-go,.sl-x'))return;if(e.cancelable)e.preventDefault()};
+  sh.addEventListener('touchstart',keepKb,{passive:false});sh.addEventListener('mousedown',keepKb);
   /* ползунок «Уведомить о продаже»: пока открыта клавиатура, нажатие не отбирает у поля фокус — клавиатура остаётся */
   const togNot=()=>{notify=!notify;notRow.classList.toggle('on',notify)};
   let nt0=null;
