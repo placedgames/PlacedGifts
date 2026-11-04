@@ -225,7 +225,7 @@ body.navanim #bar{z-index:1}
 .mpin{position:fixed;left:0;right:0;top:0;z-index:900;pointer-events:none;visibility:hidden}
 .mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h));opacity:0;background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,0.989) 25.0%,rgba(0,0,0,0.946) 31.2%,rgba(0,0,0,0.877) 37.5%,rgba(0,0,0,0.788) 43.8%,rgba(0,0,0,0.684) 50.0%,rgba(0,0,0,0.570) 56.2%,rgba(0,0,0,0.453) 62.5%,rgba(0,0,0,0.339) 68.8%,rgba(0,0,0,0.232) 75.0%,rgba(0,0,0,0.139) 81.2%,rgba(0,0,0,0.066) 87.5%,rgba(0,0,0,0.017) 93.8%,rgba(0,0,0,0.000) 100.0%)}
 #setPin .mpin-bg{height:calc(var(--hdr-top) + var(--hdr-h) + 16px);background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 5.0%,rgba(0,0,0,1.000) 10.0%,rgba(0,0,0,1.000) 15.0%,rgba(0,0,0,1.000) 20.0%,rgba(0,0,0,1.000) 25.0%,rgba(0,0,0,1.000) 30.0%,rgba(0,0,0,1.000) 35.0%,rgba(0,0,0,1.000) 40.0%,rgba(0,0,0,1.000) 45.0%,rgba(0,0,0,1.000) 50.0%,rgba(0,0,0,1.000) 55.0%,rgba(0,0,0,0.966) 60.0%,rgba(0,0,0,0.874) 65.0%,rgba(0,0,0,0.741) 70.0%,rgba(0,0,0,0.583) 75.0%,rgba(0,0,0,0.417) 80.0%,rgba(0,0,0,0.259) 85.0%,rgba(0,0,0,0.126) 90.0%,rgba(0,0,0,0.034) 95.0%,rgba(0,0,0,0.000) 100.0%)}
-#mePin .mpin-bg,#mePin .mpin-bg2{-webkit-backdrop-filter:blur(var(--sb,0px));backdrop-filter:blur(var(--sb,0px));-webkit-mask-image:linear-gradient(to bottom,#000 60%,rgba(0,0,0,0) 100%);mask-image:linear-gradient(to bottom,#000 60%,rgba(0,0,0,0) 100%)}
+#mePin .mpin-bg,#mePin .mpin-bg2{-webkit-backdrop-filter:blur(var(--sb,0px));backdrop-filter:blur(var(--sb,0px))}
 .mpin-band{position:absolute;left:0;top:var(--hdr-top);height:var(--hdr-h);width:0}
 .mpin-bg2{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 16px + 40px + 16px);opacity:0;will-change:transform,opacity;background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,1.000) 25.0%,rgba(0,0,0,1.000) 31.2%,rgba(0,0,0,1.000) 37.5%,rgba(0,0,0,1.000) 43.8%,rgba(0,0,0,1.000) 50.0%,rgba(0,0,0,1.000) 56.2%,rgba(0,0,0,1.000) 62.5%,rgba(0,0,0,1.000) 68.8%,rgba(0,0,0,1.000) 75.0%,rgba(0,0,0,0.989) 81.2%,rgba(0,0,0,0.684) 87.5%,rgba(0,0,0,0.232) 93.8%,rgba(0,0,0,0.000) 100.0%)}
 .mpin-n{position:absolute;top:0;left:16px;right:16px;text-align:center;font-size:28px;font-weight:550;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform-origin:50% 0;will-change:transform}
@@ -715,6 +715,7 @@ html,body{overscroll-behavior:none}
 #sl.on,#sl.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
 #sl .sl-fill{position:absolute;left:6px;right:6px;top:calc(100% - (var(--kb,0px) - var(--ext,0px)));height:140px;background:#1c1c1e;pointer-events:none;opacity:0;transition:opacity 0s .4s}
 #sl.kb .sl-fill{opacity:1;transition:none}
+#sl:not(.on):not(.pre) .sl-fill{opacity:0;transition:none}
 #sl .sl-x,#sl .sl-go{-webkit-backdrop-filter:none;backdrop-filter:none;filter:none}   /* блюр и тень под кнопками на сплошном фоне невидимы, но тормозят анимацию окна */
 #sl .sl-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .45s}
 #sl.on .sl-dim{opacity:1}
@@ -1709,7 +1710,7 @@ function clearAppCache(){ location.reload(); }
   const pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),pst=ps.querySelector('span'),mb=pg.querySelector('.mbody'),phd=pg.querySelector('.phead'),cvr=pg.querySelector('.cover');
   let off=0;   // пока страница «покоится» ниже ступеньки, всё что выше неё сдвинуто за верх страницы на off px (см. shiftOn)
   const KN=17/28,KS=14/17,KI=(17/22)/KS,TRAVEL=60,GAP_TABS=16;
-  const SOFT_RAMP=80,SOFT_MIN=.28,SOFT_BLUR=14;let lsb='';   // как затемнение смягчается после «ступеньки»: на скольких px прокрутки, насколько, какой блюр
+  const SOFT_RAMP=80,SOFT_MIN=.14,SOFT_BLUR=5;let lsb='';   // как затемнение смягчается после «ступеньки»: на скольких px прокрутки, насколько, какой блюр
   const SHADE_RAMP=110;   // за сколько px прокрутки до «прилипания» слайдера затемнение полностью выезжает под него
   const lerp=(a,b,t)=>a+(b-a)*t;
   let M=null,lp=-1,lh='',ln='';
@@ -4363,9 +4364,6 @@ renderMyGifts();
      Окно всегда уходит под клавиатуру: нижний край остаётся в 6px от низа экрана, а контент поднимается на высоту клавиатуры (--kb). */
   let H0=0,KBH=0;try{KBH=parseInt(localStorage.getItem('slKbh'),10)||0}catch(_){}
   const baseH=()=>{const T=window.Telegram&&Telegram.WebApp;return Math.max(window.innerHeight,(T&&T.viewportStableHeight)||0)};
-  /* Telegram: за скруглёнными углами клавиатуры виден нативный фон мини-приложения — на время клавиатуры красим его в цвет окна */
-  let tgBg='';
-  function setTgBg(c){if(tgBg===c)return;tgBg=c;try{const T=window.Telegram&&Telegram.WebApp;if(!T)return;T.setBackgroundColor&&T.setBackgroundColor(c);T.setBottomBarColor&&T.setBottomBarColor(c)}catch(_){}}
   function fit(){
     const vv=window.visualViewport,foc=document.activeElement===inp,open=sl.classList.contains('on')||sl.classList.contains('pre');
     if(!open)return;   /* окно закрывается: раскладку не трогаем, иначе оно дёргается на ходу */
@@ -4381,7 +4379,6 @@ renderMyGifts();
     if(sl.__kb!==kb){sl.__kb=kb;sl.style.setProperty('--kb',kb+'px')}
     if(sl.__ext!==shrink){sl.__ext=shrink;sl.style.setProperty('--ext',shrink+'px')}
     if(sl.classList.contains('kb')!==foc)sl.classList.toggle('kb',foc);
-    if(foc||kb>0)setTgBg('#1c1c1e');else setTimeout(()=>{if(!sl.classList.contains('kb')&&document.activeElement!==inp)setTgBg('#000000')},450);
     shapeSheet();   /* высота окна меняется за счёт отступа, а не содержимого — контур пересчитываем сами */
   }
   function loop(ms){
@@ -4418,8 +4415,7 @@ renderMyGifts();
   function closeSell(){
     try{inp.blur()}catch(_){}
     sl.classList.remove('on','pre','kb');sl.setAttribute('aria-hidden','true');
-    setTimeout(()=>{if(!sl.classList.contains('on')&&!sl.classList.contains('pre'))setTgBg('#000000')},450);
-    clearTimeout(closeT);closeT=setTimeout(()=>{if(!sl.classList.contains('on')&&!sl.classList.contains('pre')){sl.style.top='';sl.style.height='';sl.style.removeProperty('--kb');sl.style.removeProperty('--ext');H0=0}},700);
+    clearTimeout(closeT);closeT=setTimeout(()=>{if(!sl.classList.contains('on')&&!sl.classList.contains('pre')){sl.style.top='';sl.style.height='';sl.style.removeProperty('--kb');sl.style.removeProperty('--ext');sl.__kb=sl.__ext=undefined;H0=0}},700);
   }
   $i('slX').onclick=closeSell;
   sl.querySelector('.sl-dim').addEventListener('click',()=>{if(document.activeElement===inp)inp.blur();else closeSell()});
