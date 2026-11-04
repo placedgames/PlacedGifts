@@ -303,6 +303,9 @@ background:rgba(66,66,70,.58);-webkit-backdrop-filter:blur(30px) saturate(1.5);b
 #cx .cx-it{display:flex;align-items:center;gap:13px;margin:0 8px;padding:11px 11px 11px 19px;border-radius:23px;transition:background-color .16s ease;font-size:17px;line-height:20px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #cx .cx-it span{min-width:0}
 #cx .cx-it.hot{background:rgba(255,255,255,.09)}
+#cx .cx-sep{height:1px;margin:6px 18px;background:rgba(255,255,255,.14)}
+#cx .cx-it svg.ck{width:20px;height:20px;stroke-width:2.2}
+#cx .cx-it svg.ck.off{visibility:hidden}
 #cx .cx-it svg{flex:none;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 #cx .cx-it svg.f{width:25px;height:25px;margin:-2px;fill:currentColor;stroke:none;fill-rule:evenodd}
 
@@ -355,6 +358,9 @@ background:rgba(66,66,70,.58);-webkit-backdrop-filter:blur(30px) saturate(1.5);b
 #gm:not(.on) .gm-dim{transition-duration:.62s}   /* при закрытии затемнение гаснет медленнее */
 #gm .gm-sheet{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - env(safe-area-inset-top,0px) - var(--tg-content-safe-area-inset-top,0px) - 22px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform;touch-action:none;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black)}
 #gm.on .gm-sheet{transform:translateY(0)}
+/* «Показать/Скрыть» в карточке: то же закрытие, что у окна действий подарка (уменьшение и затухание, 290 мс) */
+#gm.gmpop:not(.on) .gm-sheet{transform:scale(.78)!important;opacity:0!important;transform-origin:50% 60%;transition:transform .29s cubic-bezier(.4,0,.2,1),opacity .24s cubic-bezier(.4,0,.2,1)!important}
+#gm.gmpop:not(.on) .gm-dim{transition-duration:.3s;transition-timing-function:cubic-bezier(.4,0,.2,1)}
 #gm .gm-sheet.drag{transition:none}
 #gm .gm-x{position:absolute;top:16px;left:16px;z-index:3;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;color:#fff;cursor:pointer;transition:transform .45s cubic-bezier(.25,.8,.25,1)}
 #gm .gm-x.press{transform:scale(1.1)}
@@ -1179,10 +1185,27 @@ const HDR={
   me:()=>hRound(BACK,'back')+hTxt('Изм.','edit')
 };
 const HDR_TOAST={gift:'Подарок',edit:'Изменить',qr:'QR-код'};
+/* пока слайдер закреплён под кнопками хедера, «Изм.» превращается в круглую кнопку фильтров */
+const FLT='<svg class="hs" viewBox="0 0 24 24" width="26" height="26" style="stroke-width:2.1"><path d="M3.8 7.5h16.4M6.5 12h11M9.2 16.5h5.6"/></svg>';
+window.__meStuck=false;
+window.hdrFilter=function(on,instant){
+  window.__meStuck=!!on;
+  const b=document.querySelector('#hdr .hb[data-a="edit"],#hdr .hb[data-a="filter"]');
+  if(!b||cur!=='me')return;
+  if(on===(b.dataset.a==='filter'))return;
+  const w0=b.getBoundingClientRect().width;
+  b.dataset.a=on?'filter':'edit';
+  b.classList.toggle('hb-txt',!on);b.classList.toggle('hb-round',!!on);
+  b.innerHTML=on?FLT:'<span>Изм.</span>';
+  if(instant||!animOn())return;
+  const w1=b.getBoundingClientRect().width,k=b.firstElementChild;
+  try{b.animate([{width:w0+'px'},{width:w1+'px'}],{duration:300,easing:'cubic-bezier(.32,.72,0,1)'})}catch(_){}
+  try{k&&k.animate([{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:260,easing:'cubic-bezier(.3,.8,.3,1)'})}catch(_){}
+};
 $('#hdr').addEventListener('click',e=>{
   const t=e.target.closest('[data-a]'); if(!t) return;
   const a=t.dataset.a;
-  if(a==='back') goBack(); else if(a==='stars') go('stars'); else toast(HDR_TOAST[a]+': скоро');
+  if(a==='back') goBack(); else if(a==='stars') go('stars'); else if(a==='filter'){try{openFilterMenu(t)}catch(_){}} else toast(HDR_TOAST[a]+': скоро');
 });
 
 
@@ -1205,6 +1228,7 @@ function navDone(){if(navFin){const f=navFin;navFin=null;f()}}
 function setHdr(p,pulse){
   const h=$('#hdr');
   h.innerHTML=HDR[p]?HDR[p]():'';
+  if(p==='me'&&window.__meStuck)try{hdrFilter(true,true)}catch(_){}
   if(pulse&&animOn())$$('#hdr .hb').forEach(b=>b.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:520,easing:'cubic-bezier(.4,0,.2,1)'}));
 }
 // o: {noanim:true} — без анимации; {full:true} — страница профиля поверх меню (кнопка «Мой профиль»); {bounce:true} — «подпрыгнуть» кнопками хедера
@@ -1619,11 +1643,11 @@ function clearAppCache(){ location.reload(); }
   const sw=$('#sendWrap'),sb=$('#sendBtn');let sOn=false;
   function syncSend(){
     const want=!!(M&&pg.classList.contains('on')&&(pg.scrollTop+off)>=M.tabsAt-1);
-    if(want===sOn)return;sOn=want;
+    if(want===sOn)return;sOn=want;try{window.hdrFilter&&hdrFilter(want)}catch(_){}
     if(want&&window.shapeBtn)try{shapeBtn(sb)}catch(_){}
     sw.classList.toggle('show',want);sw.setAttribute('aria-hidden',want?'false':'true');
   }
-  new MutationObserver(()=>{if(!pg.classList.contains('on')){if(sOn){sOn=false;sw.classList.remove('show')}}else{if(!M)measure();syncSend()}}).observe(pg,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(()=>{if(!pg.classList.contains('on')){window.__meStuck=false;if(sOn){sOn=false;sw.classList.remove('show')}}else{if(!M)measure();syncSend()}}).observe(pg,{attributes:true,attributeFilter:['class']});
   requestAnimationFrame(()=>{try{window.shapeBtn&&shapeBtn(sb)}catch(_){}});
   window.addEventListener('resize',()=>{try{window.shapeBtn&&shapeBtn(sb)}catch(_){}});
   /* отклик на нажатие — тот же «слайм», что у кнопки «Купить» */
@@ -1995,7 +2019,7 @@ function renderPins(){
       const mi=(x.upg&&x.upg.mi)||x.image,p=pinPos(x.pin,id),d=document.createElement('div');
       d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=(200+p[0])+'px';d.style.top=(150+p[1])+'px';d.style.setProperty('--dx',(-p[0])+'px');d.style.setProperty('--dy',(-p[1])+'px');
       const wr=k=>{const v=Math.sin((x.pin+1)*91.7+k*47.3)*43758.5453;return v-Math.floor(v)};
-      d.innerHTML='<div class="pw" style="--wd:'+(5.5+wr(1)*3.3).toFixed(1)+'s;--wl:'+(-wr(2)*6).toFixed(1)+'s;animation-direction:'+(wr(3)>.5?'normal':'reverse')+'">'+(mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+pinStars(x.pin)+'</div>';
+      d.innerHTML='<div class="pw" style="--wd:'+(24+wr(1)*12).toFixed(1)+'s;--wl:'+(-wr(2)*30).toFixed(1)+'s;animation-direction:'+(wr(3)>.5?'normal':'reverse')+'">'+(mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+pinStars(x.pin)+'</div>';
       el.appendChild(d);
       d.addEventListener('animationend',()=>d.classList.remove('new'),{once:true});
     });
@@ -2003,7 +2027,27 @@ function renderPins(){
 }
 let pgWarmT=0;
 /* порядок подарков как в сетке: сначала закреплённые, затем остальные */
-function myOrder(){return MYGIFTS.filter(x=>x.pin!=null).sort((a,b)=>(b.pinT||0)-(a.pinT||0)).concat(MYGIFTS.filter(x=>x.pin==null))}
+window.MYF=window.MYF||{sort:null,u:null,v:null};   /* sort: price|date; u: nu (не улучшенные)|u (уникальные); v: v (видимые)|h (скрытые) */
+function giftPrice(x){
+  if(x.price)return x.price;
+  const el=[...document.querySelectorAll('.gift')].find(el=>{
+    if(x.key)return el.dataset.k===x.key;
+    const im=el.querySelector('.pic img');
+    return x.image?(im&&im.src===x.image):(!im&&x.emoji&&el.querySelector('.pic').textContent.trim()===x.emoji);
+  });
+  return el?+el.dataset.p||0:0;
+}
+function myOrder(){
+  const F=window.MYF||{};
+  const ok=x=>{const un=!!(x.upg&&x.upg.c);
+    if(F.u==='nu'&&un)return false;if(F.u==='u'&&!un)return false;
+    if(F.v==='v'&&x.hid)return false;if(F.v==='h'&&!x.hid)return false;return true};
+  const top=MYGIFTS.filter(x=>x.pin!=null&&ok(x)).sort((a,b)=>(b.pinT||0)-(a.pinT||0));
+  let rest=MYGIFTS.filter(x=>x.pin==null&&ok(x));
+  if(F.sort==='price'){const m=new Map(rest.map(x=>[x,giftPrice(x)]));rest=rest.map((x,i)=>[x,i]).sort((a,b)=>(m.get(b[0])-m.get(a[0]))||(a[1]-b[1])).map(a=>a[0])}
+  else if(F.sort==='date')rest=rest.map((x,i)=>[x,i]).sort((a,b)=>((b[0].t||0)-(a[0].t||0))||(a[1]-b[1])).map(a=>a[0]);
+  return top.concat(rest);
+}
 function renderMyGifts(reset){
   const g=$('#pGrid'),e=$('#pEmpty');if(!g||!e)return;
   /* закреплённые — в самом верху (новые закрепы выше); data-i остаётся индексом в MYGIFTS */
@@ -2024,7 +2068,7 @@ function renderMyGifts(reset){
     g.__n=n;
   }
   g.hidden=!list.length;e.hidden=list.length>0;
-  e.textContent='Подарков пока нет';
+  e.textContent=(MYGIFTS.length&&!list.length)?'Нет подарков по фильтру':'Подарков пока нет';
   try{syncSendLabel()}catch(_){}
   requestAnimationFrame(meFillSpace);
   const ti=document.getElementById('mtIcons');
@@ -2361,7 +2405,7 @@ renderMyGifts();
     fin(confirm('Обмен на звёзды\n\n'+msg));
   }
   function open(x){
-    clearTimeout(closeT);gm.classList.remove('sub','up');window.__gmCur=x;const upv=!!(x.upg||x.upv);gm.classList.toggle('upv',upv);{const gi=$g('gmImg');gi.style.transition='';gi.style.opacity=''}try{if(!x.sold&&!upv)window.umPrefetch&&umPrefetch(x)}catch(_){}
+    clearTimeout(closeT);clearTimeout(window.__gmPopT);gm.classList.remove('sub','up','gmpop');window.__gmCur=x;const upv=!!(x.upg||x.upv);gm.classList.toggle('upv',upv);{const gi=$g('gmImg');gi.style.transition='';gi.style.opacity=''}try{if(!x.sold&&!upv)window.umPrefetch&&umPrefetch(x)}catch(_){}
     $g('gmImg').innerHTML=x.image?'<img src="'+x.image+'" alt="">':(x.emoji||'🎁');giftAnimOrig($g('gmImg'),x);
     gm.querySelector('.gm-s').style.display=(x.anon&&!x.sold)?'':'none';
     gm.classList.toggle('sold',!!x.sold);
@@ -2487,6 +2531,7 @@ renderMyGifts();
     x.hid=!x.hid;
     try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
     try{renderMyGifts()}catch(_){}
+    gm.classList.add('gmpop');clearTimeout(window.__gmPopT);window.__gmPopT=setTimeout(()=>gm.classList.remove('gmpop'),900);
     close();
   });
   window.addEventListener('resize',()=>{try{if(gm.classList.contains('on'))shapeBtn($g('gmUp'))}catch(e){}});
@@ -3764,6 +3809,9 @@ renderMyGifts();
     wear:'<path d="M3.6 8.6l4.1 3.7L12 5.6l4.3 6.7 4.1-3.7-1.7 9.4H5.3z"/><path d="M5.6 20.6h12.8"/>',
     link:'<path d="M10.2 13.8a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M13.8 10.2a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
     share:'<path d="M20.5 11.5 14 5.6v3.5C8.6 9.4 5 12.5 4 18c2.4-3 5.5-4.3 10-4.4v3.6z"/>',
+    price:'<path d="M20.4 11A8.5 8.5 0 1 0 12 20.5"/><path d="M14.7 9.5c-.4-1-1.4-1.6-2.7-1.6-1.5 0-2.6.8-2.6 2s1 1.7 2.6 2.1 2.6.8 2.6 2-1.1 2-2.6 2c-1.3 0-2.3-.6-2.7-1.6M12 6.6v1.3M12 16.1v1.3"/><path d="M18.2 21v-5.6M16 17.4l2.2-2.2 2.2 2.2"/>',
+    date:'<rect x="3.5" y="5" width="17" height="15.5" rx="3.2"/><path d="M3.5 10.2h17M8 3.2v3.6M16 3.2v3.6"/>',
+    ck:'<path d="M5 12.8l4.6 4.6L19 7.6"/>',
     send:'<circle cx="12" cy="12" r="9"/><path d="M7.5 12h8.2M12.6 8.6 16 12l-3.4 3.4"/>',
   };
   const FILLED={pin:1,unpin:1};   /* иконки из набора: 512×512, закрашенные */
@@ -3801,6 +3849,7 @@ renderMyGifts();
     document.addEventListener('pointermove',mv,true);
     document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
     function pick(k){
+      if(cur&&cur.flt){const f=cur.flt;window.__cxSw=performance.now()+500;close();setTimeout(()=>f(k),300);return}
       window.__cxSw=performance.now()+500;   /* клик, который придёт после отпускания пальца, не должен попасть в элемент под меню (например, во вкладку) */
       const x=cur&&cur.x,fq=(k==='hide'||k==='show');close();
       setTimeout(()=>act(k,x),fq?0:300);   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
@@ -3869,6 +3918,7 @@ renderMyGifts();
     if(busy||!x||x.sold)return;
     if(!root)build();
     cur={el,x};busy=true;openT=performance.now();
+    root.querySelector('#cxMenu').style.right='';
     const uniq=!!(x.upg&&x.upg.c),pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
     const rect=el.getBoundingClientRect(),vw=innerWidth,vh=innerHeight;
     let pvH,pvW;
@@ -3926,6 +3976,38 @@ renderMyGifts();
       root.classList.remove('on','out');root.setAttribute('aria-hidden','true');busy=false;
     },fast?180:340);
   }
+  /* окно фильтров профиля: то же окно действий, другое содержимое; открывается из круглой кнопки в хедере */
+  window.openFilterMenu=function(anchor){
+    if(busy)return;if(!root)build();
+    const F=window.MYF=window.MYF||{sort:null,u:null,v:null};
+    const ck=on=>'<svg class="ck'+(on?'':' off')+'" viewBox="0 0 24 24">'+IC.ck+'</svg>';
+    const row=(k,t,on)=>'<div class="cx-it" data-k="'+k+'">'+ck(on)+'<span>'+t+'</span></div>';
+    const srt=(k,t,ic)=>'<div class="cx-it" data-k="'+k+'"><svg viewBox="0 0 24 24">'+IC[ic]+'</svg><span>'+t+'</span>'+(F.sort===k.slice(2)?'<svg class="ck" viewBox="0 0 24 24" style="margin-left:auto">'+IC.ck+'</svg>':'')+'</div>';
+    const html=srt('s:price','По цене','price')+srt('s:date','По дате','date')+'<div class="cx-sep"></div>'+
+      row('u:nu','Не улучшенные',F.u!=='u')+row('u:u','Уникальные',F.u!=='nu')+'<div class="cx-sep"></div>'+
+      row('v:v','Видимые',F.v!=='h')+row('v:h','Скрытые',F.v!=='v');
+    const apply=k=>{
+      const g=k.charAt(0),v=k.slice(2);
+      if(g==='s')F.sort=(F.sort===v?null:v);
+      else if(g==='u')F.u=(F.u===v?null:v);
+      else if(g==='v')F.v=(F.v===v?null:v);
+      try{renderMyGifts()}catch(_){}
+    };
+    cur={flt:apply};busy=true;openT=performance.now();
+    const pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
+    pv.innerHTML='';pv.style.width='0px';pv.style.height='0px';pv.style.top='0px';pv.style.left='0px';
+    mn.innerHTML=html;mn.style.width=Math.min(262,innerWidth-24)+'px';
+    [pv,mn].forEach(n=>{try{n.getAnimations().forEach(a=>a.cancel())}catch(_){}});
+    clearTimeout(closeT);root.classList.remove('out');
+    mn.querySelectorAll('.hot').forEach(n=>n.classList.remove('hot'));try{window.__cxReset&&window.__cxReset()}catch(_){}
+    root.classList.add('on');root.setAttribute('aria-hidden','false');
+    const r=anchor.getBoundingClientRect();
+    mn.style.top=Math.round(r.bottom+10)+'px';mn.style.right='16px';
+    shapeMenu(mn);
+    try{mn.animate([{opacity:0,transform:'scale(.55)'},{opacity:1,transform:'none'}],{duration:380,easing:'cubic-bezier(.2,.9,.25,1.05)'})}catch(_){}
+    try{window.Telegram&&Telegram.WebApp&&Telegram.WebApp.HapticFeedback&&Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(_){}
+    setTimeout(()=>{busy=false},200);
+  };
   /* долгое нажатие: 420 мс без заметного сдвига пальца */
   let tm=0,pt=0,sx=0,sy=0,tel=null,pel=null;
   const stop=()=>{clearTimeout(tm);clearTimeout(pt);tm=0;tel=null;if(pel){pel.classList.remove('pressing');pel=null}};
