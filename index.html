@@ -3851,7 +3851,11 @@ renderMyGifts();
     document.addEventListener('pointermove',mv,true);
     document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
     function pick(k){
-      if(cur&&cur.flt){const f=cur.flt;window.__cxSw=performance.now()+500;close();setTimeout(()=>f(k),300);return}
+      if(cur&&cur.flt){
+        const f=cur.flt;window.__cxSw=performance.now()+500;
+        if(f(k)){hot(-1);return}               /* категории: окно остаётся открытым */
+        close();setTimeout(f.render,300);return;   /* сортировка: окно сразу закрывается */
+      }
       window.__cxSw=performance.now()+500;   /* клик, который придёт после отпускания пальца, не должен попасть в элемент под меню (например, во вкладку) */
       const x=cur&&cur.x,fq=(k==='hide'||k==='show');close();
       setTimeout(()=>act(k,x),300);   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
@@ -3993,13 +3997,26 @@ renderMyGifts();
     const html=srt+'<div class="cx-sep"></div>'+
       row('u:nu','Не улучшенные',F.u!=='u')+row('u:u','Уникальные',F.u!=='nu')+'<div class="cx-sep"></div>'+
       row('v:v','Видимые',F.v!=='h')+row('v:h','Скрытые',F.v!=='v');
+    /* сетка меняется, а прокрутка остаётся на месте: запас под списком выставляется до перерисовки, поэтому страница не «прижимается» наверх */
+    const render=()=>{
+      const pg=document.getElementById('p-me'),sp=document.getElementById('pSpace'),gr=document.getElementById('pGrid');
+      const st=pg?pg.scrollTop:0;
+      try{if(sp&&gr)sp.style.height=((parseFloat(sp.style.height)||0)+gr.offsetHeight)+'px'}catch(_){}
+      try{renderMyGifts()}catch(_){}
+      try{meFillSpace()}catch(_){}
+      try{if(pg&&pg.scrollTop!==st)pg.scrollTop=st}catch(_){}
+    };
+    const isOn=k=>k==='u:nu'?F.u!=='u':k==='u:u'?F.u!=='nu':k==='v:v'?F.v!=='h':F.v!=='v';
+    /* нажатие убирает категорию (галочка пропадает), повторное возвращает; обе сразу убрать нельзя — тогда вторая возвращается */
     const apply=k=>{
       const g=k.charAt(0),v=k.slice(2);
-      if(g==='s')F.sort=(F.sort==='price'?'date':'price');
-      else if(g==='u')F.u=(F.u===v?null:v);
-      else if(g==='v')F.v=(F.v===v?null:v);
-      try{renderMyGifts()}catch(_){}
+      if(g==='s'){F.sort=(F.sort==='price'?'date':'price');return false}
+      const o=v==='nu'?'u':v==='u'?'nu':v==='v'?'h':'v',key=g;
+      if(F[key]==null)F[key]=o;else if(F[key]===v)F[key]=o;else F[key]=null;
+      document.querySelectorAll('#cxMenu .cx-it[data-k]').forEach(el=>{const c=el.querySelector('svg.ck');if(c)c.classList.toggle('off',!isOn(el.dataset.k))});
+      render();return true;
     };
+    apply.render=render;
     cur={flt:apply};busy=true;openT=performance.now();
     const pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
     pv.innerHTML='';pv.style.width='0px';pv.style.height='0px';pv.style.top='0px';pv.style.left='0px';
