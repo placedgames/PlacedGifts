@@ -227,18 +227,29 @@ body.navanim #bar{z-index:1}
 .mpin-n{position:absolute;top:0;left:16px;right:16px;text-align:center;font-size:28px;font-weight:550;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform-origin:50% 0;will-change:transform}
 .mpin-s{position:absolute;top:0;left:16px;right:16px;display:flex;align-items:center;justify-content:center;gap:3px;font-size:17px;font-weight:500;color:var(--hint);white-space:nowrap;transform-origin:50% 0;will-change:transform}
 .mpin-s svg{width:22px;height:22px;fill:var(--accent);fill-rule:evenodd;flex:none}
-/* имя/статус «приезжают» в хедер: движение привязано к прокрутке страницы на уровне браузера (без JS-округления до пикселей) */
+/* имя/статус «приезжают» в хедер: движение привязано к прокрутке страницы на уровне браузера (без JS-округления до пикселей).
+   Показ/скрытие (копия в хедере <-> оригинал в странице) тоже делает сама анимация, а не JS: событие scroll на iOS приходит позже кадра,
+   из-за этого раньше текст «замирал» и догонял страницу при возврате вверх. */
 html{timeline-scope:--meSc,--stSc}
 #p-me{scroll-timeline:--meSc block}
 #p-settings{scroll-timeline:--stSc block}
-@keyframes sdN{from{transform:translate3d(0,var(--ls),0) scale(1)}to{transform:translate3d(0,var(--y1),0) scale(var(--kn))}}
-@keyframes sdS{from{transform:translate3d(-3px,var(--sy0),0) scale(1)}to{transform:translate3d(0,var(--sy1),0) scale(var(--ks))}}
+@keyframes sdN{from{transform:translate3d(0,var(--ls),0) scale(1);visibility:hidden}0.1%{visibility:visible}to{transform:translate3d(0,var(--y1),0) scale(var(--kn))}}
+@keyframes sdS{from{transform:translate3d(-3px,var(--sy0),0) scale(1);visibility:hidden}0.1%{visibility:visible}to{transform:translate3d(0,var(--sy1),0) scale(var(--ks))}}
 @keyframes sdV{from{transform:scale(1)}to{transform:scale(var(--ki))}}
+@keyframes sdO{0%{visibility:visible}0.1%{visibility:hidden}100%{visibility:hidden}}
 #mePin.sd .mpin-n,#setPin.sd .mpin-n{animation:sdN linear both}
 #mePin.sd .mpin-s,#setPin.sd .mpin-s{animation:sdS linear both}
 #mePin.sd .mpin-s svg,#setPin.sd .mpin-s svg{animation:sdV linear both}
 #mePin.sd .mpin-n,#mePin.sd .mpin-s,#mePin.sd .mpin-s svg{animation-timeline:--meSc;animation-range:var(--r0) var(--r1)}
 #setPin.sd .mpin-n,#setPin.sd .mpin-s,#setPin.sd .mpin-s svg{animation-timeline:--stSc;animation-range:var(--r0) var(--r1)}
+#p-me .phead.sd .pname,#p-me .phead.sd .pstat{animation:sdO linear both;animation-timeline:--meSc;animation-range:var(--r0) var(--r1)}
+#p-settings .phead.sd .pname,#p-settings .phead.sd .pnum{animation:sdO linear both;animation-timeline:--stSc;animation-range:var(--r0) var(--r1)}
+/* старые браузеры (без animation-timeline): никакого «полёта» в хедер — он всегда отставал от прокрутки.
+   Оригинал уезжает вместе со страницей (нативно, без задержек), а когда доехал до хедера — плавно сменяется копией. */
+.mpin.fb .mpin-n,.mpin.fb .mpin-s{opacity:0;visibility:visible;transition:opacity .2s ease}
+.mpin.fb.fo .mpin-n,.mpin.fb.fo .mpin-s{opacity:1}
+.phead.fb .pname,.phead.fb .pstat,.phead.fb .pnum{transition:opacity .2s ease}
+.phead.fb.fo .pname,.phead.fb.fo .pstat,.phead.fb.fo .pnum{opacity:0}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:40px;border-radius:21.2px/20px;display:flex;align-items:stretch;padding:3px}
@@ -1651,7 +1662,7 @@ function clearAppCache(){ location.reload(); }
      Только transform и opacity (без перерасчёта раскладки на каждый кадр); размеры замеряются один раз и при изменении раскладки. */
   const pg=$('#p-me'),pin=$('#mePin'),bg=pin.querySelector('.mpin-bg'),bg2=pin.querySelector('.mpin-bg2'),bl=pin.querySelector('.mpin-bl'),band=pin.querySelector('.mpin-band'),nm=$('#mpN'),st=$('#mpS'),sv=$('#mpSv'),rt=$('#mpR'),stTxt=st.querySelector('span');
   const pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),pst=ps.querySelector('span'),mb=pg.querySelector('.mbody'),phd=pg.querySelector('.phead');
-  const SD=!!(window.CSS&&CSS.supports&&CSS.supports('animation-timeline','--x')&&CSS.supports('timeline-scope','--x'));if(SD)pin.classList.add('sd');   // браузер умеет привязывать анимацию к прокрутке — имя/статус едут без участия JS
+  const SD=!!(window.CSS&&CSS.supports&&CSS.supports('animation-timeline','--x')&&CSS.supports('timeline-scope','--x'));if(SD){pin.classList.add('sd');phd.classList.add('sd')}else{pin.classList.add('fb');phd.classList.add('fb')}let fo=false,wasOn=false;   // браузер умеет привязывать анимацию к прокрутке — имя/статус едут без участия JS
   let off=0;   // пока страница «покоится» ниже ступеньки, всё что выше неё сдвинуто за верх страницы на off px (см. shiftOn)
   const KN=17/28,KS=14/17,KI=(17/22)/KS,TRAVEL=60,GAP_TABS=16;
   const SOFT_RAMP=80,SOFT_MIN=.14,SOFT_BLUR=2;let lsb='';   // как затемнение смягчается после «ступеньки»: на скольких px прокрутки, насколько, какой блюр
@@ -1666,10 +1677,33 @@ function clearAppCache(){ location.reload(); }
     nm.style.lineHeight=hn+'px';nm.style.height=hn+'px';st.style.height=hs+'px';
     const y1=bt+(bh-(hn*KN+hs*KS))/2;
     M={dn:pr.top+sc,hn,hs,gap:sr.top-pr.bottom,y1,ls:y1+TRAVEL,tabsAt:mb.offsetTop+off-(bt+bh+GAP_TABS),ext:Math.max(0,bg2.offsetHeight-bg.offsetHeight)};
-    lp=-2;sdVars();
+    lp=-2;sdVars();syncTxt();fbPaint();
   }
+  /* текст/ссылка копии в хедере обновляются сами, а не в момент появления: теперь копию показывает анимация, JS мог не успеть */
+  function syncTxt(){
+    const t=pn.textContent;if(t!==ln){ln=t;nm.textContent=t}
+    if(pst.textContent!==stTxt.textContent)stTxt.textContent=pst.textContent;
+    const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}
+  }
+  try{const mo=new MutationObserver(syncTxt);[pn,pst].forEach(n=>mo.observe(n,{childList:true,characterData:true,subtree:true}));if(src)mo.observe(src,{attributes:true,attributeFilter:['href']})}catch(_){}
+  /* старые браузеры: копия в хедере стоит на конечном месте, её только показывают/прячут */
+  function fbPaint(){
+    if(SD||!M)return;
+    nm.style.transform='translate3d(0,'+M.y1+'px,0) scale('+KN+')';
+    st.style.transform='translate3d(0,'+(M.y1+M.hn*KN)+'px,0) scale('+KS+')';
+    sv.style.transform='scale('+KI+')';
+  }
+  /* раскладка могла поменяться без изменения размеров (шрифт, данные, конец анимации перехода) — сверяем сохранённую позицию имени с настоящей */
+  function stale(){if(!M)return false;const pr=pn.getBoundingClientRect();return !pr.height||Math.abs(pr.top+pg.scrollTop+off-M.dn)>.75}
+  /* страница была display:none: на первом показе браузер мог не привязать анимацию к её прокрутке — пересоздаём анимации уже на показанной странице */
+  function sdRestart(){if(!SD)return;pin.classList.remove('sd');phd.classList.remove('sd');void pg.offsetWidth;pin.classList.add('sd');phd.classList.add('sd')}
+  function afterOpen(){
+    sdRestart();requestAnimationFrame(()=>requestAnimationFrame(()=>{if(pg.classList.contains('on')&&pg.scrollTop<1)sdRestart()}));
+    [80,260,700,1600].forEach(ms=>setTimeout(()=>{if(!pg.classList.contains('on'))return;if(!M||stale()){M=null;upd()}},ms));
+  }
+  function trackOpen(){const on=pg.classList.contains('on');if(on&&!wasOn)afterOpen();wasOn=on}
   function sdVars(){
-    if(!SD||!M)return;const q=pin.style;
+    if(!SD||!M)return;const q=pg.style;
     q.setProperty('--ls',M.ls+'px');q.setProperty('--y1',M.y1+'px');q.setProperty('--kn',KN);
     q.setProperty('--sy0',(M.ls+M.hn+M.gap)+'px');q.setProperty('--sy1',(M.y1+M.hn*KN)+'px');q.setProperty('--ks',KS);q.setProperty('--ki',KI);
     q.setProperty('--r0',(M.dn-M.ls-off)+'px');q.setProperty('--r1',(M.dn-M.y1-off)+'px');
@@ -1709,43 +1743,19 @@ function clearAppCache(){ location.reload(); }
     };
     ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
   })();
-  /* прокрутка отдаёт целые пиксели — имя и статус догоняют цель с лёгким сглаживанием, поэтому едут без «ступенек» */
-  const SM=38;let cur=null,tgt=null,sraf=0,stl=0;
-  function paintPin(){
-    if(!M||!cur)return;const p=cur.p,kn=lerp(1,KN,p),ks=lerp(1,KS,p),top=cur.top;
-    nm.style.transform='translate3d(0,'+top+'px,0) scale('+kn+')';
-    st.style.transform='translate3d('+(-3*(1-p))+'px,'+(top+M.hn*kn+M.gap*(1-p))+'px,0) scale('+ks+')';
-    sv.style.transform='scale('+lerp(1,KI,p)+')';
-  }
-  function smTick(now){
-    sraf=0;if(!cur||!tgt)return;
-    const dt=Math.min(now-stl,50);stl=now;const a=1-Math.exp(-dt/SM);
-    cur.top+=(tgt.top-cur.top)*a;cur.p+=(tgt.p-cur.p)*a;
-    if(Math.abs(tgt.top-cur.top)<.02&&Math.abs(tgt.p-cur.p)<.0005){cur.top=tgt.top;cur.p=tgt.p;paintPin();return}
-    paintPin();sraf=requestAnimationFrame(smTick);
-  }
-  function smTo(top,p){
-    tgt={top:top,p:p};
-    if(!cur){cur={top:top,p:p};paintPin();return}
-    if(!sraf){stl=performance.now();sraf=requestAnimationFrame(smTick)}
-  }
-  function smReset(){cur=tgt=null;if(sraf){cancelAnimationFrame(sraf);sraf=0}}
   function upd(){
     if(!M){measure();if(!M)return}
     syncSend();
     const sc=pg.scrollTop+off,top0=M.dn-sc;
     let p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
     if(p<=0){
-      if(lp!==0){lp=0;smReset();pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0;bg2.style.opacity=0;bl.style.opacity=0;lsb='';pin.style.removeProperty('--sb')}
+      if(lp!==0){lp=0;if(fo){fo=false;pin.classList.remove('fo');phd.classList.remove('fo')}pin.style.visibility='hidden';bg.style.opacity=0;bg2.style.opacity=0;bl.style.opacity=0;lsb='';pin.style.removeProperty('--sb')}
       return;
     }
-    if(lp<=0){pin.style.visibility='visible';pn.style.visibility=ps.style.visibility='hidden';
-      const t=pn.textContent;if(t!==ln){ln=t;nm.textContent=t}
-      if(pst.textContent!==stTxt.textContent)stTxt.textContent=pst.textContent;
-      const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}}
+    if(lp<=0){pin.style.visibility='visible';syncTxt()}
     lp=p;
     const top=Math.max(top0,M.y1);
-    if(!SD)smTo(top,p);
+    if(!SD){const f=p>=0.999;if(f!==fo){fo=f;pin.classList.toggle('fo',f);phd.classList.toggle('fo',f)}}
     /* после того как слайдер встал под кнопки, при дальнейшей прокрутке затемнение становится мягче: сквозь него видны размытые карточки */
     const rr=Math.max(0,Math.min(1,(sc-M.tabsAt)/SOFT_RAMP)),mm=1-SOFT_MIN*rr,sbv=(rr*SOFT_BLUR).toFixed(1)+'px';
     if(sbv!==lsb){lsb=sbv;pin.style.setProperty('--sb',sbv)}
@@ -1811,14 +1821,14 @@ function clearAppCache(){ location.reload(); }
   window.meTop=()=>{try{stopAnim();shiftOff();pg.scrollTo({top:0,behavior:'smooth'})}catch(_){pg.scrollTop=0}};
   let sett=0;
   const settle=()=>{clearTimeout(sett);sett=setTimeout(()=>{
-    if(touching||raf2||!pg.classList.contains('on'))return;if(!M)measure();if(!M)return;
+    if(touching||raf2||!pg.classList.contains('on'))return;if(M&&stale())M=null;if(!M)measure();if(!M)return;
     const sc=pg.scrollTop+off,T=M.tabsAt;
     if(T>2&&sc>T+1)shiftOn(T);else shiftOff();
   },180)};
   const release=()=>{lock=0;mode=0;stopAnim();unfreeze();capOff();shiftOff();settle()};
   pg.addEventListener('touchstart',e=>{
     touching=true;unfreeze();capOff();stopAnim();mode=0;                         // новый жест — все ограничения снимаются
-    if(!M)measure();ly=y0=e.touches[0].clientY;lock=0;smp=[{t:performance.now(),y:ly}];
+    if(M&&stale())M=null;if(!M)measure();ly=y0=e.touches[0].clientY;lock=0;smp=[{t:performance.now(),y:ly}];
     if(!M)return;const sc=pg.scrollTop+off,T=M.tabsAt;
     if(T>2){if(sc<T-1){lock=1;capOn(T)}else if(sc>T+1&&!off)lock=2}   /* жест начат выше ступеньки — упираемся в неё (lock 1), ниже — возвращаемся вверх (lock 2) */
   },{passive:true});
@@ -1856,24 +1866,47 @@ function clearAppCache(){ location.reload(); }
       if((lock===1&&sc>T+0.5)||(lock===2&&sc<T-0.5))freeze(T)}
     upd();settle();
   },{passive:true});
-  const inv=()=>{M=null;requestAnimationFrame(upd)};
+  const inv=()=>{M=null;requestAnimationFrame(upd)};if(document.fonts&&document.fonts.ready)document.fonts.ready.then(inv);
   window.addEventListener('resize',inv);
-  new MutationObserver(()=>{if(!pg.classList.contains('on'))release();inv()}).observe(pg,{attributes:true,attributeFilter:['class']});
-  if(window.ResizeObserver){const ro=new ResizeObserver(inv);ro.observe(pg);const ph=pg.querySelector('.phead');if(ph)ro.observe(ph)}
+  new MutationObserver(()=>{if(!pg.classList.contains('on'))release();trackOpen();inv()}).observe(pg,{attributes:true,attributeFilter:['class']});
+  if(window.ResizeObserver){const ro=new ResizeObserver(inv);ro.observe(pg);const ph=pg.querySelector('.phead');if(ph)ro.observe(ph);ro.observe(pn);ro.observe(ps)}
 })();
 
 /* ===== Настройки: имя и рейтинг «приезжают» в хедер при прокрутке (как в профиле).
    Затемнение — только фиксированная полоса под хедером, без роста по мере прокрутки. ===== */
 (function(){
   const pg=$('#p-settings'),pin=$('#setPin'),bg=pin.querySelector('.mpin-bg'),band=pin.querySelector('.mpin-band'),nm=$('#spN'),st=$('#spS'),sv=$('#spSv'),rt=$('#spR'),stTxt=st.querySelector('span');
-  const pn=$('#uname'),ps=pg.querySelector('.pnum'),src=$('#uRate'),pst=$('#unum');
+  const pn=$('#uname'),ps=pg.querySelector('.pnum'),src=$('#uRate'),pst=$('#unum'),phd=pg.querySelector('.phead');
   const KN=17/28,TRAVEL=60;
   let KS=14/17,KI=(17/22)/KS;
   const lerp=(a,b,t)=>a+(b-a)*t;
-  const SD=!!(window.CSS&&CSS.supports&&CSS.supports('animation-timeline','--x')&&CSS.supports('timeline-scope','--x'));if(SD)pin.classList.add('sd');
+  const SD=!!(window.CSS&&CSS.supports&&CSS.supports('animation-timeline','--x')&&CSS.supports('timeline-scope','--x'));if(SD){pin.classList.add('sd');phd.classList.add('sd')}else{pin.classList.add('fb');phd.classList.add('fb')}let fo=false,wasOn=false;
   let M=null,lp=-1,lh='',ln='';
+  /* текст/ссылка копии в хедере обновляются сами, а не в момент появления: теперь копию показывает анимация, JS мог не успеть */
+  function syncTxt(){
+    const t=pn.textContent;if(t!==ln){ln=t;nm.textContent=t}
+    if(pst.textContent!==stTxt.textContent)stTxt.textContent=pst.textContent;
+    const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}
+  }
+  try{const mo=new MutationObserver(syncTxt);[pn,pst].forEach(n=>mo.observe(n,{childList:true,characterData:true,subtree:true}));if(src)mo.observe(src,{attributes:true,attributeFilter:['href']})}catch(_){}
+  /* старые браузеры: копия в хедере стоит на конечном месте, её только показывают/прячут */
+  function fbPaint(){
+    if(SD||!M)return;
+    nm.style.transform='translate3d(0,'+M.y1+'px,0) scale('+KN+')';
+    st.style.transform='translate3d(0,'+(M.y1+M.hn*KN)+'px,0) scale('+KS+')';
+    sv.style.transform='scale('+KI+')';
+  }
+  /* раскладка могла поменяться без изменения размеров (шрифт, данные, конец анимации перехода) — сверяем сохранённую позицию имени с настоящей */
+  function stale(){if(!M)return false;const pr=pn.getBoundingClientRect();return !pr.height||Math.abs(pr.top+pg.scrollTop+0-M.dn)>.75}
+  /* страница была display:none: на первом показе браузер мог не привязать анимацию к её прокрутке — пересоздаём анимации уже на показанной странице */
+  function sdRestart(){if(!SD)return;pin.classList.remove('sd');phd.classList.remove('sd');void pg.offsetWidth;pin.classList.add('sd');phd.classList.add('sd')}
+  function afterOpen(){
+    sdRestart();requestAnimationFrame(()=>requestAnimationFrame(()=>{if(pg.classList.contains('on')&&pg.scrollTop<1)sdRestart()}));
+    [80,260,700,1600].forEach(ms=>setTimeout(()=>{if(!pg.classList.contains('on'))return;if(!M||stale()){M=null;upd()}},ms));
+  }
+  function trackOpen(){const on=pg.classList.contains('on');if(on&&!wasOn)afterOpen();wasOn=on}
   function sdVars(){
-    if(!SD||!M)return;const q=pin.style;
+    if(!SD||!M)return;const q=pg.style;
     q.setProperty('--ls',M.ls+'px');q.setProperty('--y1',M.y1+'px');q.setProperty('--kn',KN);
     q.setProperty('--sy0',(M.ls+M.hn+M.gap)+'px');q.setProperty('--sy1',(M.y1+M.hn*KN)+'px');q.setProperty('--ks',KS);q.setProperty('--ki',KI);
     q.setProperty('--r0',(M.dn-M.ls)+'px');q.setProperty('--r1',(M.dn-M.y1)+'px');
@@ -1888,50 +1921,27 @@ function clearAppCache(){ location.reload(); }
     nm.style.lineHeight=hn+'px';nm.style.height=hn+'px';st.style.height=hs+'px';
     const y1=bt+(bh-(hn*KN+hs*KS))/2;
     M={dn:pr.top+sc,hn,hs,gap:sr.top-pr.bottom,y1,ls:y1+TRAVEL};
-    lp=-2;sdVars();
+    lp=-2;sdVars();syncTxt();fbPaint();
   }
-  /* сглаживание: scrollTop отдаёт целые пиксели, имя и номер догоняют цель плавно */
-  const SM=38;let cur=null,tgt=null,sraf=0,stl=0;
-  function paintPin(){
-    if(!M||!cur)return;const p=cur.p,kn=lerp(1,KN,p),ks=lerp(1,KS,p),top=cur.top;
-    nm.style.transform='translate3d(0,'+top+'px,0) scale('+kn+')';
-    st.style.transform='translate3d('+(-3*(1-p))+'px,'+(top+M.hn*kn+M.gap*(1-p))+'px,0) scale('+ks+')';
-    sv.style.transform='scale('+lerp(1,KI,p)+')';
-  }
-  function smTick(now){
-    sraf=0;if(!cur||!tgt)return;
-    const dt=Math.min(now-stl,50);stl=now;const a=1-Math.exp(-dt/SM);
-    cur.top+=(tgt.top-cur.top)*a;cur.p+=(tgt.p-cur.p)*a;
-    if(Math.abs(tgt.top-cur.top)<.02&&Math.abs(tgt.p-cur.p)<.0005){cur.top=tgt.top;cur.p=tgt.p;paintPin();return}
-    paintPin();sraf=requestAnimationFrame(smTick);
-  }
-  function smTo(top,p){
-    tgt={top:top,p:p};
-    if(!cur){cur={top:top,p:p};paintPin();return}
-    if(!sraf){stl=performance.now();sraf=requestAnimationFrame(smTick)}
-  }
-  function smReset(){cur=tgt=null;if(sraf){cancelAnimationFrame(sraf);sraf=0}}
   function upd(){
     if(!M){measure();if(!M)return}
     const top0=M.dn-pg.scrollTop;
     let p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
     if(p<=0){
-      if(lp!==0){lp=0;smReset();pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0}
+      if(lp!==0){lp=0;if(fo){fo=false;pin.classList.remove('fo');phd.classList.remove('fo')}pin.style.visibility='hidden';bg.style.opacity=0}
       return;
     }
-    if(lp<=0){pin.style.visibility='visible';pn.style.visibility=ps.style.visibility='hidden';
-      const t=pn.textContent;if(t!==ln){ln=t;nm.textContent=t}
-      if(pst.textContent!==stTxt.textContent)stTxt.textContent=pst.textContent;
-      const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}}
+    if(lp<=0){pin.style.visibility='visible';syncTxt()}
     lp=p;
-    if(!SD)smTo(Math.max(top0,M.y1),p);
+    if(!SD){const f=p>=0.999;if(f!==fo){fo=f;pin.classList.toggle('fo',f);phd.classList.toggle('fo',f)}}
     bg.style.opacity=p;   // полоса затемнения фиксированной высоты (высота хедера), дальше вниз не растёт
   }
   pg.addEventListener('scroll',upd,{passive:true});
-  const inv=()=>{M=null;requestAnimationFrame(upd)};
+  pg.addEventListener('touchstart',()=>{if(M&&stale()){M=null;upd()}},{passive:true});
+  const inv=()=>{M=null;requestAnimationFrame(upd)};if(document.fonts&&document.fonts.ready)document.fonts.ready.then(inv);
   window.addEventListener('resize',inv);
-  new MutationObserver(inv).observe(pg,{attributes:true,attributeFilter:['class']});
-  if(window.ResizeObserver){const ro=new ResizeObserver(inv);ro.observe(pg);const ph=pg.querySelector('.phead');if(ph)ro.observe(ph)}
+  new MutationObserver(()=>{trackOpen();inv()}).observe(pg,{attributes:true,attributeFilter:['class']});
+  if(window.ResizeObserver){const ro=new ResizeObserver(inv);ro.observe(pg);const ph=pg.querySelector('.phead');if(ph)ro.observe(ph);ro.observe(pn);ro.observe(ps)}
 })();
 go('market',true);
 requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
