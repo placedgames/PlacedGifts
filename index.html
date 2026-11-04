@@ -3571,6 +3571,7 @@ renderMyGifts();
     setTimeout(()=>{UG.classList.remove('fxon');ugS.querySelectorAll('.ug-t3').forEach(n=>n.remove());ugS.style.clipPath='';ugS.style.webkitClipPath='';upBusy=false;ugClosing=false;ugLock=false;if(ugX){try{ugX.cancel()}catch(_){}ugX=null}ugTrkClear($u('ugTrack'));ugS.querySelectorAll('.ug-ghost').forEach(n=>n.remove())},880);
   }
   $u('ugX').onclick=()=>ugClose();UG.querySelector('.ug-dim').onclick=()=>ugClose();
+  window.__ugClose=ugClose;
   (function(){
     let sy=0,dy=0,t0=0,tr=false,sup=false,base=0;
     /* текущий сдвиг окна (если оно ещё возвращается на место — подхватываем с того места, где оно сейчас) */
@@ -3826,7 +3827,7 @@ renderMyGifts();
   const hs=x=>it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть');
   const mainHTML=x=>isU(x)?(x.pin!=null?it('pin','Открепить','unpin'):it('pin','Закрепить'))+(x.sale?it('reprice','Изменить цену','tag'):'')+it('wear','Носить')+it('link','Копировать ссылку')+it('similar','Похожие подарки','search')+it('share','Поделиться')+hs(x)+it('send','Передать'):hs(x);
   const mainW=x=>Math.min(isU(x)?276:219,innerWidth-24);
-  document.addEventListener('click',e=>{if(performance.now()<(window.__cxSw||0)){e.stopPropagation();e.preventDefault()}},true);
+  document.addEventListener('click',e=>{if(performance.now()<(window.__cxSw||0)){const f=window.__cxPend;if(f){window.__cxPend=null;clearTimeout(window.__cxPendT);try{f()}catch(_){}}e.stopPropagation();e.preventDefault()}},true);
   /* ссылка подарка: https://t.me/GiftCraftsBot?startapp=ИмяПодарка-Номер (имя без пробелов), например ScaredCat-1 */
   const gNum=x=>String(x.upg.n).replace(/\D/g,'');
   const gLink=x=>'https://t.me/GiftCraftsBot?startapp='+String(x.upg.g||'').replace(/[^\p{L}\p{N}_]/gu,'')+'-'+gNum(x);
@@ -3847,7 +3848,7 @@ renderMyGifts();
   function copyGiftLink(x){
     if(!x||!x.upg)return;
     copyText(gLink(x)).then(()=>{
-      const T='Ссылка скопирована',M='Вы можете отправить ссылку на подарок своим друзьям.',w=tgw();
+      const T='Ссылка скопирована',M='Вы можете отправить ссылку на этот подарок своим друзьям.',w=tgw();
       const cb=id=>{if(id==='send')shareGift(x)};
       if(w&&w.showPopup&&(!w.isVersionAtLeast||w.isVersionAtLeast('6.2'))){
         try{w.showPopup({title:T,message:M,buttons:[{id:'send',type:'default',text:'Отправить'},{id:'cancel',type:'cancel'}]},cb);return}catch(_){}
@@ -3855,6 +3856,8 @@ renderMyGifts();
       if(confirm(T+'\n\n'+M))cb('send');
     });
   }
+  /* действие, которому нужен жест пользователя (фокус поля → клавиатура): выполняется в ближайшем click, а если его не будет — через 350 мс */
+  function later(f){window.__cxPend=f;clearTimeout(window.__cxPendT);window.__cxPendT=setTimeout(()=>{const g=window.__cxPend;if(g){window.__cxPend=null;try{g()}catch(_){}}},350)}
   let root=null,cur=null,busy=false,lpFlag=false,closeT=0,openT=0;
   function build(){
     root=document.createElement('div');root.id='cx';root.setAttribute('aria-hidden','true');
@@ -3887,11 +3890,11 @@ renderMyGifts();
       if(cur&&cur.flt){
         const f=cur.flt;window.__cxSw=performance.now()+500;
         if(f(k)){hot(-1);return}               /* категории: окно остаётся открытым */
-        close();setTimeout(f.render,f.fast?0:300);return;   /* сортировка: окно сразу закрывается */
+        close();if(f.later)later(f.render);else setTimeout(f.render,f.fast?0:300);return;   /* сортировка: окно сразу закрывается */
       }
       window.__cxSw=performance.now()+500;   /* клик, который придёт после отпускания пальца, не должен попасть в элемент под меню (например, во вкладку) */
       const x=cur&&cur.x,fq=(k==='hide'||k==='show');close();
-      setTimeout(()=>act(k,x),(k==='similar'||k==='reprice')?0:300);   /* «Похожие» и «Изменить цену» сразу: окно подарка закрывается, а поле цены получает фокус в момент нажатия */   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
+      if(k==='reprice')later(()=>act(k,x));else setTimeout(()=>act(k,x),k==='similar'?0:300);   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
     }
     function act(k,x){
       if(k==='pin'){
@@ -4028,7 +4031,7 @@ renderMyGifts();
     if(busy||!x)return;if(!root)build();
     const own=MYGIFTS.indexOf(x)>=0&&!!(x.upg&&x.upg.c),mkb=document.getElementById('ug').classList.contains('mkbuy');
     const html=((own&&!mkb)?(x.pin!=null?it('pin','Открепить','unpin'):it('pin','Закрепить')):'')+((own&&x.sale)?it('reprice','Изменить цену','tag'):'')+it('link','Копировать ссылку')+it('similar','Похожие подарки','search')+it('share','Поделиться');
-    const apply=k=>{apply.fast=(k==='similar'||k==='reprice');apply.render=()=>window.__cxAct(k,x);return false};
+    const apply=k=>{apply.fast=(k==='similar');apply.later=(k==='reprice');apply.render=()=>window.__cxAct(k,x);return false};
     cur={flt:apply};busy=true;openT=performance.now();
     const pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
     pv.innerHTML='';pv.style.width='0px';pv.style.height='0px';pv.style.top='0px';pv.style.left='0px';
@@ -4251,7 +4254,7 @@ renderMyGifts();
     MK.f={sort:'price',dir:'asc',m:u.m?[u.m]:null,b:u.b?[u.b]:null,s:null};
     hideMenu();renderMk();
     $i('p-mkg').scrollTop=0;
-    const ug=$i('ug');if(ug&&ug.classList.contains('on')){const b=$i('ugX');if(b)b.click()}
+    try{window.__ugClose&&__ugClose(true)}catch(_){}
     go('mkg');
   };
   $i('mkGrid').addEventListener('click',e=>{
@@ -4412,7 +4415,7 @@ renderMyGifts();
     if(UG.classList.contains('mkbuy')){
       if(window.__ugDrag){window.__ugDrag=false;return}
       const x=window.__gmCur;if(!x||!x.sale)return;
-      if(MYGIFTS.indexOf(x)>=0){askUnsell(x,()=>{const b=$i('ugX');if(b)b.click();setTimeout(()=>{try{renderMk()}catch(_){}},380)});return}
+      if(MYGIFTS.indexOf(x)>=0){askUnsell(x,()=>{try{window.__ugClose&&__ugClose(true)}catch(_){}setTimeout(()=>{try{renderMk()}catch(_){}},380)});return}
       toast('Покупка: скоро');
       return;
     }
@@ -4552,7 +4555,7 @@ renderMyGifts();
         });
       return;
     }
-    popup('Подтверждение продажи','Вы точно хотите выставить '+giftTitle(x)+' на продажу за '+p+' '+(p%10===1&&p%100!==11?'звезду':(p%10>=2&&p%10<=4&&(p%100<10||p%100>=20)?'звезды':'звёзд'))+' ?',
+    popup('Подтверждение продажи','Вы точно хотите выставить '+giftTitle(x)+' за '+p+' '+(p%10===1&&p%100!==11?'звезду':(p%10>=2&&p%10<=4&&(p%100<10||p%100>=20)?'звезды':'звёзд'))+'?',
       [{id:'sell',type:'default',text:'Выставить'},{id:'cancel',type:'default',text:'Отмена'}],
       id=>{
         if(id!=='sell')return;
