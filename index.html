@@ -155,7 +155,7 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 .menu-icon-wrap svg{fill:currentColor;fill-rule:evenodd;color:var(--menu-inactive)}
 .menu-item:nth-child(1) .menu-icon-wrap,.menu-item:nth-child(1) .menu-label{transform:translateX(-2px)}
 .menu-item:nth-child(4) .menu-icon-wrap,.menu-item:nth-child(4) .menu-label{transform:translateX(2px)}
-.menu-label{font-size:10px;font-weight:600;color:var(--menu-inactive);margin-top:var(--menu-label-gap)}
+.menu-label{font-size:10px;font-weight:550;color:var(--menu-inactive);margin-top:var(--menu-label-gap)}
 .menu-item.active svg{color:var(--accent)}.menu-item.active .menu-label{color:var(--accent)}
 
 
@@ -1689,13 +1689,34 @@ function clearAppCache(){ location.reload(); }
     };
     ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,rel));
   })();
+  /* прокрутка отдаёт целые пиксели — имя и статус догоняют цель с лёгким сглаживанием, поэтому едут без «ступенек» */
+  const SM=38;let cur=null,tgt=null,sraf=0,stl=0;
+  function paintPin(){
+    if(!M||!cur)return;const p=cur.p,kn=lerp(1,KN,p),ks=lerp(1,KS,p),top=cur.top;
+    nm.style.transform='translate3d(0,'+top+'px,0) scale('+kn+')';
+    st.style.transform='translate3d('+(-3*(1-p))+'px,'+(top+M.hn*kn+M.gap*(1-p))+'px,0) scale('+ks+')';
+    sv.style.transform='scale('+lerp(1,KI,p)+')';
+  }
+  function smTick(now){
+    sraf=0;if(!cur||!tgt)return;
+    const dt=Math.min(now-stl,50);stl=now;const a=1-Math.exp(-dt/SM);
+    cur.top+=(tgt.top-cur.top)*a;cur.p+=(tgt.p-cur.p)*a;
+    if(Math.abs(tgt.top-cur.top)<.02&&Math.abs(tgt.p-cur.p)<.0005){cur.top=tgt.top;cur.p=tgt.p;paintPin();return}
+    paintPin();sraf=requestAnimationFrame(smTick);
+  }
+  function smTo(top,p){
+    tgt={top:top,p:p};
+    if(!cur){cur={top:top,p:p};paintPin();return}
+    if(!sraf){stl=performance.now();sraf=requestAnimationFrame(smTick)}
+  }
+  function smReset(){cur=tgt=null;if(sraf){cancelAnimationFrame(sraf);sraf=0}}
   function upd(){
     if(!M){measure();if(!M)return}
     syncSend();
     const sc=pg.scrollTop+off,top0=M.dn-sc;
     let p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
     if(p<=0){
-      if(lp!==0){lp=0;pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0;bg2.style.opacity=0;bl.style.opacity=0;lsb='';pin.style.removeProperty('--sb')}
+      if(lp!==0){lp=0;smReset();pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0;bg2.style.opacity=0;bl.style.opacity=0;lsb='';pin.style.removeProperty('--sb')}
       return;
     }
     if(lp<=0){pin.style.visibility='visible';pn.style.visibility=ps.style.visibility='hidden';
@@ -1703,10 +1724,8 @@ function clearAppCache(){ location.reload(); }
       if(pst.textContent!==stTxt.textContent)stTxt.textContent=pst.textContent;
       const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}}
     lp=p;
-    const kn=lerp(1,KN,p),ks=lerp(1,KS,p),top=Math.max(top0,M.y1);
-    nm.style.transform='translate3d(0,'+top+'px,0) scale('+kn+')';
-    st.style.transform='translate3d('+(-3*(1-p))+'px,'+(top+M.hn*kn+M.gap*(1-p))+'px,0) scale('+ks+')';
-    sv.style.transform='scale('+lerp(1,KI,p)+')';
+    const top=Math.max(top0,M.y1);
+    smTo(top,p);
     /* после того как слайдер встал под кнопки, при дальнейшей прокрутке затемнение становится мягче: сквозь него видны размытые карточки */
     const rr=Math.max(0,Math.min(1,(sc-M.tabsAt)/SOFT_RAMP)),mm=1-SOFT_MIN*rr,sbv=(rr*SOFT_BLUR).toFixed(1)+'px';
     if(sbv!==lsb){lsb=sbv;pin.style.setProperty('--sb',sbv)}
@@ -1781,7 +1800,7 @@ function clearAppCache(){ location.reload(); }
     touching=true;unfreeze();capOff();stopAnim();mode=0;                         // новый жест — все ограничения снимаются
     if(!M)measure();ly=y0=e.touches[0].clientY;lock=0;smp=[{t:performance.now(),y:ly}];
     if(!M)return;const sc=pg.scrollTop+off,T=M.tabsAt;
-    if(T>2&&sc>T+1&&!off)lock=2;   /* вниз по странице — только нативная прокрутка, без упора: упор (обрезка высоты + scrollTop из JS) давал откат и дёрганье */
+    if(T>2){if(sc<T-1){lock=1;capOn(T)}else if(sc>T+1&&!off)lock=2}   /* жест начат выше ступеньки — упираемся в неё (lock 1), ниже — возвращаемся вверх (lock 2) */
   },{passive:true});
   pg.addEventListener('touchmove',e=>{
     const y=e.touches[0].clientY,d=ly-y;ly=y;   // d>0: страница едет вниз по содержимому
@@ -1844,12 +1863,33 @@ function clearAppCache(){ location.reload(); }
     M={dn:pr.top+sc,hn,hs,gap:sr.top-pr.bottom,y1,ls:y1+TRAVEL};
     lp=-2;
   }
+  /* сглаживание: scrollTop отдаёт целые пиксели, имя и номер догоняют цель плавно */
+  const SM=38;let cur=null,tgt=null,sraf=0,stl=0;
+  function paintPin(){
+    if(!M||!cur)return;const p=cur.p,kn=lerp(1,KN,p),ks=lerp(1,KS,p),top=cur.top;
+    nm.style.transform='translate3d(0,'+top+'px,0) scale('+kn+')';
+    st.style.transform='translate3d('+(-3*(1-p))+'px,'+(top+M.hn*kn+M.gap*(1-p))+'px,0) scale('+ks+')';
+    sv.style.transform='scale('+lerp(1,KI,p)+')';
+  }
+  function smTick(now){
+    sraf=0;if(!cur||!tgt)return;
+    const dt=Math.min(now-stl,50);stl=now;const a=1-Math.exp(-dt/SM);
+    cur.top+=(tgt.top-cur.top)*a;cur.p+=(tgt.p-cur.p)*a;
+    if(Math.abs(tgt.top-cur.top)<.02&&Math.abs(tgt.p-cur.p)<.0005){cur.top=tgt.top;cur.p=tgt.p;paintPin();return}
+    paintPin();sraf=requestAnimationFrame(smTick);
+  }
+  function smTo(top,p){
+    tgt={top:top,p:p};
+    if(!cur){cur={top:top,p:p};paintPin();return}
+    if(!sraf){stl=performance.now();sraf=requestAnimationFrame(smTick)}
+  }
+  function smReset(){cur=tgt=null;if(sraf){cancelAnimationFrame(sraf);sraf=0}}
   function upd(){
     if(!M){measure();if(!M)return}
     const top0=M.dn-pg.scrollTop;
     let p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
     if(p<=0){
-      if(lp!==0){lp=0;pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0}
+      if(lp!==0){lp=0;smReset();pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0}
       return;
     }
     if(lp<=0){pin.style.visibility='visible';pn.style.visibility=ps.style.visibility='hidden';
@@ -1857,10 +1897,7 @@ function clearAppCache(){ location.reload(); }
       if(pst.textContent!==stTxt.textContent)stTxt.textContent=pst.textContent;
       const h=src&&src.getAttribute('href');if(h&&h!==lh){lh=h;rt.setAttribute('href',h)}}
     lp=p;
-    const kn=lerp(1,KN,p),ks=lerp(1,KS,p),top=Math.max(top0,M.y1);
-    nm.style.transform='translate3d(0,'+top+'px,0) scale('+kn+')';
-    st.style.transform='translate3d('+(-3*(1-p))+'px,'+(top+M.hn*kn+M.gap*(1-p))+'px,0) scale('+ks+')';
-    sv.style.transform='scale('+lerp(1,KI,p)+')';
+    smTo(Math.max(top0,M.y1),p);
     bg.style.opacity=p;   // полоса затемнения фиксированной высоты (высота хедера), дальше вниз не растёт
   }
   pg.addEventListener('scroll',upd,{passive:true});
