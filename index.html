@@ -225,6 +225,7 @@ body.navanim #bar{z-index:1}
 .mpin{position:fixed;left:0;right:0;top:0;z-index:900;pointer-events:none;visibility:hidden}
 .mpin-bg{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h));opacity:0;background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,0.989) 25.0%,rgba(0,0,0,0.946) 31.2%,rgba(0,0,0,0.877) 37.5%,rgba(0,0,0,0.788) 43.8%,rgba(0,0,0,0.684) 50.0%,rgba(0,0,0,0.570) 56.2%,rgba(0,0,0,0.453) 62.5%,rgba(0,0,0,0.339) 68.8%,rgba(0,0,0,0.232) 75.0%,rgba(0,0,0,0.139) 81.2%,rgba(0,0,0,0.066) 87.5%,rgba(0,0,0,0.017) 93.8%,rgba(0,0,0,0.000) 100.0%)}
 #setPin .mpin-bg{height:calc(var(--hdr-top) + var(--hdr-h) + 16px);background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 5.0%,rgba(0,0,0,1.000) 10.0%,rgba(0,0,0,1.000) 15.0%,rgba(0,0,0,1.000) 20.0%,rgba(0,0,0,1.000) 25.0%,rgba(0,0,0,1.000) 30.0%,rgba(0,0,0,1.000) 35.0%,rgba(0,0,0,1.000) 40.0%,rgba(0,0,0,1.000) 45.0%,rgba(0,0,0,1.000) 50.0%,rgba(0,0,0,1.000) 55.0%,rgba(0,0,0,0.966) 60.0%,rgba(0,0,0,0.874) 65.0%,rgba(0,0,0,0.741) 70.0%,rgba(0,0,0,0.583) 75.0%,rgba(0,0,0,0.417) 80.0%,rgba(0,0,0,0.259) 85.0%,rgba(0,0,0,0.126) 90.0%,rgba(0,0,0,0.034) 95.0%,rgba(0,0,0,0.000) 100.0%)}
+#mePin .mpin-bg,#mePin .mpin-bg2{-webkit-backdrop-filter:blur(var(--sb,0px));backdrop-filter:blur(var(--sb,0px));-webkit-mask-image:linear-gradient(to bottom,#000 60%,rgba(0,0,0,0) 100%);mask-image:linear-gradient(to bottom,#000 60%,rgba(0,0,0,0) 100%)}
 .mpin-band{position:absolute;left:0;top:var(--hdr-top);height:var(--hdr-h);width:0}
 .mpin-bg2{position:absolute;left:0;right:0;top:0;height:calc(var(--hdr-top) + var(--hdr-h) + 16px + 40px + 16px);opacity:0;will-change:transform,opacity;background:linear-gradient(to bottom,rgba(0,0,0,1.000) 0.0%,rgba(0,0,0,1.000) 6.2%,rgba(0,0,0,1.000) 12.5%,rgba(0,0,0,1.000) 18.8%,rgba(0,0,0,1.000) 25.0%,rgba(0,0,0,1.000) 31.2%,rgba(0,0,0,1.000) 37.5%,rgba(0,0,0,1.000) 43.8%,rgba(0,0,0,1.000) 50.0%,rgba(0,0,0,1.000) 56.2%,rgba(0,0,0,1.000) 62.5%,rgba(0,0,0,1.000) 68.8%,rgba(0,0,0,1.000) 75.0%,rgba(0,0,0,0.989) 81.2%,rgba(0,0,0,0.684) 87.5%,rgba(0,0,0,0.232) 93.8%,rgba(0,0,0,0.000) 100.0%)}
 .mpin-n{position:absolute;top:0;left:16px;right:16px;text-align:center;font-size:28px;font-weight:550;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform-origin:50% 0;will-change:transform}
@@ -712,12 +713,13 @@ html,body{overscroll-behavior:none}
 /* окно «Продать подарок» */
 #sl{position:fixed;left:0;right:0;top:0;height:100%;z-index:2400;visibility:hidden;pointer-events:none;transition:visibility 0s linear .6s}
 #sl.on,#sl.pre{visibility:visible;pointer-events:auto;transition-delay:0s}
-#sl .sl-fill{position:absolute;left:0;right:0;top:calc(100% - (var(--kb,0px) - var(--ext,0px)));height:140px;background:#1c1c1e;pointer-events:none;opacity:0;transition:opacity 0s .4s}
+#sl .sl-fill{position:absolute;left:6px;right:6px;top:calc(100% - (var(--kb,0px) - var(--ext,0px)));height:140px;background:#1c1c1e;pointer-events:none;opacity:0;transition:opacity 0s .4s}
 #sl.kb .sl-fill{opacity:1;transition:none}
+#sl .sl-x,#sl .sl-go{-webkit-backdrop-filter:none;backdrop-filter:none;filter:none}   /* блюр и тень под кнопками на сплошном фоне невидимы, но тормозят анимацию окна */
 #sl .sl-dim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .45s}
 #sl.on .sl-dim{opacity:1}
-#sl .sl-sheet{position:absolute;left:6px;right:6px;bottom:calc(6px - var(--ext,0px));max-height:calc(100% - 12px + var(--ext,0px));padding-bottom:var(--kb,0px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;isolation:isolate;transform:translateY(calc(100% + 6px));transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform}
-#sl.on .sl-sheet{transform:none}
+#sl .sl-sheet{position:absolute;left:6px;right:6px;bottom:calc(6px - var(--ext,0px));max-height:calc(100% - 12px + var(--ext,0px));padding-bottom:var(--kb,0px);display:flex;flex-direction:column;background:#1c1c1e;border-radius:45.6px 45.6px 63.6px 63.6px/38px 38px 53px 53px;overflow:hidden;isolation:isolate;transform:translate3d(0,calc(100% + 6px),0);transition:transform .55s cubic-bezier(.25,.8,.25,1);will-change:transform;backface-visibility:hidden}
+#sl.on .sl-sheet{transform:translate3d(0,0,0)}
 #sl .sl-head{position:relative;flex:none;height:76px;display:flex;align-items:center;justify-content:center}
 #sl .sl-t{font-size:19px;font-weight:650}
 #sl .sl-x{position:absolute;top:16px;left:16px;width:var(--hdr-h);height:var(--hdr-h);border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;color:#fff;cursor:pointer;transition:transform .45s cubic-bezier(.25,.8,.25,1)}
@@ -1707,6 +1709,7 @@ function clearAppCache(){ location.reload(); }
   const pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),pst=ps.querySelector('span'),mb=pg.querySelector('.mbody'),phd=pg.querySelector('.phead'),cvr=pg.querySelector('.cover');
   let off=0;   // пока страница «покоится» ниже ступеньки, всё что выше неё сдвинуто за верх страницы на off px (см. shiftOn)
   const KN=17/28,KS=14/17,KI=(17/22)/KS,TRAVEL=60,GAP_TABS=16;
+  const SOFT_RAMP=80,SOFT_MIN=.28,SOFT_BLUR=14;let lsb='';   // как затемнение смягчается после «ступеньки»: на скольких px прокрутки, насколько, какой блюр
   const SHADE_RAMP=110;   // за сколько px прокрутки до «прилипания» слайдера затемнение полностью выезжает под него
   const lerp=(a,b,t)=>a+(b-a)*t;
   let M=null,lp=-1,lh='',ln='';
@@ -1762,7 +1765,7 @@ function clearAppCache(){ location.reload(); }
     let p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
     if(covers.me&&covers.me.isExp())p=0;
     if(p<=0){
-      if(lp!==0){lp=0;pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0;bg2.style.opacity=0}
+      if(lp!==0){lp=0;pin.style.visibility='hidden';pn.style.visibility=ps.style.visibility='';bg.style.opacity=0;bg2.style.opacity=0;lsb='';pin.style.removeProperty('--sb')}
       return;
     }
     if(lp<=0){pin.style.visibility='visible';pn.style.visibility=ps.style.visibility='hidden';
@@ -1774,11 +1777,14 @@ function clearAppCache(){ location.reload(); }
     nm.style.transform='translate3d(0,'+top+'px,0) scale('+kn+')';
     st.style.transform='translate3d('+(-3*(1-p))+'px,'+(top+M.hn*kn+M.gap*(1-p))+'px,0) scale('+ks+')';
     sv.style.transform='scale('+lerp(1,KI,p)+')';
-    bg.style.opacity=p;
+    /* после того как слайдер встал под кнопки, при дальнейшей прокрутке затемнение становится мягче: сквозь него видны размытые карточки */
+    const rr=Math.max(0,Math.min(1,(sc-M.tabsAt)/SOFT_RAMP)),mm=1-SOFT_MIN*rr,sbv=(rr*SOFT_BLUR).toFixed(1)+'px';
+    if(sbv!==lsb){lsb=sbv;pin.style.setProperty('--sb',sbv)}
+    bg.style.opacity=p*mm;
     /* затемнение под слайдером растёт вместе с прокруткой: чем ближе слайдер к месту, где он встаёт под хедер, тем больше площадь затемнения
        (выезжает сверху вниз). Никаких таймерных transition — на месте ничего не меняется. */
     const q=Math.max(0,Math.min(1,1-(M.tabsAt-sc)/SHADE_RAMP));
-    bg2.style.opacity=q;bg2.style.transform='translate3d(0,'+(-(1-q)*M.ext)+'px,0)';
+    bg2.style.opacity=q*mm;bg2.style.transform='translate3d(0,'+(-(1-q)*M.ext)+'px,0)';
   }
   /* «ступенька» на слайдере: жест, начатый выше/ниже места, где слайдер встаёт под кнопки хедера, не может проехать это место —
      ни пальцем, ни по инерции. Чтобы ехать дальше, нужно отпустить палец и начать новый жест.
@@ -4362,18 +4368,19 @@ renderMyGifts();
   function setTgBg(c){if(tgBg===c)return;tgBg=c;try{const T=window.Telegram&&Telegram.WebApp;if(!T)return;T.setBackgroundColor&&T.setBackgroundColor(c);T.setBottomBarColor&&T.setBottomBarColor(c)}catch(_){}}
   function fit(){
     const vv=window.visualViewport,foc=document.activeElement===inp,open=sl.classList.contains('on')||sl.classList.contains('pre');
+    if(!open)return;   /* окно закрывается: раскладку не трогаем, иначе оно дёргается на ходу */
     if((foc||open)&&(window.scrollX||window.scrollY))window.scrollTo(0,0);
     if(!H0)H0=baseH();
     const vb=vv?Math.round(vv.offsetTop+vv.height):window.innerHeight;
     let shrink=Math.max(0,H0-vb);if(shrink<80)shrink=0;
-    if(vv&&(foc||shrink>0)){sl.style.top=Math.round(vv.offsetTop)+'px';sl.style.height=Math.round(vv.height)+'px'}
-    else{sl.style.top='';sl.style.height=''}
+    const nt=(vv&&(foc||shrink>0))?Math.round(vv.offsetTop)+'px':'',nh=(vv&&(foc||shrink>0))?Math.round(vv.height)+'px':'';
+    if(sl.style.top!==nt)sl.style.top=nt;if(sl.style.height!==nh)sl.style.height=nh;
     let kb=0;
     if(shrink>0){kb=shrink;if(foc&&shrink>120&&shrink!==KBH){KBH=shrink;try{localStorage.setItem('slKbh',String(shrink))}catch(_){}}}
     else if(foc)kb=KBH||Math.round(H0*.35);   /* область не сжалась (клавиатура поверх): поднимаем контент на запомненную высоту */
-    sl.style.setProperty('--kb',kb+'px');
-    sl.style.setProperty('--ext',shrink+'px');
-    sl.classList.toggle('kb',foc);
+    if(sl.__kb!==kb){sl.__kb=kb;sl.style.setProperty('--kb',kb+'px')}
+    if(sl.__ext!==shrink){sl.__ext=shrink;sl.style.setProperty('--ext',shrink+'px')}
+    if(sl.classList.contains('kb')!==foc)sl.classList.toggle('kb',foc);
     if(foc||kb>0)setTgBg('#1c1c1e');else setTimeout(()=>{if(!sl.classList.contains('kb')&&document.activeElement!==inp)setTgBg('#000000')},450);
     shapeSheet();   /* высота окна меняется за счёт отступа, а не содержимого — контур пересчитываем сами */
   }
