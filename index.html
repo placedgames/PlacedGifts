@@ -3823,9 +3823,37 @@ renderMyGifts();
   const it=(k,t,ic)=>{ic=ic||k;return '<div class="cx-it" data-k="'+k+'">'+(FILLED[ic]?'<svg class="f" viewBox="0 0 512 512">':'<svg viewBox="0 0 24 24">')+IC[ic]+'</svg><span>'+t+'</span></div>'};
   const isU=x=>!!(x&&x.upg&&x.upg.c);
   const hs=x=>it(x.hid?'show':'hide',x.hid?'Показать':'Скрыть');
-  const mainHTML=x=>isU(x)?(x.pin!=null?it('pin','Открепить','unpin'):it('pin','Закрепить'))+it('wear','Носить')+it('link','Копировать ссылку')+it('share','Поделиться')+hs(x)+it('send','Передать'):hs(x);
-  const mainW=x=>Math.min(isU(x)?241:219,innerWidth-24);
+  const mainHTML=x=>isU(x)?(x.pin!=null?it('pin','Открепить','unpin'):it('pin','Закрепить'))+it('wear','Носить')+it('link','Копировать ссылку')+it('similar','Похожие подарки','search')+it('share','Поделиться')+hs(x)+it('send','Передать'):hs(x);
+  const mainW=x=>Math.min(isU(x)?276:219,innerWidth-24);
   document.addEventListener('click',e=>{if(performance.now()<(window.__cxSw||0)){e.stopPropagation();e.preventDefault()}},true);
+  /* ссылка подарка: https://t.me/GiftCraftsBot?startapp=ИмяПодарка-Номер (имя без пробелов), например ScaredCat-1 */
+  const gNum=x=>String(x.upg.n).replace(/\D/g,'');
+  const gLink=x=>'https://t.me/GiftCraftsBot?startapp='+String(x.upg.g||'').replace(/[^\p{L}\p{N}_]/gu,'')+'-'+gNum(x);
+  const gText=x=>'Посмотри на подарок '+x.upg.g+' #'+gNum(x)+' в GiftCrafts';
+  const tgw=()=>{try{return(window.Telegram&&Telegram.WebApp)||null}catch(_){return null}};
+  /* окно «поделиться» Telegram со ссылкой и текстом */
+  function shareGift(x){
+    if(!x||!x.upg)return;
+    const url='https://t.me/share/url?url='+encodeURIComponent(gLink(x))+'&text='+encodeURIComponent(gText(x)),w=tgw();
+    try{if(w&&w.openTelegramLink){w.openTelegramLink(url);return}}catch(_){}
+    try{window.open(url,'_blank')}catch(_){}
+  }
+  function copyText(t){
+    const fb=()=>{try{const a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';document.body.appendChild(a);a.select();a.setSelectionRange(0,t.length);document.execCommand('copy');a.remove()}catch(_){}};
+    try{if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(t).catch(fb)}catch(_){}
+    fb();return Promise.resolve();
+  }
+  function copyGiftLink(x){
+    if(!x||!x.upg)return;
+    copyText(gLink(x)).then(()=>{
+      const T='Ссылка скопирована',M='Отправьте ссылку подарка другим пользователям в Telegram.',w=tgw();
+      const cb=id=>{if(id==='send')shareGift(x)};
+      if(w&&w.showPopup&&(!w.isVersionAtLeast||w.isVersionAtLeast('6.2'))){
+        try{w.showPopup({title:T,message:M,buttons:[{id:'send',type:'default',text:'Отправить'},{id:'cancel',type:'cancel'}]},cb);return}catch(_){}
+      }
+      if(confirm(T+'\n\n'+M))cb('send');
+    });
+  }
   let root=null,cur=null,busy=false,lpFlag=false,closeT=0,openT=0;
   function build(){
     root=document.createElement('div');root.id='cx';root.setAttribute('aria-hidden','true');
@@ -3891,6 +3919,9 @@ renderMyGifts();
         }
         return;
       }
+      if(k==='link'){copyGiftLink(x);return}
+      if(k==='share'){shareGift(x);return}
+      if(k==='similar'){try{window.openMkSimilar&&openMkSimilar(x)}catch(_){}return}
       const N={pin:'Закрепить',wear:'Носить',link:'Копировать ссылку',similar:'Похожие подарки',share:'Поделиться',send:'Передать'};
       try{toast((N[k]||'')+': скоро')}catch(_){}
     }
@@ -3999,7 +4030,7 @@ renderMyGifts();
     cur={flt:apply};busy=true;openT=performance.now();
     const pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
     pv.innerHTML='';pv.style.width='0px';pv.style.height='0px';pv.style.top='0px';pv.style.left='0px';
-    mn.innerHTML=html;mn.style.width=Math.min(250,innerWidth-24)+'px';
+    mn.innerHTML=html;mn.style.width=Math.min(276,innerWidth-24)+'px';
     [pv,mn].forEach(n=>{try{n.getAnimations().forEach(a=>a.cancel())}catch(_){}});
     clearTimeout(closeT);root.classList.remove('out');root.classList.add('flt');   /* без затемнения и размытия */
     mn.querySelectorAll('.hot').forEach(n=>n.classList.remove('hot'));try{window.__cxReset&&window.__cxReset()}catch(_){}
@@ -4209,6 +4240,18 @@ renderMyGifts();
     $i('p-mkg').scrollTop=0;
     go('mkg');
   }
+  /* «Похожие подарки»: страница продажи этого подарка на маркете, модель и фон уже выбраны, узор — нет */
+  window.openMkSimilar=function(x){
+    const u=x&&x.upg;if(!u)return;
+    const el=[...document.querySelectorAll('#mgrid .gift')].find(e=>e.dataset.k===String(u.k));
+    const im=el&&el.querySelector('.pic img');
+    MK.cur={k:String(u.k),name:(el&&el.dataset.n)||u.g||'Подарок',image:im?im.src:(u.mi||null)};
+    MK.f={sort:'price',dir:'asc',m:u.m?[u.m]:null,b:u.b?[u.b]:null,s:null};
+    hideMenu();renderMk();
+    $i('p-mkg').scrollTop=0;
+    const ug=$i('ug');if(ug&&ug.classList.contains('on')){const b=$i('ugX');if(b)b.click()}
+    go('mkg');
+  };
   $i('mkGrid').addEventListener('click',e=>{
     const el=e.target.closest('.mkc');if(!el)return;
     const o=MK.items[+el.dataset.i];if(o)openBuyWin(o.x);
