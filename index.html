@@ -303,6 +303,7 @@ background:rgba(66,66,70,.58);-webkit-backdrop-filter:blur(30px) saturate(1.5);b
 #cx .cx-it{display:flex;align-items:center;gap:13px;margin:0 8px;padding:11px 11px 11px 19px;border-radius:23px;transition:background-color .16s ease;font-size:17px;line-height:20px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #cx .cx-it span{min-width:0}
 #cx .cx-it.hot{background:rgba(255,255,255,.09)}
+#cx.flt .cx-dim{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}
 #cx .cx-sep{height:1px;margin:6px 18px;background:rgba(255,255,255,.14)}
 #cx .cx-it svg.ck{width:20px;height:20px;stroke-width:2.2}
 #cx .cx-it svg.ck.off{visibility:hidden}
@@ -2019,7 +2020,7 @@ function renderPins(){
       const mi=(x.upg&&x.upg.mi)||x.image,p=pinPos(x.pin,id),d=document.createElement('div');
       d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=(200+p[0])+'px';d.style.top=(150+p[1])+'px';d.style.setProperty('--dx',(-p[0])+'px');d.style.setProperty('--dy',(-p[1])+'px');
       const wr=k=>{const v=Math.sin((x.pin+1)*91.7+k*47.3)*43758.5453;return v-Math.floor(v)};
-      d.innerHTML='<div class="pw" style="--wd:'+(24+wr(1)*12).toFixed(1)+'s;--wl:'+(-wr(2)*30).toFixed(1)+'s;animation-direction:'+(wr(3)>.5?'normal':'reverse')+'">'+(mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+pinStars(x.pin)+'</div>';
+      d.innerHTML='<div class="pw" style="--wd:'+(15+wr(1)*9).toFixed(1)+'s;--wl:'+(-wr(2)*20).toFixed(1)+'s;animation-direction:'+(wr(3)>.5?'normal':'reverse')+'">'+(mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+pinStars(x.pin)+'</div>';
       el.appendChild(d);
       d.addEventListener('animationend',()=>d.classList.remove('new'),{once:true});
     });
@@ -2529,8 +2530,9 @@ renderMyGifts();
     if(!e.target.closest('a'))return;
     const x=window.__gmCur;if(!x)return;
     x.hid=!x.hid;
+    if(x.hid&&x.pin!=null){delete x.pin;delete x.pinT;try{pinFit(MYGIFTS.filter(g=>g.pin!=null))}catch(_){}}   /* скрытый подарок не может быть закреплённым */
     try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
-    try{renderMyGifts()}catch(_){}
+    setTimeout(()=>{try{renderMyGifts()}catch(_){}},320);   /* перерисовка после анимации закрытия */
     gm.classList.add('gmpop');clearTimeout(window.__gmPopT);window.__gmPopT=setTimeout(()=>gm.classList.remove('gmpop'),900);
     close();
   });
@@ -3852,7 +3854,7 @@ renderMyGifts();
       if(cur&&cur.flt){const f=cur.flt;window.__cxSw=performance.now()+500;close();setTimeout(()=>f(k),300);return}
       window.__cxSw=performance.now()+500;   /* клик, который придёт после отпускания пальца, не должен попасть в элемент под меню (например, во вкладку) */
       const x=cur&&cur.x,fq=(k==='hide'||k==='show');close();
-      setTimeout(()=>act(k,x),fq?0:300);   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
+      setTimeout(()=>act(k,x),300);   /* перерисовка сетки — после анимации закрытия, чтобы не рвать кадры */
     }
     function act(k,x){
       if(k==='pin'){
@@ -3865,7 +3867,7 @@ renderMyGifts();
               used.sort((a,b)=>(a.pinT||0)-(b.pinT||0));
               const o=used[0];delete o.pin;delete o.pinT;
             }
-            x.pin=-1;x.pinT=Date.now();pinFit(MYGIFTS.filter(g=>g.pin!=null));   /* место выбирается по правилам расположения */
+            x.hid=false;x.pin=-1;x.pinT=Date.now();pinFit(MYGIFTS.filter(g=>g.pin!=null));   /* место выбирается по правилам расположения */
             try{toast('Подарок закреплён')}catch(_){}
           }
           try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
@@ -3874,7 +3876,11 @@ renderMyGifts();
         return;
       }
       if(k==='hide'||k==='show'){
-        if(x){x.hid=!x.hid;try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}try{renderMyGifts()}catch(_){}}
+        if(x){
+          x.hid=!x.hid;
+          if(x.hid&&x.pin!=null){delete x.pin;delete x.pinT;try{pinFit(MYGIFTS.filter(g=>g.pin!=null))}catch(_){}}   /* скрытый подарок не может быть закреплённым */
+          try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}try{renderMyGifts()}catch(_){}
+        }
         return;
       }
       const N={pin:'Закрепить',wear:'Носить',link:'Копировать ссылку',share:'Поделиться',send:'Передать'};
@@ -3918,7 +3924,7 @@ renderMyGifts();
     if(busy||!x||x.sold)return;
     if(!root)build();
     cur={el,x};busy=true;openT=performance.now();
-    root.querySelector('#cxMenu').style.right='';
+    root.querySelector('#cxMenu').style.right='';root.classList.remove('flt');
     const uniq=!!(x.upg&&x.upg.c),pv=root.querySelector('#cxPv'),mn=root.querySelector('#cxMenu');
     const rect=el.getBoundingClientRect(),vw=innerWidth,vh=innerHeight;
     let pvH,pvW;
@@ -3982,13 +3988,14 @@ renderMyGifts();
     const F=window.MYF=window.MYF||{sort:null,u:null,v:null};
     const ck=on=>'<svg class="ck'+(on?'':' off')+'" viewBox="0 0 24 24">'+IC.ck+'</svg>';
     const row=(k,t,on)=>'<div class="cx-it" data-k="'+k+'">'+ck(on)+'<span>'+t+'</span></div>';
-    const srt=(k,t,ic)=>'<div class="cx-it" data-k="'+k+'"><svg viewBox="0 0 24 24">'+IC[ic]+'</svg><span>'+t+'</span>'+(F.sort===k.slice(2)?'<svg class="ck" viewBox="0 0 24 24" style="margin-left:auto">'+IC.ck+'</svg>':'')+'</div>';
-    const html=srt('s:price','По цене','price')+srt('s:date','По дате','date')+'<div class="cx-sep"></div>'+
+    const byP=F.sort==='price';   /* кнопка предлагает переключить на другую сортировку */
+    const srt='<div class="cx-it" data-k="s:x"><svg viewBox="0 0 24 24">'+(byP?IC.date:IC.price)+'</svg><span>'+(byP?'По дате':'По цене')+'</span></div>';
+    const html=srt+'<div class="cx-sep"></div>'+
       row('u:nu','Не улучшенные',F.u!=='u')+row('u:u','Уникальные',F.u!=='nu')+'<div class="cx-sep"></div>'+
       row('v:v','Видимые',F.v!=='h')+row('v:h','Скрытые',F.v!=='v');
     const apply=k=>{
       const g=k.charAt(0),v=k.slice(2);
-      if(g==='s')F.sort=(F.sort===v?null:v);
+      if(g==='s')F.sort=(F.sort==='price'?'date':'price');
       else if(g==='u')F.u=(F.u===v?null:v);
       else if(g==='v')F.v=(F.v===v?null:v);
       try{renderMyGifts()}catch(_){}
@@ -3998,7 +4005,7 @@ renderMyGifts();
     pv.innerHTML='';pv.style.width='0px';pv.style.height='0px';pv.style.top='0px';pv.style.left='0px';
     mn.innerHTML=html;mn.style.width=Math.min(262,innerWidth-24)+'px';
     [pv,mn].forEach(n=>{try{n.getAnimations().forEach(a=>a.cancel())}catch(_){}});
-    clearTimeout(closeT);root.classList.remove('out');
+    clearTimeout(closeT);root.classList.remove('out');root.classList.add('flt');
     mn.querySelectorAll('.hot').forEach(n=>n.classList.remove('hot'));try{window.__cxReset&&window.__cxReset()}catch(_){}
     root.classList.add('on');root.setAttribute('aria-hidden','false');
     const r=anchor.getBoundingClientRect();
