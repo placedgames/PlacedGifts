@@ -168,10 +168,13 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 .pins{position:absolute;left:50%;top:calc(var(--ava-top) + var(--ava-size)/2);width:400px;height:300px;margin:-150px 0 0 -200px;pointer-events:none;--pq:0;
 -webkit-mask-image:radial-gradient(circle at 50% 50%,transparent calc(var(--ava-size)/2 - .5px),#000 calc(var(--ava-size)/2 + .5px));mask-image:radial-gradient(circle at 50% 50%,transparent calc(var(--ava-size)/2 - .5px),#000 calc(var(--ava-size)/2 + .5px));-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
 /* при прокрутке вниз подарки (--pq 0→1) сдвигаются к центру аватарки и уходят под неё; при прокрутке вверх выезжают обратно */
-.pinm{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;
+.pinm{position:absolute;width:29px;height:29px;margin:-14.5px 0 0 -14.5px;display:flex;align-items:center;justify-content:center;font-size:25px;line-height:1;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;
 transform:translate3d(calc(var(--dx,0px)*var(--pq)),calc(var(--dy,0px)*var(--pq)),0) scale(calc(1 - .45*var(--pq)));opacity:calc(1 - var(--pq)*var(--pq));will-change:transform,opacity;transition:none}
 .pname,.pstat,.pnum{will-change:transform}
 .pins.pq1 .pinm{pointer-events:none}
+.pinm .ps{position:absolute;left:50%;top:50%;width:var(--z,9px);height:var(--z,9px);margin:calc(var(--z,9px)/-2) 0 0 calc(var(--z,9px)/-2);z-index:-1;pointer-events:none;opacity:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='white' d='M255.2 40.4C247.8 42 245.3 44.1 242.3 51.5C239.6 58.2 239.1 74.6 238.3 82.5C236 104 226.8 200.5 218.7 213.5C216.5 216.9 213.2 219.3 209.5 220.7C196 225.9 177.9 227.4 163.5 229.8C141.2 233.4 118.9 237.4 96.5 240.4C86.8 241.7 75.8 241.9 66.5 245.3C59.9 247.7 55.2 255.5 57.8 262.5C58.9 265.5 61.7 268.6 64.5 270.1C71.6 273.7 94.4 274.5 103.5 275.8C126.7 279.2 150.2 281.7 173.5 284.1C184.4 285.3 200.5 286.1 210.5 290.1C214.7 291.8 218 294.7 220 298.8C229 317.6 236.5 408.6 239.3 434.8C240.1 443 240 451.6 241.7 459.8C244.4 472.5 259.8 476.2 266.7 464.5C269.4 459.8 269.3 453.7 269.9 448.5C272.7 423.7 282.3 307.8 294.5 294.5C301.4 287.1 314.9 286.8 324.2 285.4C326.9 285.1 329.6 284.7 332.2 284.3C345.5 282.8 443 271.6 447.2 269.4C451.6 267.2 454.6 262.3 454.5 257.5C454 241.5 439.5 243 427.5 241.2C406.5 238.2 309.3 226.6 297.5 218.3C294.1 216 292.2 212.6 290.9 208.8C287.5 199 286.4 188 285.1 177.8C281.1 146.1 277.2 114.5 274.5 82.8C273.7 73.7 274.1 57.7 271.2 49.8C270 46.5 265.5 42 262.2 40.8C260.9 40.3 259.6 40.5 258.2 40.5C257.2 40.4 256.3 40.4 255.2 40.4Z'/%3E%3C/svg%3E") center/contain no-repeat;animation:pinStar var(--d,5s) linear var(--dl,0s) infinite}
+@keyframes pinStar{0%{opacity:0;transform:translate(var(--x0),var(--y0)) scale(.3) rotate(0)}25%{opacity:.9}70%{opacity:.7}100%{opacity:0;transform:translate(var(--x1),var(--y1)) scale(1) rotate(80deg)}}
+body.scrolling .pinm .ps,body.bmopen .pinm .ps,.pins.pq1 .pinm .ps{animation-play-state:paused}
 .pinm.new{animation:pinIn .38s cubic-bezier(.2,.9,.25,1.2)}
 @keyframes pinIn{from{opacity:0;scale:.3}to{opacity:1;scale:1}}
 .pinm img{width:100%;height:100%;object-fit:contain;display:block}
@@ -1767,7 +1770,7 @@ function clearAppCache(){ location.reload(); }
     touching=true;unfreeze();capOff();stopAnim();mode=0;                         // новый жест — все ограничения снимаются
     if(!M)measure();ly=y0=e.touches[0].clientY;lock=0;smp=[{t:performance.now(),y:ly}];
     if(!M)return;const sc=pg.scrollTop+off,T=M.tabsAt;
-    if(T>2&&sc<T-1){lock=1;capOn(T)}else if(T>2&&sc>T+1&&!off)lock=2;
+    if(T>2&&sc>T+1&&!off)lock=2;   /* вниз по странице — только нативная прокрутка, без упора: упор (обрезка высоты + scrollTop из JS) давал откат и дёрганье */
   },{passive:true});
   pg.addEventListener('touchmove',e=>{
     const y=e.touches[0].clientY,d=ly-y;ly=y;   // d>0: страница едет вниз по содержимому
@@ -2010,6 +2013,16 @@ function pinFit(items){
   items.forEach((x,i)=>{if(!keep[i])x.pin=free.pop()});
   return true;
 }
+/* 4 белые четырёхконечные звёздочки, неспешно плывущие под каждым закреплённым подарком */
+function pinStars(seed){
+  let h='';const f=v=>v-Math.floor(v);
+  for(let i=0;i<4;i++){
+    const r=k=>f(Math.sin((seed+1)*12.9898+i*78.233+k*37.719)*43758.5453),a=r(1)*6.283+i*1.57,
+      x0=Math.cos(a)*5,y0=Math.sin(a)*5+3,x1=Math.cos(a+.6)*(17+r(2)*8),y1=Math.sin(a+.6)*(17+r(2)*8)+4;
+    h+='<i class="ps" style="--z:'+(7+r(3)*4).toFixed(1)+'px;--d:'+(5.5+r(4)*2.5).toFixed(1)+'s;--dl:'+(-(i*1.7+r(5))).toFixed(1)+'s;--x0:'+x0.toFixed(1)+'px;--y0:'+y0.toFixed(1)+'px;--x1:'+x1.toFixed(1)+'px;--y1:'+y1.toFixed(1)+'px"></i>';
+  }
+  return h;
+}
 function renderPins(){
   try{if(pinFit(MYGIFTS.filter(x=>x.pin!=null))){try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}}}catch(_){}
   const items=MYGIFTS.filter(x=>x.pin!=null&&x.pin<6);
@@ -2024,7 +2037,7 @@ function renderPins(){
       if(el.querySelector('[data-s="'+x.pin+'"]'))return;
       const mi=(x.upg&&x.upg.mi)||x.image,p=PIN_SLOTS[x.pin],d=document.createElement('div');
       d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=(200+p[0])+'px';d.style.top=(150+p[1])+'px';d.style.setProperty('--dx',(-p[0])+'px');d.style.setProperty('--dy',(-p[1])+'px');
-      d.innerHTML=mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>';
+      d.innerHTML=(mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+pinStars(x.pin);
       el.appendChild(d);
       d.addEventListener('animationend',()=>d.classList.remove('new'),{once:true});
     });
