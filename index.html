@@ -227,9 +227,6 @@ body.navanim #bar{z-index:1}
 .mpin-n{position:absolute;top:0;left:16px;right:16px;text-align:center;font-size:28px;font-weight:550;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform-origin:50% 0;will-change:transform}
 .mpin-s{position:absolute;top:0;left:16px;right:16px;display:flex;align-items:center;justify-content:center;gap:3px;font-size:17px;font-weight:500;color:var(--hint);white-space:nowrap;transform-origin:50% 0;will-change:transform}
 .mpin-s svg{width:22px;height:22px;fill:var(--accent);fill-rule:evenodd;flex:none}
-/* копия имени в хедере (только профиль): появляется, когда слайдер закрепился под кнопками хедера; вместо «в сети» — число подарков */
-.mpin-n,.mpin-s{opacity:0;scale:.12;translate:0 calc(.88*var(--dy,0px));transition:opacity .16s ease-out,scale .24s cubic-bezier(.22,1,.36,1),translate .24s cubic-bezier(.22,1,.36,1)}
-.mpin.on .mpin-n,.mpin.on .mpin-s{opacity:1;scale:1;translate:0 0}
 
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:40px;border-radius:21.2px/20px;display:flex;align-items:stretch;padding:3px}
@@ -875,9 +872,9 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
     <div class="pf"><b>мобильный</b><span id="pNum"></span></div>
     <div class="pf pf-user"><div><b>имя пользователя</b><span class="lnk" id="pUser"></span></div><svg class="ico" style="--s:var(--ic-pf-qr)"><use href="#i-qr"/></svg></div>
   </div>
-  <div class="mpin" id="mePin"><div class="mpin-bl"></div><div class="mpin-bg"></div><div class="mpin-bg2"></div><div class="mpin-band"></div><div class="mpin-n" id="mpN"></div><div class="mpin-s" id="mpS"><span></span></div></div>
+  <div class="mpin" id="mePin"><div class="mpin-bl"></div><div class="mpin-bg"></div><div class="mpin-bg2"></div><div class="mpin-band"></div></div>
   <div class="mbody">
-  <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="gifts"><span>Подарки</span><span class="mt-ic" id="mtIcons"></span></button><button data-m="posts">Публикации</button></div>
+  <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="gifts"><span>Подарки</span><span class="mt-ic" id="mtIcons"></span></button></div>
   <div class="pgrid" id="pGrid"></div>
   <div class="gempty" id="pEmpty" hidden></div>
   <div id="pSpace" style="height:0;pointer-events:none" aria-hidden="true"></div>
@@ -1224,7 +1221,7 @@ function go(p,instant,back,o){
     else dir=(DETAIL.includes(p)&&!(p==='me'&&!o.full))?1:0;
   }
   if(p==='me')meFull=!!o.full;
-  if(p!==prev&&(p==='me'||p==='settings')){try{window.pinFlip&&pinFlip()}catch(_){}}   /* раскладка подарков вокруг аватарки меняется при каждом заходе */
+  if(p!==prev&&(p==='me'||(p==='settings'&&prev!=='me'))){try{window.pinFlip&&pinFlip(p)}catch(_){}}   /* раскладка подарков вокруг аватарки меняется при каждом заходе: у профиля и у настроек своё чередование; возврат из профиля в настройки раскладку не меняет */
   cur=p;
   const wantNo=noBar(p,meFull);
   setHdr(p,dir!==0||!!o.bounce);
@@ -1450,47 +1447,7 @@ $$('#stabs button').forEach(b=>b.onclick=()=>{
   const st=b.dataset.s==='stars';
   $('#sCard').hidden=!st; $('#sTasks').hidden=st;
 });
-/* прокрутка вкладок профиля: у «Подарков» и «Публикаций» запоминается своё положение, пока слайдер закреплён под хедером.
-   Как только слайдер «открепился» (страница прокручена выше ступеньки) — сохранённые положения сбрасываются, вкладки открываются «сначала». */
-const TAB_POS={gifts:null,posts:null};
 function meTabsPinned(){const i=window.meStep&&meStep(),pg=$('#p-me');return !!(i&&pg)&&pg.scrollTop+i.off>=i.T-1}
-(function(){
-  const pg=$('#p-me');let q=0;
-  pg.addEventListener('scroll',()=>{
-    if(q||(TAB_POS.gifts==null&&TAB_POS.posts==null))return;
-    q=requestAnimationFrame(()=>{q=0;if((TAB_POS.gifts!=null||TAB_POS.posts!=null)&&!meTabsPinned())TAB_POS.gifts=TAB_POS.posts=null});
-  },{passive:true});
-})();
-/* смена вкладки: на «Публикациях» после карточки идёт очень большой пустой блок (#pSpace), поэтому страница не становится короче,
-   прокрутка не меняется и слайдер остаётся на месте. Блок добавляется ДО перерисовки, в том же кадре. */
-$$('#mtabs button').forEach(b=>b.onclick=()=>{
-  const pb=$('#mtabs button.on'),was=pb&&pb.dataset.m,to=b.dataset.m;
-  pickTab($('#mtabs'),b);
-  if(was===to)return;   /* нажали на уже выбранную вкладку */
-  const posts=to==='posts';
-  requestAnimationFrame(()=>setTimeout(()=>{
-    const pg=$('#p-me'),sp=$('#pSpace'),now=pg.scrollTop+(pg._off||0);
-    TAB_POS[was]=meTabsPinned()?now:null;            /* уходим с вкладки: запоминаем её положение, только если слайдер закреплён */
-    const D=TAB_POS[to]!=null?TAB_POS[to]:now;       /* куда встаём: сохранённое положение вкладки или то же место, где были */
-    if(posts&&sp)sp.style.height=Math.max(3000,D+pg.clientHeight+600)+'px';
-    try{renderMyGifts()}catch(e){}
-    if(!posts){
-      /* «Подарки»: дорисовываем карточки до нужной позиции, пока пустой блок ещё держит высоту страницы */
-      try{
-        const g=$('#pGrid'),c=g.firstElementChild,dst=D-(pg._off||0);
-        if(dst>0&&c&&!g.hidden){
-          const rowH=c.offsetHeight+10,rows=Math.ceil((dst+pg.clientHeight+300-g.offsetTop)/rowH),target=Math.min((g.__list||[]).length,rows*3);
-          let guard=0;while((g.__n||0)<target&&guard++<100)pgMore();
-          pgKick();
-        }
-      }catch(e){}
-      if(sp)sp.style.height='0';
-      meFillSpace();
-    }
-    const want=D-(pg._off||0);
-    if(Math.abs(pg.scrollTop-want)>1)pg.scrollTop=want;   /* пишем прокрутку только если она отличается */
-  },0))
-});
 function resetTabs(){
   [['#gtabs','all','t'],['#mtabs','gifts','m'],['#mkTabs','all','t']].forEach(([sel,v,k])=>{
     const box=$(sel),b=box.querySelector('[data-'+k+'="'+v+'"]');
@@ -1499,7 +1456,6 @@ function resetTabs(){
   });
   $('#grid').hidden=false; $('#gempty').hidden=true;
   try{const sp=document.getElementById('pSpace');if(sp)sp.style.height='0'}catch(e){}
-  TAB_POS.gifts=TAB_POS.posts=null;
   try{renderMyGifts()}catch(e){}
 }
 if(window.ResizeObserver)new ResizeObserver(()=>{placeTab($('#mtabs'),true);placeTab($('#gtabs'),true);placeTab($('#stabs'),true);placeTab($('#mkTabs'),true)}).observe(document.body);
@@ -1640,9 +1596,8 @@ function clearAppCache(){ location.reload(); }
 (function(){
   /* имя, рейтинг и «в сети» не появляются новым блоком, а уменьшаются и «приезжают» в хедер вместе с прокруткой.
      Только transform и opacity (без перерасчёта раскладки на каждый кадр); размеры замеряются один раз и при изменении раскладки. */
-  const pg=$('#p-me'),pin=$('#mePin'),bg=pin.querySelector('.mpin-bg'),bg2=pin.querySelector('.mpin-bg2'),bl=pin.querySelector('.mpin-bl'),band=pin.querySelector('.mpin-band'),nm=$('#mpN'),st=$('#mpS'),stTxt=st.querySelector('span');
+  const pg=$('#p-me'),pin=$('#mePin'),bg=pin.querySelector('.mpin-bg'),bg2=pin.querySelector('.mpin-bg2'),bl=pin.querySelector('.mpin-bl'),band=pin.querySelector('.mpin-band');
   const pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),pst=ps.querySelector('span'),mb=pg.querySelector('.mbody'),phd=pg.querySelector('.phead');
-  let gOn=false,ln='';
   let off=0;   // пока страница «покоится» ниже ступеньки, всё что выше неё сдвинуто за верх страницы на off px (см. shiftOn)
   const KN=17/28,KS=14/17,KI=(17/22)/KS,TRAVEL=60,GAP_TABS=16;
   const SOFT_RAMP=80,SOFT_MIN=.14,SOFT_BLUR=2;let lsb='';   // как затемнение смягчается после «ступеньки»: на скольких px прокрутки, насколько, какой блюр
@@ -1654,26 +1609,9 @@ function clearAppCache(){ location.reload(); }
     const sc=pg.scrollTop+off,pr=pn.getBoundingClientRect(),sr=ps.getBoundingClientRect();
     if(!pr.height){M=null;return}
     const bt=band.offsetTop,bh=band.offsetHeight,hn=pr.height,hs=sr.height;
-    nm.style.lineHeight=hn+'px';nm.style.height=hn+'px';st.style.height=hs+'px';
     const y1=bt+(bh-(hn*KN+hs*KS))/2;
     M={dn:pr.top+sc,hn,hs,gap:sr.top-pr.bottom,y1,ls:y1+TRAVEL,tabsAt:mb.offsetTop+off-(bt+bh+GAP_TABS),ext:Math.max(0,bg2.offsetHeight-bg.offsetHeight)};
-    lp=-2;pinPaint();
-  }
-  /* копия имени стоит на конечном месте (под кнопками хедера, 17px), статус под ним — число подарков */
-  function pinPaint(){
-    if(!M)return;
-    nm.style.transform='translate3d(0,'+M.y1+'px,0) scale('+KN+')';
-    st.style.transform='translate3d(0,'+(M.y1+M.hn*KN)+'px,0) scale('+KS+')';
-    /* рост «изнутри»: оба элемента вырастают из общего центра блока (имя + статус) */
-    const C=M.y1+(M.hn*KN+M.hs*KS)/2;
-    nm.style.setProperty('--dy',(C-M.y1)+'px');
-    st.style.setProperty('--dy',(C-(M.y1+M.hn*KN))+'px');
-  }
-  const plural=n=>n%10===1&&n%100!==11?'подарок':(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20)?'подарка':'подарков');
-  function syncPin(){
-    const t=pn.textContent;if(t!==ln){ln=t;nm.textContent=t}
-    let n=0;try{n=MYGIFTS.length}catch(_){}
-    const c=n+'\u00a0'+plural(n);if(stTxt.textContent!==c)stTxt.textContent=c;
+    lp=-2;
   }
   /* для вкладок профиля: на какой прокрутке слайдер закрепляется под хедером (ступенька) и текущий сдвиг */
   window.meStep=()=>{if(!M)measure();return M?{T:M.tabsAt,off:off}:null};
@@ -1716,13 +1654,12 @@ function clearAppCache(){ location.reload(); }
     const sc=pg.scrollTop+off,top0=M.dn-sc;
     let p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
     if(p<=0){
-      if(lp!==0){lp=0;if(gOn){gOn=false;pin.classList.remove('on')}pin.style.visibility='hidden';bg.style.opacity=0;bg2.style.opacity=0;bl.style.opacity=0;lsb='';pin.style.removeProperty('--sb')}
+      if(lp!==0){lp=0;pin.style.visibility='hidden';bg.style.opacity=0;bg2.style.opacity=0;bl.style.opacity=0;lsb='';pin.style.removeProperty('--sb')}
       return;
     }
     if(lp<=0)pin.style.visibility='visible';
     lp=p;
     const top=Math.max(top0,M.y1);
-    const gw=sc>=M.tabsAt-1;if(gw!==gOn){gOn=gw;if(gw)syncPin();pin.classList.toggle('on',gw)}else if(gw)syncPin();
     /* после того как слайдер встал под кнопки, при дальнейшей прокрутке затемнение становится мягче: сквозь него видны размытые карточки */
     const rr=Math.max(0,Math.min(1,(sc-M.tabsAt)/SOFT_RAMP)),mm=1-SOFT_MIN*rr,sbv=(rr*SOFT_BLUR).toFixed(1)+'px';
     if(sbv!==lsb){lsb=sbv;pin.style.setProperty('--sb',sbv)}
@@ -1948,7 +1885,6 @@ function pgKick(){const g=$('#pGrid');if(!pgIO||!pgSent||!g)return;pgIO.unobserv
 function meFillSpace(){
   try{
     const pg=$('#p-me'),sp=$('#pSpace');if(!pg||!sp||!pg.classList.contains('on'))return;
-    const tb=document.querySelector('#mtabs button.on');if(tb&&tb.dataset.m==='posts')return;
     const i=window.meStep&&meStep();if(!i)return;
     /* (раньше тут высота запаса обнулялась — внизу страницы браузер из-за этого сжимал scrollTop и страница «отскакивала») */
     /* высота содержимого считаем по месту, где начинается запас (scrollHeight не бывает меньше высоты экрана) */
@@ -1991,14 +1927,14 @@ function pgWatch(){
 const PIN_SLOTS=[[-62,-44],[77,-35],[-142,21],[128,9],[-86,12],[83,19]];
 /* вариант B (рисунок с синей аватаркой); при каждом заходе на профиль/настройки раскладка чередуется A ↔ B */
 const PIN_SLOTS_B=[[-95,-33],[69,-32],[-140,8],[146,11],[-70,22],[92,13]];
-let PIN_V=0;
-const pinPos=i=>(PIN_V?PIN_SLOTS_B:PIN_SLOTS)[i];
-function pinApply(){
-  ['pPins','sPins'].forEach(id=>{const el=document.getElementById(id);if(!el)return;
-    [].slice.call(el.children).forEach(c=>{const p=pinPos(+c.dataset.s);if(!p)return;
+const PIN_VM={pPins:0,sPins:0};   /* у профиля и настроек своё чередование A ↔ B */
+const pinPos=(i,id)=>(PIN_VM[id]?PIN_SLOTS_B:PIN_SLOTS)[i];
+function pinApply(only){
+  (only?[only]:['pPins','sPins']).forEach(id=>{const el=document.getElementById(id);if(!el)return;
+    [].slice.call(el.children).forEach(c=>{const p=pinPos(+c.dataset.s,id);if(!p)return;
       c.style.left=(200+p[0])+'px';c.style.top=(150+p[1])+'px';c.style.setProperty('--dx',(-p[0])+'px');c.style.setProperty('--dy',(-p[1])+'px')})});
 }
-window.pinFlip=function(){PIN_V^=1;pinApply()};
+window.pinFlip=function(w){const id=w==='me'?'pPins':w==='settings'?'sPins':null;if(!id)return;PIN_VM[id]^=1;pinApply(id)};
 const PIN_DIAG=[[0,5],[1,4]];   /* «накрест» */
 /* допустимое расположение для n подарков:
    1 — случайный угол; 2 — только накрест; 3 и 4 — обязательно есть пара накрест, остальные где угодно;
@@ -2056,7 +1992,7 @@ function renderPins(){
     });
     items.forEach(x=>{
       if(el.querySelector('[data-s="'+x.pin+'"]'))return;
-      const mi=(x.upg&&x.upg.mi)||x.image,p=pinPos(x.pin),d=document.createElement('div');
+      const mi=(x.upg&&x.upg.mi)||x.image,p=pinPos(x.pin,id),d=document.createElement('div');
       d.className='pinm new';d.dataset.s=x.pin;d.__src=mi||x.emoji||'';d.style.left=(200+p[0])+'px';d.style.top=(150+p[1])+'px';d.style.setProperty('--dx',(-p[0])+'px');d.style.setProperty('--dy',(-p[1])+'px');
       const wr=k=>{const v=Math.sin((x.pin+1)*91.7+k*47.3)*43758.5453;return v-Math.floor(v)};
       d.innerHTML='<div class="pw" style="--wd:'+(5.5+wr(1)*3.3).toFixed(1)+'s;--wl:'+(-wr(2)*6).toFixed(1)+'s;animation-direction:'+(wr(3)>.5?'normal':'reverse')+'">'+(mi?'<img src="'+mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+pinStars(x.pin)+'</div>';
@@ -2069,13 +2005,12 @@ let pgWarmT=0;
 /* порядок подарков как в сетке: сначала закреплённые, затем остальные */
 function myOrder(){return MYGIFTS.filter(x=>x.pin!=null).sort((a,b)=>(b.pinT||0)-(a.pinT||0)).concat(MYGIFTS.filter(x=>x.pin==null))}
 function renderMyGifts(reset){
-  const g=$('#pGrid'),e=$('#pEmpty'),b=$('#mtabs button.on');if(!g||!e)return;
-  const uniq=!!b&&b.dataset.m==='posts';
+  const g=$('#pGrid'),e=$('#pEmpty');if(!g||!e)return;
   /* закреплённые — в самом верху (новые закрепы выше); data-i остаётся индексом в MYGIFTS */
-  const list=uniq?[]:myOrder();
+  const list=myOrder();
   g.__ix=list.map(x=>MYGIFTS.indexOf(x));
   try{renderPins()}catch(_){}
-  const sig=(uniq?'u':'a')+'|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.pin!=null?'p'+x.pin:'',x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
+  const sig='a|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.pin!=null?'p'+x.pin:'',x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
   g.__list=list;
   if(g.__sig!==sig){
     g.__sig=sig;try{PG_RO&&PG_RO.disconnect()}catch(_){}
@@ -2089,7 +2024,7 @@ function renderMyGifts(reset){
     g.__n=n;
   }
   g.hidden=!list.length;e.hidden=list.length>0;
-  e.textContent=uniq?'Публикаций пока нет':'Подарков пока нет';
+  e.textContent='Подарков пока нет';
   try{syncSendLabel()}catch(_){}
   requestAnimationFrame(meFillSpace);
   const ti=document.getElementById('mtIcons');
@@ -2118,10 +2053,7 @@ function sendLabel(t){
   if(vis&&nu.animate)nu.animate([{transform:'translateY(-9px) scale(.78)',opacity:0},{transform:'none',opacity:1}],{duration:280,easing:'cubic-bezier(.3,.8,.3,1)'});
 }
 /* подпись кнопки внизу зависит от вкладки */
-function syncSendLabel(){
-  const tb=document.querySelector('#mtabs button.on'),uniq=!!tb&&tb.dataset.m==='posts';
-  sendLabel(uniq?'Добавить публикацию':'Отправить подарки');
-}
+function syncSendLabel(){sendLabel('Отправить подарки')}
 renderMyGifts();
 
 
