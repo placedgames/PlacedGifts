@@ -3858,8 +3858,16 @@ renderMyGifts();
       if(confirm(T+'\n\n'+M))cb('send');
     });
   }
-  /* действие, которому нужен жест пользователя (фокус поля → клавиатура): выполняется в ближайшем click, а если его не будет — через 350 мс */
-  function later(f){window.__cxPend=f;clearTimeout(window.__cxPendT);window.__cxPendT=setTimeout(()=>{const g=window.__cxPend;if(g){window.__cxPend=null;try{g()}catch(_){}}},350)}
+  /* действие, которому нужен жест пользователя (фокус поля → клавиатура на iOS): выполняется сразу, прямо в обработчике нажатия,
+     а если iOS не засчитал его как жест — поле получает фокус ещё раз в ближайшем touchend/click этого же касания */
+  function later(f){
+    try{f()}catch(_){}
+    const ev=['touchend','click'];
+    const off=()=>ev.forEach(t=>document.removeEventListener(t,re,true));
+    const re=()=>{off();clearTimeout(tm);try{window.__slFocus&&__slFocus()}catch(_){}};
+    const tm=setTimeout(off,700);
+    ev.forEach(t=>document.addEventListener(t,re,true));
+  }
   let root=null,cur=null,busy=false,lpFlag=false,closeT=0,openT=0;
   function build(){
     root=document.createElement('div');root.id='cx';root.setAttribute('aria-hidden','true');
@@ -4518,6 +4526,7 @@ renderMyGifts();
     clearTimeout(sl.__kbt);sl.__kbt=setTimeout(()=>{if(sl.classList.contains('on'))sl.classList.add('kbt')},90);   /* при первом открытии высота клавиатуры ещё неизвестна: поправка к настоящей высоте должна идти плавно, а не скачком */
   }
   window.openSellEdit=function(x){if(x&&x.sale)openSell(x,true)};
+  window.__slFocus=function(){if(!sl.classList.contains('on')||document.activeElement===inp)return;try{inp.focus({preventScroll:true});inp.select()}catch(_){}};
   function closeSell(){
     clearTimeout(sl.__kbt);clearTimeout(sl.__foldT);sl.__fold=false;sl.classList.remove('on','pre','kb');sl.setAttribute('aria-hidden','true');
     try{inp.blur()}catch(_){}
