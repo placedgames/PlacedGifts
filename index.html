@@ -85,7 +85,7 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .empty{background:var(--card);border-radius:var(--r);padding:40px 20px;text-align:center;color:var(--hint)}
 
 /* profile */
-.ava{width:var(--ava-size);height:var(--ava-size);border-radius:50%;margin:var(--ava-top) auto 10px;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:700}
+.ava{width:var(--ava-size);height:var(--ava-size);border-radius:50%;margin:var(--ava-top) auto 8px;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:700}
 .pname{font-size:28px;font-weight:550;text-align:center}
 .pnum{color:var(--hint);display:flex;justify-content:center;align-items:center;gap:var(--stat-gap);margin:var(--name-gap) 0 var(--pgap-bottom)}
 .pnum svg{fill:var(--accent);fill-rule:evenodd}
@@ -187,23 +187,22 @@ body.scrolling .pinm .pw,body.bmopen .pinm .pw,.pins.pq1 .pinm .pw{animation-pla
 .phead>:not(.ava):not(.pins):not(.wbg){opacity:var(--hf,1)}
 /* «Носить»: фон профиля до блока с номером красится в фон подарка (с узором), рядом с именем — модель подарка со звёздочками */
 .phead{isolation:isolate}
-.wbg{position:absolute;z-index:-1;left:calc(50% - 50vw);width:100vw;top:-320px;bottom:16px;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .45s ease}
+.wbg{position:absolute;z-index:-1;left:calc(50% - 50vw);width:100vw;top:-320px;bottom:13px;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .45s ease;
+-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),rgba(0,0,0,.6) calc(100% - 11px),transparent 100%);mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),rgba(0,0,0,.6) calc(100% - 11px),transparent 100%)}
 .phead.wear .wbg{opacity:1}
 .wbg canvas{position:absolute;inset:0;width:100%;height:100%}
 /* по углам сверху и снизу: затемнение и лёгкое размытие, как в окнах подарка и улучшения */
 .wbg::after{content:"";position:absolute;inset:0;pointer-events:none;
-background:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top) + var(--ava-size)/2),rgba(0,0,0,0) 36%,rgba(0,0,0,.36) 100%);
--webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
--webkit-mask-image:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top) + var(--ava-size)/2),transparent 48%,#000 100%);
-mask-image:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top) + var(--ava-size)/2),transparent 48%,#000 100%)}
+background:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top) + var(--ava-size)/2),rgba(0,0,0,0) 36%,rgba(0,0,0,.36) 100%)}
 .phead.wear .pstat{color:rgba(255,255,255,.74)}
 .phead.wear .pstat svg{fill:#fff}
 .pname .wmod{position:relative;top:-2px;display:inline-block;width:27px;height:27px;margin:-3px 0 -3px 4px;vertical-align:middle;transform:none;opacity:1;pointer-events:none;will-change:auto;cursor:default}
-.pname .wmod .pw{animation:none;will-change:auto;transform:none}
+.pname .wmod .pw{animation:none;will-change:auto;transform:none;isolation:isolate}
+.pname .wmod.wstar svg{width:100%;height:100%;display:block;fill:var(--accent);fill-rule:evenodd}
 .phead.wear .pnum{color:rgba(255,255,255,.74)}
 .phead.wear .pnum svg{fill:#fff}
 /* перерисовка размытия по краям фона (iOS иногда оставляет старую картинку) */
-.wbg.rp::after{-webkit-backdrop-filter:blur(3.01px);backdrop-filter:blur(3.01px)}
+.wbg.rp{opacity:.999}
 
 /* хедер: закреплённые кнопки поверх контента, стекло как у меню */
 #hdr{position:fixed;left:16px;right:16px;top:var(--hdr-top);z-index:1000;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
@@ -2101,14 +2100,22 @@ function applyWear(){
     const ph=document.querySelector(t.ph),bg=document.getElementById(t.bg),pn=document.getElementById(t.pn),rt=document.getElementById(t.rt);
     if(!ph||!bg||!pn)return;
     const old=pn.querySelector('.wmod');
-    if(!x){ph.classList.remove('wear');if(old)old.remove();if(rt)rt.setAttribute('href','#i-n1');return}
+    if(!x){
+      ph.classList.remove('wear');if(rt)rt.setAttribute('href','#i-n1');
+      if(!old||old.dataset.k!=='star'){
+        if(old)old.remove();
+        const s=document.createElement('span');s.className='pinm wmod wstar';s.dataset.k='star';
+        s.innerHTML='<svg viewBox="0 0 512 512"><use href="#i-star"/></svg>';pn.appendChild(s);
+      }
+      return;
+    }
     const d=x.upg,c=d.c||{},c1=pgCol(c.c1)||'#7b72ea',c2=pgCol(c.c2)||'#5b3fb8',key=[d.n,d.mi,c.c1,c.c2,c.c3,d.si].join('|');
     const was=ph.classList.contains('wear');
     bg.style.background='radial-gradient(ellipse 85% 70% at 50% calc(320px + var(--ava-top) + var(--ava-size)/2),'+c1+' 0%,'+c2+' 100%)';
     if(!old||old.dataset.k!==key){
       if(old)old.remove();
       const m=document.createElement('span');m.className='pinm wmod';m.dataset.k=key;
-      m.innerHTML='<span class="pw">'+(d.mi?'<img src="'+d.mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+'</span>';
+      m.innerHTML='<span class="pw">'+(d.mi?'<img src="'+d.mi+'" alt="" decoding="async">':'<span>'+(x.emoji||'🎁')+'</span>')+pinStars(77)+'</span>';
       pn.appendChild(m);
     }
     ph.classList.add('wear');if(rt)rt.setAttribute('href','#i-n0');
