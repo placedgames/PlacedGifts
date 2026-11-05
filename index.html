@@ -954,8 +954,8 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
 <div id="bar">
   <div id="menuSlider"></div>
   <div id="menuPill">
-    <button class="menu-item" data-p="gifts"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-gift)"><use href="#i-gift"/></svg></div><span class="menu-label">Подарки</span></button>
     <button class="menu-item" data-p="market"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-market)"><use href="#i-market"/></svg></div><span class="menu-label">Маркет</span></button>
+    <button class="menu-item" data-p="gifts"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-gift)"><use href="#i-gift"/></svg></div><span class="menu-label">Подарки</span></button>
     <button class="menu-item" data-p="stars"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-star)"><use href="#i-star"/></svg></div><span class="menu-label">Звёзды</span></button>
   <div id="menuBg" class="glass"></div></div>
   <div id="meWrap"><div class="glass"></div><button id="meBtn" data-p="settings"><div id="meAva"></div></button></div>
@@ -1242,7 +1242,7 @@ $('#hdr').addEventListener('click',e=>{
 
 
 /* ===== Навигация ===== */
-const PAGES=['gifts','market','stars'];
+const PAGES=['market','gifts','stars'];
 function slide(p){
   const s=$('#menuSlider'),w=$('#bar');s.getBoundingClientRect();const _=0,pill=$('#menuPill'),me=$('#meWrap');
   const wr=w.getBoundingClientRect(), i=PAGES.indexOf(p);
@@ -1415,7 +1415,7 @@ $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
 /* язык: нажатие на «Русский» ↔ «English» меняет текст и названия пунктов меню */
 (function(){
   const row=document.querySelector('.row[data-s="Язык"]'),v=row&&row.querySelector('.v');if(!v)return;
-  const L={ru:{v:'Русский',m:['Подарки','Маркет','Звёзды']},en:{v:'English',m:['Gifts','Market','Stars']}};
+  const L={ru:{v:'Русский',m:['Маркет','Подарки','Звёзды']},en:{v:'English',m:['Market','Gifts','Stars']}};
   function apply(k){
     v.textContent=L[k].v;
     $$('.menu-item .menu-label').forEach((e,i)=>{if(L[k].m[i])e.textContent=L[k].m[i]});
