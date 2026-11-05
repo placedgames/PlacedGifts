@@ -147,6 +147,7 @@ mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0
 #menuPill,#menuBg,#meWrap .glass{--menu-glass-blur:11px;--glass-w:1px;--glass-strong:.27;--glass2-a:.3;--glass2-spread:1px;--glass2-blur:3px;--glass2-rgb:80,82,90;--glass-rgb:84,86,94}
 #menuBg::after,#meWrap .glass::after{-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,.85) 10%,rgba(0,0,0,.6) 20%,rgba(0,0,0,.36) 30%,rgba(0,0,0,.16) 40%,rgba(0,0,0,0) 50%,rgba(0,0,0,0) 50%,rgba(0,0,0,.16) 60%,rgba(0,0,0,.36) 70%,rgba(0,0,0,.6) 80%,rgba(0,0,0,.85) 90%,rgba(0,0,0,1) 100%);mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,.85) 10%,rgba(0,0,0,.6) 20%,rgba(0,0,0,.36) 30%,rgba(0,0,0,.16) 40%,rgba(0,0,0,0) 50%,rgba(0,0,0,0) 50%,rgba(0,0,0,.16) 60%,rgba(0,0,0,.36) 70%,rgba(0,0,0,.6) 80%,rgba(0,0,0,.85) 90%,rgba(0,0,0,1) 100%)}
 #menuBg{position:absolute;inset:0;border-radius:inherit;z-index:1;pointer-events:none}
+#p-market .price .pc{display:none!important}
 #menuPill{position:relative;flex:1;height:65px;border-radius:33px/32.5px;display:flex;justify-content:space-between;align-items:center;padding:6px 5px 9px}
 #menuSlider.no-transition{transition:none!important}
 #menuSlider{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc(33.33% - 4px);background:var(--menu-slider-bg);border-radius:29.5px/29px;pointer-events:none;z-index:2;opacity:0;transition:left .2s cubic-bezier(.4,0,.2,1),width .2s cubic-bezier(.4,0,.2,1),border-radius .2s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)}
@@ -953,8 +954,8 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
 <div id="bar">
   <div id="menuSlider"></div>
   <div id="menuPill">
-    <button class="menu-item" data-p="market"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-market)"><use href="#i-market"/></svg></div><span class="menu-label">Маркет</span></button>
     <button class="menu-item" data-p="gifts"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-gift)"><use href="#i-gift"/></svg></div><span class="menu-label">Подарки</span></button>
+    <button class="menu-item" data-p="market"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-market)"><use href="#i-market"/></svg></div><span class="menu-label">Маркет</span></button>
     <button class="menu-item" data-p="stars"><div class="menu-icon-wrap"><svg class="ico" style="--s:var(--ic-star)"><use href="#i-star"/></svg></div><span class="menu-label">Звёзды</span></button>
   <div id="menuBg" class="glass"></div></div>
   <div id="meWrap"><div class="glass"></div><button id="meBtn" data-p="settings"><div id="meAva"></div></button></div>
@@ -1241,7 +1242,7 @@ $('#hdr').addEventListener('click',e=>{
 
 
 /* ===== Навигация ===== */
-const PAGES=['market','gifts','stars'];
+const PAGES=['gifts','market','stars'];
 function slide(p){
   const s=$('#menuSlider'),w=$('#bar');s.getBoundingClientRect();const _=0,pill=$('#menuPill'),me=$('#meWrap');
   const wr=w.getBoundingClientRect(), i=PAGES.indexOf(p);
@@ -1411,6 +1412,19 @@ function noStars(){
 }
 function toast(t){return;const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1600)}
 $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
+/* язык: нажатие на «Русский» ↔ «English» меняет текст и названия пунктов меню */
+(function(){
+  const row=document.querySelector('.row[data-s="Язык"]'),v=row&&row.querySelector('.v');if(!v)return;
+  const L={ru:{v:'Русский',m:['Подарки','Маркет','Звёзды']},en:{v:'English',m:['Gifts','Market','Stars']}};
+  function apply(k){
+    v.textContent=L[k].v;
+    $$('.menu-item .menu-label').forEach((e,i)=>{if(L[k].m[i])e.textContent=L[k].m[i]});
+  }
+  let cur=store.get('lang','ru');if(!L[cur])cur='ru';
+  apply(cur);
+  v.style.cursor='pointer';
+  v.addEventListener('click',e=>{e.stopPropagation();cur=cur==='ru'?'en':'ru';store.set('lang',cur);apply(cur)});
+})();
 
 /* ===== Анимации ===== */
 function applyAnim(on){window.__gA=!!on;$('#anim').classList.toggle('on',on)}
@@ -1461,7 +1475,7 @@ const PS=(function(){
     for(const c of vis)drawOne(c);
   }
   function kick(){if(!raf&&vis.size&&ok()){last=performance.now();raf=requestAnimationFrame(loop)}}
-  function add(el){const c=el.querySelector('.pc');if(!c)return;vis.add(c);drawOne(c);kick()}
+  function add(el){if(el.closest&&el.closest('#p-market'))return;const c=el.querySelector('.pc');if(!c)return;vis.add(c);drawOne(c);kick()}
   function remove(el){const c=el.querySelector('.pc');if(c)vis.delete(c)}
   document.addEventListener('visibilitychange',kick);
   return {add,remove,kick};
