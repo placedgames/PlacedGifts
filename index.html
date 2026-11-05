@@ -1415,7 +1415,7 @@ $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
 /* язык: нажатие на «Русский» ↔ «English» меняет текст и названия пунктов меню */
 (function(){
   const row=document.querySelector('.row[data-s="Язык"]'),v=row&&row.querySelector('.v');if(!v)return;
-  const L={ru:{v:'Русский',m:['Маркет','Подарки','Звёзды']},en:{v:'English',m:['Market','Gifts','Stars']}};
+  const L={ru:{v:'Русский',m:['Маркет','Подарки','Звёзды']},en:{v:'English',m:['Market','Buy gifts','Buy stars']}};
   function apply(k){
     v.textContent=L[k].v;
     $$('.menu-item .menu-label').forEach((e,i)=>{if(L[k].m[i])e.textContent=L[k].m[i]});
