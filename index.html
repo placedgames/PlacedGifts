@@ -187,13 +187,14 @@ body.scrolling .pinm .pw,body.bmopen .pinm .pw,.pins.pq1 .pinm .pw{animation-pla
 .phead>:not(.ava):not(.pins):not(.wbg){opacity:var(--hf,1)}
 /* «Носить»: фон профиля до блока с номером красится в фон подарка (с узором), рядом с именем — модель подарка со звёздочками */
 .phead{isolation:isolate}
-.wbg{position:absolute;z-index:-1;left:calc(50% - 50vw);width:100vw;top:-320px;bottom:13px;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .45s ease;
--webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),rgba(0,0,0,.6) calc(100% - 11px),transparent 100%);mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),rgba(0,0,0,.6) calc(100% - 11px),transparent 100%)}
+.wbg{position:absolute;z-index:-1;left:calc(50% - 50vw);width:100vw;top:-320px;bottom:0;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .45s ease;
+-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 64px),rgba(0,0,0,0.972) calc(100% - 64px + 6.4px),rgba(0,0,0,0.896) calc(100% - 64px + 12.8px),rgba(0,0,0,0.784) calc(100% - 64px + 19.2px),rgba(0,0,0,0.648) calc(100% - 64px + 25.6px),rgba(0,0,0,0.500) calc(100% - 64px + 32.0px),rgba(0,0,0,0.352) calc(100% - 64px + 38.4px),rgba(0,0,0,0.216) calc(100% - 64px + 44.8px),rgba(0,0,0,0.104) calc(100% - 64px + 51.2px),rgba(0,0,0,0.028) calc(100% - 64px + 57.6px),rgba(0,0,0,0.000) calc(100% - 64px + 64.0px));mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 64px),rgba(0,0,0,0.972) calc(100% - 64px + 6.4px),rgba(0,0,0,0.896) calc(100% - 64px + 12.8px),rgba(0,0,0,0.784) calc(100% - 64px + 19.2px),rgba(0,0,0,0.648) calc(100% - 64px + 25.6px),rgba(0,0,0,0.500) calc(100% - 64px + 32.0px),rgba(0,0,0,0.352) calc(100% - 64px + 38.4px),rgba(0,0,0,0.216) calc(100% - 64px + 44.8px),rgba(0,0,0,0.104) calc(100% - 64px + 51.2px),rgba(0,0,0,0.028) calc(100% - 64px + 57.6px),rgba(0,0,0,0.000) calc(100% - 64px + 64.0px))}
 .phead.wear .wbg{opacity:1}
 .wbg canvas{position:absolute;inset:0;width:100%;height:100%}
 /* по углам сверху и снизу: затемнение и лёгкое размытие, как в окнах подарка и улучшения */
 .wbg::after{content:"";position:absolute;inset:0;pointer-events:none;
-background:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top) + var(--ava-size)/2),rgba(0,0,0,0) 36%,rgba(0,0,0,.36) 100%)}
+background:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top) + var(--ava-size)/2),rgba(0,0,0,0) 36%,rgba(0,0,0,.36) 100%);
+-webkit-mask-image:linear-gradient(to bottom,#000 calc(320px + var(--ava-top) + var(--ava-size)/2),transparent calc(320px + var(--ava-top) + var(--ava-size)/2 + 60px));mask-image:linear-gradient(to bottom,#000 calc(320px + var(--ava-top) + var(--ava-size)/2),transparent calc(320px + var(--ava-top) + var(--ava-size)/2 + 60px))}
 .phead.wear .pstat{color:rgba(255,255,255,.74)}
 .phead.wear .pstat svg{fill:#fff}
 .pname .wmod{position:relative;top:-2px;display:inline-block;width:27px;height:27px;margin:-3px 0 -3px 4px;vertical-align:middle;transform:none;opacity:1;pointer-events:none;will-change:auto;cursor:default}
