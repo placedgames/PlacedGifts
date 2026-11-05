@@ -16,7 +16,7 @@
 --ic-gift-y:0px;                                          /* доп. сдвиг иконки подарка вниз */
 --ic-star-y:0px;                                          /* доп. сдвиг иконки звезды вниз */
 --menu-y:-2px;                                              /* сдвиг всех пунктов меню (иконка + подпись) по вертикали */
---ava-size:100px;--ava-top:-41.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:39px;--ava-gap:15px;--stat-gap:3px;--stat-shift:3px;--pcard-r:30px;--list-r:22px;--set-r:51px;--set-r-multi:28px;               /* аватар и скругление карточки профиля */
+--ava-size:100px;--ava-top:-41.5px;--pgap:16px;--name-gap:-2px;--pgap-bottom:45px;--ava-gap:15px;--stat-gap:3px;--stat-shift:3px;--pcard-r:30px;--list-r:22px;--set-r:51px;--set-r-multi:28px;               /* аватар и скругление карточки профиля */
 --ic-rating-badge:22px;--ic-pf-qr:32px;                                     /* значок рейтинга на странице профиля */
 --ic-plate:31px;                                            /* цветная плашка в профиле */
 --hdr-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 6px);--hdr-h:45px;--shd:calc(var(--hdr-h)/2 + 36px);--ic-hdr:25px;--ic-hdr-gift:31px;--ic-hdr-qr:28px;
@@ -85,7 +85,7 @@ body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
 .empty{background:var(--card);border-radius:var(--r);padding:40px 20px;text-align:center;color:var(--hint)}
 
 /* profile */
-.ava{width:var(--ava-size);height:var(--ava-size);border-radius:50%;margin:var(--ava-top) auto 8px;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:700}
+.ava{width:var(--ava-size);height:var(--ava-size);border-radius:50%;margin:var(--ava-top) auto 7px;background:#303033 center/cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:700}
 .pname{font-size:28px;font-weight:550;text-align:center}
 .pnum{color:var(--hint);display:flex;justify-content:center;align-items:center;gap:var(--stat-gap);margin:var(--name-gap) 0 var(--pgap-bottom)}
 .pnum svg{fill:var(--accent);fill-rule:evenodd}
@@ -187,7 +187,8 @@ body.scrolling .pinm .pw,body.bmopen .pinm .pw,.pins.pq1 .pinm .pw{animation-pla
 .phead>:not(.ava):not(.pins):not(.wbg){opacity:var(--hf,1)}
 /* «Носить»: фон профиля до блока с номером красится в фон подарка (с узором), рядом с именем — модель подарка со звёздочками */
 .phead{isolation:isolate}
-.wbg{position:absolute;z-index:-1;left:calc(50% - 50vw);width:100vw;top:-320px;bottom:13px;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .45s ease}
+.wbg{position:absolute;z-index:-1;left:calc(50% - 50vw);width:100vw;top:-320px;bottom:16px;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .45s ease;
+-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 64px),rgba(0,0,0,calc(1 - var(--wf,0)*0.009)) calc(100% - 64px + 6.4px),rgba(0,0,0,calc(1 - var(--wf,0)*0.058)) calc(100% - 64px + 12.8px),rgba(0,0,0,calc(1 - var(--wf,0)*0.163)) calc(100% - 64px + 19.2px),rgba(0,0,0,calc(1 - var(--wf,0)*0.317)) calc(100% - 64px + 25.6px),rgba(0,0,0,calc(1 - var(--wf,0)*0.500)) calc(100% - 64px + 32.0px),rgba(0,0,0,calc(1 - var(--wf,0)*0.683)) calc(100% - 64px + 38.4px),rgba(0,0,0,calc(1 - var(--wf,0)*0.837)) calc(100% - 64px + 44.8px),rgba(0,0,0,calc(1 - var(--wf,0)*0.942)) calc(100% - 64px + 51.2px),rgba(0,0,0,calc(1 - var(--wf,0)*0.991)) calc(100% - 64px + 57.6px),rgba(0,0,0,calc(1 - var(--wf,0)*1.000)) calc(100% - 64px + 64.0px));mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 64px),rgba(0,0,0,calc(1 - var(--wf,0)*0.009)) calc(100% - 64px + 6.4px),rgba(0,0,0,calc(1 - var(--wf,0)*0.058)) calc(100% - 64px + 12.8px),rgba(0,0,0,calc(1 - var(--wf,0)*0.163)) calc(100% - 64px + 19.2px),rgba(0,0,0,calc(1 - var(--wf,0)*0.317)) calc(100% - 64px + 25.6px),rgba(0,0,0,calc(1 - var(--wf,0)*0.500)) calc(100% - 64px + 32.0px),rgba(0,0,0,calc(1 - var(--wf,0)*0.683)) calc(100% - 64px + 38.4px),rgba(0,0,0,calc(1 - var(--wf,0)*0.837)) calc(100% - 64px + 44.8px),rgba(0,0,0,calc(1 - var(--wf,0)*0.942)) calc(100% - 64px + 51.2px),rgba(0,0,0,calc(1 - var(--wf,0)*0.991)) calc(100% - 64px + 57.6px),rgba(0,0,0,calc(1 - var(--wf,0)*1.000)) calc(100% - 64px + 64.0px))}
 .phead.wear .wbg{opacity:1}
 .wbg canvas{position:absolute;inset:0;width:100%;height:100%}
 /* по углам сверху и снизу: затемнение и лёгкое размытие, как в окнах подарка и улучшения */
@@ -1646,7 +1647,7 @@ function clearAppCache(){ location.reload(); }
   /* имя, рейтинг и «в сети» не появляются новым блоком, а уменьшаются и «приезжают» в хедер вместе с прокруткой.
      Только transform и opacity (без перерасчёта раскладки на каждый кадр); размеры замеряются один раз и при изменении раскладки. */
   const pg=$('#p-me'),pin=$('#mePin'),bg=pin.querySelector('.mpin-bg'),bg2=pin.querySelector('.mpin-bg2'),bl=pin.querySelector('.mpin-bl'),band=pin.querySelector('.mpin-band');
-  const pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),pst=ps.querySelector('span'),mb=pg.querySelector('.mbody'),phd=pg.querySelector('.phead');
+  const wb=$('#wBg'),pn=$('#pName'),ps=pg.querySelector('.pstat'),src=$('#pRate'),pst=ps.querySelector('span'),mb=pg.querySelector('.mbody'),phd=pg.querySelector('.phead');
   let off=0;   // пока страница «покоится» ниже ступеньки, всё что выше неё сдвинуто за верх страницы на off px (см. shiftOn)
   const KN=17/28,KS=14/17,KI=(17/22)/KS,TRAVEL=60,GAP_TABS=16;
   const SOFT_RAMP=80,SOFT_MIN=.14,SOFT_BLUR=2;let lsb='';   // как затемнение смягчается после «ступеньки»: на скольких px прокрутки, насколько, какой блюр
@@ -1703,7 +1704,7 @@ function clearAppCache(){ location.reload(); }
     const sc=pg.scrollTop+off,top0=M.dn-sc;
     let p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
     if(p<=0){
-      if(lp!==0){lp=0;pin.style.visibility='hidden';bg.style.opacity=0;bg2.style.opacity=0;bl.style.opacity=0;lsb='';pin.style.removeProperty('--sb')}
+      if(lp!==0){lp=0;pin.style.visibility='hidden';bg.style.opacity=0;bg2.style.opacity=0;bl.style.opacity=0;lsb='';pin.style.removeProperty('--sb');if(wb)wb.style.setProperty('--wf','0')}
       return;
     }
     if(lp<=0)pin.style.visibility='visible';
@@ -1712,7 +1713,7 @@ function clearAppCache(){ location.reload(); }
     /* после того как слайдер встал под кнопки, при дальнейшей прокрутке затемнение становится мягче: сквозь него видны размытые карточки */
     const rr=Math.max(0,Math.min(1,(sc-M.tabsAt)/SOFT_RAMP)),mm=1-SOFT_MIN*rr,sbv=(rr*SOFT_BLUR).toFixed(1)+'px';
     if(sbv!==lsb){lsb=sbv;pin.style.setProperty('--sb',sbv)}
-    bg.style.opacity=p*mm;
+    bg.style.opacity=p*mm;if(wb)wb.style.setProperty('--wf',p.toFixed(3));
     /* затемнение под слайдером растёт вместе с прокруткой: чем ближе слайдер к месту, где он встаёт под хедер, тем больше площадь затемнения
        (выезжает сверху вниз). Никаких таймерных transition — на месте ничего не меняется. */
     const q=Math.max(0,Math.min(1,1-(M.tabsAt-sc)/SHADE_RAMP));
@@ -1828,7 +1829,7 @@ function clearAppCache(){ location.reload(); }
 /* ===== Настройки: затемнение под хедером при прокрутке (имя остаётся на месте и не уезжает в хедер) ===== */
 (function(){
   const pg=$('#p-settings'),pin=$('#setPin'),bg=pin.querySelector('.mpin-bg'),band=pin.querySelector('.mpin-band');
-  const pn=$('#uname'),ps=pg.querySelector('.pnum');
+  const pn=$('#uname'),ps=pg.querySelector('.pnum'),wb=$('#sWBg');
   const KN=17/28,TRAVEL=60;
   let M=null,lp=-1;
   function measure(){
@@ -1844,10 +1845,10 @@ function clearAppCache(){ location.reload(); }
     if(!M){measure();if(!M)return}
     const top0=M.dn-pg.scrollTop;
     const p=Math.max(0,Math.min(1,(M.ls-top0)/(M.ls-M.y1)));
-    if(p<=0){if(lp!==0){lp=0;pin.style.visibility='hidden';bg.style.opacity=0;bg.style.transform=''}return}
+    if(p<=0){if(lp!==0){lp=0;pin.style.visibility='hidden';bg.style.opacity=0;bg.style.transform='';if(wb)wb.style.setProperty('--wf','0')}return}
     if(lp<=0)pin.style.visibility='visible';
     lp=p;
-    bg.style.opacity=p;bg.style.transform='translate3d(0,'+(-(1-p)*70).toFixed(1)+'px,0)';   // полоса затемнения фиксированной высоты (высота хедера), дальше вниз не растёт
+    bg.style.opacity=p;bg.style.transform='translate3d(0,'+(-(1-p)*70).toFixed(1)+'px,0)';if(wb)wb.style.setProperty('--wf',p.toFixed(3));   // полоса затемнения фиксированной высоты (высота хедера), дальше вниз не растёт
   }
   pg.addEventListener('scroll',upd,{passive:true});
   const inv=()=>{M=null;requestAnimationFrame(upd)};
