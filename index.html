@@ -187,12 +187,12 @@ body.scrolling .pinm .pw,body.bmopen .pinm .pw,.pins.pq1 .pinm .pw{animation-pla
 .phead>:not(.ava):not(.pins):not(.wbg){opacity:var(--hf,1)}
 /* «Носить»: фон профиля до блока с номером красится в фон подарка (с узором), рядом с именем — модель подарка со звёздочками */
 .phead{isolation:isolate}
-.wbg{position:absolute;z-index:-1;left:calc(50% - 50vw);width:100vw;top:-320px;bottom:0;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .45s ease}
+.wbg{position:absolute;z-index:-1;left:calc(50% - 50vw);width:100vw;top:-320px;bottom:16px;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .45s ease}
 .phead.wear .wbg{opacity:1}
 .wbg canvas{position:absolute;inset:0;width:100%;height:100%}
 .phead.wear .pstat{color:rgba(255,255,255,.74)}
 .phead.wear .pstat svg{fill:#fff}
-.pname .wmod{position:relative;display:inline-block;width:30px;height:30px;margin:0 0 0 7px;vertical-align:-5px;transform:none;opacity:1;pointer-events:none;will-change:auto;cursor:default}
+.pname .wmod{position:relative;display:inline-block;width:26px;height:26px;margin:0 0 0 3px;vertical-align:-4px;transform:none;opacity:1;pointer-events:none;will-change:auto;cursor:default}
 
 /* хедер: закреплённые кнопки поверх контента, стекло как у меню */
 #hdr{position:fixed;left:16px;right:16px;top:var(--hdr-top);z-index:1000;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
@@ -2050,17 +2050,14 @@ function drawWearPat(){
     if(!im)return;
     cv.width=Math.round(w*D);cv.height=Math.round(h*D);
     const cx=cv.getContext('2d'),tc=document.createElement('canvas'),tx=tc.getContext('2d'),col=pgCol(c.c3)||'#fff';
-    const R=ava.offsetHeight/2,cy=h-(bg.parentNode.offsetHeight)+ava.offsetTop+R,mx=w/2;
-    const rings=[[R+46,8,20,.3,0],[R+100,12,18,.24,.26],[R+158,16,16,.18,0],[R+222,20,15,.13,.16],[R+288,24,14,.09,0]];
+    /* расположение узора — как в модальных окнах: [x в % ширины, y в px от верха окна, размер px, прозрачность]; центр окна (модель подарка) совпадает с центром аватарки */
+    const L=[[36.8,17,17,.3],[63,17,18,.3],[50,29,23,.3],[20.8,39,16,.3],[79,39,16,.3],[33.5,68,20,.3],[66.5,68,18,.3],[9,103,19,.2],[23.7,103,17,.3],[76,103,18,.3],[91,103,20,.2],[33.6,139,23,.3],[66.4,139,21,.3],[20.8,168,20,.3],[79,168,20,.3],[50,176,18,.3],[35,205,16,.3],[65.8,205,16,.3],[12,204,14.5,.14],[88,204,14.5,.14]];
+    const cy=h-bg.parentNode.offsetHeight+ava.offsetTop+ava.offsetHeight/2;
     cx.clearRect(0,0,cv.width,cv.height);
-    rings.forEach(r=>{
+    L.forEach(r=>{
       const s=r[2]+1;tc.width=tc.height=Math.round(s*D);tx.globalCompositeOperation='source-over';tx.clearRect(0,0,tc.width,tc.height);tx.drawImage(im,0,0,tc.width,tc.height);tx.globalCompositeOperation='source-in';tx.fillStyle=col;tx.fillRect(0,0,tc.width,tc.height);
       cx.globalAlpha=r[3];
-      for(let i=0;i<r[1];i++){
-        const a=(i/r[1]+r[4])*Math.PI*2,px=mx+Math.cos(a)*r[0]*1.15,py=cy+Math.sin(a)*r[0];
-        if(px<-s||px>w+s||py<-s||py>h+s)continue;
-        cx.drawImage(tc,(px-s/2)*D,(py-s/2)*D);
-      }
+      cx.drawImage(tc,(r[0]/100*w-s/2)*D,(cy+(r[1]+7-88)-s/2)*D);
     });
     cx.globalAlpha=1;
   });
