@@ -190,9 +190,15 @@ body.scrolling .pinm .pw,body.bmopen .pinm .pw,.pins.pq1 .pinm .pw{animation-pla
 .wbg{position:absolute;z-index:-1;left:calc(50% - 50vw);width:100vw;top:-320px;bottom:16px;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .45s ease}
 .phead.wear .wbg{opacity:1}
 .wbg canvas{position:absolute;inset:0;width:100%;height:100%}
+/* по углам сверху и снизу: затемнение и лёгкое размытие, как в окнах подарка и улучшения */
+.wbg::after{content:"";position:absolute;inset:0;pointer-events:none;
+background:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top) + var(--ava-size)/2),rgba(0,0,0,0) 36%,rgba(0,0,0,.36) 100%);
+-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+-webkit-mask-image:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top) + var(--ava-size)/2),transparent 48%,#000 100%);
+mask-image:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top) + var(--ava-size)/2),transparent 48%,#000 100%)}
 .phead.wear .pstat{color:rgba(255,255,255,.74)}
 .phead.wear .pstat svg{fill:#fff}
-.pname .wmod{position:relative;display:inline-block;width:26px;height:26px;margin:0 0 0 3px;vertical-align:-4px;transform:none;opacity:1;pointer-events:none;will-change:auto;cursor:default}
+.pname .wmod{position:relative;display:inline-block;width:23px;height:23px;margin:0 0 0 3px;vertical-align:-3px;transform:none;opacity:1;pointer-events:none;will-change:auto;cursor:default}
 
 /* хедер: закреплённые кнопки поверх контента, стекло как у меню */
 #hdr{position:fixed;left:16px;right:16px;top:var(--hdr-top);z-index:1000;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
@@ -726,7 +732,7 @@ html,body{overscroll-behavior:none}
 /* окно «в продаже» / покупка */
 #ug .ug-sub.mk{margin-top:4px;min-height:23px}
 #ug .ug-sub.mk+.ug-acts{margin-top:9px}
-#ug .mk-sale{position:relative;display:inline-flex;align-items:center;vertical-align:top;gap:3px;height:22px;padding:0 9px 0 8px;border:0;border-radius:11px;color:#fff;font-size:14px;font-weight:550;line-height:1;white-space:nowrap}
+#ug .mk-sale{position:relative;display:inline-flex;align-items:center;vertical-align:top;gap:3px;height:22px;padding:0 9px 0 8px;border:0;border-radius:11px;color:#fff;font-size:14px;font-weight:500;line-height:1;white-space:nowrap}
 #ug .mk-sale::before,#ug .mk-sale::after{display:none}
 #ug .mk-sale{height:21px;box-shadow:none}
 #ug .mk-sale svg{width:18px;height:18px;margin-right:-2px;fill:#fff;fill-rule:evenodd;flex:none}
