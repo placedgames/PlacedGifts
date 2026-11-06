@@ -562,7 +562,7 @@ html,body{overscroll-behavior:none}
 #ug .ug-title i{font-style:normal;margin-left:6px;color:rgba(255,255,255,.62)}
 #ug .ug-sub{position:relative;z-index:1;margin-top:3px;font-size:14px;color:rgba(255,255,255,.66);min-height:17px}
 #ug .ug-acts{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin-top:16px}
-#ug .ug-a{height:58px;border:0;border-radius:19px;background:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;font:inherit;font-size:11.5px;font-weight:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+#ug .ug-a{height:58px;border:0;border-radius:19px;background:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;font:inherit;font-size:12.5px;font-weight:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:transform .3s cubic-bezier(.4,0,.2,1)}
 #ug .ug-a:active{transform:scale(1.05)}
 #ug .ug-a svg{width:26px;height:26px;fill:#fff;fill-rule:evenodd}
 #ug .ug-tbl{flex:none;margin:16px 16px 0;border:1px solid rgba(255,255,255,.1);border-radius:16px;overflow:hidden}
@@ -749,6 +749,7 @@ html,body{overscroll-behavior:none}
 #ug .mk-sale{position:relative;display:inline-flex;align-items:center;vertical-align:top;gap:3px;height:22px;padding:0 9px 0 8px;border:0;border-radius:11px;color:#fff;font-size:14px;font-weight:500;line-height:1;white-space:nowrap}
 #ug .mk-sale::before,#ug .mk-sale::after{display:none}
 #ug .mk-sale{height:21px;box-shadow:none}
+#ug .mk-sale{background:rgba(255,255,255,.16);--glass-strong:.2;--glass2-a:.4;-webkit-backdrop-filter:blur(8px) brightness(.8);backdrop-filter:blur(8px) brightness(.8);--glass-rgb:calc(150 + var(--ug-d)),calc(152 + var(--ug-d)),calc(160 + var(--ug-d));--glass2-rgb:calc(160 + var(--ug-d)),calc(162 + var(--ug-d)),calc(170 + var(--ug-d))}
 #ug .mk-sale svg{width:18px;height:18px;margin-right:-2px;fill:#fff;fill-rule:evenodd;flex:none}
 #ug.mkbuy .ug-acts{display:none}
 #ug.mkbuy .ug-note{display:none!important}
@@ -1438,7 +1439,7 @@ $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
 'Закрыть':'Close','Количество':'Quantity','Введите сообщение (необязательно)':'Enter message (optional)','Назад':'Back','Ещё: скоро':'More: coming soon','Ещё':'More','Укажите цену':'Enter price',
 'Баланс':'Balance','Изм.':'Edit','Изменить цену':'Change price','Изменить':'Edit','QR-код':'QR code',': скоро':': coming soon',
 'На балансе недостаточно звезд, пожалуйста пополните баланс.':'Not enough stars on your balance, please top up.','Недостаточно звезд':'Not enough stars','Пополнить':'Top up','Отмена':'Cancel',
-'продан':'sold','редкий':'rare','маркет':'market','Вы действительно хотите очистить кэш приложения?':'Do you really want to clear the app cache?','Очистить кэш приложения?':'Clear app cache?','Очистить':'Clear',
+'продан':'sold','редкий':'limited','маркет':'market','Вы действительно хотите очистить кэш приложения?':'Do you really want to clear the app cache?','Очистить кэш приложения?':'Clear app cache?','Очистить':'Clear',
 'Нет подарков по фильтру':'No gifts match the filter','Подарков пока нет':'No gifts yet','Добавьте этот подарок в профиль или обменяйте на':'Add this gift to your profile or exchange it for',
 'Вы купили подарок за':'You bought the gift for','Просмотр подарка':'Viewing gift','Подарки закончились':'Gifts are sold out','Память браузера заполнена: подарок не сохранился':'Browser storage is full: the gift was not saved',
 'Аноним':'Anonymous','Гость':'Guest','Обмен на звёзды':'Exchange for stars','Обменять':'Exchange','Вы обменяли этот подарок':'You exchanged this gift','Этот подарок был сделан':'This gift was made','ОК':'OK',
