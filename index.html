@@ -144,7 +144,7 @@ mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.8) 8%,rgba(0,
 #bar::before{content:"";position:absolute;left:-21px;right:-21px;bottom:-16px;height:calc(65px + 16px + 22px);z-index:-1;pointer-events:none;background:var(--bg);opacity:.5;
 -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0,0,.15) 28%,rgba(0,0,0,.38) 48%,rgba(0,0,0,.66) 70%,rgba(0,0,0,.88) 88%,#000 100%);
 mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.04) 12%,rgba(0,0,0,.15) 28%,rgba(0,0,0,.38) 48%,rgba(0,0,0,.66) 70%,rgba(0,0,0,.88) 88%,#000 100%)}
-#menuPill,#menuBg,#meWrap .glass{--menu-glass-blur:11px;--glass-w:1px;--glass-strong:.27;--glass2-a:.3;--glass2-spread:1px;--glass2-blur:3px;--glass2-rgb:80,82,90;--glass-rgb:86,88,96}
+#menuPill,#menuBg,#meWrap .glass{--menu-glass-blur:11px;--glass-w:1px;--glass-strong:.29;--glass2-a:.32;--glass2-spread:1px;--glass2-blur:3px;--glass2-rgb:90,92,100;--glass-rgb:96,98,106}
 #menuBg::after,#meWrap .glass::after{-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,.85) 10%,rgba(0,0,0,.6) 20%,rgba(0,0,0,.36) 30%,rgba(0,0,0,.16) 40%,rgba(0,0,0,0) 50%,rgba(0,0,0,0) 50%,rgba(0,0,0,.16) 60%,rgba(0,0,0,.36) 70%,rgba(0,0,0,.6) 80%,rgba(0,0,0,.85) 90%,rgba(0,0,0,1) 100%);mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,.85) 10%,rgba(0,0,0,.6) 20%,rgba(0,0,0,.36) 30%,rgba(0,0,0,.16) 40%,rgba(0,0,0,0) 50%,rgba(0,0,0,0) 50%,rgba(0,0,0,.16) 60%,rgba(0,0,0,.36) 70%,rgba(0,0,0,.6) 80%,rgba(0,0,0,.85) 90%,rgba(0,0,0,1) 100%)}
 #menuBg{position:absolute;inset:0;border-radius:inherit;z-index:1;pointer-events:none}
 #p-market .price .pc{display:none!important}
@@ -683,8 +683,8 @@ html,body{overscroll-behavior:none}
 /* ===== МАРКЕТ ===== */
 .gava.mk-ava{background:linear-gradient(to bottom,#56caff,#3bb1e9)}
 .mk-ava svg{fill:#fff;fill-rule:evenodd}
-#p-mkg{padding-bottom:40px}
-.mk-fwrap{--fb:24px;position:sticky;top:8px;z-index:50;margin:0 -16px;padding:0 16px var(--fb)}
+#p-mkg{padding-bottom:40px;padding-top:calc(var(--hdr-top) + var(--hdr-h) + 6px)}
+.mk-fwrap{--fb:26px;position:sticky;top:8px;z-index:50;margin:0 -16px;padding:0 16px var(--fb)}
 /* затемнение и размытие под кнопками хедера и фильтрами — та же кривая и то же поведение, что под хедером и слайдером профиля:
    выезжает по мере прокрутки (--mq), потом становится мягче и появляется блюр (--mm, --mb). Значения ставит JS */
 .mk-fwrap::before,.mk-fwrap::after{content:"";position:absolute;left:0;right:0;top:calc(-1*(var(--hdr-top) + var(--hdr-h) + 60px));height:calc(var(--hdr-top) + var(--hdr-h) + 60px + 96px);z-index:-1;pointer-events:none;will-change:transform,opacity;transform:translate3d(0,calc(-35px*(1 - var(--mq,0))),0)}
@@ -695,6 +695,7 @@ html,body{overscroll-behavior:none}
 .mk-filters>:last-child{margin-right:auto}
 .mk-chip{flex:none;height:37px;padding:0 11px;border-radius:18.5px;display:flex;align-items:center;gap:3px;color:#fff;font:inherit;font-size:15px;font-weight:550;cursor:pointer;white-space:nowrap;--menu-glass-blur:11px;--glass-w:.5px}
 .mk-chip.on{color:#fff}
+.mk-chip.sm::before,.mk-chip.sm::after{display:none}
 .mk-chip svg{flex:none;position:relative;z-index:1}
 .mk-chip span{position:relative;z-index:1}
 .mk-pi{width:27px;height:27px;margin:0 -1px 0 -4px}
@@ -4893,6 +4894,31 @@ renderMyGifts();
     });
     soon();
   });
+})();
+</script>
+<script>
+/* фильтры маркета (.mk-chip): сглаженные углы — тот же контур «таблетки», что у плашек с ценой; обводка перерисована по этому контуру */
+(function(){
+  function shape(b){
+    if(!b||b.__chip||!window.smoothFit)return;b.__chip=1;
+    b.classList.add('sm');
+    try{smoothFit(b,'pill',true,1)}catch(_){}
+    const draw=()=>{
+      const cs=getComputedStyle(b);let w=parseFloat(cs.width),h=parseFloat(cs.height);
+      if(!(w>0)||!(h>0)){w=b.offsetWidth;h=b.offsetHeight}if(!(w>0)||!(h>0))return;
+      const f=n=>+n.toFixed(2),r=h/2,px=Math.min(1.09*r,w/2),hx=px*.57,vy=r*.57;
+      const d='M'+f(px)+' 0L'+f(w-px)+' 0C'+f(w-px+hx)+' 0 '+f(w)+' '+f(r-vy)+' '+f(w)+' '+f(r)+'C'+f(w)+' '+f(r+vy)+' '+f(w-px+hx)+' '+f(h)+' '+f(w-px)+' '+f(h)+'L'+f(px)+' '+f(h)+'C'+f(px-hx)+' '+f(h)+' 0 '+f(r+vy)+' 0 '+f(r)+'C0 '+f(r-vy)+' '+f(px-hx)+' 0 '+f(px)+' 0Z';
+      const st=(o,a)=>'<stop offset="'+o+'" stop-color="#7a7c84" stop-opacity="'+a+'"/>';
+      const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">'+st(0,.6)+st(.16,.4)+st(.34,.12)+st(.5,.03)+st(.66,.12)+st(.84,.4)+st(1,.6)+'</linearGradient><clipPath id="c"><path d="'+d+'"/></clipPath></defs><g clip-path="url(#c)"><path d="'+d+'" fill="none" stroke="url(#g)" stroke-width="2"/></g></svg>';
+      b.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';b.style.backgroundSize='100% 100%';b.style.backgroundRepeat='no-repeat';
+    };
+    draw();
+    if(window.ResizeObserver)new ResizeObserver(draw).observe(b);
+  }
+  const all=()=>document.querySelectorAll('#mkF .mk-chip').forEach(shape);
+  all();
+  const t=document.getElementById('mkF');
+  if(t)new MutationObserver(all).observe(t,{childList:true,subtree:true});
 })();
 </script>
 </body>
