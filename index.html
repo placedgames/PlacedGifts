@@ -1258,7 +1258,7 @@ window.hdrFilter=function(on,instant){
 $('#hdr').addEventListener('click',e=>{
   const t=e.target.closest('[data-a]'); if(!t) return;
   const a=t.dataset.a;
-  if(a==='back') goBack(); else if(a==='stars') go('stars'); else if(a==='filter'){try{openFilterMenu(t)}catch(_){}} else toast(HDR_TOAST[a]+': скоро');
+  if(a==='back') goBack(); else if(a==='stars') go('stars'); else if(a==='filter'){try{openFilterMenu(t)}catch(_){}} else soon(HDR_TOAST[a]);
 });
 
 
@@ -1431,8 +1431,16 @@ function noStars(){
   if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){try{tg.showPopup({title:'Недостаточно звезд',message:m,buttons:[{id:'top',type:'default',text:'Пополнить'},{id:'cancel',type:'default',text:'Отмена'}]},id=>{if(id==='top')go2()});return}catch(e){}}
   if(confirm('Недостаточно звезд\n\n'+m))go2();
 }
+/* шаблонный алерт для всех функций и кнопок, которые пока не работают */
+function soon(name){
+  const t=(name?name+' ':'')+'скоро',m='В данный момент эта функция находится в разработке.';
+  if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){
+    try{tg.showPopup({title:t,message:m,buttons:[{id:'ok',type:'default',text:'ОК'},{id:'cancel',type:'default',text:'Отмена'}]},()=>{});return}catch(_){}
+  }
+  alert(t+'\n\n'+m);
+}
 function toast(t){return;const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1600)}
-$$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
+$$('[data-s]').forEach(e=>e.onclick=()=>soon(e.dataset.s));
 /* ===== язык: нажатие на «Русский» ↔ «English» переводит весь интерфейс ===== */
 (function(){
   const row=document.querySelector('.row[data-s="Язык"]'),v=row&&row.querySelector('.v');if(!v)return;
@@ -1445,7 +1453,7 @@ $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
 'Коллекционные подарки скоро появятся':'Collectible gifts are coming soon','Коллекционные':'Collectibles','Коллекционный подарок можно отправить любому пользователю.':'A collectible gift can be sent to any user.',
 'Звёзды GiftCrafts нужны для покупки уникальных и коллекционных подарков, а также для прочих услуг.':'GiftCrafts Stars are used to buy unique and collectible gifts, as well as for other services.','Звёзды GiftCrafts':'GiftCrafts Stars','Звёзды':'Stars','Задания скоро появятся':'Tasks are coming soon','Задания':'Tasks','Ваш баланс':'Your balance',
 'Мой профиль':'My Profile','Деньги':'Money','Мои звёзды':'My Stars','Поддержка':'Support','Промокод':'Promo code','Язык':'Language','Оформление':'Appearance','Чёрная':'Black','Анимации подарков':'Gift animations','Анимация звёзд':'Star animation',
-'Коллекции скоро':'Collectibles are coming soon','Коллекции':'Collectibles','В данный момент эта функция находится в разработке.':'This feature is currently under development.','в сети':'online','мобильный':'mobile','имя пользователя':'username','Отправить подарки':'Send gifts','Подарки':'Gifts','Маркет':'Market','Купленный подарок':'Purchased gift','Посмотреть':'View',
+'Коллекции скоро':'Collectibles are coming soon','Коллекции':'Collectibles','В данный момент эта функция находится в разработке.':'This feature is currently under development.','Отправка подарков':'Sending gifts','в сети':'online','мобильный':'mobile','имя пользователя':'username','Отправить подарки':'Send gifts','Подарки':'Gifts','Маркет':'Market','Купленный подарок':'Purchased gift','Посмотреть':'View',
 'Скрыть моё имя и сообщение от посетителей профиля.':'Hide my name and message from profile visitors.','Скрыть моё имя':'Hide my name','Когда все подарки будут проданы, вы больше не сможете их купить.':'When all gifts are sold, you will no longer be able to buy them.',
 'Подарок Вам':'Gift for you','Этот подарок можно сделать':'This gift can be made','уникальным коллекционным.':'unique and collectible.','Имя отправителя видите только Вы.':'Only you can see the sender’s name.',
 'Подарок скрыт из профиля. ':'The gift is hidden from your profile. ','Подарок скрыт из профиля':'Gift hidden from profile','Подарок виден в профиле.':'The gift is visible in your profile.','Этот подарок не виден в профиле.':'This gift is not visible in your profile.',
@@ -1477,6 +1485,7 @@ $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
   const KEYS=Object.keys(D).sort((a,b)=>b.length-a.length);
   const N=x=>+String(x).replace(/[^\d]/g,''),pl=(n,a,b)=>n===1?a:b,SP='[\\d\\u00a0\\u202f ]*';
   const PAT=[
+    [/^(.+) скоро$/,'$1 coming soon'],
     [/Вы действительно хотите снять с продажи (.+?)\??$/,(m,a)=>'Do you really want to take '+a+' off sale?'],
     [/Вы точно хотите выставить (.+?) за (.+?)\??$/,(m,a,b)=>'Are you sure you want to list '+a+' for '+b+'?'],
     [/Обменять этот подарок от (.+?) на (.+)$/,(m,a,b)=>'Exchange this gift from '+a+' for '+b],
@@ -1663,14 +1672,7 @@ $$('#stabs button').forEach(b=>b.onclick=()=>{
   $('#sCard').hidden=!st; $('#sTasks').hidden=st;
 });
 /* «Коллекции» в профиле: ползунок на неё не переезжает, по нажатию — алерт «скоро» */
-$$('#mtabs button[data-m="collectibles"]').forEach(b=>b.onclick=e=>{
-  e.preventDefault();
-  const t='Коллекции скоро',m='В данный момент эта функция находится в разработке.';
-  if(tg&&tg.showPopup&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.2'))){
-    try{tg.showPopup({title:t,message:m,buttons:[{id:'cancel',type:'default',text:'Отмена'},{id:'ok',type:'default',text:'ОК'}]},()=>{});return}catch(_){}
-  }
-  alert(t+'\n\n'+m);
-});
+$$('#mtabs button[data-m="collectibles"]').forEach(b=>b.onclick=e=>{e.preventDefault();soon('Коллекции')});
 function meTabsPinned(){const i=window.meStep&&meStep(),pg=$('#p-me');return !!(i&&pg)&&pg.scrollTop+i.off>=i.T-1}
 function resetTabs(){
   [['#gtabs','all','t'],['#mtabs','gifts','m'],['#mkTabs','all','t']].forEach(([sel,v,k])=>{
@@ -1862,6 +1864,7 @@ function clearAppCache(){ location.reload(); }
   /* отклик на нажатие — тот же «слайм», что у кнопки «Купить» */
   (function(){
     const MIN=160,R=60;let st=null,t0=0;
+    sb.addEventListener('click',()=>soon('Отправка подарков'));
     sb.addEventListener('pointerdown',e=>{
       st={x:e.clientX,y:e.clientY,id:e.pointerId,drag:false};t0=performance.now();
       sb.classList.add('press');try{sb.setPointerCapture(e.pointerId)}catch(_){}
@@ -2597,7 +2600,7 @@ renderMyGifts();
   $b('bmClose').onclick=close;
   bm.querySelector('.bm-dim').onclick=close;
   $b('bmHide').onclick=()=>{hidden=!hidden;$b('bmHide').classList.toggle('on',hidden)};
-  $b('bmView').onclick=()=>toast('Просмотр подарка: скоро');
+  $b('bmView').onclick=()=>soon('Просмотр подарка');
   $b('bmBuy').onclick=()=>{
     if(window.__buyDrag){window.__buyDrag=false;return}
     const total=cur.total||DEF_TOTAL,sold=SOLDMAP[cur.key]||0,n=qty;
@@ -2816,7 +2819,7 @@ renderMyGifts();
     if(window.__upDrag){window.__upDrag=false;return}
     if(window.__gmCur&&window.__gmCur.sold){close();return}
     if(gm.classList.contains('upv')){close();return}
-    if(window.openUpgrade)openUpgrade(window.__gmCur);else toast('Улучшение: скоро');
+    if(window.openUpgrade)openUpgrade(window.__gmCur);else soon('Улучшение');
   };
   /* кнопка «Улучшить»: тот же отклик и «слайм», что у кнопки «Купить» */
   (function(){
@@ -3283,7 +3286,7 @@ renderMyGifts();
   um.querySelector('.um-dim').onclick=close;
   window.addEventListener('resize',()=>{if(um.classList.contains('on')&&!raf&&!busy){measure();H=nh;sh.style.height='';frame(1);gmSh.style.height='';gmSh.style.maxHeight=''}});
   $u('umChk').onclick=()=>$u('umChk').classList.toggle('on');
-  $u('umVar').onclick=()=>toast('Все варианты: скоро');
+  $u('umVar').onclick=()=>soon('Все варианты');
   $u('umGo').onclick=()=>{if(window.__umDrag){window.__umDrag=false;return}startUpgrade()};
   (function(){
     const btn=$u('umGo'),MIN=160,R=60;let st=null,t0=0;
@@ -3588,7 +3591,7 @@ renderMyGifts();
     $u('ugOwn').classList.remove('c');$u('ugOwn').innerHTML=(u.photo_url?'<span class="ug-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="ug-ava">'+escH((name[0]||'').toUpperCase())+'</span>')+'<span class="ug-own">'+escH(name)+'</span>';
     $u('ugAv').classList.remove('c');$u('ugAv').textContent=spaced(iss)+'/'+spaced(tot)+' выпущено';
     $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+(pr*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
-    $u('ugLm').onclick=()=>toast('Подробнее: скоро');
+    $u('ugLm').onclick=()=>soon('Подробнее');
     pk.note=ugNoteTxt(x,$u('umChk').classList.contains('on'));ugNoteSet(pk.note);
     pk.spl=[shuf(pk.lm).slice(0,9),shuf(pk.ls).slice(0,9),shuf(pk.lb).slice(0,5).concat(shuf(pk.lm).slice(0,4))];
     ['ugM','ugS','ugB'].forEach((id,i)=>{const c=$u(id);c.classList.add('c');const f=pk.spl[i][0]||{n:'—',p:1};c.innerHTML='<div class="ug-it"><span>'+escH(f.n)+'</span><i class="ug-pc">'+pcS(f.p)+'</i></div>'});
@@ -3855,7 +3858,7 @@ renderMyGifts();
     $u('ugOwn').classList.remove('c');$u('ugOwn').innerHTML=(u.photo_url?'<span class="ug-ava" style="background-image:url(\''+u.photo_url+'\')"></span>':'<span class="ug-ava">'+escH((name[0]||'').toUpperCase())+'</span>')+'<span class="ug-own">'+escH(name)+'</span>';
     $u('ugAv').classList.remove('c');{let cur=0;try{cur=(JSON.parse(store.get('upgCnt','{}'))||{})[d.k]||0}catch(_){}$u('ugAv').textContent=spaced(Math.max(d.iss||0,cur))+'/'+spaced(d.tot||0)+' выпущено'}
     $u('ugVal').classList.remove('c');$u('ugVal').innerHTML='<span>~'+((d.pr||PRICE)*1.8).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</span><i class="ug-pc" id="ugLm">подробнее</i>';
-    $u('ugLm').onclick=()=>toast('Подробнее: скоро');
+    $u('ugLm').onclick=()=>soon('Подробнее');
     ugNoteSet(d.nt);
     const pc=pcS;
     [['ugM',d.m,d.mp],['ugS',d.s,d.sp],['ugB',d.b,d.bp]].forEach(r=>{const cc=$u(r[0]);cc.classList.add('c');cc.innerHTML='<div class="ug-it"><span>'+escH(r[1]||'—')+'</span><i class="ug-pc">'+pc(r[2])+'</i></div>'});
@@ -3951,8 +3954,8 @@ renderMyGifts();
     if(done&&x){x.hid=false;try{if(MYGIFTS.indexOf(x)>=0)store.set(MYK,JSON.stringify(MYGIFTS));renderMyGifts()}catch(_){}toast('Подарок добавлен в профиль')}
     ugClose();
   };
-  $u('ugMore').onclick=()=>{try{openGiftMenu($u('ugMore'),window.__gmCur)}catch(_){toast('Ещё: скоро')}};
-  UG.querySelectorAll('.ug-a').forEach(b=>b.onclick=()=>{if(b.dataset.a==='Носить'){try{wearGift(window.__gmCur)}catch(_){}ugClose();return}toast(b.dataset.a+': скоро')});
+  $u('ugMore').onclick=()=>{try{openGiftMenu($u('ugMore'),window.__gmCur)}catch(_){soon('Ещё')}};
+  UG.querySelectorAll('.ug-a').forEach(b=>b.onclick=()=>{if(b.dataset.a==='Носить'){try{wearGift(window.__gmCur)}catch(_){}ugClose();return}soon(b.dataset.a)});
 })();
 </script>
 <script>
@@ -4261,7 +4264,7 @@ renderMyGifts();
       if(k==='share'){shareGift(x);return}
       if(k==='similar'){try{window.openMkSimilar&&openMkSimilar(x)}catch(_){}return}
       const N={pin:'Закрепить',wear:'Носить',link:'Копировать ссылку',similar:'Похожие подарки',share:'Поделиться',send:'Передать'};
-      try{toast((N[k]||'')+': скоро')}catch(_){}
+      try{soon(N[k]||'')}catch(_){}
     }
   }
   function drawPat(cv,x){
@@ -4753,7 +4756,7 @@ renderMyGifts();
       if(window.__ugDrag){window.__ugDrag=false;return}
       const x=window.__gmCur;if(!x||!x.sale)return;
       if(MYGIFTS.indexOf(x)>=0){askUnsell(x,()=>{try{window.__ugClose&&__ugClose(true)}catch(_){}setTimeout(()=>{try{renderMk()}catch(_){}},380)});return}
-      toast('Покупка: скоро');
+      soon('Покупка');
       return;
     }
     return _oc&&_oc.call(this,e);
