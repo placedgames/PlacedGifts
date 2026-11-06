@@ -684,7 +684,7 @@ html,body{overscroll-behavior:none}
 .gava.mk-ava{background:linear-gradient(to bottom,#56caff,#3bb1e9)}
 .mk-ava svg{fill:#fff;fill-rule:evenodd}
 #p-mkg{padding-bottom:40px;padding-top:calc(var(--hdr-top) + var(--hdr-h) + 6px)}
-.mk-fwrap{--fb:26px;position:sticky;top:8px;z-index:50;margin:0 -16px;padding:0 16px var(--fb)}
+.mk-fwrap{--fb:16px;position:sticky;top:8px;z-index:50;margin:0 -16px;padding:0 16px var(--fb)}
 /* затемнение и размытие под кнопками хедера и фильтрами — та же кривая и то же поведение, что под хедером и слайдером профиля:
    выезжает по мере прокрутки (--mq), потом становится мягче и появляется блюр (--mm, --mb). Значения ставит JS */
 .mk-fwrap::before,.mk-fwrap::after{content:"";position:absolute;left:0;right:0;top:calc(-1*(var(--hdr-top) + var(--hdr-h) + 60px));height:calc(var(--hdr-top) + var(--hdr-h) + 60px + 96px);z-index:-1;pointer-events:none;will-change:transform,opacity;transform:translate3d(0,calc(-35px*(1 - var(--mq,0))),0)}
@@ -4593,7 +4593,10 @@ renderMyGifts();
     shapeMk();
   }
   function openMenu(chip,k,srt){
-    menuK=k;chip.classList.add('open');placeMenu(chip,srt);menu.classList.add('on');
+    menuK=k;chip.classList.add('open');menu.style.clipPath=menu.style.webkitClipPath='';placeMenu(chip,srt);menu.classList.add('on');
+    /* при повторном открытии размеры сразу после смены содержимого могли быть ещё не финальными — контур и обводку пересчитываем после раскладки */
+    const re=()=>{if(menu.classList.contains('on'))shapeMk()};
+    requestAnimationFrame(()=>{re();requestAnimationFrame(re)});setTimeout(re,120);setTimeout(re,420);
     try{__hap('medium')}catch(_){}
   }
   function showSort(chip){
