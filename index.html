@@ -211,6 +211,10 @@ mask-image:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top)
 .pname .wmod.wstar svg{width:100%;height:100%;display:block;fill:var(--accent);fill-rule:evenodd}
 .pname .wmod.wstar{width:28px;height:28px;margin-left:2px}
 /* значок слева от имени: голубой, а если на профиле носится подарок-фон — белый */
+/* метка о верификации под карточкой профиля */
+.list.pcard{margin-bottom:0}   /* отступ до метки задаёт сама метка (иначе margin-bottom списка 16px схлопывается с её верхним) */
+.vnote{margin:6px 0 14px;padding:0 16px;font-size:13px;line-height:1.38;font-weight:500;color:#8e8e93;text-align:left}
+.vnote svg{display:inline-block;width:17px;height:17px;vertical-align:-4px;margin-right:5px;fill:#8e8e93}
 .pname .vbadge{position:relative;top:-2px;display:inline-block;width:25px;height:25px;margin:-3px 5px -3px 0;vertical-align:middle;transform:none;pointer-events:none}
 .pname .vbadge svg{width:100%;height:100%;display:block;fill:#4fc3ff;transition:fill .45s ease}
 .phead.wear .pname .vbadge svg{fill:#fff}
@@ -920,6 +924,7 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
     <div class="pf"><b>мобильный</b><span id="pNum"></span></div>
     <div class="pf pf-user"><div><b>имя пользователя</b><span class="lnk" id="pUser"></span></div><svg class="ico" style="--s:var(--ic-pf-qr)"><use href="#i-qr"/></svg></div>
   </div>
+  <div class="vnote"><svg viewBox="0 0 512 512" aria-hidden="true"><defs><mask id="vbm-note" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512"><rect width="512" height="512" fill="#fff"/><g transform="translate(256 256) scale(0.39) translate(-627 -598)" fill="#000"><path d="M331 520Q331 498 350 483L607 292Q627 280 647 292L903 483Q922 498 922 520L922 705Q922 735 895 722L647 528Q627 515 607 528L358 722Q331 735 331 705Z"/><path d="M485 760L608 652Q628 640 648 652L771 760Q793 778 771 796L648 904Q628 916 608 904L485 796Q463 778 485 760Z"/></g></mask></defs><g mask="url(#vbm-note)"><rect x="76" y="76" width="360" height="360" rx="42"/><rect x="76" y="76" width="360" height="360" rx="42" transform="rotate(45 256 256)"/></g></svg><span>Этот пользователь верифицирован организацией «GiftCrafts».</span></div>
   <div class="mpin" id="mePin"><div class="mpin-bl"></div><div class="mpin-bg"></div><div class="mpin-bg2"></div><div class="mpin-band"></div></div>
   <div class="mbody">
   <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="gifts"><span>Подарки</span><span class="mt-ic" id="mtIcons"></span></button></div>
@@ -1461,7 +1466,8 @@ $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
 'Вы получите':'You will receive','Продать за':'Sell for','Минимальная цена —':'Minimum price —','Изменение цены':'Price change','Цена изменена':'Price changed','Подтверждение продажи':'Confirm sale','Подарок выставлен на продажу':'Gift listed for sale',
 'Подарок скрыт':'Gift hidden','Подарок':'Gift','подарок':'gift','подарка':'gift','подарков':'gifts','подарки':'gifts','звёзд':'stars','звезд':'stars','звезду':'star','звезды':'stars','модель':'model','фон':'backdrop','узор':'symbol',
 'Г':'G','Pepe с сердцем':'Pepe with heart','Золотой перстень':'Gold ring','Брошь':'Brooch','Кепка':'Cap','Слива':'Plum','Радужный кристалл':'Rainbow crystal','Кристалл':'Crystal','Орёл':'Eagle','Статуэтка':'Statuette','Кольцо с камнем':'Gem ring','Кирпич':'Brick','Перьевая ручка':'Fountain pen',
-'из':'of','осталось':'left','продано':'sold','за':'for','на':'for','в':'at'
+'из':'of','осталось':'left','продано':'sold','за':'for','на':'for','в':'at',
+'Этот пользователь верифицирован организацией «GiftCrafts».':'This user was verified by the organization "GiftCrafts".'
   };
   const KEYS=Object.keys(D).sort((a,b)=>b.length-a.length);
   const N=x=>+String(x).replace(/[^\d]/g,''),pl=(n,a,b)=>n===1?a:b,SP='[\\d\\u00a0\\u202f ]*';
