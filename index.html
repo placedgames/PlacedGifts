@@ -213,7 +213,7 @@ mask-image:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top)
 /* значок слева от имени: голубой, а если на профиле носится подарок-фон — белый */
 /* метка о верификации под карточкой профиля */
 .list.pcard{margin-bottom:0}   /* отступ до метки задаёт сама метка (иначе margin-bottom списка 16px схлопывается с её верхним) */
-.vnote{margin:6px 0 14px;padding:0 16px;font-size:13px;line-height:1.38;font-weight:500;color:#8e8e93;text-align:left}
+.vnote{margin:6px 0 13px;padding:0 16px;font-size:13px;line-height:1.38;font-weight:500;color:#8e8e93;text-align:left}
 .vnote svg{display:inline-block;width:17px;height:17px;vertical-align:-4px;margin-right:5px;fill:#8e8e93}
 .pname .vbadge{position:relative;top:-2px;display:inline-block;width:25px;height:25px;margin:-3px 5px -3px 0;vertical-align:middle;transform:none;pointer-events:none}
 .pname .vbadge svg{width:100%;height:100%;display:block;fill:#4fc3ff;transition:fill .45s ease}
@@ -273,6 +273,9 @@ body.navanim #bar{z-index:1}
 .mtabs button{position:relative;z-index:2;flex:none;border:0;background:none;color:#fff;font:inherit;font-size:16px;font-weight:550;cursor:pointer;padding:0 15.75px}
 .mtabs button.on{color:#fff}
 .mtabs button{display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
+/* слайдер «Подарки» в профиле: без ползунка, ниже на 1px, скругление меньше, а углы сглажены сильнее (горизонтальный радиус больше вертикального) */
+#mtabs{height:39px;border-radius:21px/18.5px}
+#mtabs i{display:none}
 /* смена подписи кнопки внизу: старый текст уходит вниз, новый приходит сверху (как в окне улучшения) */
 #sendBtn{position:relative}
 #sendBtn .sb-l{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;pointer-events:none;white-space:nowrap;will-change:transform,opacity}
