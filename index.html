@@ -684,7 +684,7 @@ html,body{overscroll-behavior:none}
 .gava.mk-ava{background:linear-gradient(to bottom,#56caff,#3bb1e9)}
 .mk-ava svg{fill:#fff;fill-rule:evenodd}
 #p-mkg{padding-bottom:40px;padding-top:calc(var(--hdr-top) + var(--hdr-h) + 4px)}
-.mk-fwrap{--fb:16px;position:sticky;top:8px;z-index:50;margin:0 -16px;padding:0 16px 16px}
+.mk-fwrap{--fb:24px;position:sticky;top:8px;z-index:50;margin:0 -16px;padding:0 16px var(--fb)}   /* sticky top:8px сдвигает блок вниз на 8px, поэтому 24px даёт реальные 16px до карточек */
 /* затемнение и размытие под кнопками хедера и фильтрами — та же кривая и то же поведение, что под хедером и слайдером профиля:
    выезжает по мере прокрутки (--mq), потом становится мягче и появляется блюр (--mm, --mb). Значения ставит JS */
 .mk-fwrap::before,.mk-fwrap::after{content:"";position:absolute;left:0;right:0;top:calc(-1*(var(--hdr-top) + var(--hdr-h) + 60px));height:calc(var(--hdr-top) + var(--hdr-h) + 60px + 96px);z-index:-1;pointer-events:none;will-change:transform,opacity;transform:translate3d(0,calc(-35px*(1 - var(--mq,0))),0)}
