@@ -274,11 +274,11 @@ body.navanim #bar{z-index:1}
 .mph-n{display:flex;align-items:center;justify-content:center;max-width:100%;font-size:17px;line-height:20px;font-weight:550;color:#fff;white-space:nowrap}
 .mph-n .mt{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .mph-n .vb,.mph-n .wm{flex:none;display:block;width:15px;height:15px}
-.mph-n .vb{width:16px;height:16px;margin-right:1px}.mph-n .wm{margin-left:3px}
+.mph-n .vb{width:15px;height:15px;margin-right:2px}.mph-n .wm{width:16px;height:16px;margin-left:3px}.mph-n .wm.ws{width:18px;height:18px;margin-left:2px}
 #mpHd .vb svg{width:100%;height:100%;display:block;fill:#4fc3ff}
 #mpHd .wm svg{width:100%;height:100%;display:block;fill:var(--accent);fill-rule:evenodd}
 #mpHd .wm img{width:100%;height:100%;display:block;object-fit:contain}
-#mpHd .wm.em{font-size:13px;line-height:15px;text-align:center}
+#mpHd .wm.em{font-size:14px;line-height:16px;text-align:center}
 .mph-s{display:flex;align-items:center;justify-content:center;gap:2px;font-size:13px;line-height:15px;font-weight:500;color:var(--hint);white-space:nowrap}
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:40px;border-radius:21.2px/20px;display:flex;align-items:stretch;padding:3px}
@@ -1878,7 +1878,7 @@ function clearAppCache(){ location.reload(); }
       if(vb)h+='<span class="vb">'+vb.outerHTML.split('vbm-pName').join('vbm-mph')+'</span>';
       h+='<span class="mt"></span>';
       if(wm){
-        if(wm.classList.contains('wstar'))h+='<span class="wm"><svg viewBox="0 0 512 512"><use href="#i-star"/></svg></span>';
+        if(wm.classList.contains('wstar'))h+='<span class="wm ws"><svg viewBox="0 0 512 512"><use href="#i-star"/></svg></span>';
         else{const im=wm.querySelector('.pw img'),em=wm.querySelector('.pw > span:not(.ps)');
           if(im)h+='<span class="wm"><img src="'+im.getAttribute('src')+'" alt=""></span>';
           else if(em)h+='<span class="wm em"></span>'}
@@ -2271,7 +2271,9 @@ function pinStars(seed){
 function renderPins(){
   try{applyWear()}catch(_){}
   try{if(pinFit(MYGIFTS.filter(x=>x.pin!=null))){try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}}}catch(_){}
-  const items=MYGIFTS.filter(x=>x.pin!=null&&x.pin<6);
+  /* носимый подарок сидит у имени — со своего закрепа (вокруг аватарки) его модель убирается, сам закреп и его место сохраняются */
+  const wornG=MYGIFTS.find(g=>g.worn&&g.upg&&g.upg.c);
+  const items=MYGIFTS.filter(x=>x.pin!=null&&x.pin<6&&x!==wornG);
   const want={};items.forEach(x=>{want[x.pin]=x});
   ['pPins','sPins'].forEach(id=>{      /* страница профиля и страница настроек — одни и те же позиции */
     const el=document.getElementById(id);if(!el)return;
@@ -2383,7 +2385,7 @@ window.wearGift=function(x){
   if(!x||!x.upg||!x.upg.c||MYGIFTS.indexOf(x)<0)return;
   const was=!!x.worn;MYGIFTS.forEach(g=>{delete g.worn});if(!was)x.worn=true;
   try{store.set(MYK,JSON.stringify(MYGIFTS))}catch(_){}
-  applyWear();
+  try{renderPins()}catch(_){applyWear()}   /* renderPins сам вызывает applyWear и прячет/возвращает модель закреплённого носимого подарка */
 };
 let pgWarmT=0;
 /* порядок подарков как в сетке: сначала закреплённые, затем остальные */
