@@ -693,7 +693,7 @@ html,body{overscroll-behavior:none}
 .mk-filters{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;margin:0 -16px;padding:0 16px;scrollbar-width:none}
 .mk-filters>:first-child{margin-left:auto}
 .mk-filters>:last-child{margin-right:auto}
-.mk-chip{flex:none;height:37px;padding:0 11px;border-radius:18.5px;display:flex;align-items:center;gap:3px;color:#fff;font:inherit;font-size:15px;font-weight:550;cursor:pointer;white-space:nowrap;--menu-glass-blur:11px;--glass-w:.5px}
+.mk-chip{flex:none;height:37px;padding:0 11px;border-radius:18.5px;display:flex;align-items:center;gap:3px;color:#fff;font:inherit;font-size:15px;font-weight:550;cursor:pointer;white-space:nowrap;--menu-glass-blur:11px;--glass-w:.5px;--menu-glass-bg:rgba(53,53,54,.6)}
 .mk-chip.on{color:#fff}
 .mk-chip.sm::before,.mk-chip.sm::after{display:none}
 .mk-chip svg{flex:none;position:relative;z-index:1}
@@ -4908,8 +4908,10 @@ renderMyGifts();
       if(!(w>0)||!(h>0)){w=b.offsetWidth;h=b.offsetHeight}if(!(w>0)||!(h>0))return;
       const f=n=>+n.toFixed(2),r=h/2,px=Math.min(1.09*r,w/2),hx=px*.57,vy=r*.57;
       const d='M'+f(px)+' 0L'+f(w-px)+' 0C'+f(w-px+hx)+' 0 '+f(w)+' '+f(r-vy)+' '+f(w)+' '+f(r)+'C'+f(w)+' '+f(r+vy)+' '+f(w-px+hx)+' '+f(h)+' '+f(w-px)+' '+f(h)+'L'+f(px)+' '+f(h)+'C'+f(px-hx)+' '+f(h)+' 0 '+f(r+vy)+' 0 '+f(r)+'C0 '+f(r-vy)+' '+f(px-hx)+' 0 '+f(px)+' 0Z';
-      const st=(o,a)=>'<stop offset="'+o+'" stop-color="#787a82" stop-opacity="'+a+'"/>';
-      const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">'+st(0,.3)+st(.08,.24)+st(.16,.15)+st(.24,.085)+st(.32,.036)+st(.42,0)+st(.58,0)+st(.68,.036)+st(.76,.085)+st(.84,.15)+st(.92,.24)+st(1,.3)+'</linearGradient><clipPath id="c"><path d="'+d+'"/></clipPath></defs><g clip-path="url(#c)"><path d="'+d+'" fill="none" stroke="url(#g)" stroke-width="1.2"/></g></svg>';
+      const gr=(id,rgb,A,m)=>'<linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1">'+m.map(q=>'<stop offset="'+q[0]+'" stop-color="rgb('+rgb+')" stop-opacity="'+(+(A*q[1]).toFixed(4))+'"/>').join('')+'</linearGradient>';
+      const half=[[0,1],[.036,.8],[.072,.5],[.11,.26],[.15,.1],[.2,.02],[.225,0]],mir=a=>a.concat(a.slice(0,-1).reverse().map(q=>[1-q[0],q[1]]));
+      const half2=[[0,1],[.045,.85],[.09,.6],[.135,.36],[.18,.16],[.225,0]];
+      const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs>'+gr('g','96,98,106',.3,mir(half))+gr('h','90,92,100',.25,mir(half2))+'<clipPath id="c"><path d="'+d+'"/></clipPath><filter id="b" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="0.9"/></filter></defs><g clip-path="url(#c)"><path d="'+d+'" fill="none" stroke="url(#h)" stroke-width="1.5" filter="url(#b)"/><path d="'+d+'" fill="none" stroke="url(#g)" stroke-width="1"/></g></svg>';
       b.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';b.style.backgroundSize='100% 100%';b.style.backgroundRepeat='no-repeat';
     };
     draw();
