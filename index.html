@@ -268,6 +268,19 @@ body.navanim #bar{z-index:1}
 .mpin-s{position:absolute;top:0;left:16px;right:16px;display:flex;align-items:center;justify-content:center;gap:3px;font-size:17px;font-weight:500;color:var(--hint);white-space:nowrap;transform-origin:50% 0;will-change:transform}
 .mpin-s svg{width:22px;height:22px;fill:var(--accent);fill-rule:evenodd;flex:none}
 
+/* имя, значки и «в сети» в хедере: появляются, когда слайдер встал под кнопки (без привязки к прокрутке) */
+.mpin-hd{position:absolute;top:var(--hdr-top);height:calc(var(--hdr-h) - 1px);left:76px;right:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:scale(.35);transform-origin:50% 50%;transition:opacity .2s ease,transform .28s cubic-bezier(.2,.9,.25,1.2);pointer-events:none;will-change:transform,opacity}
+.mpin-hd.on{opacity:1;transform:none}
+.mph-n{display:flex;align-items:center;justify-content:center;max-width:100%;font-size:17px;line-height:20px;font-weight:550;color:#fff;white-space:nowrap}
+.mph-n .mt{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.mph-n .vb,.mph-n .wm{flex:none;display:block;width:15px;height:15px}
+.mph-n .vb{margin-right:3px}.mph-n .wm{margin-left:3px}
+#mpHd .vb svg{width:100%;height:100%;display:block;fill:#4fc3ff}
+#mpHd .wm svg{width:100%;height:100%;display:block;fill:var(--accent);fill-rule:evenodd}
+#mpHd .wm img{width:100%;height:100%;display:block;object-fit:contain}
+#mpHd .wm.em{font-size:13px;line-height:15px;text-align:center}
+.mph-s{display:flex;align-items:center;justify-content:center;gap:2px;font-size:13px;line-height:15px;font-weight:500;color:var(--hint);white-space:nowrap}
+#mpHd .mph-s svg{width:16px;height:16px;flex:none;fill:var(--accent);fill-rule:evenodd}
 /* слайдер на странице профиля: стекло и ползунок как у меню */
 .mtabs{margin:16px auto 0;width:fit-content;max-width:100%;box-sizing:border-box;height:40px;border-radius:21.2px/20px;display:flex;align-items:stretch;padding:3px}
 .mtabs i{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--menu-slider-bg);border-radius:18.05px/17px;pointer-events:none;z-index:1;transition:left .22s cubic-bezier(.25,.9,.3,1),width .22s cubic-bezier(.25,.9,.3,1)}
@@ -930,7 +943,7 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
     <div class="pf pf-user"><div><b>имя пользователя</b><span class="lnk" id="pUser"></span></div><svg class="ico" style="--s:var(--ic-pf-qr)"><use href="#i-qr"/></svg></div>
   </div>
   <div class="vnote"><svg viewBox="0 0 512 512" aria-hidden="true"><defs><mask id="vbm-note" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512"><rect width="512" height="512" fill="#fff"/><g transform="translate(256 256) scale(0.39) translate(-627 -598)" fill="#000"><path d="M331 520Q331 498 350 483L607 292Q627 280 647 292L903 483Q922 498 922 520L922 705Q922 735 895 722L647 528Q627 515 607 528L358 722Q331 735 331 705Z"/><path d="M485 760L608 652Q628 640 648 652L771 760Q793 778 771 796L648 904Q628 916 608 904L485 796Q463 778 485 760Z"/></g></mask></defs><g mask="url(#vbm-note)"><rect x="76" y="76" width="360" height="360" rx="42"/><rect x="76" y="76" width="360" height="360" rx="42" transform="rotate(45 256 256)"/></g></svg><span>Верифицирован организацией «GiftCrafts».</span></div>
-  <div class="mpin" id="mePin"><div class="mpin-bl"></div><div class="mpin-bg"></div><div class="mpin-bg2"></div><div class="mpin-band"></div></div>
+  <div class="mpin" id="mePin"><div class="mpin-bl"></div><div class="mpin-bg"></div><div class="mpin-bg2"></div><div class="mpin-band"></div><div class="mpin-hd" id="mpHd"><div class="mph-n" id="mphN"></div><div class="mph-s"><svg class="ico"><use id="mphR" href="#i-n1"/></svg><span>в сети</span></div></div></div>
   <div class="mbody">
   <div class="mtabs glass" id="mtabs"><i id="mtI"></i><button class="on" data-m="gifts"><span>Подарки</span><span class="mt-ic" id="mtIcons"></span></button><button data-m="collectibles" id="mtColl"><span>Коллекции</span></button></div>
   <div class="pgrid" id="pGrid"></div>
@@ -1251,9 +1264,13 @@ window.hdrFilter=function(on,instant){
   b.classList.toggle('hb-txt',!on);b.classList.toggle('hb-round',!!on);
   b.innerHTML=on?FLT:'<span>Изм.</span>';
   if(instant||!animOn())return;
-  const w1=b.getBoundingClientRect().width,k=b.firstElementChild;
-  try{b.animate([{width:w0+'px'},{width:w1+'px'}],{duration:300,easing:'cubic-bezier(.32,.72,0,1)'})}catch(_){}
-  try{k&&k.animate([{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:260,easing:'cubic-bezier(.3,.8,.3,1)'})}catch(_){}
+  /* ширину «после» меряем, когда подпись уже переведена (наблюдатель перевода срабатывает микрозадачей): иначе «Изм.» короче «Edit»/длиннее и кнопка сначала растягивается, а потом сжимается */
+  const go=()=>{
+    const w1=b.getBoundingClientRect().width,k=b.firstElementChild;
+    try{b.animate([{width:w0+'px'},{width:w1+'px'}],{duration:300,easing:'cubic-bezier(.32,.72,0,1)'})}catch(_){}
+    try{k&&k.animate([{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:260,easing:'cubic-bezier(.3,.8,.3,1)'})}catch(_){}
+  };
+  if(window.queueMicrotask)queueMicrotask(go);else go();
 };
 $('#hdr').addEventListener('click',e=>{
   const t=e.target.closest('[data-a]'); if(!t) return;
@@ -1851,14 +1868,33 @@ function clearAppCache(){ location.reload(); }
   /* для вкладок профиля: на какой прокрутке слайдер закрепляется под хедером (ступенька) и текущий сдвиг */
   window.meStep=()=>{if(!M)measure();return M?{T:M.tabsAt,off:off}:null};
   /* кнопка «Отправить подарки друзьям»: выезжает снизу, пока слайдер закреплён под кнопками хедера; пока без действия */
-  const sw=$('#sendWrap'),sb=$('#sendBtn');let sOn=false;
+  const sw=$('#sendWrap'),sb=$('#sendBtn'),hd=$('#mpHd');let sOn=false;
+  /* блок в хедере собирается из имени профиля: значок слева, имя, звезда или носимый подарок справа (без звёздочек) */
+  function hdFill(){
+    try{
+      const n=$('#mphN'),vb=pn.querySelector('.vbadge svg'),wm=pn.querySelector('.wmod');
+      const name=[].filter.call(pn.childNodes,x=>x.nodeType===3).map(x=>x.textContent).join('').trim();
+      let h='';
+      if(vb)h+='<span class="vb">'+vb.outerHTML.split('vbm-pName').join('vbm-mph')+'</span>';
+      h+='<span class="mt"></span>';
+      if(wm){
+        if(wm.classList.contains('wstar'))h+='<span class="wm"><svg viewBox="0 0 512 512"><use href="#i-star"/></svg></span>';
+        else{const im=wm.querySelector('.pw img'),em=wm.querySelector('.pw > span:not(.ps)');
+          if(im)h+='<span class="wm"><img src="'+im.getAttribute('src')+'" alt=""></span>';
+          else if(em)h+='<span class="wm em"></span>'}
+      }
+      n.innerHTML=h;n.querySelector('.mt').textContent=name;
+      const e=n.querySelector('.wm.em'),em2=wm&&wm.querySelector('.pw > span:not(.ps)');if(e&&em2)e.textContent=em2.textContent;
+      $('#mphR').setAttribute('href',src.getAttribute('href')||'#i-n1');
+    }catch(_){}
+  }
   function syncSend(){
     const want=!!(M&&pg.classList.contains('on')&&(pg.scrollTop+off)>=M.tabsAt-1);
-    if(want===sOn)return;sOn=want;try{window.hdrFilter&&hdrFilter(want)}catch(_){}
+    if(want===sOn)return;sOn=want;if(want)hdFill();hd.classList.toggle('on',want);try{window.hdrFilter&&hdrFilter(want)}catch(_){}
     if(want&&window.shapeBtn)try{shapeBtn(sb)}catch(_){}
     sw.classList.toggle('show',want);sw.setAttribute('aria-hidden',want?'false':'true');
   }
-  new MutationObserver(()=>{if(!pg.classList.contains('on')){window.__meStuck=false;if(sOn){sOn=false;sw.classList.remove('show')}}else{if(!M)measure();syncSend()}}).observe(pg,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(()=>{if(!pg.classList.contains('on')){window.__meStuck=false;if(sOn){sOn=false;sw.classList.remove('show');hd.classList.remove('on')}}else{if(!M)measure();syncSend()}}).observe(pg,{attributes:true,attributeFilter:['class']});
   requestAnimationFrame(()=>{try{window.shapeBtn&&shapeBtn(sb)}catch(_){}});
   window.addEventListener('resize',()=>{try{window.shapeBtn&&shapeBtn(sb)}catch(_){}});
   /* отклик на нажатие — тот же «слайм», что у кнопки «Купить» */
