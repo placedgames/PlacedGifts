@@ -502,6 +502,8 @@ mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,0.010) 2px,rgba(
 #bm .bm-sheet{will-change:transform}
 .gift{contain:layout style}
 .pg{contain:style}
+/* карточки далеко за пределами экрана не рисуются: размер в сетке остаётся, а слоёв на 60+ карточек больше нет */
+.pg.pgoff>*{visibility:hidden}
 .pg .rib{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 button,.gift,.pg,.row{touch-action:manipulation}
 html,body{overscroll-behavior:none}
@@ -2041,7 +2043,7 @@ try{MYGIFTS=JSON.parse(store.get(MYK,'[]'))||[];SOLDMAP=JSON.parse(store.get(SOL
 const shortN=n=>n>=1000?(n/1000).toFixed(n%1000?1:0).replace('.0','')+'K':String(n);
 /* карточка улучшенного подарка: фон, узор, модель и плашка с номером */
 const PG_POS=[[50,11,15,.3],[83,30,15,.3,1],[83,68,15,.3,1],[50,87,15,.3],[17,68,15,.3,1],[17,30,15,.3,1],[24,5,14,.14],[76,5,14,.14],[24,92,14,.14],[76,92,14,.14],[0,49,14,.14],[100,49,14,.14]];
-const PG_BMP={},PG_IMG={},PG_RO=window.ResizeObserver?new ResizeObserver(es=>es.forEach(e=>pgDraw(e.target))):null;
+const PG_BMP={},PG_IMG={},PG_RO=window.ResizeObserver?new ResizeObserver(es=>es.forEach(e=>{const t=e.target;if(!t.clientWidth||!t.clientHeight)return;pgDraw(t)})):null;
 const pgCol=v=>/^#[0-9a-f]{3,8}$/i.test(String(v||''))?v:null;
 function pgShade(c,k){const m=/^#([0-9a-f]{6})$/i.exec(String(c||''));if(!m)return null;const n=parseInt(m[1],16),f=v=>Math.round(v*k);return '#'+[f(n>>16&255),f(n>>8&255),f(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('')}
 function pgLoad(u){return PG_IMG[u]||(PG_IMG[u]=new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>{delete PG_IMG[u];r(null)};i.src=u}))}
@@ -2084,10 +2086,20 @@ function pgDraw(cv){
     {const gr=cx.createRadialGradient(0,0,0,0,0,1);gr.addColorStop(.35,'rgba(0,0,0,1)');gr.addColorStop(1,'rgba(0,0,0,.4)');cx.fillStyle=gr;cx.fillRect(-3,-3,6,6)}
     cx.restore();
     cv.__ok=1;
-    try{const oc=document.createElement('canvas');oc.width=W;oc.height=H;oc.getContext('2d').drawImage(cv,0,0);const ks=Object.keys(PG_BMP);if(ks.length>=40)delete PG_BMP[ks[0]];PG_BMP[key]=oc}catch(_){}
+    try{const oc=document.createElement('canvas');oc.width=W;oc.height=H;oc.getContext('2d').drawImage(cv,0,0);const ks=Object.keys(PG_BMP);if(ks.length>=120)delete PG_BMP[ks[0]];PG_BMP[key]=oc}catch(_){}
   });
 }
-function pgPaint(g,from){const els=from?Array.prototype.slice.call(g.children,from):[g];els.forEach(el=>el.querySelectorAll('canvas.pu-pat').forEach(cv=>{if(PG_RO)PG_RO.observe(cv);pgDraw(cv)}))}
+let PG_CULL=null;
+function pgCull(g,from){
+  if(!window.IntersectionObserver)return;
+  const root=document.getElementById('p-me');if(!root)return;
+  if(!PG_CULL)PG_CULL=new IntersectionObserver(es=>{
+    if(!root.clientHeight)return;   /* страница скрыта — ничего не прячем, иначе при заходе карточки мигнут */
+    es.forEach(e=>e.target.classList.toggle('pgoff',!e.isIntersecting));
+  },{root:root,rootMargin:'120% 0px 120% 0px'});
+  Array.prototype.slice.call(g.children,from||0).forEach(c=>PG_CULL.observe(c));
+}
+function pgPaint(g,from){try{pgCull(g,from)}catch(_){}const els=from?Array.prototype.slice.call(g.children,from):[g];els.forEach(el=>el.querySelectorAll('canvas.pu-pat').forEach(cv=>{if(PG_RO)PG_RO.observe(cv);pgDraw(cv)}))}
 function pgUpg(x,i){
   const d=x.upg,c=d.c||{},c1=pgCol(c.c1)||'#7b72ea',c2=pgCol(c.c2)||'#5b3fb8',c3=pgCol(c.c3)||'#ffffff',rb=pgShade(c2,.72)||'rgba(0,0,0,.3)',num='#'+d.n;
   return '<div class="pg pgu" data-i="'+i+'" style="--pc1:'+c1+';--pc2:'+c2+'"><div class="pu-bg">'+(d.si?'<canvas class="pu-pat" data-si="'+d.si+'" data-c="'+c3+'"></canvas>':'')+'</div>'+
@@ -2352,14 +2364,14 @@ function renderMyGifts(reset){
   const sig='a|'+list.map(x=>[x.t,x.image||x.emoji,x.total,x.anon?1:0,x.hid?1:0,x.pin!=null?'p'+x.pin:'',x.upg?(x.upg.n+'/'+x.upg.mi+'/'+(x.upg.c?x.upg.c.c1:'')):''].join(':')).join(',');
   g.__list=list;
   if(g.__sig!==sig){
-    g.__sig=sig;try{PG_RO&&PG_RO.disconnect()}catch(_){}
+    g.__sig=sig;try{PG_RO&&PG_RO.disconnect()}catch(_){}try{PG_CULL&&PG_CULL.disconnect()}catch(_){}
     const n=Math.min(list.length,reset?PG_BATCH:Math.max(PG_BATCH,g.__n||0));let h='';
     for(let i=0;i<n;i++)h+=pgCard(list[i],g.__ix?g.__ix[i]:i);
     g.innerHTML=h;g.__n=n;
     try{pgPaint(g)}catch(_){}
   }else if(reset&&(g.__n||0)>PG_BATCH){
     const n=Math.min(list.length,PG_BATCH);
-    while(g.children.length>n){const c=g.lastElementChild,cv=c.querySelector('canvas.pu-pat');if(cv&&PG_RO)try{PG_RO.unobserve(cv)}catch(_){}c.remove()}
+    while(g.children.length>n){const c=g.lastElementChild,cv=c.querySelector('canvas.pu-pat');if(cv&&PG_RO)try{PG_RO.unobserve(cv)}catch(_){}try{PG_CULL&&PG_CULL.unobserve(c)}catch(_){}c.remove()}
     g.__n=n;
   }
   g.hidden=!list.length;e.hidden=list.length>0;
