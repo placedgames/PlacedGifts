@@ -1414,15 +1414,138 @@ function noStars(){
 }
 function toast(t){return;const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1600)}
 $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
-/* язык: нажатие на «Русский» ↔ «English» меняет текст и названия пунктов меню */
+/* ===== язык: нажатие на «Русский» ↔ «English» переводит весь интерфейс ===== */
 (function(){
   const row=document.querySelector('.row[data-s="Язык"]'),v=row&&row.querySelector('.v');if(!v)return;
-  const L={ru:{v:'Русский',m:['Маркет','Подарки','Звёзды']},en:{v:'English',m:['Market','Buy gifts','Buy stars']}};
-  function apply(k){
-    v.textContent=L[k].v;
-    $$('.menu-item .menu-label').forEach((e,i)=>{if(L[k].m[i])e.textContent=L[k].m[i]});
+  v.setAttribute('data-i18n-skip','1');
+  const CY=/[А-Яа-яЁё]/;
+  const D={
+'Маркет подарков':'Gift Market','Покупайте уже улучшенные':'Buy already upgraded','коллекционные подарки, выбирайте':'collectible gifts, choose','модель, фон и узор на свой вкус.':'the model, backdrop and symbol you like.',
+'Все варианты':'All variants','Все':'All','Не улучшенные':'Not upgraded','Здесь пока пусто':'Nothing here yet','Цена':'Price','Модель':'Model','Фон':'Backdrop','Узор':'Symbol','Предложений пока нет':'No offers yet',
+'Купить подарок за':'Buy gift for','Купить подарок':'Buy gifts','Купить':'Buy','Редкий подарок можно превратить':'A rare gift can be turned','в коллекционный и затем подарить':'into a collectible and then given','другому пользователю.':'to another user.',
+'Коллекционные подарки скоро появятся':'Collectible gifts are coming soon','Коллекционные':'Collectibles','Коллекционный подарок можно отправить любому пользователю.':'A collectible gift can be sent to any user.',
+'Звёзды GiftCrafts нужны для покупки уникальных и коллекционных подарков, а также для прочих услуг.':'GiftCrafts Stars are used to buy unique and collectible gifts, as well as for other services.','Звёзды GiftCrafts':'GiftCrafts Stars','Звёзды':'Stars','Задания скоро появятся':'Tasks are coming soon','Задания':'Tasks','Ваш баланс':'Your balance',
+'Мой профиль':'My Profile','Деньги':'Money','Мои звёзды':'My Stars','Поддержка':'Support','Промокод':'Promo code','Язык':'Language','Оформление':'Appearance','Чёрная':'Black','Анимации подарков':'Gift animations',
+'в сети':'online','мобильный':'mobile','имя пользователя':'username','Отправить подарки':'Send gifts','Подарки':'Gifts','Маркет':'Market','Купленный подарок':'Purchased gift','Посмотреть':'View',
+'Скрыть моё имя и сообщение от посетителей профиля.':'Hide my name and message from profile visitors.','Скрыть моё имя':'Hide my name','Когда все подарки будут проданы, вы больше не сможете их купить.':'When all gifts are sold, you will no longer be able to buy them.',
+'Подарок Вам':'Gift for you','Этот подарок можно сделать':'This gift can be made','уникальным коллекционным.':'unique and collectible.','Имя отправителя видите только Вы.':'Only you can see the sender’s name.',
+'Подарок скрыт из профиля. ':'The gift is hidden from your profile. ','Подарок скрыт из профиля':'Gift hidden from profile','Подарок виден в профиле.':'The gift is visible in your profile.','Этот подарок не виден в профиле.':'This gift is not visible in your profile.',
+'Показать':'Show','Скрыть':'Hide','Улучшение подарка':'Gift upgrade','Улучшение':'Upgrade','Улучшить за':'Upgrade for','Улучшить':'Upgrade','Смотреть улучшенный подарок':'View upgraded gift','Смотреть все варианты':'View all variants',
+'Уникальность':'Uniqueness','Подарок получит уникальный номер, модель, фон и символ.':'The gift will get a unique number, model, backdrop and symbol.','Можно передать':'Can be transferred','Можно продать':'Can be sold',
+'Подарок можно продать или выставить на внутренний маркет.':'The gift can be sold or listed on the in-app market.','С именем отправителя':'With sender’s name','отправить':'send','носить':'wear','продать за':'sell for','продать':'sell','убрать':'remove','снять':'remove',
+'Владелец':'Owner','Символ':'Symbol','Выпущено':'Issued','выпущено':'issued','Пропустить':'Skip','Продать подарок':'Sell gift','ЦЕНА В ЗВЁЗДАХ':'PRICE IN STARS','Минимально 100 звёзд.':'Minimum 100 stars.','Минимально':'Minimum',
+'Уведомить о продаже':'Notify about sale','Получить уведомления от бота когда ваш уникальный подарок будет продан.':'Get notifications from the bot when your unique gift is sold.','Выставить на продажу':'List for sale','Выставить':'List',
+'Закрыть':'Close','Количество':'Quantity','Введите сообщение (необязательно)':'Enter message (optional)','Назад':'Back','Ещё: скоро':'More: coming soon','Ещё':'More','Укажите цену':'Enter price',
+'Баланс':'Balance','Изм.':'Edit','Изменить цену':'Change price','Изменить':'Edit','QR-код':'QR code',': скоро':': coming soon',
+'На балансе недостаточно звезд, пожалуйста пополните баланс.':'Not enough stars on your balance, please top up.','Недостаточно звезд':'Not enough stars','Пополнить':'Top up','Отмена':'Cancel',
+'продан':'sold','редкий':'rare','маркет':'market','Вы действительно хотите очистить кэш приложения?':'Do you really want to clear the app cache?','Очистить кэш приложения?':'Clear app cache?','Очистить':'Clear',
+'Нет подарков по фильтру':'No gifts match the filter','Подарков пока нет':'No gifts yet','Добавьте этот подарок в профиль или обменяйте на':'Add this gift to your profile or exchange it for',
+'Вы купили подарок за':'You bought the gift for','Просмотр подарка':'Viewing gift','Подарки закончились':'Gifts are sold out','Память браузера заполнена: подарок не сохранился':'Browser storage is full: the gift was not saved',
+'Аноним':'Anonymous','Гость':'Guest','Обмен на звёзды':'Exchange for stars','Обменять':'Exchange','Вы обменяли этот подарок':'You exchanged this gift','Этот подарок был сделан':'This gift was made','ОК':'OK',
+'Дата':'Date','Стоимость':'Cost','От':'From','Наличие':'Availability','Статус':'Status','Неуникальный':'Non-unique','Удаление подписи':'Delete caption','Удалить':'Delete',
+'Подарок уже улучшен':'The gift is already upgraded','Подарок для':'Gift for','Подарок от':'Gift from',', отправлен':', sent','с комментарием':'with comment','подробнее':'more','Подробнее':'More',
+'Добавить в профиль':'Add to profile','Подарок добавлен в профиль':'Gift added to profile','Носить':'Wear','Открепить':'Unpin','Закрепить':'Pin','Убрать':'Remove','Копировать ссылку':'Copy link','Похожие подарки':'Similar gifts','Поделиться':'Share','Передать':'Transfer',
+'Посмотри на подарок':'Check out the gift','в GiftCrafts':'in GiftCrafts','Ссылка скопирована':'Link copied','Вы можете отправить ссылку на этот подарок своим друзьям.':'You can send a link to this gift to your friends.','Отправить':'Send',
+'Подарок откреплён':'Gift unpinned','Подарок закреплён':'Gift pinned','По дате':'By date','По цене':'By price','Уникальные':'Unique','Видимые':'Visible','Скрытые':'Hidden',
+'Сортировать по цене':'Sort by price','Сортировать по дате':'Sort by date','Сортировать по номеру':'Sort by number','Номер':'Number','По выбранным фильтрам ничего нет':'Nothing found for the selected filters','Ничего не найдено':'Nothing found','Выбрать все':'Select all',
+'Снять с продажи':'Take off sale','Снятие с продажи':'Remove from sale','Подарок снят с продажи':'Gift taken off sale','Снять':'Remove','Купить за':'Buy for','В продаже за':'On sale for','не продавать':'don’t sell','Покупка':'Purchase',
+'Вы получите':'You will receive','Продать за':'Sell for','Минимальная цена —':'Minimum price —','Изменение цены':'Price change','Цена изменена':'Price changed','Подтверждение продажи':'Confirm sale','Подарок выставлен на продажу':'Gift listed for sale',
+'Подарок скрыт':'Gift hidden','Подарок':'Gift','подарок':'gift','подарка':'gift','подарков':'gifts','подарки':'gifts','звёзд':'stars','звезд':'stars','звезду':'star','звезды':'stars','модель':'model','фон':'backdrop','узор':'symbol',
+'Г':'G','Pepe с сердцем':'Pepe with heart','Золотой перстень':'Gold ring','Брошь':'Brooch','Кепка':'Cap','Слива':'Plum','Радужный кристалл':'Rainbow crystal','Кристалл':'Crystal','Орёл':'Eagle','Статуэтка':'Statuette','Кольцо с камнем':'Gem ring','Кирпич':'Brick','Перьевая ручка':'Fountain pen',
+'из':'of','осталось':'left','продано':'sold','за':'for','на':'for','в':'at'
+  };
+  const KEYS=Object.keys(D).sort((a,b)=>b.length-a.length);
+  const N=x=>+String(x).replace(/[^\d]/g,''),pl=(n,a,b)=>n===1?a:b,SP='[\\d\\u00a0\\u202f ]*';
+  const PAT=[
+    [/Вы действительно хотите снять с продажи (.+?)\??$/,(m,a)=>'Do you really want to take '+a+' off sale?'],
+    [/Вы точно хотите выставить (.+?) за (.+?)\??$/,(m,a,b)=>'Are you sure you want to list '+a+' for '+b+'?'],
+    [/Обменять этот подарок от (.+?) на (.+)$/,(m,a,b)=>'Exchange this gift from '+a+' for '+b],
+    [/Осталось только (\d+)/,(m,n)=>'Only '+n+' left'],
+    [new RegExp('(\\d'+SP+')\\s*(подарок|подарка|подарков)(?![А-Яа-яЁё])','g'),(m,n)=>n.trim()+' '+pl(N(n),'gift','gifts')],
+    [new RegExp('(\\d'+SP+')\\s*(звезду|звезды|звёзд|звезд)(?![А-Яа-яЁё])','g'),(m,n)=>n.trim()+' '+pl(N(n),'star','stars')],
+    [new RegExp('(\\d'+SP+')\\s*(предложение|предложения|предложений)(?![А-Яа-яЁё])','g'),(m,n)=>n.trim()+' '+pl(N(n),'offer','offers')],
+    [new RegExp('(\\d'+SP+')\\s*(модель|модели|моделей)(?![А-Яа-яЁё])','g'),(m,n)=>n.trim()+' '+pl(N(n),'model','models')],
+    [new RegExp('(\\d'+SP+')\\s*(фон|фона|фонов)(?![А-Яа-яЁё])','g'),(m,n)=>n.trim()+' '+pl(N(n),'backdrop','backdrops')],
+    [new RegExp('(\\d'+SP+')\\s*(узор|узора|узоров)(?![А-Яа-яЁё])','g'),(m,n)=>n.trim()+' '+pl(N(n),'symbol','symbols')],
+    [/(\d+) из (\d+)/g,'$1 of $2'],
+    [/(\d+) осталось/g,'$1 left'],[/(\d+) продано/g,'$1 sold'],[/(\d+) выпущено/g,'$1 issued']
+  ];
+  const NUMRE=/\d[\u00a0\u202f]\d{3}(?!\d)|\d,\d{1,2}(?!\d)|^,\d{2}$/,fmtNum=s=>s.replace(/(\d),(\d{1,2})(?!\d)/g,'$1.$2').replace(/(\d)[\u00a0\u202f](\d{3})(?!\d)/g,'$1,$2').replace(/^,(\d{2})$/,'.$1');
+  function tr(s){
+    if(!CY.test(s))return fmtNum(s);
+    let o=s;
+    for(let i=0;i<PAT.length;i++)o=o.replace(PAT[i][0],PAT[i][1]);
+    for(let ki=0;ki<KEYS.length&&CY.test(o);ki++){
+      const k=KEYS[ki];let i=o.indexOf(k);
+      while(i>=0){
+        const b=o.charAt(i-1),a=o.charAt(i+k.length);
+        if((!b||!CY.test(b))&&(!a||!CY.test(a))){o=o.slice(0,i)+D[k]+o.slice(i+k.length);i=o.indexOf(k,i+D[k].length)}
+        else i=o.indexOf(k,i+1);
+      }
+    }
+    return fmtNum(o);
   }
-  let cur=store.get('lang','ru');if(!L[cur])cur='ru';
+  /* --- перевод DOM: тексты и подписи (placeholder/title/aria-label), оригинал хранится, чтобы вернуть русский --- */
+  const REC=new WeakMap(),ATT=['placeholder','title','aria-label'];
+  let lang='ru',obs=null;
+  const skipNode=n=>{const p=n.parentNode;if(!p||p.nodeType!==1)return true;const t=p.nodeName;if(t==='SCRIPT'||t==='STYLE'||t==='TEXTAREA'||t==='NOSCRIPT')return true;return !!(p.closest&&p.closest('.menu-label,[data-i18n-skip]'))};
+  function doText(n){
+    if(skipNode(n))return;
+    const r=REC.get(n),val=n.nodeValue;
+    if(r&&val===r.en)return;
+    if(!CY.test(val)&&!NUMRE.test(val)){if(r)REC.delete(n);return}
+    const en=tr(val);REC.set(n,{ru:val,en});if(en!==val)n.nodeValue=en;
+  }
+  function doAttr(el,a){
+    const val=el.getAttribute(a);if(val==null)return;
+    const m=el.__i18n||(el.__i18n={}),r=m[a];
+    if(r&&val===r.en)return;
+    if(!CY.test(val)){if(r)delete m[a];return}
+    const en=tr(val);m[a]={ru:val,en};if(en!==val)el.setAttribute(a,en);
+  }
+  function walk(root){
+    if(!root)return;
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1)return;
+    const tw=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;
+    while((n=tw.nextNode()))doText(n);
+    const els=root.querySelectorAll('[placeholder],[title],[aria-label]');
+    for(let i=0;i<els.length;i++)ATT.forEach(a=>doAttr(els[i],a));
+    if(root.matches&&root.matches('[placeholder],[title],[aria-label]'))ATT.forEach(a=>doAttr(root,a));
+  }
+  function restore(){
+    const tw=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;
+    while((n=tw.nextNode())){const r=REC.get(n);if(r&&n.nodeValue===r.en)n.nodeValue=r.ru;REC.delete(n)}
+    document.querySelectorAll('[placeholder],[title],[aria-label]').forEach(el=>{
+      const m=el.__i18n;if(!m)return;
+      ATT.forEach(a=>{const r=m[a];if(r&&el.getAttribute(a)===r.en)el.setAttribute(a,r.ru)});el.__i18n=null;
+    });
+  }
+  function startObs(){
+    if(obs||!window.MutationObserver)return;
+    obs=new MutationObserver(ms=>{
+      for(const m of ms){
+        if(m.type==='childList')m.addedNodes.forEach(walk);
+        else if(m.type==='characterData')doText(m.target);
+        else if(m.type==='attributes')doAttr(m.target,m.attributeName);
+      }
+    });
+    obs.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:ATT});
+  }
+  function stopObs(){if(obs){obs.disconnect();obs=null}}
+  /* системные окна: confirm и tg.showPopup тоже переводятся */
+  const trPop=o=>{if(!o||lang!=='en')return o;const c=Object.assign({},o);if(c.title)c.title=tr(c.title);if(c.message)c.message=tr(c.message);if(c.buttons)c.buttons=c.buttons.map(b=>b&&b.text?Object.assign({},b,{text:tr(b.text)}):b);return c};
+  try{const _c=window.confirm;window.confirm=function(m){return _c.call(window,lang==='en'?tr(String(m)):m)}}catch(_){}
+  try{const T=window.Telegram&&Telegram.WebApp;if(T&&T.showPopup){const _sp=T.showPopup;T.showPopup=function(o,cb){return _sp.call(T,trPop(o),cb)}}}catch(_){}
+  const LBL={ru:['Маркет','Подарки','Звёзды'],en:['Market','Buy gifts','Buy stars']};
+  function apply(k){
+    lang=k;document.documentElement.lang=k;
+    v.textContent=k==='en'?'English':'Русский';
+    $$('.menu-item .menu-label').forEach((e,i)=>{if(LBL[k][i])e.textContent=LBL[k][i]});
+    if(k==='en'){walk(document.body);startObs()}else{stopObs();restore()}
+  }
+  window.I18N={tr:tr,get lang(){return lang}};
+  let cur=store.get('lang','ru');if(cur!=='en')cur='ru';
   apply(cur);
   v.style.cursor='pointer';
   v.addEventListener('click',e=>{e.stopPropagation();cur=cur==='ru'?'en':'ru';store.set('lang',cur);apply(cur)});
