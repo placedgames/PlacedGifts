@@ -209,6 +209,10 @@ mask-image:radial-gradient(ellipse 70vw 190px at 50% calc(320px + var(--ava-top)
 .pname .wmod:not(.wstar)::after{content:"";position:absolute;inset:-6px}
 .pname .wmod .pw{animation:none;will-change:auto;transform:none;isolation:isolate}
 .pname .wmod.wstar svg{width:100%;height:100%;display:block;fill:var(--accent);fill-rule:evenodd}
+/* значок слева от имени: голубой, а если на профиле носится подарок-фон — белый */
+.pname .vbadge{position:relative;top:-2px;display:inline-block;width:25px;height:25px;margin:-3px 4px -3px 0;vertical-align:middle;transform:none;pointer-events:none}
+.pname .vbadge svg{width:100%;height:100%;display:block;fill:#4fc3ff;transition:fill .45s ease}
+.phead.wear .pname .vbadge svg{fill:#fff}
 .phead.wear .pnum{color:rgba(255,255,255,.74)}
 .phead.wear .pnum svg{fill:#fff}
 /* перерисовка размытия по краям фона (iOS иногда оставляет старую картинку) */
@@ -2264,6 +2268,12 @@ function applyWear(){
   WEAR_T.forEach(t=>{
     const ph=document.querySelector(t.ph),bg=document.getElementById(t.bg),pn=document.getElementById(t.pn),rt=document.getElementById(t.rt);
     if(!ph||!bg||!pn)return;
+    /* значок слева от имени (в профиле и в настройках) */
+    if(!pn.querySelector('.vbadge')){
+      const id='vbm-'+t.pn,b=document.createElement('span');b.className='vbadge';
+      b.innerHTML='<svg viewBox="0 0 512 512" aria-hidden="true"><defs><mask id="'+id+'" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512"><rect width="512" height="512" fill="#fff"/><g transform="translate(256 256) scale(0.39) translate(-627 -598)" fill="#000"><path d="M331 520Q331 498 350 483L607 292Q627 280 647 292L903 483Q922 498 922 520L922 705Q922 735 895 722L647 528Q627 515 607 528L358 722Q331 735 331 705Z"/><path d="M485 760L608 652Q628 640 648 652L771 760Q793 778 771 796L648 904Q628 916 608 904L485 796Q463 778 485 760Z"/></g></mask></defs><g mask="url(#'+id+')"><rect x="76" y="76" width="360" height="360" rx="42"/><rect x="76" y="76" width="360" height="360" rx="42" transform="rotate(45 256 256)"/></g></svg>';
+      pn.insertBefore(b,pn.firstChild);
+    }
     const old=pn.querySelector('.wmod');
     if(!x){
       ph.classList.remove('wear');if(rt)rt.setAttribute('href','#i-n1');
