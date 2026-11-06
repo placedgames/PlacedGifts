@@ -71,6 +71,7 @@ body.nobar #bar{display:none}
 .sp{position:absolute;z-index:0;pointer-events:none;animation-play-state:paused;background:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20512%20512%27%3E%3Cpath%20fill=%27%23ecb23a%27%20d=%27M255.2%2040.4C247.8%2042%20245.3%2044.1%20242.3%2051.5C239.6%2058.2%20239.1%2074.6%20238.3%2082.5C236%20104%20226.8%20200.5%20218.7%20213.5C216.5%20216.9%20213.2%20219.3%20209.5%20220.7C196%20225.9%20177.9%20227.4%20163.5%20229.8C141.2%20233.4%20118.9%20237.4%2096.5%20240.4C86.8%20241.7%2075.8%20241.9%2066.5%20245.3C59.9%20247.7%2055.2%20255.5%2057.8%20262.5C58.9%20265.5%2061.7%20268.6%2064.5%20270.1C71.6%20273.7%2094.4%20274.5%20103.5%20275.8C126.7%20279.2%20150.2%20281.7%20173.5%20284.1C184.4%20285.3%20200.5%20286.1%20210.5%20290.1C214.7%20291.8%20218%20294.7%20220%20298.8C229%20317.6%20236.5%20408.6%20239.3%20434.8C240.1%20443%20240%20451.6%20241.7%20459.8C244.4%20472.5%20259.8%20476.2%20266.7%20464.5C269.4%20459.8%20269.3%20453.7%20269.9%20448.5C272.7%20423.7%20282.3%20307.8%20294.5%20294.5C301.4%20287.1%20314.9%20286.8%20324.2%20285.4C326.9%20285.1%20329.6%20284.7%20332.2%20284.3C345.5%20282.8%20443%20271.6%20447.2%20269.4C451.6%20267.2%20454.6%20262.3%20454.5%20257.5C454%20241.5%20439.5%20243%20427.5%20241.2C406.5%20238.2%20309.3%20226.6%20297.5%20218.3C294.1%20216%20292.2%20212.6%20290.9%20208.8C287.5%20199%20286.4%20188%20285.1%20177.8C281.1%20146.1%20277.2%20114.5%20274.5%2082.8C273.7%2073.7%20274.1%2057.7%20271.2%2049.8C270%2046.5%20265.5%2042%20262.2%2040.8C260.9%2040.3%20259.6%2040.5%20258.2%2040.5C257.2%2040.4%20256.3%2040.4%20255.2%2040.4Z%27/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;animation:fly 3.8s ease-in-out infinite paused}
 .gift.vis .sp{animation-play-state:running}
 body.scrolling .gift .sp,body.bmopen .gift .sp{animation-play-state:paused}
+body.nostars .sp{animation:none!important}
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-20deg)}18%{opacity:.95}70%{opacity:.8}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.05) rotate(20deg)}}
 .gempty{margin-top:19px;background:var(--card);border-radius:28px;padding:44px 20px;text-align:center;color:var(--hint)}
 .gbtn{flex:none;width:max-content;min-width:calc(var(--hdr-h) + 24px);flex-direction:column;gap:0;padding:0 18px;line-height:1}
@@ -897,6 +898,7 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
     <div class="row" data-s="Язык"><div class="ic" style="background:linear-gradient(to bottom,#62e27d,#31cc62)"><svg class="ico" style="--s:var(--ic-lang)"><use href="#i-lang"/></svg></div><span class="t">Язык</span><span class="v">Русский</span></div>
     <div class="row" data-s="Оформление"><div class="ic" style="background:linear-gradient(to bottom,#56caff,#3bb1e9)"><svg class="ico" style="--s:var(--ic-theme)" viewBox="0 0 24 24"><use href="#icon-theme"/></svg></div><span class="t">Оформление</span><span class="v">Чёрная</span></div>
     <div class="row sw on" id="anim"><div class="ic" style="background:linear-gradient(to bottom,#ff665a,#ff4b44)"><svg class="ico" style="--s:var(--ic-anim)"><use href="#i-gift"/></svg></div><span class="t">Анимации подарков</span><i></i></div>
+    <div class="row sw on" id="animStars"><div class="ic" style="background:linear-gradient(to bottom,#ffbd3e,#ffa50d)"><svg class="ico" style="--s:var(--ic-stars)"><use href="#i-star"/></svg></div><span class="t">Анимация звёзд</span><i></i></div>
   </div>
   <a class="credit" href="https://t.me/GiftChanges" target="_blank" rel="noopener">Gift assets powered by @GiftChanges</a>
 </section>
@@ -1217,7 +1219,8 @@ const HDR={
   market:()=>hRound(GIFT,'gift')+BAL(),
   gifts:()=>hRound(GIFT,'gift')+BAL(),
   settings:()=>hRound(QR,'qr')+hTxt('Изм.','edit'),
-  me:()=>hRound(BACK,'back')+hTxt('Изм.','edit')
+  me:()=>hRound(BACK,'back')+hTxt('Изм.','edit'),
+  stars:()=>hRound(BACK,'back')
 };
 const HDR_TOAST={gift:'Подарок',edit:'Изменить',qr:'QR-код'};
 /* пока слайдер закреплён под кнопками хедера, «Изм.» превращается в круглую кнопку фильтров */
@@ -1255,7 +1258,7 @@ function slide(p){
 }
 let cur='market',hist=[];
 function syncInstant(){const s=$('#menuSlider');s.classList.add('no-transition');slide(cur);void s.offsetWidth;s.classList.remove('no-transition')}
-const DETAIL=['me'], NAV_EASE='cubic-bezier(.32,.72,0,1)'; let NAV_MS=560;
+const DETAIL=['me','stars'], NAV_EASE='cubic-bezier(.32,.72,0,1)'; let NAV_MS=560;
 let navFin=null, swipeOn=false, meFull=false;
 const animOn=()=>true;
 function navDone(){if(navFin){const f=navFin;navFin=null;f()}}
@@ -1267,7 +1270,7 @@ function setHdr(p,pulse){
   if(pulse&&animOn())$$('#hdr .hb').forEach(b=>b.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:520,easing:'cubic-bezier(.4,0,.2,1)'}));
 }
 // o: {noanim:true} — без анимации; {full:true} — страница профиля поверх меню (кнопка «Мой профиль»); {bounce:true} — «подпрыгнуть» кнопками хедера
-const noBar=(n,full)=>n==='mkg'||(n==='me'&&full);
+const noBar=(n,full)=>n==='mkg'||n==='stars'||(n==='me'&&full);
 function go(p,instant,back,o){
   o=o||{};
   navDone();
@@ -1426,7 +1429,7 @@ $$('[data-s]').forEach(e=>e.onclick=()=>toast(e.dataset.s+': скоро'));
 'Купить подарок за':'Buy gift for','Купить подарок':'Buy gifts','Купить':'Buy','Редкий подарок можно превратить':'A rare gift can be turned','в коллекционный и затем подарить':'into a collectible and then given','другому пользователю.':'to another user.',
 'Коллекционные подарки скоро появятся':'Collectible gifts are coming soon','Коллекционные':'Collectibles','Коллекционный подарок можно отправить любому пользователю.':'A collectible gift can be sent to any user.',
 'Звёзды GiftCrafts нужны для покупки уникальных и коллекционных подарков, а также для прочих услуг.':'GiftCrafts Stars are used to buy unique and collectible gifts, as well as for other services.','Звёзды GiftCrafts':'GiftCrafts Stars','Звёзды':'Stars','Задания скоро появятся':'Tasks are coming soon','Задания':'Tasks','Ваш баланс':'Your balance',
-'Мой профиль':'My Profile','Деньги':'Money','Мои звёзды':'My Stars','Поддержка':'Support','Промокод':'Promo code','Язык':'Language','Оформление':'Appearance','Чёрная':'Black','Анимации подарков':'Gift animations',
+'Мой профиль':'My Profile','Деньги':'Money','Мои звёзды':'My Stars','Поддержка':'Support','Промокод':'Promo code','Язык':'Language','Оформление':'Appearance','Чёрная':'Black','Анимации подарков':'Gift animations','Анимация звёзд':'Star animation',
 'в сети':'online','мобильный':'mobile','имя пользователя':'username','Отправить подарки':'Send gifts','Подарки':'Gifts','Маркет':'Market','Купленный подарок':'Purchased gift','Посмотреть':'View',
 'Скрыть моё имя и сообщение от посетителей профиля.':'Hide my name and message from profile visitors.','Скрыть моё имя':'Hide my name','Когда все подарки будут проданы, вы больше не сможете их купить.':'When all gifts are sold, you will no longer be able to buy them.',
 'Подарок Вам':'Gift for you','Этот подарок можно сделать':'This gift can be made','уникальным коллекционным.':'unique and collectible.','Имя отправителя видите только Вы.':'Only you can see the sender’s name.',
@@ -1592,7 +1595,7 @@ const PS=(function(){
     }
     x.globalAlpha=1;
   }
-  const ok=()=>!document.hidden&&($('#p-gifts').classList.contains('on')||$('#p-market').classList.contains('on'))&&!document.body.classList.contains('scrolling')&&!document.body.classList.contains('bmopen')&&!document.body.classList.contains('noanim');
+  const ok=()=>!document.hidden&&($('#p-gifts').classList.contains('on')||$('#p-market').classList.contains('on'))&&!document.body.classList.contains('scrolling')&&!document.body.classList.contains('bmopen')&&!document.body.classList.contains('noanim')&&window.__sA!==false;
   function loop(now){
     raf=0;for(const c of vis)if(!c.isConnected)vis.delete(c);
     if(!vis.size||!ok())return;
@@ -1710,7 +1713,7 @@ function makeSP(cvSel,avaSel){
     }
     cx.globalAlpha=1;cx.setTransform(1,0,0,1,0,0);
   }
-  const animOn=()=>true;
+  const animOn=()=>window.__sA!==false;   /* настройка «Анимация звёзд» */
   const want=()=>running&&!held&&!document.hidden&&animOn();
   function loop(now){
     raf=0; if(!want()) return;
@@ -1739,10 +1742,19 @@ function makeSP(cvSel,avaSel){
   if(window.ResizeObserver)new ResizeObserver(()=>{if(running&&cv.getBoundingClientRect().width){const w=W;W=0;if(!size())W=w;sync()}}).observe(cv);
   if(window.IntersectionObserver)new IntersectionObserver(e=>{if(running)hold(2,!e[e.length-1].isIntersecting)}).observe(cv);
   document.addEventListener('visibilitychange',sync);
-  return {start,stop,hold};
+  return {start,stop,hold,sync};
 }
 const SPg=makeSP('#gsp','#gAva'), SPs=makeSP('#ssp','#sAva'), SPm=makeSP('#msp','#mAva');
-const SP={hold(b,v){SPg.hold(b,v);SPs.hold(b,v);SPm.hold(b,v)}};
+const SP={hold(b,v){SPg.hold(b,v);SPs.hold(b,v);SPm.hold(b,v)},sync(){SPg.sync();SPs.sync();SPm.sync()}};
+
+/* ===== Анимация звёзд: выключает звёзды на страницах «Подарки», «Маркет», «Звёзды» и на плашках цен.
+   Звёзды у закреплённых подарков в профиле и настройках работают всегда ===== */
+function applyStarAnim(on){
+  window.__sA=!!on;document.body.classList.toggle('nostars',!on);$('#animStars').classList.toggle('on',!!on);
+  try{SP.sync()}catch(_){}try{PS.kick()}catch(_){}
+}
+applyStarAnim(store.get('starAnim','1')==='1');
+$('#animStars').onclick=()=>{const on=store.get('starAnim','1')!=='1';store.set('starAnim',on?'1':'0');applyStarAnim(on)};
 
 /* пауза анимаций во время скролла + анимация только видимых карточек */
 (function(){
