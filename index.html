@@ -274,7 +274,7 @@ body.navanim #bar{z-index:1}
 .mph-n{display:flex;align-items:center;justify-content:center;max-width:100%;font-size:17px;line-height:20px;font-weight:550;color:#fff;white-space:nowrap}
 .mph-n .mt{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .mph-n .vb,.mph-n .wm{flex:none;display:block;width:15px;height:15px}
-.mph-n .vb{width:15px;height:15px;margin-right:2px}.mph-n .wm{width:16px;height:16px;margin-left:3px}.mph-n .wm.ws{width:18px;height:18px;margin-left:2px}
+.mph-n .vb{width:15px;height:15px;margin-right:3px}.mph-n .wm{width:16px;height:16px;margin-left:3px}.mph-n .wm.ws{width:18px;height:18px;margin-left:1px}
 #mpHd .vb svg{width:100%;height:100%;display:block;fill:#4fc3ff}
 #mpHd .wm svg{width:100%;height:100%;display:block;fill:var(--accent);fill-rule:evenodd}
 #mpHd .wm img{width:100%;height:100%;display:block;object-fit:contain}
@@ -847,7 +847,7 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
 </script>
 
 
-<section class="page on" id="p-market">
+<section class="page" id="p-market">
   <div class="ghead">
     <canvas id="msp"></canvas>
     <div class="gava mk-ava" id="mAva"><svg class="ico" style="--s:62px" viewBox="0 0 512 512"><use href="#i-market"/></svg></div>
@@ -871,7 +871,7 @@ window.__hap=function(t){try{const h=window.Telegram&&Telegram.WebApp&&Telegram.
 </section>
 
 
-<section class="page" id="p-gifts">
+<section class="page on" id="p-gifts">
   <div class="ghead">
     <canvas id="gsp"></canvas>
     <div class="gava" id="gAva"></div>
@@ -1481,7 +1481,7 @@ $$('[data-s]').forEach(e=>e.onclick=()=>soon(e.dataset.s));
 'Закрыть':'Close','Количество':'Quantity','Введите сообщение (необязательно)':'Enter message (optional)','Назад':'Back','Ещё: скоро':'More: coming soon','Ещё':'More','Укажите цену':'Enter price',
 'Баланс':'Balance','Изм.':'Edit','Изменить цену':'Change price','Изменить':'Edit','QR-код':'QR code',': скоро':': coming soon',
 'На балансе недостаточно звезд, пожалуйста пополните баланс.':'Not enough stars on your balance, please top up.','Недостаточно звезд':'Not enough stars','Пополнить':'Top up','Отмена':'Cancel',
-'продан':'sold','редкий':'limited','маркет':'market','Вы действительно хотите очистить кэш приложения?':'Do you really want to clear the app cache?','Очистить кэш приложения?':'Clear app cache?','Очистить':'Clear',
+'продан':'sold','редкий':'limited','маркет':'resale','Вы действительно хотите очистить кэш приложения?':'Do you really want to clear the app cache?','Очистить кэш приложения?':'Clear app cache?','Очистить':'Clear',
 'Нет подарков по фильтру':'No gifts match the filter','Подарков пока нет':'No gifts yet','Добавьте этот подарок в профиль или обменяйте на':'Add this gift to your profile or exchange it for',
 'Вы купили подарок за':'You bought the gift for','Просмотр подарка':'Viewing gift','Подарки закончились':'Gifts are sold out','Память браузера заполнена: подарок не сохранился':'Browser storage is full: the gift was not saved',
 'Аноним':'Anonymous','Гость':'Guest','Обмен на звёзды':'Exchange for stars','Обменять':'Exchange','Вы обменяли этот подарок':'You exchanged this gift','Этот подарок был сделан':'This gift was made','ОК':'OK',
@@ -2084,7 +2084,7 @@ function clearAppCache(){ location.reload(); }
   new MutationObserver(inv).observe(pg,{attributes:true,attributeFilter:['class']});
   if(window.ResizeObserver){const ro=new ResizeObserver(inv);ro.observe(pg);const ph=pg.querySelector('.phead');if(ph)ro.observe(ph)}
 })();
-go('market',true);
+go('gifts',true);   /* стартовая страница — «Подарки» */
 requestAnimationFrame(()=>requestAnimationFrame(syncInstant));
 </script>
 <script>
